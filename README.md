@@ -1,2 +1,3 @@
-# flightlog-api
-The flightlog backend api
+# FlightLog API
+The FlightLog application API.
+
