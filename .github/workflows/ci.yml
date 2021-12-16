@@ -58,7 +58,7 @@ jobs:
         uses: github/codeql-action/analyze@v1
 
       - name: Copy Server JAR
-        run: scp -B build/flightlog-*.jar travis@desertskyrangers.com:/opt/dsr/store/latest/www.desertskyrangers.com/server.jar
+        run: scp -B build/libs/flightlog-*.jar travis@desertskyrangers.com:/opt/dsr/store/latest/www.desertskyrangers.com/server.jar
 
 #      - name: Copy Provider Icon
 #        run: |
