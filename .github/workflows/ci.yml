@@ -1,0 +1,71 @@
+name: CI
+
+on: [ push ]
+
+env:
+  JAVA_VERSION: "17"
+  DSR_GPG_PASSWORD: ${{ secrets.DSR_GPG_PASSWORD }}
+  DSR_REPO_USERNAME: ${{ secrets.DSR_REPO_USERNAME }}
+  WEBSITE_DEPLOY_PATH: '/opt/dsr/flightlog/api'
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'java' ]
+    steps:
+      - name: Fetch sources
+        uses: actions/checkout@v2
+
+      - name: Fetch CI/CD resources
+        uses: actions/checkout@v2
+        with:
+          repository: desertskyrangers/cicd
+          path: .github
+
+      - name: Configuration
+        shell: bash
+        run: |
+          source .github/config.sh
+
+      - name: Set up Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: adopt
+          java-version: ${{env.JAVA_VERSION}}
+
+      - name: Maven Repository Cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v1
+        with:
+          languages: ${{ matrix.language }}
+
+      - name: Build Server
+        run: |
+          cd server
+          mvn ${{env.MAVEN_PARMS}} package
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v1
+
+      - name: Copy Server JAR
+        run: scp -B server/target/flightlog.jar travis@desertskyrangers.com:/opt/dsr/store/latest/www.desertskyrangers.com/server.jar
+
+#      - name: Copy Provider Icon
+#        run: |
+#          scp -B server/target/main/images/desertskyrangers.png travis@desertskyrangers.com:/opt/dsr/store/stable/desertskyrangers/provider.png
+#          scp -B server/target/main/images/desertskyrangers-dark.png travis@desertskyrangers.com:/opt/dsr/store/stable/desertskyrangers/provider-dark.png
+#          scp -B server/target/main/images/desertskyrangers-light.png travis@desertskyrangers.com:/opt/dsr/store/stable/desertskyrangers/provider-light.png
+
+      - name: Update the Website
+        run: ssh travis@desertskyrangers.com /home/ecco/bin/update-flightlog-website
