@@ -17,6 +17,8 @@ public class AuthRequestingService implements AuthRequesting {
 
 	@Override
 	public void requestUserAccountSignup( UserAccount account ) {
+		// TODO Block repeat attempts to generate an account
+
 		// Generate a new account
 		statePersisting.upsert( account );
 

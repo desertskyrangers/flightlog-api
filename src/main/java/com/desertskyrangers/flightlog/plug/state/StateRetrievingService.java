@@ -12,11 +12,13 @@ public class StateRetrievingService implements StateRetrieving {
 
 	@Override
 	public UserAccount findUserAccount( UUID id ) {
+		// TODO Find entity and convert to bean
 		return null;
 	}
 
 	@Override
 	public UserProfile findUserProfile( UUID id ) {
+		// TODO Find entity and convert to bean
 		return null;
 	}
 }
