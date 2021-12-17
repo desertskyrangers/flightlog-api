@@ -30,7 +30,7 @@ public class MonitorControllerTests {
 		Map<String, String> response = new HashMap<>();
 		response.put( "running", "true" );
 		response.put( "version", version );
-		this.mockMvc.perform( get( "/api/monitor/status" ) ).andExpect( status().isOk() ).andExpect( content().json( Json.stringify( response ), true ) );
+		this.mockMvc.perform( get( ApiPath.MONITOR_STATUS ) ).andExpect( status().isOk() ).andExpect( content().json( Json.stringify( response ), true ) );
 	}
 
 }

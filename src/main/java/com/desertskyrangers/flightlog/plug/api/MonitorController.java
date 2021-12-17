@@ -9,12 +9,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping( "/api/monitor" )
 public class MonitorController {
 
 	@Value("${spring.application.version:unknown}") String version;
 
-	@GetMapping( "/status" )
+	@GetMapping( ApiPath.MONITOR_STATUS )
 	public Map<String, String> isAlive() {
 		Map<String, String> response = new HashMap<>();
 		response.put( "running", "true" );
