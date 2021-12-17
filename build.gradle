@@ -1,3 +1,5 @@
+import org.apache.tools.ant.filters.*
+
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.6.1'
@@ -55,4 +57,10 @@ springBoot {
 
 bootJar {
 	launchScript()
+}
+
+processResources {
+	filesMatching('application.properties') {
+		expand 'version': project.property("version")
+	}
 }
