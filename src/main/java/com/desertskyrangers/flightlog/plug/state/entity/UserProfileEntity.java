@@ -3,6 +3,7 @@ package com.desertskyrangers.flightlog.plug.state.entity;
 import com.desertskyrangers.flightlog.core.model.SmsProvider;
 import lombok.Data;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -16,8 +17,10 @@ public class UserProfileEntity {
 	@Id
 	private UUID id;
 
+	@Column( name = "preferredname" )
 	private String preferredName;
 
+	@Column( name = "smsnumber" )
 	private String smsNumber;
 
 	private SmsProvider provider;
