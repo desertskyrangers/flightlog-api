@@ -2,12 +2,9 @@ package com.desertskyrangers.flightlog.plug.state.entity;
 
 import com.desertskyrangers.flightlog.core.model.SmsProvider;
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import java.util.UUID;
+import javax.persistence.*;
 
 @Data
 @Entity
@@ -15,7 +12,9 @@ import java.util.UUID;
 public class UserProfileEntity {
 
 	@Id
-	private UUID id;
+	@GeneratedValue( strategy = GenerationType.AUTO, generator = "native" )
+	@GenericGenerator( name = "native", strategy = "native" )
+	private Long id;
 
 	@Column( name = "preferredname" )
 	private String preferredName;
