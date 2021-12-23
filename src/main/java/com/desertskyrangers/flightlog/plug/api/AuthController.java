@@ -21,6 +21,7 @@ public class AuthController {
 
 	@PostMapping( ApiPath.SIGNUP )
 	@ResponseStatus( HttpStatus.ACCEPTED )
+	@CrossOrigin(origins = "http://localhost:3000")
 	void signup( @RequestBody ReactUserAccount request ) {
 		List<String> messages = new ArrayList<>();
 		if( request.getUsername() == null ) messages.add( "Username required" );
