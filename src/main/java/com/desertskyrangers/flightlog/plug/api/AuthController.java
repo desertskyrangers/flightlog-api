@@ -19,16 +19,15 @@ public class AuthController {
 		this.authRequesting = authRequesting;
 	}
 
-	@PostMapping( ApiPath.SIGNUP )
+	@PostMapping( path = ApiPath.SIGNUP, consumes = "application/json", produces = "application/json" )
 	@ResponseStatus( HttpStatus.ACCEPTED )
-	@CrossOrigin(origins = "http://localhost:3000")
+	@CrossOrigin( origins = "http://localhost:3000" )
 	void signup( @RequestBody ReactUserAccount request ) {
 		List<String> messages = new ArrayList<>();
 		if( request.getUsername() == null ) messages.add( "Username required" );
 		if( request.getPassword() == null ) messages.add( "Password required" );
 		if( request.getEmail() == null ) messages.add( "EmailRequired" );
 		if( !messages.isEmpty() ) throw new ResponseStatusException( HttpStatus.BAD_REQUEST, Json.stringify( messages ) );
-
 		authRequesting.requestUserAccountSignup( new UserAccount().username( request.getUsername() ).password( request.getPassword() ).email( request.getEmail() ) );
 	}
 

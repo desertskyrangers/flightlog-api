@@ -24,7 +24,7 @@ public class HumanInterfaceService implements HumanInterface {
 		mailMessage.setTo( message.recipients().toArray( new String[]{} ) );
 		mailMessage.setSubject( message.subject() );
 		mailMessage.setText( message.message() );
-		emailSender.send( mailMessage );
+		//emailSender.send( mailMessage );
 	}
 
 	public void sms( SmsMessage message ) {
