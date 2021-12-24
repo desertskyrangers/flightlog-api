@@ -11,7 +11,7 @@ public class UserAccountEntity {
 
 	@Id
 	@GeneratedValue( strategy = GenerationType.IDENTITY, generator = "native" )
-	private Long id;
+	private Integer id;
 
 	private String username;
 
