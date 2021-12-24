@@ -21,6 +21,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -45,7 +46,7 @@ public class AuthControllerTests {
 		String content = new ObjectMapper().writeValueAsString( Map.of( "username", username, "password", password, "email", email ) );
 
 		// when
-		this.mockMvc.perform( post( ApiPath.AUTH_SIGNUP ).content( content ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isAccepted() );
+		this.mockMvc.perform( post( ApiPath.AUTH_SIGNUP ).with( csrf() ).content( content ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isAccepted() );
 
 		// then
 		ArgumentCaptor<UserAccount> argumentCaptor = ArgumentCaptor.forClass( UserAccount.class );
@@ -64,7 +65,19 @@ public class AuthControllerTests {
 
 		Map<String, Object> result = Map.of( "messages", List.of( "Username required", "Password required", "EmailRequired" ) );
 		this.mockMvc
-			.perform( post( ApiPath.AUTH_SIGNUP ).content( content ).contentType( MediaType.APPLICATION_JSON ) )
+			.perform( post( ApiPath.AUTH_SIGNUP ).with( csrf() ).content( content ).contentType( MediaType.APPLICATION_JSON ) )
+			.andExpect( status().isBadRequest() )
+			.andExpect( content().json( Json.stringify( result ) ) );
+	}
+
+	@Test
+	public void whenApiAuthLoginBadRequest_thenHandleErrorGracefully() throws Exception {
+		Map<String, Object> request = Map.of();
+		String content = Json.stringify( request );
+
+		Map<String, Object> result = Map.of( "messages", List.of( "Username required", "Password required" ) );
+		this.mockMvc
+			.perform( post( ApiPath.AUTH_LOGIN ).with( csrf() ).content( content ).contentType( MediaType.APPLICATION_JSON ) )
 			.andExpect( status().isBadRequest() )
 			.andExpect( content().json( Json.stringify( result ) ) );
 	}

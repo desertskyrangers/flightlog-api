@@ -26,8 +26,9 @@ public class AuthController {
 		this.authRequesting = authRequesting;
 	}
 
-	@PostMapping( path = ApiPath.AUTH_SIGNUP, consumes = "application/json", produces = "application/json" )
 	@CrossOrigin
+	//@Secured( "USER" )
+	@PostMapping( path = ApiPath.AUTH_SIGNUP, consumes = "application/json", produces = "application/json" )
 	ResponseEntity<Map<String, Object>> signup( @RequestBody ReactUserAccount request ) {
 		List<String> messages = new ArrayList<>();
 		if( Text.isBlank( request.getUsername() ) ) messages.add( "Username required" );
@@ -41,8 +42,9 @@ public class AuthController {
 		return new ResponseEntity<>( Map.of(), HttpStatus.ACCEPTED );
 	}
 
-	@PostMapping( path = ApiPath.AUTH_LOGIN, consumes = "application/json", produces = "application/json" )
 	@CrossOrigin
+	//@Secured( "USER" )
+	@PostMapping( path = ApiPath.AUTH_LOGIN, consumes = "application/json", produces = "application/json" )
 	ResponseEntity<Map<String, Object>> login( @RequestBody ReactUserAccount request ) {
 		System.out.println( "login request username=" + request.getUsername() );
 		List<String> messages = new ArrayList<>();
@@ -54,7 +56,7 @@ public class AuthController {
 		//authRequesting.requestUserAccountLogin( new UserAccount().username( request.getUsername() ).password( request.getPassword() ) );
 		//return new ResponseEntity<>( Map.of(), HttpStatus.OK );
 
-		return new ResponseEntity<>( Map.of( "messages", List.of("Login not implemented") ), HttpStatus.SERVICE_UNAVAILABLE );
+		return new ResponseEntity<>( Map.of( "messages", List.of( "Login not implemented" ) ), HttpStatus.SERVICE_UNAVAILABLE );
 	}
 
 }
