@@ -18,6 +18,7 @@ import java.util.Map;
 
 @Slf4j
 @RestController
+@CrossOrigin
 public class AuthController {
 
 	private final AuthRequesting authRequesting;
@@ -42,7 +43,6 @@ public class AuthController {
 		return new ResponseEntity<>( Map.of(), HttpStatus.ACCEPTED );
 	}
 
-	@CrossOrigin
 	//@Secured( "USER" )
 	@PostMapping( path = ApiPath.AUTH_LOGIN, consumes = "application/json", produces = "application/json" )
 	ResponseEntity<Map<String, Object>> login( @RequestBody ReactUserAccount request ) {
