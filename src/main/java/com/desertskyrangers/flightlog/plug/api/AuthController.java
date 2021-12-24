@@ -27,7 +27,7 @@ public class AuthController {
 	}
 
 	@PostMapping( path = ApiPath.AUTH_SIGNUP, consumes = "application/json", produces = "application/json" )
-	@CrossOrigin( origins = "http://localhost:3000" )
+	@CrossOrigin
 	ResponseEntity<Map<String, Object>> signup( @RequestBody ReactUserAccount request ) {
 		List<String> messages = new ArrayList<>();
 		if( Text.isBlank( request.getUsername() ) ) messages.add( "Username required" );
@@ -42,7 +42,7 @@ public class AuthController {
 	}
 
 	@PostMapping( path = ApiPath.AUTH_LOGIN, consumes = "application/json", produces = "application/json" )
-	@CrossOrigin( origins = "http://localhost:3000" )
+	@CrossOrigin
 	ResponseEntity<Map<String, Object>> login( @RequestBody ReactUserAccount request ) {
 		System.out.println( "login request username=" + request.getUsername() );
 		List<String> messages = new ArrayList<>();
