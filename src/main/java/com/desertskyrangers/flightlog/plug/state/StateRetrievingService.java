@@ -5,19 +5,17 @@ import com.desertskyrangers.flightlog.core.model.UserProfile;
 import com.desertskyrangers.flightlog.port.StateRetrieving;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
-
 @Service
 public class StateRetrievingService implements StateRetrieving {
 
 	@Override
-	public UserAccount findUserAccount( UUID id ) {
+	public UserAccount findUserAccount( Long id ) {
 		// TODO Find entity and convert to bean
 		return null;
 	}
 
 	@Override
-	public UserProfile findUserProfile( UUID id ) {
+	public UserProfile findUserProfile( Long id ) {
 		// TODO Find entity and convert to bean
 		return null;
 	}
