@@ -3,6 +3,15 @@ server:
   compression:
     enabled: true
 
+logging:
+  level:
+    # Start with only WARN messages
+    root: WARN
+    # Increase verbosity as needed
+    com:
+      desertskyrangers:
+        perform: INFO
+
 spring:
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver

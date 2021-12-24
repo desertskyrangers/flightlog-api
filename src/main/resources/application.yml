@@ -1,6 +1,17 @@
 server:
   port: 8050
 
+logging:
+  file:
+    name: flightlog.log
+  level:
+    # Start with only WARN messages
+    root: INFO
+    # Increase verbosity as needed
+    com:
+      desertskyrangers:
+        perform: INFO
+
 spring:
 
   application:
