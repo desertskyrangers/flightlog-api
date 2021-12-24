@@ -47,10 +47,11 @@ public class AuthController {
 		if( Text.isBlank( request.getPassword() ) ) messages.add( "Password required" );
 		if( !messages.isEmpty() ) {
 			return new ResponseEntity<>( Map.of( "messages", messages ), HttpStatus.BAD_REQUEST );
-			//throw new ResponseStatusException( HttpStatus.BAD_REQUEST, "Got some errors!" );
 		}
-		//authRequesting.requestUserAccountSignup( new UserAccount().username( request.getUsername() ).password( request.getPassword() ).email( request.getEmail() ) );
-		return new ResponseEntity<>( Map.of(), HttpStatus.OK );
+		//authRequesting.requestUserAccountLogin( new UserAccount().username( request.getUsername() ).password( request.getPassword() ) );
+		//return new ResponseEntity<>( Map.of(), HttpStatus.OK );
+
+		return new ResponseEntity<>( Map.of( "messages", List.of("Login not implemented") ), HttpStatus.SERVICE_UNAVAILABLE );
 	}
 
 }

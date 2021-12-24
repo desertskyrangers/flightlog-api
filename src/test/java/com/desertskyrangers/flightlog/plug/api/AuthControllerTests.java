@@ -2,6 +2,7 @@ package com.desertskyrangers.flightlog.plug.api;
 
 import com.desertskyrangers.flightlog.core.model.UserAccount;
 import com.desertskyrangers.flightlog.port.AuthRequesting;
+import com.desertskyrangers.flightlog.util.Json;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,13 +15,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -58,9 +60,13 @@ public class AuthControllerTests {
 	@Test
 	public void whenApiAuthSignupBadRequest_thenHandleErrorGracefully() throws Exception {
 		Map<String, Object> request = Map.of();
-		String content = new ObjectMapper().writeValueAsString( request );
-		String message = "[\"Username required\",\"Password required\",\"EmailRequired\"]";
-		this.mockMvc.perform( post( ApiPath.AUTH_SIGNUP ).content( content ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isBadRequest() ).andExpect( status().reason( message ) );
+		String content = Json.stringify( request );
+
+		Map<String, Object> result = Map.of( "messages", List.of( "Username required", "Password required", "EmailRequired" ) );
+		this.mockMvc
+			.perform( post( ApiPath.AUTH_SIGNUP ).content( content ).contentType( MediaType.APPLICATION_JSON ) )
+			.andExpect( status().isBadRequest() )
+			.andExpect( content().json( Json.stringify( result ) ) );
 	}
 
 }
