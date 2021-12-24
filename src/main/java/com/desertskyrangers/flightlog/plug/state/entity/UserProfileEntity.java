@@ -4,6 +4,7 @@ import com.desertskyrangers.flightlog.core.model.SmsProvider;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 @Data
 @Entity
@@ -11,8 +12,7 @@ import javax.persistence.*;
 public class UserProfileEntity {
 
 	@Id
-	@GeneratedValue( strategy = GenerationType.IDENTITY, generator = "native" )
-	private Long id;
+	private UUID id;
 
 	@Column( name = "preferredname" )
 	private String preferredName;
