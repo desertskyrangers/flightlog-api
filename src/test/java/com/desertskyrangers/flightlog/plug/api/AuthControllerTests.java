@@ -1,15 +1,11 @@
 package com.desertskyrangers.flightlog.plug.api;
 
-import com.desertskyrangers.flightlog.core.AuthRequestingService;
 import com.desertskyrangers.flightlog.core.model.UserAccount;
 import com.desertskyrangers.flightlog.port.AuthRequesting;
-import com.desertskyrangers.flightlog.port.StatePersisting;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -47,7 +43,7 @@ public class AuthControllerTests {
 		String content = new ObjectMapper().writeValueAsString( Map.of( "username", username, "password", password, "email", email ) );
 
 		// when
-		this.mockMvc.perform( post( ApiPath.SIGNUP ).content( content ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isAccepted() );
+		this.mockMvc.perform( post( ApiPath.AUTH_SIGNUP ).content( content ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isAccepted() );
 
 		// then
 		ArgumentCaptor<UserAccount> argumentCaptor = ArgumentCaptor.forClass( UserAccount.class );
@@ -64,7 +60,7 @@ public class AuthControllerTests {
 		Map<String, Object> request = Map.of();
 		String content = new ObjectMapper().writeValueAsString( request );
 		String message = "[\"Username required\",\"Password required\",\"EmailRequired\"]";
-		this.mockMvc.perform( post( ApiPath.SIGNUP ).content( content ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isBadRequest() ).andExpect( status().reason( message ) );
+		this.mockMvc.perform( post( ApiPath.AUTH_SIGNUP ).content( content ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isBadRequest() ).andExpect( status().reason( message ) );
 	}
 
 }
