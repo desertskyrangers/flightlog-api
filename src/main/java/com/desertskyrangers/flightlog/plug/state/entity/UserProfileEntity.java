@@ -2,7 +2,6 @@ package com.desertskyrangers.flightlog.plug.state.entity;
 
 import com.desertskyrangers.flightlog.core.model.SmsProvider;
 import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
@@ -12,8 +11,7 @@ import javax.persistence.*;
 public class UserProfileEntity {
 
 	@Id
-	@GeneratedValue( strategy = GenerationType.AUTO, generator = "native" )
-	@GenericGenerator( name = "native", strategy = "native" )
+	@GeneratedValue( strategy = GenerationType.IDENTITY, generator = "native" )
 	private Long id;
 
 	@Column( name = "preferredname" )
