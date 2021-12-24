@@ -1,8 +1,10 @@
 package com.desertskyrangers.flightlog.plug.api;
 
 import com.desertskyrangers.flightlog.core.model.UserAccount;
+import com.desertskyrangers.flightlog.plug.api.model.ReactUserAccount;
 import com.desertskyrangers.flightlog.port.AuthRequesting;
 import com.desertskyrangers.flightlog.util.Text;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -14,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RestController
 public class AuthController {
 

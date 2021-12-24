@@ -1,4 +1,4 @@
-package com.desertskyrangers.flightlog.plug.api;
+package com.desertskyrangers.flightlog.plug.api.model;
 
 import com.desertskyrangers.flightlog.core.model.UserAccount;
 import lombok.Data;
@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.UUID;
 
 @Data
-class ReactUserAccount {
+public class ReactUserAccount {
 
 	private String id;
 
