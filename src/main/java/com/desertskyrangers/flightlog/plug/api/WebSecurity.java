@@ -39,7 +39,10 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 				.mvcMatchers( HttpMethod.POST, "/api/auth/login" ).permitAll()
 				.mvcMatchers( HttpMethod.POST, "/api/auth/signup" ).permitAll()
 				.mvcMatchers( HttpMethod.GET, "/api/monitor/status" ).permitAll()
-				.anyRequest().authenticated();
+				.anyRequest().authenticated()
+
+			// FIXME Eventually remove basic auth
+			.and().httpBasic();
 		// @formatter:on
 	}
 
