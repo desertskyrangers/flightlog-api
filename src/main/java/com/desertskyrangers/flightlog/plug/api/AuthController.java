@@ -7,7 +7,8 @@ import com.desertskyrangers.flightlog.util.Text;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,7 +19,6 @@ import java.util.Map;
 
 @Slf4j
 @RestController
-@CrossOrigin
 public class AuthController {
 
 	private final AuthRequesting authRequesting;
@@ -27,7 +27,11 @@ public class AuthController {
 		this.authRequesting = authRequesting;
 	}
 
-	@CrossOrigin
+	@GetMapping( path = ApiPath.AUTH_CSRF )
+	CsrfToken csrf( CsrfToken token) {
+		return token;
+	}
+
 	//@Secured( "USER" )
 	@PostMapping( path = ApiPath.AUTH_SIGNUP, consumes = "application/json", produces = "application/json" )
 	ResponseEntity<Map<String, Object>> signup( @RequestBody ReactUserAccount request ) {

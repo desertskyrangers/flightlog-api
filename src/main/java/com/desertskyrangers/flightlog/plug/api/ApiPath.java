@@ -6,6 +6,8 @@ public interface ApiPath {
 
 	String AUTH = ROOT + "/auth";
 
+	String AUTH_CSRF = AUTH + "/csrf";
+
 	String AUTH_LOGIN = AUTH + "/login";
 
 	String AUTH_SIGNUP = AUTH + "/signup";

@@ -1,6 +1,7 @@
 package com.desertskyrangers.flightlog.plug.api;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -28,15 +29,18 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure( HttpSecurity http ) throws Exception {
-		// FIXME Had to turn off CSRF for login to work
-		// Need to figure out how to mix csrf, cors and public pages
-		http.authorizeRequests().anyRequest().permitAll().and().csrf().disable();
-
-//		http.authorizeRequests()
-//			.antMatchers( HttpMethod.POST, "/api/auth/login" ).permitAll()
-//			.antMatchers( HttpMethod.POST, "/api/auth/signup" ).permitAll()
-//			.antMatchers( HttpMethod.GET, "/api/monitor/status" ).permitAll()
-//			.anyRequest().authenticated().and().httpBasic();
+		// @formatter:off
+		http
+			.cors().and()
+			.csrf().ignoringAntMatchers( "/api/auth/login" ).and()
+			.csrf().ignoringAntMatchers( "/api/auth/signup" ).and()
+			.authorizeRequests()
+				.mvcMatchers( HttpMethod.GET, "/api/auth/csrf" ).permitAll()
+				.mvcMatchers( HttpMethod.POST, "/api/auth/login" ).permitAll()
+				.mvcMatchers( HttpMethod.POST, "/api/auth/signup" ).permitAll()
+				.mvcMatchers( HttpMethod.GET, "/api/monitor/status" ).permitAll()
+				.anyRequest().authenticated();
+		// @formatter:on
 	}
 
 }

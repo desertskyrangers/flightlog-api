@@ -6,7 +6,7 @@ logging:
     name: flightlog.log
   level:
     # Start with only WARN messages
-    root: INFO
+    root: DEBUG
     # Increase verbosity as needed
     com:
       desertskyrangers:
