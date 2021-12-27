@@ -18,8 +18,9 @@ import java.io.UnsupportedEncodingException;
 @Slf4j
 public class HumanInterfaceService implements HumanInterface {
 
+	private static final String FROM_ADDRESS = "flightlog@desertskyrangers.com";
+	private static final String FROM_NAME = "FlightLog";
 	private static final String REPLY_TO_ADDRESS = "noreply@desertskyrangers.com";
-
 	private static final String REPLY_TO_NAME = "Desert Sky Rangers";
 
 	private final FlightLogApp app;
@@ -35,7 +36,8 @@ public class HumanInterfaceService implements HumanInterface {
 		MimeMessage mimeMessage = emailSender.createMimeMessage();
 		try {
 			MimeMessageHelper helper = new MimeMessageHelper( mimeMessage );
-			helper.setFrom( REPLY_TO_ADDRESS, REPLY_TO_NAME );
+			helper.setFrom( FROM_ADDRESS, FROM_NAME );
+			helper.setReplyTo( REPLY_TO_ADDRESS, REPLY_TO_NAME );
 			helper.setTo( message.recipients() );
 			helper.setSubject( message.subject() );
 			helper.setText( message.message(), message.isHtml() );
