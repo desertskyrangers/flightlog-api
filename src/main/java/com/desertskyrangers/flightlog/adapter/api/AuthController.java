@@ -3,6 +3,7 @@ package com.desertskyrangers.flightlog.adapter.api;
 import com.desertskyrangers.flightlog.adapter.api.model.ReactUserAccount;
 import com.desertskyrangers.flightlog.core.model.UserAccount;
 import com.desertskyrangers.flightlog.port.AuthRequesting;
+import com.desertskyrangers.flightlog.util.Json;
 import com.desertskyrangers.flightlog.util.Text;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -42,13 +43,12 @@ public class AuthController {
 		if( !messages.isEmpty() ) return new ResponseEntity<>( Map.of( "messages", messages ), HttpStatus.BAD_REQUEST );
 
 		try {
-			authRequesting.requestUserAccountSignup( new UserAccount().username( request.getUsername() ).password( request.getPassword() ).email( request.getEmail() ) );
+			UserAccount account = authRequesting.requestUserAccountSignup( new UserAccount().username( request.getUsername() ).password( request.getPassword() ).email( request.getEmail() ) );
+			return new ResponseEntity<>( Json.asMap( account ), HttpStatus.ACCEPTED );
 		} catch( Exception exception ) {
 			log.error( "Error during account sign up, username=" + request.getUsername(), exception );
 			return new ResponseEntity<>( Map.of( "messages", List.of( "There was an error creating the account" ) ), HttpStatus.INTERNAL_SERVER_ERROR );
 		}
-
-		return new ResponseEntity<>( Map.of(), HttpStatus.ACCEPTED );
 	}
 
 	//@Secured( "USER" )

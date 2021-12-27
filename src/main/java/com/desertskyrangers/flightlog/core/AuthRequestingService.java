@@ -33,7 +33,7 @@ public class AuthRequestingService implements AuthRequesting {
 	}
 
 	@Override
-	public void requestUserAccountSignup( UserAccount account ) {
+	public UserAccount requestUserAccountSignup( UserAccount account ) {
 		log.info( "Creating account for: " + account.username() );
 
 		// TODO Block repeat attempts to generate an account
@@ -54,6 +54,8 @@ public class AuthRequestingService implements AuthRequesting {
 
 		// Send the message to verify the email address
 		sendEmailAddressVerificationMessage( account, code );
+
+		return account;
 	}
 
 	@Async
