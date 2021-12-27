@@ -5,6 +5,8 @@ import lombok.experimental.Accessors;
 
 import java.util.UUID;
 
+// FIXME The profile should be the user account, email moved to this class and account "just" be credentials
+
 @Data
 @Accessors( fluent = true )
 public class UserProfile {

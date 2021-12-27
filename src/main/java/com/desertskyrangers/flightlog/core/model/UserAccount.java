@@ -6,6 +6,8 @@ import lombok.experimental.Accessors;
 import javax.persistence.Id;
 import java.util.UUID;
 
+// FIXME User account should really be a set of credentials and email moved to the profile
+
 @Data
 @Accessors( fluent = true )
 public class UserAccount {
