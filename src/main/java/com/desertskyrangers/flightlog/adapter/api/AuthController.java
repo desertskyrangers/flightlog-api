@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -44,8 +43,9 @@ public class AuthController {
 
 		try {
 			authRequesting.requestUserAccountSignup( new UserAccount().username( request.getUsername() ).password( request.getPassword() ).email( request.getEmail() ) );
-		} catch( Exception exception) {
-			return new ResponseEntity<>( Map.of( "messages", List.of("There was an error creating the account") ), HttpStatus.INTERNAL_SERVER_ERROR );
+		} catch( Exception exception ) {
+			log.error( "Error during account sign up, username=" + request.getUsername(), exception );
+			return new ResponseEntity<>( Map.of( "messages", List.of( "There was an error creating the account" ) ), HttpStatus.INTERNAL_SERVER_ERROR );
 		}
 
 		return new ResponseEntity<>( Map.of(), HttpStatus.ACCEPTED );
