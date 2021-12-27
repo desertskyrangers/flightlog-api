@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 @Service
 @Slf4j
@@ -64,9 +63,10 @@ public class AuthRequestingService implements AuthRequesting {
 		if( verificationMessage == null ) return;
 
 		EmailMessage message = new EmailMessage();
-		message.recipient( account.email() );
+		message.recipient( account.email(), account.username() );
 		message.subject( subject );
 		message.message( verificationMessage );
+		message.isHtml( true );
 		humanInterface.email( message );
 	}
 
