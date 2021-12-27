@@ -1,4 +1,4 @@
-package com.desertskyrangers.flightlog.plug.state;
+package com.desertskyrangers.flightlog.adapter.state;
 
 import com.desertskyrangers.flightlog.core.model.UserAccount;
 import com.desertskyrangers.flightlog.core.model.UserProfile;

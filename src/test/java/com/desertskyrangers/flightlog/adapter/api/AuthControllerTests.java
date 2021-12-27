@@ -1,4 +1,4 @@
-package com.desertskyrangers.flightlog.plug.api;
+package com.desertskyrangers.flightlog.adapter.api;
 
 import com.desertskyrangers.flightlog.core.model.UserAccount;
 import com.desertskyrangers.flightlog.port.AuthRequesting;

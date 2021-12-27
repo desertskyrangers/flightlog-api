@@ -1,7 +1,7 @@
-package com.desertskyrangers.flightlog.plug.api;
+package com.desertskyrangers.flightlog.adapter.api;
 
 import com.desertskyrangers.flightlog.core.UserAccountService;
-import com.desertskyrangers.flightlog.plug.api.model.ReactUserAccount;
+import com.desertskyrangers.flightlog.adapter.api.model.ReactUserAccount;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

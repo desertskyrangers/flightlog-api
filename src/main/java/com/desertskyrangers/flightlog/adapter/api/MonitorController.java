@@ -1,4 +1,4 @@
-package com.desertskyrangers.flightlog.plug.api;
+package com.desertskyrangers.flightlog.adapter.api;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

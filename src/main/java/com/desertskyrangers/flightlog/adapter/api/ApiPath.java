@@ -1,4 +1,4 @@
-package com.desertskyrangers.flightlog.plug.api;
+package com.desertskyrangers.flightlog.adapter.api;
 
 public interface ApiPath {
 

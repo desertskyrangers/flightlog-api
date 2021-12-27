@@ -1,4 +1,4 @@
-package com.desertskyrangers.flightlog.plug.human;
+package com.desertskyrangers.flightlog.adapter.human;
 
 import com.desertskyrangers.flightlog.core.model.EmailMessage;
 import com.desertskyrangers.flightlog.core.model.SmsMessage;

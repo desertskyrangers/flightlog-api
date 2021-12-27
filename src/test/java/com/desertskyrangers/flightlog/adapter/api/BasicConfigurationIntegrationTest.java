@@ -1,4 +1,4 @@
-package com.desertskyrangers.flightlog.plug.api;
+package com.desertskyrangers.flightlog.adapter.api;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

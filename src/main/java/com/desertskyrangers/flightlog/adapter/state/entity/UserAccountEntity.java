@@ -1,4 +1,4 @@
-package com.desertskyrangers.flightlog.plug.state.entity;
+package com.desertskyrangers.flightlog.adapter.state.entity;
 
 import lombok.Data;
 

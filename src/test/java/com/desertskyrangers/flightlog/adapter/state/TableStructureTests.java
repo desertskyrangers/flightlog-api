@@ -1,4 +1,4 @@
-package com.desertskyrangers.flightlog.plug.state;
+package com.desertskyrangers.flightlog.adapter.state;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

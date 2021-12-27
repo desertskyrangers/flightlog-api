@@ -1,7 +1,7 @@
-package com.desertskyrangers.flightlog.plug.api;
+package com.desertskyrangers.flightlog.adapter.api;
 
 import com.desertskyrangers.flightlog.core.model.UserAccount;
-import com.desertskyrangers.flightlog.plug.api.model.ReactUserAccount;
+import com.desertskyrangers.flightlog.adapter.api.model.ReactUserAccount;
 import com.desertskyrangers.flightlog.port.AuthRequesting;
 import com.desertskyrangers.flightlog.util.Text;
 import lombok.extern.slf4j.Slf4j;

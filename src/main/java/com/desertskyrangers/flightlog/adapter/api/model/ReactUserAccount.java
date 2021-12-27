@@ -1,4 +1,4 @@
-package com.desertskyrangers.flightlog.plug.api.model;
+package com.desertskyrangers.flightlog.adapter.api.model;
 
 import com.desertskyrangers.flightlog.core.model.UserAccount;
 import lombok.Data;
