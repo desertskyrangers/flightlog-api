@@ -6,6 +6,7 @@ import com.desertskyrangers.flightlog.core.model.Verification;
 import com.desertskyrangers.flightlog.port.AuthRequesting;
 import com.desertskyrangers.flightlog.port.HumanInterface;
 import com.desertskyrangers.flightlog.port.StatePersisting;
+import com.desertskyrangers.flightlog.util.Text;
 import com.mitchellbosecke.pebble.PebbleEngine;
 import com.mitchellbosecke.pebble.template.PebbleTemplate;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 @Service
 @Slf4j
@@ -40,7 +42,7 @@ public class AuthRequestingService implements AuthRequesting {
 		statePersisting.upsert( account );
 
 		// Generate a verification code
-		String code = "000000";
+		String code = Text.lpad( String.valueOf( new Random().nextInt( 1000000 ) ), 6, '0' );
 
 		// Generate a verification record
 		Verification verification = new Verification();
