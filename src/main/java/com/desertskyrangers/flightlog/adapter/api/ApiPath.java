@@ -2,6 +2,8 @@ package com.desertskyrangers.flightlog.adapter.api;
 
 public interface ApiPath {
 
+	String HOST = "https://flightlog.desertskyrangers.com";
+
 	String ROOT = "/api";
 
 	String AUTH = ROOT + "/auth";
@@ -11,6 +13,8 @@ public interface ApiPath {
 	String AUTH_LOGIN = AUTH + "/login";
 
 	String AUTH_SIGNUP = AUTH + "/signup";
+
+	String AUTH_VERIFY = AUTH + "/verify";
 
 	String MONITOR = ROOT + "/monitor";
 

@@ -44,12 +44,6 @@ public class AuthControllerTests {
 		String email = "mock@email.com";
 		String content = new ObjectMapper().writeValueAsString( Map.of( "username", username, "password", password, "email", email ) );
 
-		UserAccount mockAccount = new UserAccount();
-		mockAccount.username( username );
-		mockAccount.password( password );
-		mockAccount.email( email );
-		when( authRequesting.requestUserAccountSignup( any() ) ).thenReturn( mockAccount );
-
 		// when
 		this.mockMvc.perform( post( ApiPath.AUTH_SIGNUP ).with( csrf() ).content( content ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isAccepted() );
 

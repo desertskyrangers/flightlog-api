@@ -4,6 +4,6 @@ import com.desertskyrangers.flightlog.core.model.UserAccount;
 
 public interface AuthRequesting {
 
-	UserAccount requestUserAccountSignup( UserAccount account );
+	void requestUserAccountSignup( UserAccount account );
 
 }

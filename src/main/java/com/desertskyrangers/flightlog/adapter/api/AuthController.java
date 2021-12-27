@@ -2,6 +2,7 @@ package com.desertskyrangers.flightlog.adapter.api;
 
 import com.desertskyrangers.flightlog.adapter.api.model.ReactBasicCredentials;
 import com.desertskyrangers.flightlog.adapter.api.model.ReactUserAccount;
+import com.desertskyrangers.flightlog.adapter.api.model.ReactVerifyRequest;
 import com.desertskyrangers.flightlog.core.model.UserAccount;
 import com.desertskyrangers.flightlog.port.AuthRequesting;
 import com.desertskyrangers.flightlog.util.Json;
@@ -34,7 +35,6 @@ public class AuthController {
 		return token;
 	}
 
-	//@Secured( "USER" )
 	@PostMapping( path = ApiPath.AUTH_SIGNUP, consumes = "application/json", produces = "application/json" )
 	ResponseEntity<Map<String, Object>> signup( @RequestBody ReactUserAccount request ) {
 		List<String> messages = new ArrayList<>();
@@ -45,7 +45,7 @@ public class AuthController {
 
 		try {
 			UserAccount account = new UserAccount().username( request.getUsername() ).password( request.getPassword() ).email( request.getEmail() );
-			account = authRequesting.requestUserAccountSignup( account );
+			authRequesting.requestUserAccountSignup( account );
 
 			ReactUserAccount response = new ReactUserAccount();
 			response.setId( account.id().toString() );
@@ -58,7 +58,30 @@ public class AuthController {
 		}
 	}
 
-	//@Secured( "USER" )
+	@PostMapping( path = ApiPath.AUTH_VERIFY, consumes = "application/json", produces = "application/json" )
+	ResponseEntity<Map<String, Object>> verify( @RequestBody ReactVerifyRequest request ) {
+		List<String> messages = new ArrayList<>();
+		if( Text.isBlank( request.getId() ) ) messages.add( "ID required" );
+		if( Text.isBlank( request.getCode() ) ) messages.add( "Code required" );
+		if( !messages.isEmpty() ) return new ResponseEntity<>( Map.of( "messages", messages ), HttpStatus.BAD_REQUEST );
+
+//		try {
+//			UserAccount account = new UserAccount().username( request.getUsername() ).password( request.getPassword() ).email( request.getEmail() );
+//			account = authRequesting.requestUserAccountSignup( account );
+//
+//			ReactUserAccount response = new ReactUserAccount();
+//			response.setId( account.id().toString() );
+//			response.setUsername( account.username()  );
+//			response.setEmail( account.email() );
+//			return new ResponseEntity<>( Json.asMap( response ), HttpStatus.ACCEPTED );
+//		} catch( Exception exception ) {
+//			log.error( "Error during account sign up, username=" + request.getUsername(), exception );
+//			return new ResponseEntity<>( Map.of( "messages", List.of( "There was an error creating the account" ) ), HttpStatus.INTERNAL_SERVER_ERROR );
+//		}
+
+		return new ResponseEntity<>( Map.of(), HttpStatus.OK );
+	}
+
 	@PostMapping( path = ApiPath.AUTH_LOGIN, consumes = "application/json", produces = "application/json" )
 	ResponseEntity<Map<String, Object>> login( @RequestBody ReactBasicCredentials request ) {
 		log.info( "login request username=" + request.getUsername() );
