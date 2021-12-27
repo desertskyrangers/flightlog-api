@@ -42,11 +42,12 @@ public class AuthController {
 		if( Text.isBlank( request.getEmail() ) ) messages.add( "EmailRequired" );
 		if( !messages.isEmpty() ) return new ResponseEntity<>( Map.of( "messages", messages ), HttpStatus.BAD_REQUEST );
 
-		authRequesting.requestUserAccountSignup( new UserAccount()
-			.id( UUID.fromString( request.getId() ) )
-			.username( request.getUsername() )
-			.password( request.getPassword() )
-			.email( request.getEmail() ) );
+		try {
+			authRequesting.requestUserAccountSignup( new UserAccount().username( request.getUsername() ).password( request.getPassword() ).email( request.getEmail() ) );
+		} catch( Exception exception) {
+			return new ResponseEntity<>( Map.of( "messages", List.of("There was an error creating the account") ), HttpStatus.INTERNAL_SERVER_ERROR );
+		}
+
 		return new ResponseEntity<>( Map.of(), HttpStatus.ACCEPTED );
 	}
 
