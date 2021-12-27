@@ -1,5 +1,6 @@
 package com.desertskyrangers.flightlog.adapter.api;
 
+import com.desertskyrangers.flightlog.adapter.api.model.ReactBasicCredentials;
 import com.desertskyrangers.flightlog.adapter.api.model.ReactUserAccount;
 import com.desertskyrangers.flightlog.core.model.UserAccount;
 import com.desertskyrangers.flightlog.port.AuthRequesting;
@@ -43,8 +44,14 @@ public class AuthController {
 		if( !messages.isEmpty() ) return new ResponseEntity<>( Map.of( "messages", messages ), HttpStatus.BAD_REQUEST );
 
 		try {
-			UserAccount account = authRequesting.requestUserAccountSignup( new UserAccount().username( request.getUsername() ).password( request.getPassword() ).email( request.getEmail() ) );
-			return new ResponseEntity<>( Json.asMap( account ), HttpStatus.ACCEPTED );
+			UserAccount account = new UserAccount().username( request.getUsername() ).password( request.getPassword() ).email( request.getEmail() );
+			account = authRequesting.requestUserAccountSignup( account );
+
+			ReactUserAccount response = new ReactUserAccount();
+			response.setId( account.id().toString() );
+			response.setUsername( account.username()  );
+			response.setEmail( account.email() );
+			return new ResponseEntity<>( Json.asMap( response ), HttpStatus.ACCEPTED );
 		} catch( Exception exception ) {
 			log.error( "Error during account sign up, username=" + request.getUsername(), exception );
 			return new ResponseEntity<>( Map.of( "messages", List.of( "There was an error creating the account" ) ), HttpStatus.INTERNAL_SERVER_ERROR );
@@ -53,7 +60,7 @@ public class AuthController {
 
 	//@Secured( "USER" )
 	@PostMapping( path = ApiPath.AUTH_LOGIN, consumes = "application/json", produces = "application/json" )
-	ResponseEntity<Map<String, Object>> login( @RequestBody ReactUserAccount request ) {
+	ResponseEntity<Map<String, Object>> login( @RequestBody ReactBasicCredentials request ) {
 		log.info( "login request username=" + request.getUsername() );
 		List<String> messages = new ArrayList<>();
 		if( Text.isBlank( request.getUsername() ) ) messages.add( "Username required" );

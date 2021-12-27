@@ -18,6 +18,7 @@ import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -53,17 +54,15 @@ public class AuthRequestingService implements AuthRequesting {
 		statePersisting.upsert( verification );
 
 		// Send the message to verify the email address
-		sendEmailAddressVerificationMessage( account, code );
+		sendEmailAddressVerificationMessage( account, verification );
 
 		return account;
 	}
 
 	@Async
-	void sendEmailAddressVerificationMessage( UserAccount account, String code ) {
+	void sendEmailAddressVerificationMessage( UserAccount account, Verification verification ) {
 		String subject = "FlightLog Email Account Verification";
-		String link = "https://www.flightlog.desertskyrangers.com/api/auth/verify?id=" + account.id() + "&code=" + code;
-
-		String verificationMessage = generateEmailAddressVerificationMessage( subject, link, code );
+		String verificationMessage = generateEmailAddressVerificationMessage( subject, verification.id(), verification.code() );
 		if( verificationMessage == null ) return;
 
 		EmailMessage message = new EmailMessage();
@@ -74,7 +73,9 @@ public class AuthRequestingService implements AuthRequesting {
 		humanInterface.email( message );
 	}
 
-	private String generateEmailAddressVerificationMessage( String subject, String link, String code ) {
+	private String generateEmailAddressVerificationMessage( String subject, UUID id, String code ) {
+		String link = "https://flightlog.desertskyrangers.com/api/auth/verify?id=" + id + "&code=" + code;
+
 		Map<String, Object> values = new HashMap<>();
 		values.put( "subject", subject );
 		values.put( "link", link );
