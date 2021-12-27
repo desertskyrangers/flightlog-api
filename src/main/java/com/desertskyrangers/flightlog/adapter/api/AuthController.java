@@ -1,7 +1,7 @@
 package com.desertskyrangers.flightlog.adapter.api;
 
-import com.desertskyrangers.flightlog.core.model.UserAccount;
 import com.desertskyrangers.flightlog.adapter.api.model.ReactUserAccount;
+import com.desertskyrangers.flightlog.core.model.UserAccount;
 import com.desertskyrangers.flightlog.port.AuthRequesting;
 import com.desertskyrangers.flightlog.util.Text;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -28,7 +29,7 @@ public class AuthController {
 	}
 
 	@GetMapping( path = ApiPath.AUTH_CSRF )
-	CsrfToken csrf( CsrfToken token) {
+	CsrfToken csrf( CsrfToken token ) {
 		return token;
 	}
 
@@ -39,18 +40,20 @@ public class AuthController {
 		if( Text.isBlank( request.getUsername() ) ) messages.add( "Username required" );
 		if( Text.isBlank( request.getPassword() ) ) messages.add( "Password required" );
 		if( Text.isBlank( request.getEmail() ) ) messages.add( "EmailRequired" );
-		if( !messages.isEmpty() ) {
-			return new ResponseEntity<>( Map.of( "messages", messages ), HttpStatus.BAD_REQUEST );
-			//throw new ResponseStatusException( HttpStatus.BAD_REQUEST, Json.stringify( messages ) );
-		}
-		authRequesting.requestUserAccountSignup( new UserAccount().username( request.getUsername() ).password( request.getPassword() ).email( request.getEmail() ) );
+		if( !messages.isEmpty() ) return new ResponseEntity<>( Map.of( "messages", messages ), HttpStatus.BAD_REQUEST );
+
+		authRequesting.requestUserAccountSignup( new UserAccount()
+			.id( UUID.fromString( request.getId() ) )
+			.username( request.getUsername() )
+			.password( request.getPassword() )
+			.email( request.getEmail() ) );
 		return new ResponseEntity<>( Map.of(), HttpStatus.ACCEPTED );
 	}
 
 	//@Secured( "USER" )
 	@PostMapping( path = ApiPath.AUTH_LOGIN, consumes = "application/json", produces = "application/json" )
 	ResponseEntity<Map<String, Object>> login( @RequestBody ReactUserAccount request ) {
-		System.out.println( "login request username=" + request.getUsername() );
+		log.info( "login request username=" + request.getUsername() );
 		List<String> messages = new ArrayList<>();
 		if( Text.isBlank( request.getUsername() ) ) messages.add( "Username required" );
 		if( Text.isBlank( request.getPassword() ) ) messages.add( "Password required" );

@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -32,10 +33,12 @@ public class AuthRequestingService implements AuthRequesting {
 
 	@Override
 	public void requestUserAccountSignup( UserAccount account ) {
-		System.out.println( "Creating account for: " + account.username() );
+		log.info( "Creating account for: " + account.username() );
+
 		// TODO Block repeat attempts to generate an account
 
 		// Generate a new account
+		if( account.id() ==  null) account.id( UUID.randomUUID() );
 		statePersisting.upsert( account );
 
 		// Generate a verification code
