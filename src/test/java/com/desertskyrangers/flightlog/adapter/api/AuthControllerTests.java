@@ -19,8 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -44,6 +43,12 @@ public class AuthControllerTests {
 		String password = "mockpassword";
 		String email = "mock@email.com";
 		String content = new ObjectMapper().writeValueAsString( Map.of( "username", username, "password", password, "email", email ) );
+
+		UserAccount mockAccount = new UserAccount();
+		mockAccount.username( username );
+		mockAccount.password( password );
+		mockAccount.email( email );
+		when( authRequesting.requestUserAccountSignup( any() ) ).thenReturn( mockAccount );
 
 		// when
 		this.mockMvc.perform( post( ApiPath.AUTH_SIGNUP ).with( csrf() ).content( content ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isAccepted() );
