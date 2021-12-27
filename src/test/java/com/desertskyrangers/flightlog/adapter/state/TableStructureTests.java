@@ -46,7 +46,7 @@ public class TableStructureTests {
 		expected.add( "id" );
 		expected.add( "preferredname" );
 		expected.add( "smsnumber" );
-		expected.add( "provider" );
+		expected.add( "smsprovider" );
 
 		assertThat( getColumns( "userprofile" ) ).containsAll( expected );
 	}
@@ -56,7 +56,9 @@ public class TableStructureTests {
 		Set<String> expected = new HashSet<>();
 		expected.add( "id" );
 		expected.add( "userid" );
+		expected.add( "timestamp" );
 		expected.add( "code" );
+		expected.add( "type" );
 
 		assertThat( getColumns( "verification" ) ).containsAll( expected );
 	}

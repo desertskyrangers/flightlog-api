@@ -15,7 +15,7 @@ public class UserProfile {
 
 	private String smsNumber;
 
-	private SmsProvider provider;
+	private SmsProvider smsProvider;
 
 	public UUID getId() {
 		return user.id();
