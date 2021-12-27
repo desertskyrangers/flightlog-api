@@ -11,16 +11,24 @@ import java.util.UUID;
 @Accessors( fluent = true )
 public class UserProfile {
 
-	private final UserAccount user;
+	private UUID id;
+
+	// given name
+
+	// last name
 
 	private String preferredName;
+
+	// email
 
 	private String smsNumber;
 
 	private SmsProvider smsProvider;
 
-	public UUID getId() {
-		return user.id();
+	// authentications
+
+	public UserProfile() {
+		id( UUID.randomUUID() );
 	}
 
 }

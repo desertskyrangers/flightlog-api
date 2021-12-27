@@ -38,7 +38,6 @@ public class AuthRequestingService implements AuthRequesting {
 		// TODO Block repeat attempts to generate an account
 
 		// Generate a new account
-		if( account.id() ==  null) account.id( UUID.randomUUID() );
 		statePersisting.upsert( account );
 
 		// Generate a verification code

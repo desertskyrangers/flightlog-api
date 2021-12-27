@@ -19,4 +19,8 @@ public class Verification {
 
 	private String type;
 
+	public Verification() {
+		id(UUID.randomUUID());
+	}
+
 }

@@ -29,7 +29,7 @@ public class UserProfileEntity {
 	public static UserProfileEntity from( UserProfile profile ) {
 		UserProfileEntity entity = new UserProfileEntity();
 
-		entity.setId( profile.user().id() );
+		entity.setId( profile.id() );
 		entity.setPreferredName( profile.preferredName() );
 		entity.setSmsNumber( profile.smsNumber() );
 		entity.setSmsNumber( profile.smsProvider().name() );
