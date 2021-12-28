@@ -3,7 +3,7 @@ package com.desertskyrangers.flightlog.adapter.state;
 import com.desertskyrangers.flightlog.adapter.state.entity.UserCredentialEntity;
 import com.desertskyrangers.flightlog.adapter.state.entity.UserAccountEntity;
 import com.desertskyrangers.flightlog.adapter.state.entity.VerificationEntity;
-import com.desertskyrangers.flightlog.core.model.UserCredentials;
+import com.desertskyrangers.flightlog.core.model.UserCredential;
 import com.desertskyrangers.flightlog.core.model.UserAccount;
 import com.desertskyrangers.flightlog.core.model.Verification;
 import com.desertskyrangers.flightlog.port.StatePersisting;
@@ -25,7 +25,7 @@ public class StatePersistingService implements StatePersisting {
 	}
 
 	@Override
-	public void upsert( UserCredentials account ) {
+	public void upsert( UserCredential account ) {
 		userCredentialsRepo.save( UserCredentialEntity.from( account ) );
 	}
 

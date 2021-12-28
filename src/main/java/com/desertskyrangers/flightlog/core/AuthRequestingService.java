@@ -3,7 +3,7 @@ package com.desertskyrangers.flightlog.core;
 import com.desertskyrangers.flightlog.adapter.api.ApiPath;
 import com.desertskyrangers.flightlog.core.model.EmailMessage;
 import com.desertskyrangers.flightlog.core.model.UserAccount;
-import com.desertskyrangers.flightlog.core.model.UserCredentials;
+import com.desertskyrangers.flightlog.core.model.UserCredential;
 import com.desertskyrangers.flightlog.core.model.Verification;
 import com.desertskyrangers.flightlog.port.AuthRequesting;
 import com.desertskyrangers.flightlog.port.HumanInterface;
@@ -47,7 +47,7 @@ public class AuthRequestingService implements AuthRequesting {
 
 	@Async
 	@Override
-	public void requestUserAccountSignup( UserAccount account, UserCredentials credentials ) {
+	public void requestUserAccountSignup( UserAccount account, UserCredential credentials ) {
 		log.info( "Creating account username: " + credentials.username() );
 
 		// TODO Block repeat attempts to generate an account
@@ -77,7 +77,7 @@ public class AuthRequestingService implements AuthRequesting {
 	}
 
 	@Async
-	void sendEmailAddressVerificationMessage( UserAccount account, UserCredentials credentials, Verification verification ) {
+	void sendEmailAddressVerificationMessage( UserAccount account, UserCredential credentials, Verification verification ) {
 		String subject = EMAIL_SUBJECT;
 		String verificationMessage = generateEmailAddressVerificationMessage( subject, verification.id(), verification.code() );
 		if( verificationMessage == null ) return;

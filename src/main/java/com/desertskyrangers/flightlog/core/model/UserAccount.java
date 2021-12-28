@@ -3,9 +3,9 @@ package com.desertskyrangers.flightlog.core.model;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import javax.persistence.OneToMany;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 @Data
 @Accessors( fluent = true )
@@ -29,7 +29,7 @@ public class UserAccount {
 
 	private boolean smsVerified;
 
-	private Set<UserCredentials> credentials;
+	private Set<UserCredential> credentials = new CopyOnWriteArraySet<>();
 
 	public UserAccount() {
 		id( UUID.randomUUID() );

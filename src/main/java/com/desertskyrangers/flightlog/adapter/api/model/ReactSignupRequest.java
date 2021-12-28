@@ -1,6 +1,6 @@
 package com.desertskyrangers.flightlog.adapter.api.model;
 
-import com.desertskyrangers.flightlog.core.model.UserCredentials;
+import com.desertskyrangers.flightlog.core.model.UserCredential;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -18,7 +18,7 @@ public class ReactSignupRequest {
 
 	private String email;
 
-	public static ReactSignupRequest from( UserCredentials user ) {
+	public static ReactSignupRequest from( UserCredential user ) {
 		ReactSignupRequest signup = new ReactSignupRequest();
 		signup.setId( user.id().toString() );
 		signup.setUsername( user.username() );
@@ -26,8 +26,8 @@ public class ReactSignupRequest {
 		return signup;
 	}
 
-	public static UserCredentials to( ReactSignupRequest user ) {
-		return new UserCredentials().id( UUID.fromString( user.id ) ).username( user.getUsername() ).password( user.getPassword() );
+	public static UserCredential to( ReactSignupRequest user ) {
+		return new UserCredential().id( UUID.fromString( user.id ) ).username( user.getUsername() ).password( user.getPassword() );
 	}
 
 }

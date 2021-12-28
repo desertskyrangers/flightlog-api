@@ -1,7 +1,7 @@
 package com.desertskyrangers.flightlog.core;
 
 import com.desertskyrangers.flightlog.core.model.UserAccount;
-import com.desertskyrangers.flightlog.core.model.UserCredentials;
+import com.desertskyrangers.flightlog.core.model.UserCredential;
 import com.desertskyrangers.flightlog.port.UserManagement;
 import org.springframework.stereotype.Service;
 
@@ -13,12 +13,12 @@ import java.util.UUID;
 public class UserAccountService implements UserManagement {
 
 	@Override
-	public Set<UserCredentials> find() {
+	public Set<UserCredential> find() {
 		return Set.of();
 	}
 
 	@Override
-	public UserCredentials find( UUID id ) {
+	public UserCredential find( UUID id ) {
 		return null;
 	}
 
@@ -29,12 +29,12 @@ public class UserAccountService implements UserManagement {
 	}
 
 	@Override
-	public UserCredentials update( UserCredentials account ) {
+	public UserCredential update( UserCredential account ) {
 		return null;
 	}
 
 	@Override
-	public void delete( UserCredentials account ) {
+	public void delete( UserCredential account ) {
 
 	}
 }

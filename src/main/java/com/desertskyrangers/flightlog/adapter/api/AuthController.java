@@ -4,7 +4,7 @@ import com.desertskyrangers.flightlog.adapter.api.model.ReactBasicCredentials;
 import com.desertskyrangers.flightlog.adapter.api.model.ReactSignupRequest;
 import com.desertskyrangers.flightlog.adapter.api.model.ReactUserAccount;
 import com.desertskyrangers.flightlog.core.model.UserAccount;
-import com.desertskyrangers.flightlog.core.model.UserCredentials;
+import com.desertskyrangers.flightlog.core.model.UserCredential;
 import com.desertskyrangers.flightlog.core.model.Verification;
 import com.desertskyrangers.flightlog.port.AuthRequesting;
 import com.desertskyrangers.flightlog.port.UserManagement;
@@ -39,7 +39,7 @@ public class AuthController {
 		return token;
 	}
 
-	@PostMapping( path = ApiPath.AUTH_SIGNUP, consumes = "application/json", produces = "application/json" )
+	@PostMapping( path = ApiPath.AUTH_REGISTER, consumes = "application/json", produces = "application/json" )
 	ResponseEntity<Map<String, Object>> signup( @RequestBody ReactSignupRequest request ) {
 		List<String> messages = new ArrayList<>();
 		if( Text.isBlank( request.getUsername() ) ) messages.add( "Username required" );
@@ -61,7 +61,7 @@ public class AuthController {
 
 		try {
 			UserAccount account = new UserAccount().email( request.getEmail() );
-			UserCredentials credentials = new UserCredentials().userAccount( account ).username( request.getUsername() ).password( request.getPassword() );
+			UserCredential credentials = new UserCredential().userAccount( account ).username( request.getUsername() ).password( request.getPassword() );
 			authRequesting.requestUserAccountSignup( account, credentials );
 
 			ReactUserAccount response = new ReactUserAccount().setId( account.id().toString() ).setEmail( account.email() );

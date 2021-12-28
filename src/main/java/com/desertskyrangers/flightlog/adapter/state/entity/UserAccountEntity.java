@@ -2,6 +2,7 @@ package com.desertskyrangers.flightlog.adapter.state.entity;
 
 import com.desertskyrangers.flightlog.core.model.UserAccount;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -33,7 +34,8 @@ public class UserAccountEntity {
 	@Column( name = "smsverified" )
 	private boolean smsVerified;
 
-	@OneToMany
+	@EqualsAndHashCode.Exclude
+	@OneToMany(cascade = CascadeType.ALL)
 	private Set<UserCredentialEntity> credentials;
 
 	public static UserAccountEntity from( UserAccount account ) {
@@ -42,9 +44,9 @@ public class UserAccountEntity {
 		entity.setId( account.id() );
 		entity.setPreferredName( account.preferredName() );
 		entity.setSmsNumber( account.smsNumber() );
-		entity.setSmsNumber( account.smsProvider().name() );
+		if( account.smsProvider() != null ) entity.setSmsNumber( account.smsProvider().name() );
 
-		entity.getCredentials().addAll( account.credentials().stream().map( UserCredentialEntity::from ).collect( Collectors.toSet()) );
+		entity.setCredentials( account.credentials().stream().map( UserCredentialEntity::from ).peek( c -> c.setUserAccount( entity ) ).collect( Collectors.toSet() ) );
 
 		return entity;
 	}

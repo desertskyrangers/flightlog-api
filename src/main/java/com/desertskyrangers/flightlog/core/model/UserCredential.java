@@ -7,7 +7,7 @@ import java.util.UUID;
 
 @Data
 @Accessors( fluent = true )
-public class UserCredentials {
+public class UserCredential {
 
 	private UUID id;
 
@@ -17,7 +17,7 @@ public class UserCredentials {
 
 	private String password;
 
-	public UserCredentials() {
+	public UserCredential() {
 		id(UUID.randomUUID());
 	}
 

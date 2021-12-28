@@ -1,7 +1,7 @@
 package com.desertskyrangers.flightlog.adapter.api;
 
 import com.desertskyrangers.flightlog.core.model.UserAccount;
-import com.desertskyrangers.flightlog.core.model.UserCredentials;
+import com.desertskyrangers.flightlog.core.model.UserCredential;
 import com.desertskyrangers.flightlog.core.model.Verification;
 import com.desertskyrangers.flightlog.port.AuthRequesting;
 import com.desertskyrangers.flightlog.util.Json;
@@ -50,17 +50,17 @@ public class AuthControllerTests {
 		String content = new ObjectMapper().writeValueAsString( Map.of( "username", username, "password", password, "email", email ) );
 
 		// when
-		this.mockMvc.perform( post( ApiPath.AUTH_SIGNUP ).with( csrf() ).content( content ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isAccepted() );
+		this.mockMvc.perform( post( ApiPath.AUTH_REGISTER ).with( csrf() ).content( content ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isAccepted() );
 
 		// then
 		ArgumentCaptor<UserAccount> accountCaptor = ArgumentCaptor.forClass( UserAccount.class );
-		ArgumentCaptor<UserCredentials> credentialsCaptor = ArgumentCaptor.forClass( UserCredentials.class );
+		ArgumentCaptor<UserCredential> credentialsCaptor = ArgumentCaptor.forClass( UserCredential.class );
 		verify( authRequesting, times( 1 ) ).requestUserAccountSignup( accountCaptor.capture(), credentialsCaptor.capture() );
 
 		UserAccount account = accountCaptor.getValue();
 		assertThat( account.email() ).isEqualTo( email );
 
-		UserCredentials credentials = credentialsCaptor.getValue();
+		UserCredential credentials = credentialsCaptor.getValue();
 		assertThat( credentials.username() ).isEqualTo( username );
 		assertThat( credentials.password() ).isEqualTo( password );
 	}
@@ -72,7 +72,7 @@ public class AuthControllerTests {
 
 		Map<String, Object> result = Map.of( "messages", List.of( "Username required", "Password required", "EmailRequired" ) );
 		this.mockMvc
-			.perform( post( ApiPath.AUTH_SIGNUP ).with( csrf() ).content( content ).contentType( MediaType.APPLICATION_JSON ) )
+			.perform( post( ApiPath.AUTH_REGISTER ).with( csrf() ).content( content ).contentType( MediaType.APPLICATION_JSON ) )
 			.andExpect( status().isBadRequest() )
 			.andExpect( content().json( Json.stringify( result ) ) );
 	}

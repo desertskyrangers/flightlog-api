@@ -32,15 +32,15 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 		// @formatter:off
 		http
 			.cors().and()
-			.csrf().ignoringAntMatchers( "/api/auth/login" ).and()
-			.csrf().ignoringAntMatchers( "/api/auth/signup" ).and()
+			.csrf().ignoringAntMatchers( ApiPath.AUTH_LOGIN ).and()
+			.csrf().ignoringAntMatchers( ApiPath.AUTH_REGISTER ).and()
 			.csrf().ignoringAntMatchers( ApiPath.AUTH_VERIFY ).and()
 			.authorizeRequests()
 				.mvcMatchers( HttpMethod.GET, "/api/auth/csrf" ).permitAll()
-				.mvcMatchers( HttpMethod.POST, "/api/auth/login" ).permitAll()
-				.mvcMatchers( HttpMethod.POST, "/api/auth/signup" ).permitAll()
+				.mvcMatchers( HttpMethod.POST, ApiPath.AUTH_LOGIN ).permitAll()
+				.mvcMatchers( HttpMethod.POST, ApiPath.AUTH_REGISTER ).permitAll()
 				.mvcMatchers( HttpMethod.GET, ApiPath.AUTH_VERIFY ).permitAll()
-				.mvcMatchers( HttpMethod.GET, "/api/monitor/status" ).permitAll()
+				.mvcMatchers( HttpMethod.GET, ApiPath.MONITOR_STATUS ).permitAll()
 				.anyRequest().authenticated()
 
 			// FIXME Eventually remove basic auth

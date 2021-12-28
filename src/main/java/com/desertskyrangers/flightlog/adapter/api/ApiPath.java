@@ -12,7 +12,7 @@ public interface ApiPath {
 
 	String AUTH_LOGIN = AUTH + "/login";
 
-	String AUTH_SIGNUP = AUTH + "/signup";
+	String AUTH_REGISTER = AUTH + "/register";
 
 	String AUTH_VERIFY = AUTH + "/verify";
 
