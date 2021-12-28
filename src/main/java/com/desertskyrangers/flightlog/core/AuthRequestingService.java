@@ -3,6 +3,7 @@ package com.desertskyrangers.flightlog.core;
 import com.desertskyrangers.flightlog.adapter.api.ApiPath;
 import com.desertskyrangers.flightlog.core.model.EmailMessage;
 import com.desertskyrangers.flightlog.core.model.UserAccount;
+import com.desertskyrangers.flightlog.core.model.UserCredentials;
 import com.desertskyrangers.flightlog.core.model.Verification;
 import com.desertskyrangers.flightlog.port.AuthRequesting;
 import com.desertskyrangers.flightlog.port.HumanInterface;
@@ -46,7 +47,7 @@ public class AuthRequestingService implements AuthRequesting {
 
 	@Async
 	@Override
-	public void requestUserAccountSignup( UserAccount account ) {
+	public void requestUserAccountSignup( UserAccount account, UserCredentials credentials ) {
 		log.info( "Creating account for: " + account.username() );
 
 		// TODO Block repeat attempts to generate an account

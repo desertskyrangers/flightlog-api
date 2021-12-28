@@ -5,7 +5,7 @@ import lombok.experimental.Accessors;
 
 import java.util.UUID;
 
-// FIXME User account should really be a set of credentials and email moved to the profile
+// FIXME The profile should be the user account, email moved to this class and account "just" be credentials
 
 @Data
 @Accessors( fluent = true )
@@ -15,12 +15,26 @@ public class UserAccount {
 
 	private String username;
 
-	private String password;
+	// given name
+
+	// last name
+
+	private String preferredName;
 
 	private String email;
 
+	private boolean emailVerified;
+
+	private String smsNumber;
+
+	private SmsProvider smsProvider;
+
+	private boolean smsVerified;
+
+	// authentications
+
 	public UserAccount() {
-		id(UUID.randomUUID());
+		id( UUID.randomUUID() );
 	}
 
 }

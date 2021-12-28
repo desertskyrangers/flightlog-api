@@ -3,6 +3,7 @@ package com.desertskyrangers.flightlog.adapter.state.entity;
 import com.desertskyrangers.flightlog.core.model.UserAccount;
 import lombok.Data;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -16,18 +17,31 @@ public class UserAccountEntity {
 	@Id
 	private UUID id;
 
-	private String username;
-
-	private String password;
+	@Column( name = "preferredname" )
+	private String preferredName;
 
 	private String email;
 
-	public static UserAccountEntity from( UserAccount account ) {
+	@Column( name = "emailverified" )
+	private boolean emailVerified;
+
+	@Column( name = "smsnumber" )
+	private String smsNumber;
+
+	@Column( name = "smsprovider" )
+	private String provider;
+
+	@Column( name = "smsverified" )
+	private boolean smsVerified;
+
+	public static UserAccountEntity from( UserAccount profile ) {
 		UserAccountEntity entity = new UserAccountEntity();
-		entity.setId( account.id() );
-		entity.setUsername( account.username() );
-		entity.setPassword( account.password() );
-		entity.setEmail( account.email() );
+
+		entity.setId( profile.id() );
+		entity.setPreferredName( profile.preferredName() );
+		entity.setSmsNumber( profile.smsNumber() );
+		entity.setSmsNumber( profile.smsProvider().name() );
+
 		return entity;
 	}
 

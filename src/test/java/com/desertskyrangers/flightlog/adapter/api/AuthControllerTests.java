@@ -1,6 +1,7 @@
 package com.desertskyrangers.flightlog.adapter.api;
 
 import com.desertskyrangers.flightlog.core.model.UserAccount;
+import com.desertskyrangers.flightlog.core.model.UserCredentials;
 import com.desertskyrangers.flightlog.core.model.Verification;
 import com.desertskyrangers.flightlog.port.AuthRequesting;
 import com.desertskyrangers.flightlog.util.Json;
@@ -52,13 +53,17 @@ public class AuthControllerTests {
 		this.mockMvc.perform( post( ApiPath.AUTH_SIGNUP ).with( csrf() ).content( content ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isAccepted() );
 
 		// then
-		ArgumentCaptor<UserAccount> argumentCaptor = ArgumentCaptor.forClass( UserAccount.class );
-		verify( authRequesting, times( 1 ) ).requestUserAccountSignup( argumentCaptor.capture() );
+		ArgumentCaptor<UserAccount> accountCaptor = ArgumentCaptor.forClass( UserAccount.class );
+		ArgumentCaptor<UserCredentials> credentialsCaptor = ArgumentCaptor.forClass( UserCredentials.class );
+		verify( authRequesting, times( 1 ) ).requestUserAccountSignup( accountCaptor.capture(), credentialsCaptor.capture() );
 
-		UserAccount account = argumentCaptor.getValue();
-		assertThat( account.username() ).isEqualTo( username );
-		assertThat( account.password() ).isEqualTo( password );
+		UserAccount account = accountCaptor.getValue();
+		//assertThat( account.username() ).isEqualTo( username );
 		assertThat( account.email() ).isEqualTo( email );
+
+		UserCredentials credentials = credentialsCaptor.getValue();
+		assertThat( credentials.username() ).isEqualTo( username );
+		assertThat( credentials.password() ).isEqualTo( password );
 	}
 
 	@Test
@@ -97,10 +102,7 @@ public class AuthControllerTests {
 		String url = ApiPath.AUTH_VERIFY + "?id=&code=";
 
 		Map<String, Object> result = Map.of( "messages", List.of( "ID required", "Code required" ) );
-		this.mockMvc
-			.perform( get( url ).contentType( MediaType.APPLICATION_JSON ) )
-			.andExpect( status().isBadRequest() )
-			.andExpect( content().json( Json.stringify( result ) ) );
+		this.mockMvc.perform( get( url ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isBadRequest() ).andExpect( content().json( Json.stringify( result ) ) );
 	}
 
 	@Test

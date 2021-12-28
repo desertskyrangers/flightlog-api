@@ -2,7 +2,9 @@ package com.desertskyrangers.flightlog.adapter.api;
 
 import com.desertskyrangers.flightlog.adapter.api.model.ReactBasicCredentials;
 import com.desertskyrangers.flightlog.adapter.api.model.ReactUserAccount;
+import com.desertskyrangers.flightlog.adapter.api.model.ReactUserSignup;
 import com.desertskyrangers.flightlog.core.model.UserAccount;
+import com.desertskyrangers.flightlog.core.model.UserCredentials;
 import com.desertskyrangers.flightlog.core.model.Verification;
 import com.desertskyrangers.flightlog.port.AuthRequesting;
 import com.desertskyrangers.flightlog.util.Json;
@@ -34,21 +36,25 @@ public class AuthController {
 	}
 
 	@PostMapping( path = ApiPath.AUTH_SIGNUP, consumes = "application/json", produces = "application/json" )
-	ResponseEntity<Map<String, Object>> signup( @RequestBody ReactUserAccount request ) {
+	ResponseEntity<Map<String, Object>> signup( @RequestBody ReactUserSignup request ) {
 		List<String> messages = new ArrayList<>();
 		if( Text.isBlank( request.getUsername() ) ) messages.add( "Username required" );
 		if( Text.isBlank( request.getPassword() ) ) messages.add( "Password required" );
 		if( Text.isBlank( request.getEmail() ) ) messages.add( "EmailRequired" );
 		if( !messages.isEmpty() ) return new ResponseEntity<>( Map.of( "messages", messages ), HttpStatus.BAD_REQUEST );
 
-		try {
-			UserAccount account = new UserAccount().username( request.getUsername() ).password( request.getPassword() ).email( request.getEmail() );
-			authRequesting.requestUserAccountSignup( account );
+		// FIXME Check for invalid data
+		// - Username only uses valid characters
+		// - Username is not taken
+		// - Email only uses valid characters
+		// - Email is in correct format
 
-			ReactUserAccount response = new ReactUserAccount();
-			response.setId( account.id().toString() );
-			response.setUsername( account.username() );
-			response.setEmail( account.email() );
+		try {
+			UserAccount account = new UserAccount().email(request.getEmail());
+			UserCredentials credentials = new UserCredentials().username( request.getUsername() ).password( request.getPassword() );
+			authRequesting.requestUserAccountSignup( account, credentials );
+
+			ReactUserAccount response = new ReactUserAccount().setId( account.id().toString() ).setEmail( account.email() );
 			return new ResponseEntity<>( Json.asMap( response ), HttpStatus.ACCEPTED );
 		} catch( Exception exception ) {
 			log.error( "Error during account sign up, username=" + request.getUsername(), exception );
