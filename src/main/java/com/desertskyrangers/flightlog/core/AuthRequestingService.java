@@ -69,6 +69,11 @@ public class AuthRequestingService implements AuthRequesting {
 		sendEmailAddressVerificationMessage( account, verification );
 	}
 
+	@Override
+	public void requestUserVerify( Verification verification ) {
+
+	}
+
 	@Async
 	void sendEmailAddressVerificationMessage( UserAccount account, Verification verification ) {
 		String subject = EMAIL_SUBJECT;

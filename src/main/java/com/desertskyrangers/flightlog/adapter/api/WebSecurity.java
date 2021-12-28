@@ -34,10 +34,12 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 			.cors().and()
 			.csrf().ignoringAntMatchers( "/api/auth/login" ).and()
 			.csrf().ignoringAntMatchers( "/api/auth/signup" ).and()
+			.csrf().ignoringAntMatchers( ApiPath.AUTH_VERIFY ).and()
 			.authorizeRequests()
 				.mvcMatchers( HttpMethod.GET, "/api/auth/csrf" ).permitAll()
 				.mvcMatchers( HttpMethod.POST, "/api/auth/login" ).permitAll()
 				.mvcMatchers( HttpMethod.POST, "/api/auth/signup" ).permitAll()
+				.mvcMatchers( HttpMethod.GET, ApiPath.AUTH_VERIFY ).permitAll()
 				.mvcMatchers( HttpMethod.GET, "/api/monitor/status" ).permitAll()
 				.anyRequest().authenticated()
 

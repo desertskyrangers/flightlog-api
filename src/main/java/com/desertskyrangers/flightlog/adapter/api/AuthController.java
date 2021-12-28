@@ -2,8 +2,8 @@ package com.desertskyrangers.flightlog.adapter.api;
 
 import com.desertskyrangers.flightlog.adapter.api.model.ReactBasicCredentials;
 import com.desertskyrangers.flightlog.adapter.api.model.ReactUserAccount;
-import com.desertskyrangers.flightlog.adapter.api.model.ReactVerifyRequest;
 import com.desertskyrangers.flightlog.core.model.UserAccount;
+import com.desertskyrangers.flightlog.core.model.Verification;
 import com.desertskyrangers.flightlog.port.AuthRequesting;
 import com.desertskyrangers.flightlog.util.Json;
 import com.desertskyrangers.flightlog.util.Text;
@@ -11,14 +11,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.web.csrf.CsrfToken;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -49,7 +47,7 @@ public class AuthController {
 
 			ReactUserAccount response = new ReactUserAccount();
 			response.setId( account.id().toString() );
-			response.setUsername( account.username()  );
+			response.setUsername( account.username() );
 			response.setEmail( account.email() );
 			return new ResponseEntity<>( Json.asMap( response ), HttpStatus.ACCEPTED );
 		} catch( Exception exception ) {
@@ -58,26 +56,26 @@ public class AuthController {
 		}
 	}
 
-	@PostMapping( path = ApiPath.AUTH_VERIFY, consumes = "application/json", produces = "application/json" )
-	ResponseEntity<Map<String, Object>> verify( @RequestBody ReactVerifyRequest request ) {
+	@GetMapping( path = ApiPath.AUTH_VERIFY, produces = "application/json" )
+	ResponseEntity<Map<String, Object>> verify( @RequestParam String id, @RequestParam String code ) {
 		List<String> messages = new ArrayList<>();
-		if( Text.isBlank( request.getId() ) ) messages.add( "ID required" );
-		if( Text.isBlank( request.getCode() ) ) messages.add( "Code required" );
+		if( Text.isBlank( id ) ) messages.add( "ID required" );
+		if( Text.isBlank( code ) ) messages.add( "Code required" );
 		if( !messages.isEmpty() ) return new ResponseEntity<>( Map.of( "messages", messages ), HttpStatus.BAD_REQUEST );
 
-//		try {
-//			UserAccount account = new UserAccount().username( request.getUsername() ).password( request.getPassword() ).email( request.getEmail() );
-//			account = authRequesting.requestUserAccountSignup( account );
-//
-//			ReactUserAccount response = new ReactUserAccount();
-//			response.setId( account.id().toString() );
-//			response.setUsername( account.username()  );
-//			response.setEmail( account.email() );
-//			return new ResponseEntity<>( Json.asMap( response ), HttpStatus.ACCEPTED );
-//		} catch( Exception exception ) {
-//			log.error( "Error during account sign up, username=" + request.getUsername(), exception );
-//			return new ResponseEntity<>( Map.of( "messages", List.of( "There was an error creating the account" ) ), HttpStatus.INTERNAL_SERVER_ERROR );
-//		}
+		try {
+			Verification verification = new Verification().id( UUID.fromString( id ) ).code( code );
+			authRequesting.requestUserVerify( verification );
+
+			//			ReactUserAccount response = new ReactUserAccount();
+			//			response.setId( account.id().toString() );
+			//			response.setUsername( account.username()  );
+			//			response.setEmail( account.email() );
+			//			return new ResponseEntity<>( Json.asMap( response ), HttpStatus.ACCEPTED );
+		} catch( Exception exception ) {
+			log.error( "Error during email verification, id=" + id, exception );
+			return new ResponseEntity<>( Map.of( "messages", List.of( "There was an error verifying the email address" ) ), HttpStatus.INTERNAL_SERVER_ERROR );
+		}
 
 		return new ResponseEntity<>( Map.of(), HttpStatus.OK );
 	}
