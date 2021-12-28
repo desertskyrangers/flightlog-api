@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Data
 @Accessors( chain = true )
-public class ReactUserSignup {
+public class ReactSignupRequest {
 
 	private String id;
 
@@ -18,15 +18,15 @@ public class ReactUserSignup {
 
 	private String email;
 
-	public static ReactUserSignup from( UserCredentials user ) {
-		ReactUserSignup signup = new ReactUserSignup();
+	public static ReactSignupRequest from( UserCredentials user ) {
+		ReactSignupRequest signup = new ReactSignupRequest();
 		signup.setId( user.id().toString() );
 		signup.setUsername( user.username() );
 		signup.setPassword( user.password() );
 		return signup;
 	}
 
-	public static UserCredentials to( ReactUserSignup user ) {
+	public static UserCredentials to( ReactSignupRequest user ) {
 		return new UserCredentials().id( UUID.fromString( user.id ) ).username( user.getUsername() ).password( user.getPassword() );
 	}
 

@@ -58,7 +58,6 @@ public class AuthControllerTests {
 		verify( authRequesting, times( 1 ) ).requestUserAccountSignup( accountCaptor.capture(), credentialsCaptor.capture() );
 
 		UserAccount account = accountCaptor.getValue();
-		//assertThat( account.username() ).isEqualTo( username );
 		assertThat( account.email() ).isEqualTo( email );
 
 		UserCredentials credentials = credentialsCaptor.getValue();

@@ -1,7 +1,7 @@
 package com.desertskyrangers.flightlog.adapter.api;
 
 import com.desertskyrangers.flightlog.core.UserAccountService;
-import com.desertskyrangers.flightlog.adapter.api.model.ReactUserSignup;
+import com.desertskyrangers.flightlog.adapter.api.model.ReactSignupRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -22,19 +22,19 @@ public class UserController {
 	}
 
 	@GetMapping
-	public List<ReactUserSignup> findAll() {
-		return service.find().stream().map( ReactUserSignup::from ).collect( Collectors.toList() );
+	public List<ReactSignupRequest> findAll() {
+		return service.find().stream().map( ReactSignupRequest::from ).collect( Collectors.toList() );
 	}
 
 	@GetMapping( value = "/{id}" )
-	public ReactUserSignup findById( @PathVariable( "id" ) Long id ) {
+	public ReactSignupRequest findById( @PathVariable( "id" ) Long id ) {
 		//return RestPreconditions.checkFound(service.findById(id));
-		return new ReactUserSignup();
+		return new ReactSignupRequest();
 	}
 
 	@PostMapping
 	@ResponseStatus( HttpStatus.CREATED )
-	public UUID create( @RequestBody ReactUserSignup resource ) {
+	public UUID create( @RequestBody ReactSignupRequest resource ) {
 		//		Preconditions.checkNotNull(resource);
 		//		return service.create(resource);
 		return UUID.randomUUID();
@@ -42,7 +42,7 @@ public class UserController {
 
 	@PutMapping( value = "/{id}" )
 	@ResponseStatus( HttpStatus.OK )
-	public void update( @PathVariable( "id" ) Long id, @RequestBody ReactUserSignup resource ) {
+	public void update( @PathVariable( "id" ) Long id, @RequestBody ReactSignupRequest resource ) {
 		//		Preconditions.checkNotNull(resource);
 		//		RestPreconditions.checkNotNull(service.getById(resource.getId()));
 		//		service.update(resource);

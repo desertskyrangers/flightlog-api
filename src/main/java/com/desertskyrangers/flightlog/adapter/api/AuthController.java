@@ -1,12 +1,13 @@
 package com.desertskyrangers.flightlog.adapter.api;
 
 import com.desertskyrangers.flightlog.adapter.api.model.ReactBasicCredentials;
+import com.desertskyrangers.flightlog.adapter.api.model.ReactSignupRequest;
 import com.desertskyrangers.flightlog.adapter.api.model.ReactUserAccount;
-import com.desertskyrangers.flightlog.adapter.api.model.ReactUserSignup;
 import com.desertskyrangers.flightlog.core.model.UserAccount;
 import com.desertskyrangers.flightlog.core.model.UserCredentials;
 import com.desertskyrangers.flightlog.core.model.Verification;
 import com.desertskyrangers.flightlog.port.AuthRequesting;
+import com.desertskyrangers.flightlog.port.UserManagement;
 import com.desertskyrangers.flightlog.util.Json;
 import com.desertskyrangers.flightlog.util.Text;
 import lombok.extern.slf4j.Slf4j;
@@ -26,8 +27,11 @@ public class AuthController {
 
 	private final AuthRequesting authRequesting;
 
-	public AuthController( AuthRequesting authRequesting ) {
+	private final UserManagement userManagement;
+
+	public AuthController( AuthRequesting authRequesting, UserManagement userManagement ) {
 		this.authRequesting = authRequesting;
+		this.userManagement = userManagement;
 	}
 
 	@GetMapping( path = ApiPath.AUTH_CSRF )
@@ -36,22 +40,28 @@ public class AuthController {
 	}
 
 	@PostMapping( path = ApiPath.AUTH_SIGNUP, consumes = "application/json", produces = "application/json" )
-	ResponseEntity<Map<String, Object>> signup( @RequestBody ReactUserSignup request ) {
+	ResponseEntity<Map<String, Object>> signup( @RequestBody ReactSignupRequest request ) {
 		List<String> messages = new ArrayList<>();
 		if( Text.isBlank( request.getUsername() ) ) messages.add( "Username required" );
 		if( Text.isBlank( request.getPassword() ) ) messages.add( "Password required" );
 		if( Text.isBlank( request.getEmail() ) ) messages.add( "EmailRequired" );
-		if( !messages.isEmpty() ) return new ResponseEntity<>( Map.of( "messages", messages ), HttpStatus.BAD_REQUEST );
+		if( userManagement.findByUsername( request.getUsername() ).isPresent() ) messages.add( "Username unavailable" );
 
 		// FIXME Check for invalid data
-		// - Username only uses valid characters
+		// - Username only uses valid characters (do I need this if only for authentication?)
 		// - Username is not taken
+		// - Username is long enough (>4 chars)
+		// - Username is not too long (~64 chars)
+		// - Password is long enough (>8 chars)
+		// - Password is not too long (~128 chars)
 		// - Email only uses valid characters
 		// - Email is in correct format
+		// - Email is not taken (what if I have two accounts with the same email?)
+		if( !messages.isEmpty() ) return new ResponseEntity<>( Map.of( "messages", messages ), HttpStatus.BAD_REQUEST );
 
 		try {
-			UserAccount account = new UserAccount().email(request.getEmail());
-			UserCredentials credentials = new UserCredentials().username( request.getUsername() ).password( request.getPassword() );
+			UserAccount account = new UserAccount().email( request.getEmail() );
+			UserCredentials credentials = new UserCredentials().userAccount( account ).username( request.getUsername() ).password( request.getPassword() );
 			authRequesting.requestUserAccountSignup( account, credentials );
 
 			ReactUserAccount response = new ReactUserAccount().setId( account.id().toString() ).setEmail( account.email() );

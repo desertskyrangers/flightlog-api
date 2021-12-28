@@ -3,11 +3,10 @@ package com.desertskyrangers.flightlog.adapter.state.entity;
 import com.desertskyrangers.flightlog.core.model.UserAccount;
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Data
 @Entity
@@ -34,13 +33,18 @@ public class UserAccountEntity {
 	@Column( name = "smsverified" )
 	private boolean smsVerified;
 
-	public static UserAccountEntity from( UserAccount profile ) {
+	@OneToMany
+	private Set<UserCredentialEntity> credentials;
+
+	public static UserAccountEntity from( UserAccount account ) {
 		UserAccountEntity entity = new UserAccountEntity();
 
-		entity.setId( profile.id() );
-		entity.setPreferredName( profile.preferredName() );
-		entity.setSmsNumber( profile.smsNumber() );
-		entity.setSmsNumber( profile.smsProvider().name() );
+		entity.setId( account.id() );
+		entity.setPreferredName( account.preferredName() );
+		entity.setSmsNumber( account.smsNumber() );
+		entity.setSmsNumber( account.smsProvider().name() );
+
+		entity.getCredentials().addAll( account.credentials().stream().map( UserCredentialEntity::from ).collect( Collectors.toSet()) );
 
 		return entity;
 	}

@@ -3,9 +3,9 @@ package com.desertskyrangers.flightlog.core.model;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import javax.persistence.OneToMany;
+import java.util.Set;
 import java.util.UUID;
-
-// FIXME The profile should be the user account, email moved to this class and account "just" be credentials
 
 @Data
 @Accessors( fluent = true )
@@ -13,11 +13,9 @@ public class UserAccount {
 
 	private UUID id;
 
-	private String username;
+	private String firstName;
 
-	// given name
-
-	// last name
+	private String lastName;
 
 	private String preferredName;
 
@@ -31,7 +29,7 @@ public class UserAccount {
 
 	private boolean smsVerified;
 
-	// authentications
+	private Set<UserCredentials> credentials;
 
 	public UserAccount() {
 		id( UUID.randomUUID() );

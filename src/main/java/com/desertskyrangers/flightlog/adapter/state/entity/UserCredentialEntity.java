@@ -3,9 +3,7 @@ package com.desertskyrangers.flightlog.adapter.state.entity;
 import com.desertskyrangers.flightlog.core.model.UserCredentials;
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.UUID;
 
 @Data
@@ -16,15 +14,20 @@ public class UserCredentialEntity {
 	@Id
 	private UUID id;
 
+	@ManyToOne( optional = false, fetch = FetchType.LAZY )
+	@JoinColumn( name = "userid", nullable = false, updatable = false )
+	private UserAccountEntity userAccount;
+
 	private String username;
 
 	private String password;
 
-	public static UserCredentialEntity from( UserCredentials account ) {
+	public static UserCredentialEntity from( UserCredentials credentials ) {
 		UserCredentialEntity entity = new UserCredentialEntity();
-		entity.setId( account.id() );
-		entity.setUsername( account.username() );
-		entity.setPassword( account.password() );
+		entity.setId( credentials.id() );
+		entity.setUserAccount( UserAccountEntity.from(credentials.userAccount()) );
+		entity.setUsername( credentials.username() );
+		entity.setPassword( credentials.password() );
 		return entity;
 	}
 

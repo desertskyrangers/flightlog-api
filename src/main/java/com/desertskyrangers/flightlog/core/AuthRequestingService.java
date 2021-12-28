@@ -48,11 +48,12 @@ public class AuthRequestingService implements AuthRequesting {
 	@Async
 	@Override
 	public void requestUserAccountSignup( UserAccount account, UserCredentials credentials ) {
-		log.info( "Creating account for: " + account.username() );
+		log.info( "Creating account username: " + credentials.username() );
 
 		// TODO Block repeat attempts to generate an account
 
 		// Generate a new account
+		account.credentials().add( credentials );
 		statePersisting.upsert( account );
 
 		// Generate a verification code
@@ -67,7 +68,7 @@ public class AuthRequestingService implements AuthRequesting {
 		statePersisting.upsert( verification );
 
 		// Send the message to verify the email address
-		sendEmailAddressVerificationMessage( account, verification );
+		sendEmailAddressVerificationMessage( account, credentials, verification );
 	}
 
 	@Override
@@ -76,13 +77,13 @@ public class AuthRequestingService implements AuthRequesting {
 	}
 
 	@Async
-	void sendEmailAddressVerificationMessage( UserAccount account, Verification verification ) {
+	void sendEmailAddressVerificationMessage( UserAccount account, UserCredentials credentials, Verification verification ) {
 		String subject = EMAIL_SUBJECT;
 		String verificationMessage = generateEmailAddressVerificationMessage( subject, verification.id(), verification.code() );
 		if( verificationMessage == null ) return;
 
 		EmailMessage message = new EmailMessage();
-		message.recipient( account.email(), account.username() );
+		message.recipient( account.email(), credentials.username() );
 		message.subject( subject );
 		message.message( verificationMessage );
 		message.isHtml( true );

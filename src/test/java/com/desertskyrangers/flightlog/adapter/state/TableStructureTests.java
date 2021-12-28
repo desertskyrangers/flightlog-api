@@ -25,6 +25,7 @@ public class TableStructureTests {
 		expected.add( "useraccount" );
 		expected.add( "usercredential" );
 		expected.add( "verification" );
+		expected.add( "useraccount_credentials" );
 
 		assertThat( getTables() ).containsExactlyInAnyOrderElementsOf( expected );
 	}
@@ -33,6 +34,7 @@ public class TableStructureTests {
 	void testUserCredential() throws Exception {
 		Set<String> expected = new HashSet<>();
 		expected.add( "id" );
+		expected.add( "userid" );
 		expected.add( "username" );
 		expected.add( "password" );
 

@@ -1,6 +1,6 @@
 package com.desertskyrangers.flightlog.util;
 
-import com.desertskyrangers.flightlog.adapter.api.model.ReactUserSignup;
+import com.desertskyrangers.flightlog.adapter.api.model.ReactSignupRequest;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
@@ -23,7 +23,7 @@ public class JsonTest {
 
 	@Test
 	void asMapCreatesObjectMapForReactUserAccount() {
-		ReactUserSignup account = new ReactUserSignup();
+		ReactSignupRequest account = new ReactSignupRequest();
 		account.setId( UUID.randomUUID().toString() );
 		account.setUsername( "mockuser" );
 		account.setPassword( "password");
