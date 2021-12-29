@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
@@ -43,10 +44,13 @@ public class AuthRequestingService implements AuthRequesting {
 		this.humanInterface = humanInterface;
 	}
 
-	@Scheduled( fixedRate = 60000 )
+	@Scheduled( fixedRate = 1, timeUnit = TimeUnit.MINUTES)
 	public void cleanupExpiredVerificationsAndAccounts() {
 		for( Verification verification : stateRetrieving.findAllVerifications() ) {
-			if( verification.isExpired() ) stateRetrieving.findUserAccount( verification.userId() ).ifPresent( statePersisting::delete );
+			if( verification.isExpired() ) {
+				stateRetrieving.findUserAccount( verification.userId() ).ifPresent( statePersisting::delete );
+				log.info("Verification expired: " + verification.id() );
+			}
 		}
 	}
 

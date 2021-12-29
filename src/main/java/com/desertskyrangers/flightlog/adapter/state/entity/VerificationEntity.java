@@ -15,9 +15,10 @@ import java.util.UUID;
 public class VerificationEntity {
 
 	@Id
+	@Column( columnDefinition = "BINARY(16)" )
 	private UUID id;
 
-	@Column( name = "userid" )
+	@Column( name = "userid", columnDefinition = "BINARY(16)" )
 	private UUID userId;
 
 	private Long timestamp;
