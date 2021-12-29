@@ -35,17 +35,16 @@ public class UserCredentialEntity {
 	public static UserCredential toUserCredential( UserCredentialEntity entity ) {
 		UserCredential credential = new UserCredential();
 
-		credential.username(entity.getUsername());
-		credential.password(entity.getPassword());
+		credential.id( entity.getId() );
+		credential.username( entity.getUsername() );
+		credential.password( entity.getPassword() );
 
 		return credential;
 	}
 
 	public static UserCredential toUserCredential( UserAccount account, UserCredentialEntity entity ) {
-		UserCredential credential = new UserCredential();
+		UserCredential credential = toUserCredential( entity );
 
-		credential.username(entity.getUsername());
-		credential.password(entity.getPassword());
 		credential.userAccount( account );
 
 		return credential;
