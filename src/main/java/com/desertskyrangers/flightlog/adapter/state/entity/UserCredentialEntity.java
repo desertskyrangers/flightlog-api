@@ -1,5 +1,6 @@
 package com.desertskyrangers.flightlog.adapter.state.entity;
 
+import com.desertskyrangers.flightlog.core.model.UserAccount;
 import com.desertskyrangers.flightlog.core.model.UserCredential;
 import lombok.Data;
 
@@ -29,6 +30,16 @@ public class UserCredentialEntity {
 		entity.setUsername( credentials.username() );
 		entity.setPassword( credentials.password() );
 		return entity;
+	}
+
+	public static UserCredential toUserCredential( UserAccount account, UserCredentialEntity entity ) {
+		UserCredential credential = new UserCredential();
+
+		credential.username(entity.getUsername());
+		credential.password(entity.getPassword());
+		credential.userAccount( account );
+
+		return credential;
 	}
 
 }

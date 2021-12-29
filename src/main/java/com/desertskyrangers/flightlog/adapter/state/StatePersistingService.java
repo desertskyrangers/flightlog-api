@@ -12,21 +12,21 @@ import org.springframework.stereotype.Service;
 @Service
 public class StatePersistingService implements StatePersisting {
 
-	private final UserCredentialsRepo userCredentialsRepo;
+	private final UserCredentialRepo userCredentialRepo;
 
 	private final UserAccountRepo userAccountRepo;
 
 	private final VerificationRepo verificationRepo;
 
-	public StatePersistingService( UserCredentialsRepo userCredentialsRepo, UserAccountRepo userAccountRepo, VerificationRepo verificationRepo ) {
-		this.userCredentialsRepo = userCredentialsRepo;
+	public StatePersistingService( UserCredentialRepo userCredentialRepo, UserAccountRepo userAccountRepo, VerificationRepo verificationRepo ) {
+		this.userCredentialRepo = userCredentialRepo;
 		this.userAccountRepo = userAccountRepo;
 		this.verificationRepo = verificationRepo;
 	}
 
 	@Override
 	public void upsert( UserCredential account ) {
-		userCredentialsRepo.save( UserCredentialEntity.from( account ) );
+		userCredentialRepo.save( UserCredentialEntity.from( account ) );
 	}
 
 	@Override

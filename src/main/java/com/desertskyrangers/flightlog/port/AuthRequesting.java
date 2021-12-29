@@ -4,10 +4,12 @@ import com.desertskyrangers.flightlog.core.model.UserAccount;
 import com.desertskyrangers.flightlog.core.model.UserCredential;
 import com.desertskyrangers.flightlog.core.model.Verification;
 
+import java.util.List;
+
 public interface AuthRequesting {
 
-	void requestUserAccountSignup( UserAccount account, UserCredential credentials );
+	void requestUserAccountRegister( UserAccount account, UserCredential credentials, Verification verification );
 
-	void requestUserVerify( Verification verification );
+	List<String> requestUserVerify( Verification verification );
 
 }

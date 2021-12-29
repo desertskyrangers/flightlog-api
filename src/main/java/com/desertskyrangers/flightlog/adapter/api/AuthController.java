@@ -1,8 +1,8 @@
 package com.desertskyrangers.flightlog.adapter.api;
 
 import com.desertskyrangers.flightlog.adapter.api.model.ReactBasicCredentials;
-import com.desertskyrangers.flightlog.adapter.api.model.ReactSignupRequest;
-import com.desertskyrangers.flightlog.adapter.api.model.ReactUserAccount;
+import com.desertskyrangers.flightlog.adapter.api.model.ReactRegisterResponse;
+import com.desertskyrangers.flightlog.adapter.api.model.ReactRegisterRequest;
 import com.desertskyrangers.flightlog.core.model.UserAccount;
 import com.desertskyrangers.flightlog.core.model.UserCredential;
 import com.desertskyrangers.flightlog.core.model.Verification;
@@ -40,7 +40,7 @@ public class AuthController {
 	}
 
 	@PostMapping( path = ApiPath.AUTH_REGISTER, consumes = "application/json", produces = "application/json" )
-	ResponseEntity<Map<String, Object>> signup( @RequestBody ReactSignupRequest request ) {
+	ResponseEntity<Map<String, Object>> register( @RequestBody ReactRegisterRequest request ) {
 		List<String> messages = new ArrayList<>();
 		if( Text.isBlank( request.getUsername() ) ) messages.add( "Username required" );
 		if( Text.isBlank( request.getPassword() ) ) messages.add( "Password required" );
@@ -62,9 +62,11 @@ public class AuthController {
 		try {
 			UserAccount account = new UserAccount().email( request.getEmail() );
 			UserCredential credentials = new UserCredential().userAccount( account ).username( request.getUsername() ).password( request.getPassword() );
-			authRequesting.requestUserAccountSignup( account, credentials );
+			Verification verification = new Verification();
 
-			ReactUserAccount response = new ReactUserAccount().setId( account.id().toString() ).setEmail( account.email() );
+			authRequesting.requestUserAccountRegister( account, credentials, verification );
+
+			ReactRegisterResponse response = new ReactRegisterResponse().setId( verification.id().toString() );
 			return new ResponseEntity<>( Json.asMap( response ), HttpStatus.ACCEPTED );
 		} catch( Exception exception ) {
 			log.error( "Error during account sign up, username=" + request.getUsername(), exception );
@@ -81,16 +83,11 @@ public class AuthController {
 
 		try {
 			Verification verification = new Verification().id( UUID.fromString( id ) ).code( code );
-			authRequesting.requestUserVerify( verification );
-
-			//			ReactUserAccount response = new ReactUserAccount();
-			//			response.setId( account.id().toString() );
-			//			response.setUsername( account.username()  );
-			//			response.setEmail( account.email() );
-			//			return new ResponseEntity<>( Json.asMap( response ), HttpStatus.ACCEPTED );
+			messages.addAll( authRequesting.requestUserVerify( verification ) );
+			if( !messages.isEmpty() ) return new ResponseEntity<>( Map.of( "messages", messages ), HttpStatus.FORBIDDEN );
 		} catch( Exception exception ) {
-			log.error( "Error during email verification, id=" + id, exception );
-			return new ResponseEntity<>( Map.of( "messages", List.of( "There was an error verifying the email address" ) ), HttpStatus.INTERNAL_SERVER_ERROR );
+			log.error( "Verification error, id=" + id, exception );
+			return new ResponseEntity<>( Map.of( "messages", List.of( "Verification error" ) ), HttpStatus.INTERNAL_SERVER_ERROR );
 		}
 
 		return new ResponseEntity<>( Map.of(), HttpStatus.OK );

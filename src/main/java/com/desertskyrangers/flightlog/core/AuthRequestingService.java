@@ -8,6 +8,7 @@ import com.desertskyrangers.flightlog.core.model.Verification;
 import com.desertskyrangers.flightlog.port.AuthRequesting;
 import com.desertskyrangers.flightlog.port.HumanInterface;
 import com.desertskyrangers.flightlog.port.StatePersisting;
+import com.desertskyrangers.flightlog.port.StateRetrieving;
 import com.desertskyrangers.flightlog.util.Text;
 import com.mitchellbosecke.pebble.PebbleEngine;
 import com.mitchellbosecke.pebble.template.PebbleTemplate;
@@ -17,10 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -30,24 +28,23 @@ public class AuthRequestingService implements AuthRequesting {
 
 	private static final String EMAIL_SUBJECT = "FlightLog Email Account Verification";
 
-	public static final String EMAIL_VERIFY_TYPE = "email";
-
-	public static final String SMS_VERIFY_TYPE = "sms";
-
-	public static final String TEMPLATES_VERIFY_EMAIL_HTML = "templates/verify-email.html";
+	private static final String TEMPLATES_VERIFY_EMAIL_HTML = "templates/verify-email.html";
 
 	private final StatePersisting statePersisting;
 
+	private final StateRetrieving stateRetrieving;
+
 	private final HumanInterface humanInterface;
 
-	public AuthRequestingService( StatePersisting statePersisting, HumanInterface humanInterface ) {
+	public AuthRequestingService( StatePersisting statePersisting, StateRetrieving stateRetrieving, HumanInterface humanInterface ) {
 		this.statePersisting = statePersisting;
+		this.stateRetrieving = stateRetrieving;
 		this.humanInterface = humanInterface;
 	}
 
 	@Async
 	@Override
-	public void requestUserAccountSignup( UserAccount account, UserCredential credentials ) {
+	public void requestUserAccountRegister( UserAccount account, UserCredential credentials, Verification verification ) {
 		log.info( "Creating account username: " + credentials.username() );
 
 		// TODO Block repeat attempts to generate an account
@@ -60,19 +57,58 @@ public class AuthRequestingService implements AuthRequesting {
 		String code = Text.lpad( String.valueOf( new Random().nextInt( 1000000 ) ), 6, '0' );
 
 		// Generate a verification record
-		Verification verification = new Verification();
 		verification.userId( account.id() );
-		verification.timestamp( System.currentTimeMillis() );
 		verification.code( code );
-		verification.type( EMAIL_VERIFY_TYPE );
+		verification.type( Verification.EMAIL_VERIFY_TYPE );
 		statePersisting.upsert( verification );
+
+		log.warn("verification code: " + verification.code() );
 
 		// Send the message to verify the email address
 		sendEmailAddressVerificationMessage( account, credentials, verification );
 	}
 
 	@Override
-	public void requestUserVerify( Verification verification ) {
+	public List<String> requestUserVerify( Verification verification ) {
+		List<String> messages = new ArrayList<>();
+
+		Optional<Verification> optional = stateRetrieving.findVerification( verification.id() );
+		if( optional.isPresent() ) {
+			Verification storedVerification = optional.get();
+
+			boolean validCode = Objects.equals( storedVerification.code(), verification.code() );
+			long duration = verification.timestamp() - storedVerification.timestamp();
+
+			if( !validCode ) messages.add( "Invalid verification code: " + verification.code() );
+			if( duration < 0 ) messages.add( "Invalid verification timestamp" );
+			if( duration > Verification.CODE_TIMEOUT ) messages.add( "Verification code expired" );
+
+			if( messages.size() == 0 ) {
+				stateRetrieving.findUserAccount(storedVerification.userId()).ifPresent( u -> {
+					switch( storedVerification.type() ) {
+						case Verification.EMAIL_VERIFY_TYPE: {
+							setEmailVerified( u, true );
+							break;
+						}
+						case Verification.SMS_VERIFY_TYPE: {
+							setSmsVerified( u, true );
+							break;
+						}
+					}
+				} );
+			}
+		} else {
+			messages.add( "Invalid verification" );
+		}
+
+		return messages;
+	}
+
+	void setEmailVerified( UserAccount account, boolean verified ) {
+
+	}
+
+	void setSmsVerified( UserAccount account, boolean verified ) {
 
 	}
 

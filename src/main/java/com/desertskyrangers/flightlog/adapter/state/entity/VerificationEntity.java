@@ -37,4 +37,17 @@ public class VerificationEntity {
 
 		return entity;
 	}
+
+	public static Verification toVerification( VerificationEntity entity ) {
+		Verification verification = new Verification();
+
+		verification.id( entity.getId() );
+		verification.userId( entity.getUserId() );
+		verification.timestamp( entity.getTimestamp() );
+		verification.code( entity.getCode() );
+		verification.type( entity.getType() );
+
+		return verification;
+	}
+
 }
