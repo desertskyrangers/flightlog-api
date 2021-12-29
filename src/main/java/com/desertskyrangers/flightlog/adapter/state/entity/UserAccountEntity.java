@@ -31,7 +31,7 @@ public class UserAccountEntity {
 	private String email;
 
 	@Column( name = "emailverified" )
-	private boolean emailVerified;
+	private Boolean emailVerified;
 
 	@Column( name = "smsnumber" )
 	private String smsNumber;
@@ -40,7 +40,7 @@ public class UserAccountEntity {
 	private String provider;
 
 	@Column( name = "smsverified" )
-	private boolean smsVerified;
+	private Boolean smsVerified;
 
 	@EqualsAndHashCode.Exclude
 	@OneToMany( cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -71,10 +71,10 @@ public class UserAccountEntity {
 		account.lastName( entity.getLastName() );
 		account.preferredName( entity.getPreferredName() );
 		account.email( entity.getEmail() );
-		account.emailVerified( entity.isEmailVerified() );
+		account.emailVerified( entity.getEmailVerified() != null && entity.getEmailVerified() );
 		account.smsNumber( entity.getSmsNumber() );
 		if( entity.getSmsNumber() != null ) account.smsProvider( SmsProvider.valueOf( entity.getSmsNumber().toUpperCase() ) );
-		account.smsVerified( entity.isSmsVerified() );
+		account.smsVerified( entity.getSmsVerified() != null && entity.getSmsVerified() );
 		account.credentials( entity.getCredentials().stream().map( c -> UserCredentialEntity.toUserCredential( account, c ) ).collect( Collectors.toSet() ) );
 
 		return account;

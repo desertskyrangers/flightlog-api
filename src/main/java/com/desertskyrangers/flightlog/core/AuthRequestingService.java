@@ -110,6 +110,7 @@ public class AuthRequestingService implements AuthRequesting {
 						}
 					}
 				} );
+				statePersisting.remove( storedVerification );
 			}
 		} else {
 			messages.add( "Verification code expired" );
