@@ -1,6 +1,5 @@
-package com.desertskyrangers.flightlog;
+package com.desertskyrangers.flightlog.core;
 
-import com.desertskyrangers.flightlog.core.AuthRequestingService;
 import com.desertskyrangers.flightlog.core.model.Verification;
 import com.desertskyrangers.flightlog.port.StateRetrieving;
 import org.junit.jupiter.api.BeforeEach;
@@ -78,7 +77,7 @@ public class AuthRequestingServiceTest {
 		List<String> messages = service.requestUserVerify( verification );
 
 		// then
-		assertThat( messages.get( 0 ) ).isEqualTo( "Invalid verification" );
+		assertThat( messages.get( 0 ) ).isEqualTo( "Verification code expired" );
 	}
 
 	@Test

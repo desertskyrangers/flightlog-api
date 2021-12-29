@@ -112,7 +112,7 @@ public class AuthRequestingService implements AuthRequesting {
 				} );
 			}
 		} else {
-			messages.add( "Invalid verification" );
+			messages.add( "Verification code expired" );
 		}
 
 		return messages;
