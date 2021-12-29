@@ -50,10 +50,14 @@ public class UserAccountEntity {
 		UserAccountEntity entity = new UserAccountEntity();
 
 		entity.setId( account.id() );
+		entity.setFirstName( account.firstName() );
+		entity.setLastName(account.lastName() );
 		entity.setPreferredName( account.preferredName() );
+		entity.setEmail( account.email() );
+		entity.setEmailVerified( account.emailVerified() );
 		entity.setSmsNumber( account.smsNumber() );
 		if( account.smsProvider() != null ) entity.setSmsNumber( account.smsProvider().name().toLowerCase() );
-
+		entity.setSmsVerified( account.smsVerified() );
 		entity.setCredentials( account.credentials().stream().map( UserCredentialEntity::from ).peek( c -> c.setUserAccount( entity ) ).collect( Collectors.toSet() ) );
 
 		return entity;
