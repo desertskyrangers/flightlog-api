@@ -6,9 +6,9 @@ import com.desertskyrangers.flightlog.core.model.Verification;
 
 public interface StatePersisting {
 
-	void upsert( UserCredential account );
+	void upsert( UserAccount account );
 
-	void upsert( UserAccount profile );
+	void delete( UserAccount account );
 
 	void upsert( Verification verification );
 

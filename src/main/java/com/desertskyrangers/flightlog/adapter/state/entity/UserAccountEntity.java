@@ -42,7 +42,7 @@ public class UserAccountEntity {
 	private boolean smsVerified;
 
 	@EqualsAndHashCode.Exclude
-	@OneToMany( cascade = CascadeType.ALL )
+	@OneToMany( cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<UserCredentialEntity> credentials;
 
 	public static UserAccountEntity from( UserAccount account ) {
@@ -70,9 +70,7 @@ public class UserAccountEntity {
 		account.smsNumber( entity.getSmsNumber() );
 		if( entity.getSmsNumber() != null ) account.smsProvider( SmsProvider.valueOf( entity.getSmsNumber().toUpperCase() ) );
 		account.smsVerified( entity.isSmsVerified() );
-
-		// FIXME have to do this with a new session or not be lazy
-		//account.credentials( entity.getCredentials().stream().map( c -> UserCredentialEntity.toUserCredential( account, c ) ).collect( Collectors.toSet() ) );
+		account.credentials( entity.getCredentials().stream().map( c -> UserCredentialEntity.toUserCredential( account, c ) ).collect( Collectors.toSet() ) );
 
 		return account;
 	}

@@ -30,4 +30,20 @@ public class Verification {
 		timestamp( System.currentTimeMillis() );
 	}
 
+	public boolean isValid() {
+		return isValid( System.currentTimeMillis() );
+	}
+
+	public boolean isValid( long timestamp ) {
+		return timestamp - timestamp() >= 0;
+	}
+
+	public boolean isExpired() {
+		return isExpired( System.currentTimeMillis() );
+	}
+
+	public boolean isExpired( long timestamp ) {
+		return timestamp - timestamp() > CODE_TIMEOUT;
+	}
+
 }

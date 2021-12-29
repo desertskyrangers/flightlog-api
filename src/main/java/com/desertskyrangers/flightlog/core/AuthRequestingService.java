@@ -14,6 +14,7 @@ import com.mitchellbosecke.pebble.PebbleEngine;
 import com.mitchellbosecke.pebble.template.PebbleTemplate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -42,30 +43,37 @@ public class AuthRequestingService implements AuthRequesting {
 		this.humanInterface = humanInterface;
 	}
 
-	@Async
+	@Scheduled( fixedRate = 60000 )
+	public void cleanupExpiredVerificationsAndAccounts() {
+		for( Verification verification : stateRetrieving.findAllVerifications() ) {
+			if( verification.isExpired() ) stateRetrieving.findUserAccount( verification.userId() ).ifPresent( statePersisting::delete );
+		}
+	}
+
 	@Override
-	public void requestUserAccountRegister( UserAccount account, UserCredential credentials, Verification verification ) {
+	public List<String> requestUserAccountRegister( UserAccount account, UserCredential credentials, Verification verification ) {
 		log.info( "Creating account username: " + credentials.username() );
 
-		// TODO Block repeat attempts to generate an account
+		// Block repeat attempts to generate the same account
+		Optional<UserCredential> optional = stateRetrieving.findUserCredentialByUsername( credentials.username() );
+		if( optional.isPresent() ) return List.of( "Username not available" );
 
-		// Generate a new account
+		// Store the new account
 		account.credentials().add( credentials );
 		statePersisting.upsert( account );
 
-		// Generate a verification code
+		// Generate the verification code
 		String code = Text.lpad( String.valueOf( new Random().nextInt( 1000000 ) ), 6, '0' );
 
-		// Generate a verification record
-		verification.userId( account.id() );
-		verification.code( code );
-		verification.type( Verification.EMAIL_VERIFY_TYPE );
-		statePersisting.upsert( verification );
+		// Store the verification record
+		statePersisting.upsert( verification.userId( account.id() ).code( code ).type( Verification.EMAIL_VERIFY_TYPE ) );
 
-		log.warn("verification code: " + verification.code() );
+		log.warn( "verification code: " + verification.code() );
 
 		// Send the message to verify the email address
 		sendEmailAddressVerificationMessage( account, credentials, verification );
+
+		return List.of();
 	}
 
 	@Override
@@ -77,14 +85,15 @@ public class AuthRequestingService implements AuthRequesting {
 			Verification storedVerification = optional.get();
 
 			boolean validCode = Objects.equals( storedVerification.code(), verification.code() );
-			long duration = verification.timestamp() - storedVerification.timestamp();
+			boolean isValid = storedVerification.isValid( verification.timestamp() );
+			boolean isExpired = storedVerification.isExpired( verification.timestamp() );
 
 			if( !validCode ) messages.add( "Invalid verification code: " + verification.code() );
-			if( duration < 0 ) messages.add( "Invalid verification timestamp" );
-			if( duration > Verification.CODE_TIMEOUT ) messages.add( "Verification code expired" );
+			if( !isValid ) messages.add( "Invalid verification timestamp" );
+			if( isExpired ) messages.add( "Verification code expired" );
 
 			if( messages.size() == 0 ) {
-				stateRetrieving.findUserAccount(storedVerification.userId()).ifPresent( u -> {
+				stateRetrieving.findUserAccount( storedVerification.userId() ).ifPresent( u -> {
 					switch( storedVerification.type() ) {
 						case Verification.EMAIL_VERIFY_TYPE: {
 							setEmailVerified( u, true );

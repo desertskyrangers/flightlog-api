@@ -64,10 +64,13 @@ public class AuthController {
 			UserCredential credentials = new UserCredential().userAccount( account ).username( request.getUsername() ).password( request.getPassword() );
 			Verification verification = new Verification();
 
-			authRequesting.requestUserAccountRegister( account, credentials, verification );
-
-			ReactRegisterResponse response = new ReactRegisterResponse().setId( verification.id().toString() );
-			return new ResponseEntity<>( Json.asMap( response ), HttpStatus.ACCEPTED );
+			messages.addAll( authRequesting.requestUserAccountRegister( account, credentials, verification ) );
+			if( messages.isEmpty() ) {
+				ReactRegisterResponse response = new ReactRegisterResponse().setId( verification.id().toString() );
+				return new ResponseEntity<>( Json.asMap( response ), HttpStatus.ACCEPTED );
+			} else {
+				return new ResponseEntity<>( Map.of( "messages", messages ), HttpStatus.FORBIDDEN );
+			}
 		} catch( Exception exception ) {
 			log.error( "Error during account sign up, username=" + request.getUsername(), exception );
 			return new ResponseEntity<>( Map.of( "messages", List.of( "There was an error creating the account" ) ), HttpStatus.INTERNAL_SERVER_ERROR );
