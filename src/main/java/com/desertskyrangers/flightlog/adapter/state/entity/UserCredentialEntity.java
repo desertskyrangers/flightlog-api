@@ -13,10 +13,11 @@ import java.util.UUID;
 public class UserCredentialEntity {
 
 	@Id
+	@Column( columnDefinition = "BINARY(16)" )
 	private UUID id;
 
 	@ManyToOne( optional = false, fetch = FetchType.LAZY )
-	@JoinColumn( name = "userid", nullable = false, updatable = false )
+	@JoinColumn( name = "userid", nullable = false, updatable = false, columnDefinition = "BINARY(16)" )
 	private UserAccountEntity userAccount;
 
 	private String username;

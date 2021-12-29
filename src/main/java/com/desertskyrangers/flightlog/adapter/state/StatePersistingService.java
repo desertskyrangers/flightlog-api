@@ -25,7 +25,7 @@ public class StatePersistingService implements StatePersisting {
 	}
 
 	@Override
-	public void delete( UserAccount account ) {
+	public void remove( UserAccount account ) {
 		userAccountRepo.deleteById( account.id() );
 	}
 
@@ -33,4 +33,10 @@ public class StatePersistingService implements StatePersisting {
 	public void upsert( Verification verification ) {
 		verificationRepo.save( VerificationEntity.from( verification ) );
 	}
+
+	@Override
+	public void remove( Verification verification ) {
+		verificationRepo.deleteById( verification.id() );
+	}
+
 }

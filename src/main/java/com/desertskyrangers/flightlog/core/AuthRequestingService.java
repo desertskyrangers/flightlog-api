@@ -44,19 +44,20 @@ public class AuthRequestingService implements AuthRequesting {
 		this.humanInterface = humanInterface;
 	}
 
-	@Scheduled( fixedRate = 1, timeUnit = TimeUnit.MINUTES)
+	@Scheduled( fixedRate = 1, timeUnit = TimeUnit.MINUTES )
 	public void cleanupExpiredVerificationsAndAccounts() {
 		for( Verification verification : stateRetrieving.findAllVerifications() ) {
 			if( verification.isExpired() ) {
-				stateRetrieving.findUserAccount( verification.userId() ).ifPresent( statePersisting::delete );
-				log.info("Verification expired: " + verification.id() );
+				stateRetrieving.findUserAccount( verification.userId() ).ifPresent( statePersisting::remove );
+				statePersisting.remove( verification );
+				log.info( "Verification expired: " + verification.id() );
 			}
 		}
 	}
 
 	@Override
 	public List<String> requestUserAccountRegister( UserAccount account, UserCredential credentials, Verification verification ) {
-		log.info( "Creating account username: " + credentials.username() );
+		log.info( "Creating account username=" + credentials.username() + " email=" + account.email() );
 
 		// Block repeat attempts to generate the same account
 		Optional<UserCredential> optional = stateRetrieving.findUserCredentialByUsername( credentials.username() );
@@ -118,11 +119,15 @@ public class AuthRequestingService implements AuthRequesting {
 	}
 
 	void setEmailVerified( UserAccount account, boolean verified ) {
-
+		account.emailVerified( verified );
+		statePersisting.upsert( account );
+		log.info( "Email verified=" + verified + " address=" + account.email() );
 	}
 
 	void setSmsVerified( UserAccount account, boolean verified ) {
-
+		account.smsVerified( verified );
+		statePersisting.upsert( account );
+		log.info( "SMS verified=" + verified + " number=" + account.smsNumber() );
 	}
 
 	@Async

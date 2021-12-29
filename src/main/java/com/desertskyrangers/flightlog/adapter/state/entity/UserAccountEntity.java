@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 public class UserAccountEntity {
 
 	@Id
+	@Column( columnDefinition = "BINARY(16)" )
 	private UUID id;
 
 	@Column( name = "firstname" )
