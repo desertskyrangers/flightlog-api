@@ -34,7 +34,6 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 			.cors().and()
 			.csrf().ignoringAntMatchers( ApiPath.AUTH_LOGIN ).and()
 			.csrf().ignoringAntMatchers( ApiPath.AUTH_REGISTER ).and()
-			.csrf().ignoringAntMatchers( ApiPath.AUTH_VERIFY ).and()
 			.authorizeRequests()
 				.mvcMatchers( HttpMethod.GET, "/api/auth/csrf" ).permitAll()
 				.mvcMatchers( HttpMethod.POST, ApiPath.AUTH_LOGIN ).permitAll()
