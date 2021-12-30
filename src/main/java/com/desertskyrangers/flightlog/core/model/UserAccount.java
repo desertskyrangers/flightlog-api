@@ -31,6 +31,8 @@ public class UserAccount {
 
 	private Set<UserCredential> credentials = new CopyOnWriteArraySet<>();
 
+	private Set<String> roles = new CopyOnWriteArraySet<>();
+
 	public UserAccount() {
 		id( UUID.randomUUID() );
 	}

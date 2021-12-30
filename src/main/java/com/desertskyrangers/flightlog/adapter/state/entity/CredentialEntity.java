@@ -9,8 +9,8 @@ import java.util.UUID;
 
 @Data
 @Entity
-@Table( name = "usercredential" )
-public class UserCredentialEntity {
+@Table( name = "credential" )
+public class CredentialEntity {
 
 	@Id
 	@Column( columnDefinition = "BINARY(16)" )
@@ -18,32 +18,33 @@ public class UserCredentialEntity {
 
 	@ManyToOne( optional = false, fetch = FetchType.LAZY )
 	@JoinColumn( name = "userid", nullable = false, updatable = false, columnDefinition = "BINARY(16)" )
-	private UserAccountEntity userAccount;
+	private UserEntity userAccount;
 
 	private String username;
 
 	private String password;
 
-	public static UserCredentialEntity from( UserCredential credentials ) {
-		UserCredentialEntity entity = new UserCredentialEntity();
+	public static CredentialEntity from( UserCredential credentials ) {
+		CredentialEntity entity = new CredentialEntity();
 		entity.setId( credentials.id() );
-		//entity.setUserAccount( UserAccountEntity.from(credentials.userAccount()) );
+		if( credentials.userAccount() != null ) entity.setUserAccount( UserEntity.fromWithoutCredential( credentials.userAccount() ) );
 		entity.setUsername( credentials.username() );
 		entity.setPassword( credentials.password() );
 		return entity;
 	}
 
-	public static UserCredential toUserCredential( UserCredentialEntity entity ) {
+	public static UserCredential toUserCredential( CredentialEntity entity ) {
 		UserCredential credential = new UserCredential();
 
 		credential.id( entity.getId() );
 		credential.username( entity.getUsername() );
 		credential.password( entity.getPassword() );
+		if( entity.getUserAccount() != null ) credential.userAccount( UserEntity.toUserAccount( entity.getUserAccount() ));
 
 		return credential;
 	}
 
-	public static UserCredential toUserCredential( UserAccount account, UserCredentialEntity entity ) {
+	public static UserCredential toUserCredential( UserAccount account, CredentialEntity entity ) {
 		UserCredential credential = toUserCredential( entity );
 
 		credential.userAccount( account );

@@ -1,7 +1,7 @@
 package com.desertskyrangers.flightlog.adapter.state;
 
-import com.desertskyrangers.flightlog.adapter.state.entity.UserAccountEntity;
-import com.desertskyrangers.flightlog.adapter.state.entity.UserCredentialEntity;
+import com.desertskyrangers.flightlog.adapter.state.entity.UserEntity;
+import com.desertskyrangers.flightlog.adapter.state.entity.CredentialEntity;
 import com.desertskyrangers.flightlog.adapter.state.entity.VerificationEntity;
 import com.desertskyrangers.flightlog.core.model.UserAccount;
 import com.desertskyrangers.flightlog.core.model.UserCredential;
@@ -32,17 +32,17 @@ public class StateRetrievingService implements StateRetrieving {
 
 	@Override
 	public Optional<UserCredential> findUserCredential( UUID id ) {
-		return userCredentialRepo.findById( id ).map( UserCredentialEntity::toUserCredential );
+		return userCredentialRepo.findById( id ).map( CredentialEntity::toUserCredential );
 	}
 
 	@Override
 	public Optional<UserCredential> findUserCredentialByUsername( String username ) {
-		return userCredentialRepo.findByUsername( username ).map( UserCredentialEntity::toUserCredential );
+		return userCredentialRepo.findByUsername( username ).map( CredentialEntity::toUserCredential );
 	}
 
 	@Override
 	public Optional<UserAccount> findUserAccount( UUID id ) {
-		return userAccountRepo.findById( id ).map( UserAccountEntity::toUserAccount );
+		return userAccountRepo.findById( id ).map( UserEntity::toUserAccount );
 	}
 
 	@Override

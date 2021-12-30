@@ -1,6 +1,6 @@
 package com.desertskyrangers.flightlog.adapter.state;
 
-import com.desertskyrangers.flightlog.adapter.state.entity.UserAccountEntity;
+import com.desertskyrangers.flightlog.adapter.state.entity.UserEntity;
 import com.desertskyrangers.flightlog.adapter.state.entity.VerificationEntity;
 import com.desertskyrangers.flightlog.core.model.UserAccount;
 import com.desertskyrangers.flightlog.core.model.Verification;
@@ -21,7 +21,7 @@ public class StatePersistingService implements StatePersisting {
 
 	@Override
 	public void upsert( UserAccount account ) {
-		userAccountRepo.save( UserAccountEntity.from( account ) );
+		userAccountRepo.save( UserEntity.from( account ) );
 	}
 
 	@Override

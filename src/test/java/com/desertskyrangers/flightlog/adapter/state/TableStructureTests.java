@@ -22,27 +22,28 @@ public class TableStructureTests {
 	@Test
 	void testTables() throws Exception {
 		Set<String> expected = new HashSet<>();
-		expected.add( "useraccount" );
-		expected.add( "usercredential" );
+		expected.add( "user" );
+		expected.add( "credential" );
 		expected.add( "verification" );
-		expected.add( "useraccount_credentials" );
+		expected.add( "usercredential" );
+		expected.add( "userrole" );
 
 		assertThat( getTables() ).containsExactlyInAnyOrderElementsOf( expected );
 	}
 
 	@Test
-	void testUserCredential() throws Exception {
+	void testCredential() throws Exception {
 		Set<String> expected = new HashSet<>();
 		expected.add( "id" );
 		expected.add( "userid" );
 		expected.add( "username" );
 		expected.add( "password" );
 
-		assertThat( getColumns( "usercredential" ) ).containsExactlyInAnyOrderElementsOf( expected );
+		assertThat( getColumns( "credential" ) ).containsExactlyInAnyOrderElementsOf( expected );
 	}
 
 	@Test
-	void testUserAccount() throws Exception {
+	void testUser() throws Exception {
 		Set<String> expected = new HashSet<>();
 		expected.add( "id" );
 		expected.add( "firstname" );
@@ -54,7 +55,7 @@ public class TableStructureTests {
 		expected.add( "smsprovider" );
 		expected.add( "smsverified" );
 
-		assertThat( getColumns( "useraccount" ) ).containsExactlyInAnyOrderElementsOf( expected );
+		assertThat( getColumns( "user" ) ).containsExactlyInAnyOrderElementsOf( expected );
 	}
 
 	@Test

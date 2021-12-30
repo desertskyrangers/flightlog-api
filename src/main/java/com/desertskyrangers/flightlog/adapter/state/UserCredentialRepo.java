@@ -1,13 +1,13 @@
 package com.desertskyrangers.flightlog.adapter.state;
 
-import com.desertskyrangers.flightlog.adapter.state.entity.UserCredentialEntity;
+import com.desertskyrangers.flightlog.adapter.state.entity.CredentialEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 import java.util.UUID;
 
-public interface UserCredentialRepo extends JpaRepository<UserCredentialEntity, UUID> {
+public interface UserCredentialRepo extends JpaRepository<CredentialEntity, UUID> {
 
-	Optional<UserCredentialEntity> findByUsername( String username);
+	Optional<CredentialEntity> findByUsername( String username);
 
 }
