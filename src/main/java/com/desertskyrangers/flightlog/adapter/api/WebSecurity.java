@@ -2,8 +2,10 @@ package com.desertskyrangers.flightlog.adapter.api;
 
 import com.desertskyrangers.flightlog.adapter.api.jwt.JwtConfigurer;
 import com.desertskyrangers.flightlog.adapter.api.jwt.JwtTokenProvider;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -19,6 +21,13 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
 	public WebSecurity( JwtTokenProvider jwtTokenProvider) {
 		this.jwtTokenProvider = jwtTokenProvider;
+	}
+
+	// Expose the AuthenticationManager bean
+	@Bean
+	@Override
+	public AuthenticationManager authenticationManagerBean() throws Exception {
+		return super.authenticationManagerBean();
 	}
 
 	@Override
@@ -48,10 +57,6 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 				.mvcMatchers( HttpMethod.GET, ApiPath.AUTH_VERIFY ).permitAll()
 				.mvcMatchers( HttpMethod.GET, ApiPath.MONITOR_STATUS ).permitAll()
 				.anyRequest().authenticated()
-
-			// FIXME Eventually remove basic auth
-			//.and().httpBasic()
-
 			.and().apply( new JwtConfigurer( jwtTokenProvider ) );
 		// @formatter:on
 	}

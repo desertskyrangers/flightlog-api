@@ -1,5 +1,7 @@
 package com.desertskyrangers.flightlog.adapter.api;
 
+import com.desertskyrangers.flightlog.adapter.api.jwt.JwtToken;
+import com.desertskyrangers.flightlog.adapter.api.jwt.JwtTokenProvider;
 import com.desertskyrangers.flightlog.adapter.api.model.ReactBasicCredentials;
 import com.desertskyrangers.flightlog.adapter.api.model.ReactRegisterRequest;
 import com.desertskyrangers.flightlog.adapter.api.model.ReactRegisterResponse;
@@ -13,8 +15,14 @@ import com.desertskyrangers.flightlog.util.Text;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -30,9 +38,15 @@ public class AuthController {
 
 	private final UserManagement userManagement;
 
-	public AuthController( AuthRequesting authRequesting, UserManagement userManagement ) {
+	private final JwtTokenProvider tokenProvider;
+
+	private final AuthenticationManager authenticationManager;
+
+	public AuthController( AuthRequesting authRequesting, UserManagement userManagement, JwtTokenProvider tokenProvider, AuthenticationManager authenticationManager ) {
 		this.authRequesting = authRequesting;
 		this.userManagement = userManagement;
+		this.tokenProvider = tokenProvider;
+		this.authenticationManager = authenticationManager;
 	}
 
 	@GetMapping( path = ApiPath.PROFILE )
@@ -104,13 +118,25 @@ public class AuthController {
 		List<String> messages = new ArrayList<>();
 		if( Text.isBlank( request.getUsername() ) ) messages.add( "Username required" );
 		if( Text.isBlank( request.getPassword() ) ) messages.add( "Password required" );
-		if( !messages.isEmpty() ) {
-			return new ResponseEntity<>( Map.of( "messages", messages ), HttpStatus.BAD_REQUEST );
-		}
-		//authRequesting.requestUserAccountLogin( new UserAccount().username( request.getUsername() ).password( request.getPassword() ) );
-		//return new ResponseEntity<>( Map.of(), HttpStatus.OK );
+		if( !messages.isEmpty() ) return new ResponseEntity<>( Map.of( "messages", messages ), HttpStatus.BAD_REQUEST );
 
-		return new ResponseEntity<>( Map.of( "messages", List.of( "Login not implemented" ) ), HttpStatus.SERVICE_UNAVAILABLE );
+		// Authenticate
+		UserCredential credential = new UserCredential().username( request.getUsername() ).password( request.getPassword() );
+		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken( credential.username(), credential.password() );
+		try {
+			Authentication authentication = this.authenticationManager.authenticate( authenticationToken );
+			SecurityContextHolder.getContext().setAuthentication( authentication );
+
+			// Create JWT token and return to requester
+			String jwt = tokenProvider.createToken( authentication, request.isRemember() );
+			return new ResponseEntity<>( Json.asMap( new JwtToken( jwt ) ), HttpStatus.OK );
+		} catch( UsernameNotFoundException | BadCredentialsException exception ) {
+			log.warn( "Authentication failure: " + request.getUsername() );
+			return new ResponseEntity<>( Map.of( "messages", List.of( "Authentication failure") ), HttpStatus.UNAUTHORIZED );
+		} catch( AuthenticationException exception ) {
+			log.warn( "Authentication failure: " + request.getUsername(), exception );
+			return new ResponseEntity<>( Map.of( "messages", List.of( "Authentication failure") ), HttpStatus.UNAUTHORIZED );
+		}
 	}
 
 }

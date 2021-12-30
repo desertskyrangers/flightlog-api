@@ -11,4 +11,6 @@ public class ReactBasicCredentials {
 
 	private String password;
 
+	private boolean remember;
+
 }
