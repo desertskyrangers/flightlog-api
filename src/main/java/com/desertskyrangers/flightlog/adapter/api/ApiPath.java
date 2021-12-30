@@ -8,8 +8,6 @@ public interface ApiPath {
 
 	String AUTH = ROOT + "/auth";
 
-	String AUTH_CSRF = AUTH + "/csrf";
-
 	String AUTH_LOGIN = AUTH + "/login";
 
 	String AUTH_REGISTER = AUTH + "/register";
@@ -19,5 +17,7 @@ public interface ApiPath {
 	String MONITOR = ROOT + "/monitor";
 
 	String MONITOR_STATUS = MONITOR + "/status";
+
+	String PROFILE = ROOT + "/profile";
 
 }

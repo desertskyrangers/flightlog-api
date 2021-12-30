@@ -1,8 +1,8 @@
 package com.desertskyrangers.flightlog.adapter.api;
 
 import com.desertskyrangers.flightlog.adapter.api.model.ReactBasicCredentials;
-import com.desertskyrangers.flightlog.adapter.api.model.ReactRegisterResponse;
 import com.desertskyrangers.flightlog.adapter.api.model.ReactRegisterRequest;
+import com.desertskyrangers.flightlog.adapter.api.model.ReactRegisterResponse;
 import com.desertskyrangers.flightlog.core.model.UserAccount;
 import com.desertskyrangers.flightlog.core.model.UserCredential;
 import com.desertskyrangers.flightlog.core.model.Verification;
@@ -13,7 +13,8 @@ import com.desertskyrangers.flightlog.util.Text;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -34,9 +35,10 @@ public class AuthController {
 		this.userManagement = userManagement;
 	}
 
-	@GetMapping( path = ApiPath.AUTH_CSRF )
-	CsrfToken csrf( CsrfToken token ) {
-		return token;
+	@GetMapping( path = ApiPath.PROFILE )
+	Map<String, Object> profile() {
+		String username = ((User)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+		return Map.of( "username", username );
 	}
 
 	@PostMapping( path = ApiPath.AUTH_REGISTER, consumes = "application/json", produces = "application/json" )

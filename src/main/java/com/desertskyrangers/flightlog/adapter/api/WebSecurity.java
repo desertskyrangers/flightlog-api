@@ -1,5 +1,7 @@
 package com.desertskyrangers.flightlog.adapter.api;
 
+import com.desertskyrangers.flightlog.adapter.api.jwt.JwtConfigurer;
+import com.desertskyrangers.flightlog.adapter.api.jwt.JwtTokenProvider;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -12,6 +14,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 @EnableWebSecurity
 public class WebSecurity extends WebSecurityConfigurerAdapter {
+
+	private final JwtTokenProvider jwtTokenProvider;
+
+	public WebSecurity( JwtTokenProvider jwtTokenProvider) {
+		this.jwtTokenProvider = jwtTokenProvider;
+	}
 
 	@Override
 	protected void configure( AuthenticationManagerBuilder authentication ) throws Exception {
@@ -35,7 +43,6 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 			.csrf().ignoringAntMatchers( ApiPath.AUTH_LOGIN ).and()
 			.csrf().ignoringAntMatchers( ApiPath.AUTH_REGISTER ).and()
 			.authorizeRequests()
-				.mvcMatchers( HttpMethod.GET, "/api/auth/csrf" ).permitAll()
 				.mvcMatchers( HttpMethod.POST, ApiPath.AUTH_LOGIN ).permitAll()
 				.mvcMatchers( HttpMethod.POST, ApiPath.AUTH_REGISTER ).permitAll()
 				.mvcMatchers( HttpMethod.GET, ApiPath.AUTH_VERIFY ).permitAll()
@@ -43,7 +50,9 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 				.anyRequest().authenticated()
 
 			// FIXME Eventually remove basic auth
-			.and().httpBasic();
+			//.and().httpBasic()
+
+			.and().apply( new JwtConfigurer( jwtTokenProvider ) );
 		// @formatter:on
 	}
 
