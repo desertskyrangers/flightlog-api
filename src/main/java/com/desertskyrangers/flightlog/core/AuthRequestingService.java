@@ -15,6 +15,7 @@ import com.mitchellbosecke.pebble.template.PebbleTemplate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -123,10 +124,11 @@ public class AuthRequestingService implements AuthRequesting {
 		return messages;
 	}
 
+	@Deprecated
 	@Override
-	public Authentication authenticate( UserCredential credential ) {
-		log.warn("generating authentication username=" + credential.username() );
-		return new AppAuthentication( appPrincipalService.loadUserByUsername( credential.username() ) );
+	public UserCredential getUserCredential( UUID userId ) {
+		UserAccount account = stateRetrieving.findUserAccount( userId ).orElseThrow();
+		return account.credentials().iterator().next();
 	}
 
 	void setEmailVerified( UserAccount account, boolean verified ) {

@@ -18,11 +18,11 @@ public class JwtToken {
 	}
 
 	@JsonProperty( "token" )
-	String getToken() {
+	public String getToken() {
 		return token;
 	}
 
-	void setToken( String token ) {
+	public void setToken( String token ) {
 		this.token = token;
 	}
 

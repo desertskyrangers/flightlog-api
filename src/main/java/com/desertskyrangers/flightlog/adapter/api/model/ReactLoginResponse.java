@@ -8,9 +8,7 @@ import java.util.List;
 
 @Data
 @Accessors( chain = true )
-public class ReactRegisterResponse {
-
-	private String id;
+public class ReactLoginResponse {
 
 	private JwtToken jwt;
 

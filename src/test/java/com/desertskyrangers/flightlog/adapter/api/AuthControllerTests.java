@@ -1,11 +1,13 @@
 package com.desertskyrangers.flightlog.adapter.api;
 
+import com.desertskyrangers.flightlog.adapter.api.jwt.JwtToken;
+import com.desertskyrangers.flightlog.adapter.api.jwt.JwtTokenProvider;
 import com.desertskyrangers.flightlog.core.model.UserAccount;
 import com.desertskyrangers.flightlog.core.model.UserCredential;
 import com.desertskyrangers.flightlog.core.model.Verification;
 import com.desertskyrangers.flightlog.port.AuthRequesting;
+import com.desertskyrangers.flightlog.port.StatePersisting;
 import com.desertskyrangers.flightlog.util.Json;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -15,10 +17,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,16 +43,25 @@ public class AuthControllerTests {
 	@Autowired
 	private MockMvc mockMvc;
 
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+
+	@Autowired
+	private StatePersisting statePersisting;
+
+	@Autowired
+	private JwtTokenProvider jwtTokenProvider;
+
 	@MockBean
-	private AuthRequesting authRequesting;
+	private AuthRequesting mockAuthRequesting;
 
 	@Test
-	public void whenApiAuthSignup_thenSuccessResponse() throws Exception {
+	public void whenApiAuthRegister_thenSuccessResponse() throws Exception {
 		// given
 		String username = "mockusername";
 		String password = "mockpassword";
 		String email = "mock@email.com";
-		String content = new ObjectMapper().writeValueAsString( Map.of( "username", username, "password", password, "email", email ) );
+		String content = Json.stringify( Map.of( "username", username, "password", password, "email", email ) );
 
 		// when
 		this.mockMvc.perform( post( ApiPath.AUTH_REGISTER ).with( csrf() ).content( content ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isAccepted() );
@@ -56,18 +70,18 @@ public class AuthControllerTests {
 		ArgumentCaptor<UserAccount> accountCaptor = ArgumentCaptor.forClass( UserAccount.class );
 		ArgumentCaptor<UserCredential> credentialsCaptor = ArgumentCaptor.forClass( UserCredential.class );
 		ArgumentCaptor<Verification> verificationCaptor = ArgumentCaptor.forClass( Verification.class );
-		verify( authRequesting, times( 1 ) ).requestUserRegister( accountCaptor.capture(), credentialsCaptor.capture(), verificationCaptor.capture() );
+		verify( mockAuthRequesting, times( 1 ) ).requestUserRegister( accountCaptor.capture(), credentialsCaptor.capture(), verificationCaptor.capture() );
 
 		UserAccount account = accountCaptor.getValue();
 		assertThat( account.email() ).isEqualTo( email );
 
 		UserCredential credentials = credentialsCaptor.getValue();
 		assertThat( credentials.username() ).isEqualTo( username );
-		assertThat( credentials.password() ).isEqualTo( password );
+		assertThat( passwordEncoder.matches( password, credentials.password() ) ).isTrue();
 	}
 
 	@Test
-	public void whenApiAuthSignupBadRequest_thenHandleErrorGracefully() throws Exception {
+	public void whenApiAuthRegisterBadRequest_thenHandleErrorGracefully() throws Exception {
 		Map<String, Object> request = Map.of();
 		String content = Json.stringify( request );
 
@@ -90,7 +104,7 @@ public class AuthControllerTests {
 
 		// then
 		ArgumentCaptor<Verification> argumentCaptor = ArgumentCaptor.forClass( Verification.class );
-		verify( authRequesting, times( 1 ) ).requestUserVerify( argumentCaptor.capture() );
+		verify( mockAuthRequesting, times( 1 ) ).requestUserVerify( argumentCaptor.capture() );
 
 		Verification verification = argumentCaptor.getValue();
 		assertThat( verification.id() ).isEqualTo( id );
@@ -103,6 +117,34 @@ public class AuthControllerTests {
 
 		Map<String, Object> result = Map.of( "messages", List.of( "ID required", "Code required" ) );
 		this.mockMvc.perform( get( url ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isBadRequest() ).andExpect( content().json( Json.stringify( result ) ) );
+	}
+
+	@Test
+	public void whenApiAuthLogin_thenSuccessResponse() throws Exception {
+		// given
+		String username = "mockusername";
+		String password = "mockpassword";
+		String remember = "true";
+
+		UserCredential credential = new UserCredential();
+		credential.username( username );
+		credential.password( passwordEncoder.encode( password ) );
+		UserAccount user = new UserAccount();
+		user.credentials( Set.of( credential ) );
+		credential.userAccount( user );
+		statePersisting.upsert( user );
+
+		// when
+		String content = Json.stringify( Map.of( "username", username, "password", password, "remember", remember ) );
+		MvcResult result = this.mockMvc.perform( post( ApiPath.AUTH_LOGIN ).with( csrf() ).content( content ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
+
+		// then
+		// Parse the JSON content
+		Map<String, Object> json = Json.asMap( result.getResponse().getContentAsString() );
+		// Get the jwt map from the json map
+		Map<?,?> jwt = (Map<?,?>)json.get("jwt");
+		// Validate the generated token
+		jwtTokenProvider.validateToken( jwt.get("token").toString() );
 	}
 
 	@Test

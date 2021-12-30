@@ -5,7 +5,7 @@ import lombok.experimental.Accessors;
 
 @Data
 @Accessors( chain = true )
-public class ReactBasicCredentials {
+public class ReactLoginRequest {
 
 	private String username;
 

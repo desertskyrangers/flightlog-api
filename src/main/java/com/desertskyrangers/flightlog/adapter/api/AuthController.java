@@ -2,7 +2,8 @@ package com.desertskyrangers.flightlog.adapter.api;
 
 import com.desertskyrangers.flightlog.adapter.api.jwt.JwtToken;
 import com.desertskyrangers.flightlog.adapter.api.jwt.JwtTokenProvider;
-import com.desertskyrangers.flightlog.adapter.api.model.ReactBasicCredentials;
+import com.desertskyrangers.flightlog.adapter.api.model.ReactLoginRequest;
+import com.desertskyrangers.flightlog.adapter.api.model.ReactLoginResponse;
 import com.desertskyrangers.flightlog.adapter.api.model.ReactRegisterRequest;
 import com.desertskyrangers.flightlog.adapter.api.model.ReactRegisterResponse;
 import com.desertskyrangers.flightlog.core.model.UserAccount;
@@ -23,6 +24,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -42,11 +44,14 @@ public class AuthController {
 
 	private final AuthenticationManager authenticationManager;
 
-	public AuthController( AuthRequesting authRequesting, UserManagement userManagement, JwtTokenProvider tokenProvider, AuthenticationManager authenticationManager ) {
+	private final PasswordEncoder passwordEncoder;
+
+	public AuthController( AuthRequesting authRequesting, UserManagement userManagement, JwtTokenProvider tokenProvider, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder ) {
 		this.authRequesting = authRequesting;
 		this.userManagement = userManagement;
 		this.tokenProvider = tokenProvider;
 		this.authenticationManager = authenticationManager;
+		this.passwordEncoder = passwordEncoder;
 	}
 
 	@GetMapping( path = ApiPath.PROFILE )
@@ -77,11 +82,12 @@ public class AuthController {
 
 		try {
 			UserAccount account = new UserAccount().email( request.getEmail() );
-			UserCredential credentials = new UserCredential().userAccount( account ).username( request.getUsername() ).password( request.getPassword() );
+			UserCredential credentials = new UserCredential().userAccount( account ).username( request.getUsername() ).password( passwordEncoder.encode( request.getPassword() ) );
 			Verification verification = new Verification();
 
 			messages.addAll( authRequesting.requestUserRegister( account, credentials, verification ) );
 			if( messages.isEmpty() ) {
+
 				ReactRegisterResponse response = new ReactRegisterResponse().setId( verification.id().toString() );
 				return new ResponseEntity<>( Json.asMap( response ), HttpStatus.ACCEPTED );
 			} else {
@@ -113,29 +119,33 @@ public class AuthController {
 	}
 
 	@PostMapping( path = ApiPath.AUTH_LOGIN, consumes = "application/json", produces = "application/json" )
-	ResponseEntity<Map<String, Object>> login( @RequestBody ReactBasicCredentials request ) {
+	ResponseEntity<ReactLoginResponse> login( @RequestBody ReactLoginRequest request ) {
 		log.info( "login request username=" + request.getUsername() );
 		List<String> messages = new ArrayList<>();
 		if( Text.isBlank( request.getUsername() ) ) messages.add( "Username required" );
 		if( Text.isBlank( request.getPassword() ) ) messages.add( "Password required" );
-		if( !messages.isEmpty() ) return new ResponseEntity<>( Map.of( "messages", messages ), HttpStatus.BAD_REQUEST );
+		if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactLoginResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
 
 		// Authenticate
 		try {
-			UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken( request.getUsername(), request.getPassword() );
-			Authentication authentication = this.authenticationManager.authenticate( authenticationToken );
-			SecurityContextHolder.getContext().setAuthentication( authentication );
-
-			// Create JWT token and return to requester
-			String jwt = tokenProvider.createToken( authentication, request.isRemember() );
-			return new ResponseEntity<>( Json.asMap( new JwtToken( jwt ) ), HttpStatus.OK );
+			new ReactLoginResponse().setJwt( new JwtToken( authenticate( request ) ) );
+			return new ResponseEntity<>( new ReactLoginResponse().setJwt( new JwtToken( authenticate( request ) ) ), HttpStatus.OK );
 		} catch( UsernameNotFoundException | BadCredentialsException exception ) {
 			log.warn( "Authentication failure: " + request.getUsername(), exception );
-			return new ResponseEntity<>( Map.of( "messages", List.of( "Authentication failure") ), HttpStatus.UNAUTHORIZED );
+			return new ResponseEntity<>( new ReactLoginResponse().setMessages( List.of( "Authentication failure" ) ), HttpStatus.UNAUTHORIZED );
 		} catch( AuthenticationException exception ) {
-			log.warn( "Authentication failure: " + request.getUsername(), exception );
-			return new ResponseEntity<>( Map.of( "messages", List.of( "Authentication failure") ), HttpStatus.UNAUTHORIZED );
+			log.warn( "Authentication error: " + request.getUsername(), exception );
+			return new ResponseEntity<>( new ReactLoginResponse().setMessages( List.of( "Authentication error" ) ), HttpStatus.INTERNAL_SERVER_ERROR );
 		}
+	}
+
+	private String authenticate( ReactLoginRequest request ) {
+		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken( request.getUsername(), request.getPassword() );
+		Authentication authentication = this.authenticationManager.authenticate( authenticationToken );
+		SecurityContextHolder.getContext().setAuthentication( authentication );
+
+		// Create JWT token and return to requester
+		return tokenProvider.createToken( authentication, request.isRemember() );
 	}
 
 }

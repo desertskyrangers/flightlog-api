@@ -19,12 +19,13 @@ public class Json {
 		}
 	}
 
+	@Deprecated
 	public static Map<String, Object> asMap( Object object ) {
 		return asMap( stringify( object ) );
 	}
 
 	public static Map<String, Object> asMap( String json ) {
-		TypeReference<HashMap<String, Object>> type = new TypeReference<HashMap<String, Object>>() {};
+		TypeReference<HashMap<String, Object>> type = new TypeReference<>() {};
 		try {
 			return new ObjectMapper().readValue( json, type );
 		} catch( JsonProcessingException exception ) {
