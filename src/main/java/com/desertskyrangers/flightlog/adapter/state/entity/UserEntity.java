@@ -4,6 +4,8 @@ import com.desertskyrangers.flightlog.core.model.SmsProvider;
 import com.desertskyrangers.flightlog.core.model.UserAccount;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -51,6 +53,7 @@ public class UserEntity {
 	@ElementCollection
 	@Column( name = "roles", nullable = false )
 	@CollectionTable( name = "userrole", joinColumns = @JoinColumn( name = "userid" ) )
+	@Fetch( FetchMode.JOIN )
 	private Set<String> roles = new HashSet<>();
 
 	public static UserEntity from( UserAccount user ) {
@@ -69,7 +72,7 @@ public class UserEntity {
 		user.smsNumber( entity.getSmsNumber() );
 		if( entity.getSmsNumber() != null ) user.smsProvider( SmsProvider.valueOf( entity.getSmsNumber().toUpperCase() ) );
 		user.smsVerified( entity.getSmsVerified() != null && entity.getSmsVerified() );
-		user.credentials( entity.getCredentials().stream().map( c -> CredentialEntity.toUserCredential( user, c ) ).collect( Collectors.toSet() ) );
+		user.credentials( entity.getCredentials().stream().map( c -> CredentialEntity.toUserCredential( c ).userAccount( user ) ).collect( Collectors.toSet() ) );
 		user.roles( entity.getRoles() );
 
 		return user;

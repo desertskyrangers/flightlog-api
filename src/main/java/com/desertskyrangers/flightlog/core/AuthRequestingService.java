@@ -39,10 +39,13 @@ public class AuthRequestingService implements AuthRequesting {
 
 	private final HumanInterface humanInterface;
 
-	public AuthRequestingService( StatePersisting statePersisting, StateRetrieving stateRetrieving, HumanInterface humanInterface ) {
+	private final AppPrincipalService appPrincipalService;
+
+	public AuthRequestingService( StatePersisting statePersisting, StateRetrieving stateRetrieving, HumanInterface humanInterface, AppPrincipalService appPrincipalService ) {
 		this.statePersisting = statePersisting;
 		this.stateRetrieving = stateRetrieving;
 		this.humanInterface = humanInterface;
+		this.appPrincipalService = appPrincipalService;
 	}
 
 	@Scheduled( fixedRate = 1, timeUnit = TimeUnit.MINUTES )
@@ -57,7 +60,7 @@ public class AuthRequestingService implements AuthRequesting {
 	}
 
 	@Override
-	public List<String> requestUserAccountRegister( UserAccount account, UserCredential credentials, Verification verification ) {
+	public List<String> requestUserRegister( UserAccount account, UserCredential credentials, Verification verification ) {
 		log.info( "Creating account username=" + credentials.username() + " email=" + account.email() );
 
 		// Block repeat attempts to generate the same account
@@ -122,7 +125,8 @@ public class AuthRequestingService implements AuthRequesting {
 
 	@Override
 	public Authentication authenticate( UserCredential credential ) {
-		return null;
+		log.warn("generating authentication username=" + credential.username() );
+		return new AppAuthentication( appPrincipalService.loadUserByUsername( credential.username() ) );
 	}
 
 	void setEmailVerified( UserAccount account, boolean verified ) {

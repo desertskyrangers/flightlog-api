@@ -1,6 +1,5 @@
 package com.desertskyrangers.flightlog.adapter.state.entity;
 
-import com.desertskyrangers.flightlog.core.model.UserAccount;
 import com.desertskyrangers.flightlog.core.model.UserCredential;
 import lombok.Data;
 
@@ -16,7 +15,7 @@ public class CredentialEntity {
 	@Column( columnDefinition = "BINARY(16)" )
 	private UUID id;
 
-	@ManyToOne( optional = false, fetch = FetchType.LAZY )
+	@ManyToOne( optional = false, fetch = FetchType.EAGER )
 	@JoinColumn( name = "userid", nullable = false, updatable = false, columnDefinition = "BINARY(16)" )
 	private UserEntity userAccount;
 
@@ -34,20 +33,20 @@ public class CredentialEntity {
 	}
 
 	public static UserCredential toUserCredential( CredentialEntity entity ) {
+		return toUserCredential( entity, false );
+	}
+
+	public static UserCredential toUserCredentialDeep( CredentialEntity entity ) {
+		return toUserCredential( entity, true );
+	}
+
+	private static UserCredential toUserCredential( CredentialEntity entity, boolean includeAccount ) {
 		UserCredential credential = new UserCredential();
 
 		credential.id( entity.getId() );
 		credential.username( entity.getUsername() );
 		credential.password( entity.getPassword() );
-		if( entity.getUserAccount() != null ) credential.userAccount( UserEntity.toUserAccount( entity.getUserAccount() ));
-
-		return credential;
-	}
-
-	public static UserCredential toUserCredential( UserAccount account, CredentialEntity entity ) {
-		UserCredential credential = toUserCredential( entity );
-
-		credential.userAccount( account );
+		if( includeAccount && entity.getUserAccount() != null ) credential.userAccount( UserEntity.toUserAccount( entity.getUserAccount() ));
 
 		return credential;
 	}

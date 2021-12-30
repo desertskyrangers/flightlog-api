@@ -3,6 +3,7 @@ package com.desertskyrangers.flightlog;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -14,7 +15,8 @@ public class FlightLogApp {
 	private final ApplicationContext context;
 
 	public static void main( String[] args ) {
-		SpringApplication.run( FlightLogApp.class, args );
+		ConfigurableApplicationContext context =SpringApplication.run( FlightLogApp.class, args );
+		//context.getBean( InitialConfig.class ).init();
 	}
 
 	public FlightLogApp( final ApplicationContext context ) {

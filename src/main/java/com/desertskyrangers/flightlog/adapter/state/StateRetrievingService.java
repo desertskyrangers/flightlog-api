@@ -37,7 +37,7 @@ public class StateRetrievingService implements StateRetrieving {
 
 	@Override
 	public Optional<UserCredential> findUserCredentialByUsername( String username ) {
-		return userCredentialRepo.findByUsername( username ).map( CredentialEntity::toUserCredential );
+		return userCredentialRepo.findByUsername( username ).map( CredentialEntity::toUserCredentialDeep );
 	}
 
 	@Override

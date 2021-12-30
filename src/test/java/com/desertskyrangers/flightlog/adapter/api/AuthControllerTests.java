@@ -56,7 +56,7 @@ public class AuthControllerTests {
 		ArgumentCaptor<UserAccount> accountCaptor = ArgumentCaptor.forClass( UserAccount.class );
 		ArgumentCaptor<UserCredential> credentialsCaptor = ArgumentCaptor.forClass( UserCredential.class );
 		ArgumentCaptor<Verification> verificationCaptor = ArgumentCaptor.forClass( Verification.class );
-		verify( authRequesting, times( 1 ) ).requestUserAccountRegister( accountCaptor.capture(), credentialsCaptor.capture(), verificationCaptor.capture() );
+		verify( authRequesting, times( 1 ) ).requestUserRegister( accountCaptor.capture(), credentialsCaptor.capture(), verificationCaptor.capture() );
 
 		UserAccount account = accountCaptor.getValue();
 		assertThat( account.email() ).isEqualTo( email );

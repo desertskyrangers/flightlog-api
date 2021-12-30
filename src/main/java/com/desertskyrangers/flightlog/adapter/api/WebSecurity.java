@@ -2,6 +2,7 @@ package com.desertskyrangers.flightlog.adapter.api;
 
 import com.desertskyrangers.flightlog.adapter.api.jwt.JwtConfigurer;
 import com.desertskyrangers.flightlog.adapter.api.jwt.JwtTokenProvider;
+import com.desertskyrangers.flightlog.core.AppPrincipalService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -10,16 +11,22 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.nio.file.attribute.UserPrincipalLookupService;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurity extends WebSecurityConfigurerAdapter {
 
+	private final AppPrincipalService appPrincipalService;
+
 	private final JwtTokenProvider jwtTokenProvider;
 
-	public WebSecurity( JwtTokenProvider jwtTokenProvider) {
+	public WebSecurity( AppPrincipalService appPrincipalService, JwtTokenProvider jwtTokenProvider) {
+		this.appPrincipalService = appPrincipalService;
 		this.jwtTokenProvider = jwtTokenProvider;
 	}
 
@@ -30,18 +37,14 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 		return super.authenticationManagerBean();
 	}
 
-	@Override
-	protected void configure( AuthenticationManagerBuilder authentication ) throws Exception {
-		PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-		authentication
-			.inMemoryAuthentication()
-			.withUser( "user" )
-			.password( encoder.encode( "password" ) )
-			.roles( "USER" )
-			.and()
-			.withUser( "admin" )
-			.password( encoder.encode( "admin" ) )
-			.roles( "USER", "ADMIN" );
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
+
+		@Override
+	protected void configure( AuthenticationManagerBuilder builder ) throws Exception {
+			builder.userDetailsService( appPrincipalService ).passwordEncoder( passwordEncoder() );
 	}
 
 	@Override

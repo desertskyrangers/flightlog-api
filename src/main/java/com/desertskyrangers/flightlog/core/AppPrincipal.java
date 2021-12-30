@@ -1,14 +1,14 @@
 package com.desertskyrangers.flightlog.core;
 
 import com.desertskyrangers.flightlog.core.model.UserCredential;
-import org.springframework.security.core.GrantedAuthority;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class AppPrincipal implements UserDetails {
 
 	private final UserCredential credential;

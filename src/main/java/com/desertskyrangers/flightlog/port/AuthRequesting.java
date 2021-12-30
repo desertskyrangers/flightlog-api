@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface AuthRequesting {
 
-	List<String> requestUserAccountRegister( UserAccount account, UserCredential credentials, Verification verification );
+	List<String> requestUserRegister( UserAccount account, UserCredential credentials, Verification verification );
 
 	List<String> requestUserVerify( Verification verification );
 

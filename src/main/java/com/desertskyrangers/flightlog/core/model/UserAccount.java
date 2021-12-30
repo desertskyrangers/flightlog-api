@@ -1,6 +1,7 @@
 package com.desertskyrangers.flightlog.core.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.util.Set;
@@ -29,12 +30,18 @@ public class UserAccount {
 
 	private boolean smsVerified;
 
+	@EqualsAndHashCode.Exclude
 	private Set<UserCredential> credentials = new CopyOnWriteArraySet<>();
 
+	@EqualsAndHashCode.Exclude
 	private Set<String> roles = new CopyOnWriteArraySet<>();
 
 	public UserAccount() {
 		id( UUID.randomUUID() );
+	}
+
+	public void setRoles( Set<String> roles ) {
+		this.roles = roles == null ? Set.of() : roles;
 	}
 
 }

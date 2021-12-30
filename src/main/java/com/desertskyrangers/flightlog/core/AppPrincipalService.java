@@ -2,7 +2,6 @@ package com.desertskyrangers.flightlog.core;
 
 import com.desertskyrangers.flightlog.port.StateRetrieving;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -18,7 +17,9 @@ public class AppPrincipalService implements UserDetailsService {
 	}
 
 	@Override
-	public UserDetails loadUserByUsername( String username ) throws UsernameNotFoundException {
+	public AppPrincipal loadUserByUsername( String username ) throws UsernameNotFoundException {
+		log.warn( "looking for username=" + username );
+
 		return stateRetrieving.findUserCredentialByUsername( username ).map( AppPrincipal::new ).orElse( null );
 	}
 

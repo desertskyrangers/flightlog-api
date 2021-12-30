@@ -80,7 +80,7 @@ public class AuthController {
 			UserCredential credentials = new UserCredential().userAccount( account ).username( request.getUsername() ).password( request.getPassword() );
 			Verification verification = new Verification();
 
-			messages.addAll( authRequesting.requestUserAccountRegister( account, credentials, verification ) );
+			messages.addAll( authRequesting.requestUserRegister( account, credentials, verification ) );
 			if( messages.isEmpty() ) {
 				ReactRegisterResponse response = new ReactRegisterResponse().setId( verification.id().toString() );
 				return new ResponseEntity<>( Json.asMap( response ), HttpStatus.ACCEPTED );
@@ -121,9 +121,8 @@ public class AuthController {
 		if( !messages.isEmpty() ) return new ResponseEntity<>( Map.of( "messages", messages ), HttpStatus.BAD_REQUEST );
 
 		// Authenticate
-		UserCredential credential = new UserCredential().username( request.getUsername() ).password( request.getPassword() );
-		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken( credential.username(), credential.password() );
 		try {
+			UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken( request.getUsername(), request.getPassword() );
 			Authentication authentication = this.authenticationManager.authenticate( authenticationToken );
 			SecurityContextHolder.getContext().setAuthentication( authentication );
 
@@ -131,7 +130,7 @@ public class AuthController {
 			String jwt = tokenProvider.createToken( authentication, request.isRemember() );
 			return new ResponseEntity<>( Json.asMap( new JwtToken( jwt ) ), HttpStatus.OK );
 		} catch( UsernameNotFoundException | BadCredentialsException exception ) {
-			log.warn( "Authentication failure: " + request.getUsername() );
+			log.warn( "Authentication failure: " + request.getUsername(), exception );
 			return new ResponseEntity<>( Map.of( "messages", List.of( "Authentication failure") ), HttpStatus.UNAUTHORIZED );
 		} catch( AuthenticationException exception ) {
 			log.warn( "Authentication failure: " + request.getUsername(), exception );
