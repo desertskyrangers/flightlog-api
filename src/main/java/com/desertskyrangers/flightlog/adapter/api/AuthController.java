@@ -11,7 +11,6 @@ import com.desertskyrangers.flightlog.core.model.UserCredential;
 import com.desertskyrangers.flightlog.core.model.Verification;
 import com.desertskyrangers.flightlog.port.AuthRequesting;
 import com.desertskyrangers.flightlog.port.UserManagement;
-import com.desertskyrangers.flightlog.util.Json;
 import com.desertskyrangers.flightlog.util.Text;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -61,7 +60,7 @@ public class AuthController {
 	}
 
 	@PostMapping( path = ApiPath.AUTH_REGISTER, consumes = "application/json", produces = "application/json" )
-	ResponseEntity<Map<String, Object>> register( @RequestBody ReactRegisterRequest request ) {
+	ResponseEntity<ReactRegisterResponse> register( @RequestBody ReactRegisterRequest request ) {
 		List<String> messages = new ArrayList<>();
 		if( Text.isBlank( request.getUsername() ) ) messages.add( "Username required" );
 		if( Text.isBlank( request.getPassword() ) ) messages.add( "Password required" );
@@ -78,7 +77,7 @@ public class AuthController {
 		// - Email only uses valid characters
 		// - Email is in correct format
 		// - Email is not taken (what if I have two accounts with the same email?)
-		if( !messages.isEmpty() ) return new ResponseEntity<>( Map.of( "messages", messages ), HttpStatus.BAD_REQUEST );
+		if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactRegisterResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
 
 		try {
 			UserAccount account = new UserAccount().email( request.getEmail() );
@@ -87,15 +86,16 @@ public class AuthController {
 
 			messages.addAll( authRequesting.requestUserRegister( account, credentials, verification ) );
 			if( messages.isEmpty() ) {
-
-				ReactRegisterResponse response = new ReactRegisterResponse().setId( verification.id().toString() );
-				return new ResponseEntity<>( Json.asMap( response ), HttpStatus.ACCEPTED );
+				// Generate the JWT token like login
+				String jwt = authenticate( new ReactLoginRequest().setUsername( request.getUsername() ).setPassword( request.getPassword() ).setRemember( false ) );
+				ReactRegisterResponse response = new ReactRegisterResponse().setId( verification.id().toString() ).setJwt( new JwtToken( jwt ) );
+				return new ResponseEntity<>( response, HttpStatus.ACCEPTED );
 			} else {
-				return new ResponseEntity<>( Map.of( "messages", messages ), HttpStatus.FORBIDDEN );
+				return new ResponseEntity<>( new ReactRegisterResponse().setMessages( messages ), HttpStatus.FORBIDDEN );
 			}
 		} catch( Exception exception ) {
 			log.error( "Error during account sign up, username=" + request.getUsername(), exception );
-			return new ResponseEntity<>( Map.of( "messages", List.of( "There was an error creating the account" ) ), HttpStatus.INTERNAL_SERVER_ERROR );
+			return new ResponseEntity<>( new ReactRegisterResponse().setMessages( List.of( "There was an error creating the account" ) ), HttpStatus.INTERNAL_SERVER_ERROR );
 		}
 	}
 
