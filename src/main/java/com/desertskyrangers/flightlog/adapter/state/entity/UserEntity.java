@@ -45,15 +45,16 @@ public class UserEntity {
 	@Column( name = "smsverified" )
 	private Boolean smsVerified;
 
-	@EqualsAndHashCode.Exclude
 	@OneToMany( cascade = CascadeType.ALL, fetch = FetchType.EAGER )
 	@CollectionTable( name = "usercredential", joinColumns = @JoinColumn( name = "userid" ) )
+	@EqualsAndHashCode.Exclude
 	private Set<CredentialEntity> credentials = new HashSet<>();
 
 	@ElementCollection
 	@Column( name = "roles", nullable = false )
 	@CollectionTable( name = "userrole", joinColumns = @JoinColumn( name = "userid" ) )
 	@Fetch( FetchMode.JOIN )
+	@EqualsAndHashCode.Exclude
 	private Set<String> roles = new HashSet<>();
 
 	public static UserEntity from( UserAccount user ) {

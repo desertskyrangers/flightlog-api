@@ -1,6 +1,6 @@
 package com.desertskyrangers.flightlog.adapter.api;
 
-import com.desertskyrangers.flightlog.adapter.api.jwt.JwtConfigurer;
+import com.desertskyrangers.flightlog.adapter.api.jwt.JwtFilter;
 import com.desertskyrangers.flightlog.adapter.api.jwt.JwtTokenProvider;
 import com.desertskyrangers.flightlog.core.AppPrincipalService;
 import org.springframework.context.annotation.Bean;
@@ -12,10 +12,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.nio.file.attribute.UserPrincipalLookupService;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -25,7 +23,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
 	private final JwtTokenProvider jwtTokenProvider;
 
-	public WebSecurity( AppPrincipalService appPrincipalService, JwtTokenProvider jwtTokenProvider) {
+	public WebSecurity( AppPrincipalService appPrincipalService, JwtTokenProvider jwtTokenProvider ) {
 		this.appPrincipalService = appPrincipalService;
 		this.jwtTokenProvider = jwtTokenProvider;
 	}
@@ -42,9 +40,9 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 		return new BCryptPasswordEncoder();
 	}
 
-		@Override
+	@Override
 	protected void configure( AuthenticationManagerBuilder builder ) throws Exception {
-			builder.userDetailsService( appPrincipalService ).passwordEncoder( passwordEncoder() );
+		builder.userDetailsService( appPrincipalService ).passwordEncoder( passwordEncoder() );
 	}
 
 	@Override
@@ -60,7 +58,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 				.mvcMatchers( HttpMethod.GET, ApiPath.AUTH_VERIFY ).permitAll()
 				.mvcMatchers( HttpMethod.GET, ApiPath.MONITOR_STATUS ).permitAll()
 				.anyRequest().authenticated()
-			.and().apply( new JwtConfigurer( jwtTokenProvider ) );
+			.and().addFilterAfter( new JwtFilter( jwtTokenProvider ), UsernamePasswordAuthenticationFilter.class );
 		// @formatter:on
 	}
 

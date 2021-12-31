@@ -24,7 +24,7 @@ public class UserAccountService implements UserManagement {
 
 	@Override
 	public Optional<UserAccount> findByUsername( String username ) {
-		// FIXME Look up the credentials by username, get the associated user account
+		// TODO Look up the credentials by username, get the associated user account
 		return Optional.empty();
 	}
 
