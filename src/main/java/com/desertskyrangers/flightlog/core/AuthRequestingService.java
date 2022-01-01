@@ -153,8 +153,7 @@ public class AuthRequestingService implements AuthRequesting {
 	}
 
 	private String generateEmailAddressVerificationMessage( String subject, UUID id, String code ) {
-		//String link = VERIFY_ENDPOINT + "?id=" + id + "&code=" + code;
-		String link = "/verify/" + id + "/" + code;
+		String link = VERIFY_ENDPOINT + "/" + id + "/" + code;
 
 		Map<String, Object> values = new HashMap<>();
 		values.put( "subject", subject );

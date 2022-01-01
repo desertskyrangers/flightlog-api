@@ -103,7 +103,7 @@ public class AuthController {
 	}
 
 	@PostMapping( path = ApiPath.AUTH_VERIFY, consumes = "application/json", produces = "application/json" )
-	ResponseEntity<Map<String, Object>> verifyPut( @RequestBody Map<String, Object> request ) {
+	ResponseEntity<Map<String, Object>> verify( @RequestBody Map<String, Object> request ) {
 		String id = (String)request.get( "id" );
 		String code = (String)request.get( "code" );
 

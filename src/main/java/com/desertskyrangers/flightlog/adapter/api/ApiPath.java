@@ -8,11 +8,11 @@ public interface ApiPath {
 
 	String AUTH = ROOT + "/auth";
 
-	String AUTH_LOGIN = AUTH + "/login";
-
 	String AUTH_REGISTER = AUTH + "/register";
 
 	String AUTH_VERIFY = AUTH + "/verify";
+
+	String AUTH_LOGIN = AUTH + "/login";
 
 	String AUTH_LOGOUT = AUTH + "/logout";
 
