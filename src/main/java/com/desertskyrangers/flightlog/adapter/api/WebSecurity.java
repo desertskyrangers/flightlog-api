@@ -60,8 +60,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 			.and().authorizeRequests()
 				.mvcMatchers( HttpMethod.POST, ApiPath.AUTH_LOGIN ).permitAll()
 				.mvcMatchers( HttpMethod.POST, ApiPath.AUTH_REGISTER ).permitAll()
-				.mvcMatchers( HttpMethod.PUT, ApiPath.AUTH_VERIFY ).permitAll()
-				//.mvcMatchers( HttpMethod.GET, ApiPath.AUTH_VERIFY ).permitAll()
+				.antMatchers( HttpMethod.POST, ApiPath.AUTH_VERIFY ).permitAll()
 				.mvcMatchers( HttpMethod.GET, ApiPath.MONITOR_STATUS ).permitAll()
 				.anyRequest().authenticated()
 			.and().addFilterAfter( new JwtFilter( jwtTokenProvider ), UsernamePasswordAuthenticationFilter.class );

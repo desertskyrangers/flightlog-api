@@ -99,32 +99,11 @@ public class AuthController {
 		}
 	}
 
-	@GetMapping( path = ApiPath.AUTH_VERIFY, produces = "application/json" )
-	ResponseEntity<Map<String, Object>> verifyGet( @RequestParam String id, @RequestParam String code ) {
-		ResponseEntity<Map<String, Object>> response = getVerifyResponse( id, code );
-		if( response != null ) return response;
+	@PostMapping( path = ApiPath.AUTH_VERIFY, consumes = "application/json", produces = "application/json" )
+	ResponseEntity<Map<String, Object>> verifyPut( @RequestBody Map<String, Object> request ) {
+		String id = (String)request.get( "id" );
+		String code = (String)request.get( "code" );
 
-		// GET is used from the email link, PUT is used from the verify page
-		return new ResponseEntity<>( Map.of(), HttpStatus.OK );
-	}
-
-	@PutMapping( path = ApiPath.AUTH_VERIFY, produces = "application/json" )
-	ResponseEntity<Map<String, Object>> verifyPut( Map<String, Object> request ) {
-		String id = String.valueOf( request.get( "id" ) );
-		String code = String.valueOf( request.get( "code" ) );
-
-		ResponseEntity<Map<String, Object>> response = getVerifyResponse( id, code );
-		if( response != null ) return response;
-
-		// GET is used from the email link, PUT is used from the verify page
-		return new ResponseEntity<>( Map.of(), HttpStatus.TEMPORARY_REDIRECT );
-
-//		HttpHeaders headers = new HttpHeaders();
-//		headers.add("Location", "/member/uploadImage");
-//		return new ResponseEntity<String>(headers,HttpStatus.FOUND);
-	}
-
-	private ResponseEntity<Map<String, Object>> getVerifyResponse( String id, String code ) {
 		List<String> messages = new ArrayList<>();
 		if( Text.isBlank( id ) ) messages.add( "ID required" );
 		if( Text.isBlank( code ) ) messages.add( "Code required" );
@@ -138,7 +117,8 @@ public class AuthController {
 			log.error( "Verification error, id=" + id, exception );
 			return new ResponseEntity<>( Map.of( "messages", List.of( "Verification error" ) ), HttpStatus.INTERNAL_SERVER_ERROR );
 		}
-		return null;
+
+		return new ResponseEntity<>( Map.of( "messages", messages ), HttpStatus.OK );
 	}
 
 	@PostMapping( path = ApiPath.AUTH_LOGIN, consumes = "application/json", produces = "application/json" )
