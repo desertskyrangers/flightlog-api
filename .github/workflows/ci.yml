@@ -67,4 +67,4 @@ jobs:
 #          scp -B server/target/main/images/desertskyrangers-light.png travis@desertskyrangers.com:/opt/dsr/store/stable/desertskyrangers/provider-light.png
 
       - name: Update the Website
-        run: ssh travis@desertskyrangers.com /home/ecco/bin/update-flightlog-website
+        run: ssh travis@desertskyrangers.com /home/ecco/bin/update-flightlog-server
