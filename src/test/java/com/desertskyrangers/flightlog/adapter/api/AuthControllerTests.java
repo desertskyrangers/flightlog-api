@@ -1,6 +1,5 @@
 package com.desertskyrangers.flightlog.adapter.api;
 
-import com.desertskyrangers.flightlog.adapter.api.jwt.JwtToken;
 import com.desertskyrangers.flightlog.adapter.api.jwt.JwtTokenProvider;
 import com.desertskyrangers.flightlog.core.model.UserAccount;
 import com.desertskyrangers.flightlog.core.model.UserCredential;
@@ -30,7 +29,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -96,11 +94,11 @@ public class AuthControllerTests {
 	public void whenApiAuthVerify_thenSuccessResponse() throws Exception {
 		// given
 		UUID id = UUID.randomUUID();
-		String code = "543210";
-		String url = ApiPath.AUTH_VERIFY + "?id=" + id + "&code=" + code;
+		String code = "000000";
+		String content = Json.stringify( Map.of( "id", id, "code", code ) );
 
 		// when
-		this.mockMvc.perform( get( url ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() );
+		this.mockMvc.perform( post( ApiPath.AUTH_VERIFY ).with( csrf() ).content( content ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() );
 
 		// then
 		ArgumentCaptor<Verification> argumentCaptor = ArgumentCaptor.forClass( Verification.class );
@@ -113,10 +111,11 @@ public class AuthControllerTests {
 
 	@Test
 	public void whenApiAuthVerifyBadRequest_thenHandleErrorGracefully() throws Exception {
-		String url = ApiPath.AUTH_VERIFY + "?id=&code=";
+		Map<String, Object> request = Map.of();
+		String content = Json.stringify( request );
 
 		Map<String, Object> result = Map.of( "messages", List.of( "ID required", "Code required" ) );
-		this.mockMvc.perform( get( url ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isBadRequest() ).andExpect( content().json( Json.stringify( result ) ) );
+		this.mockMvc.perform( post( ApiPath.AUTH_VERIFY ).with( csrf() ).content( content ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isBadRequest() ).andExpect( content().json( Json.stringify( result ) ) );
 	}
 
 	@Test
