@@ -3,7 +3,7 @@ name: CI
 on: [ push ]
 
 env:
-  JAVA_VERSION: "11"
+  JAVA_VERSION: "17"
   DSR_GPG_PASSWORD: ${{ secrets.DSR_GPG_PASSWORD }}
   DSR_REPO_USERNAME: ${{ secrets.DSR_REPO_USERNAME }}
   WEBSITE_DEPLOY_PATH: '/opt/dsr/flightlog/api'
