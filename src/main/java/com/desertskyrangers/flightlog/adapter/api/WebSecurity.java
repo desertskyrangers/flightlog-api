@@ -57,10 +57,12 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 			.and().csrf().ignoringAntMatchers( ApiPath.AUTH_LOGIN )
 			.and().csrf().ignoringAntMatchers( ApiPath.AUTH_REGISTER )
 			.and().csrf().ignoringAntMatchers( ApiPath.AUTH_VERIFY )
+			.and().csrf().ignoringAntMatchers( ApiPath.AUTH_LOGOUT )
 			.and().authorizeRequests()
 				.mvcMatchers( HttpMethod.POST, ApiPath.AUTH_LOGIN ).permitAll()
 				.mvcMatchers( HttpMethod.POST, ApiPath.AUTH_REGISTER ).permitAll()
 				.antMatchers( HttpMethod.POST, ApiPath.AUTH_VERIFY ).permitAll()
+				.antMatchers( HttpMethod.POST, ApiPath.AUTH_LOGOUT ).permitAll()
 				.mvcMatchers( HttpMethod.GET, ApiPath.MONITOR_STATUS ).permitAll()
 				.anyRequest().authenticated()
 			.and().addFilterAfter( new JwtFilter( jwtTokenProvider ), UsernamePasswordAuthenticationFilter.class );

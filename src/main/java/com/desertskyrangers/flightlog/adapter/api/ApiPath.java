@@ -14,6 +14,8 @@ public interface ApiPath {
 
 	String AUTH_VERIFY = AUTH + "/verify";
 
+	String AUTH_LOGOUT = AUTH + "/logout";
+
 	String MONITOR = ROOT + "/monitor";
 
 	String MONITOR_STATUS = MONITOR + "/status";

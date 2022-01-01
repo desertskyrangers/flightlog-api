@@ -24,7 +24,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -140,6 +143,11 @@ public class AuthController {
 			log.warn( "Authentication error: " + request.getUsername(), exception );
 			return new ResponseEntity<>( new ReactLoginResponse().setMessages( List.of( "Authentication error" ) ), HttpStatus.INTERNAL_SERVER_ERROR );
 		}
+	}
+
+	@PostMapping( path = ApiPath.AUTH_LOGOUT, consumes = "application/json", produces = "application/json" )
+	ResponseEntity<Object> logout( @RequestBody Map<String, Object> request ) {
+		return new ResponseEntity<>( null, HttpStatus.OK );
 	}
 
 	private String authenticate( ReactLoginRequest request ) {
