@@ -144,4 +144,14 @@ public class AuthRequestingServiceTest {
 		assertThat( messages.get( 0 ) ).isEqualTo( "Invalid verification timestamp" );
 	}
 
+	@Test
+	void testGenerateVerifyLink() {
+		UUID id = UUID.randomUUID();
+		String code = "000000";
+
+		// This link is intentionally not a link to /api/auth/verify
+		// it is supposed to request the verify page at the browser.
+		assertThat( service.generateVerifyLink( id, code )).isEqualTo( "https://flightlog.desertskyrangers.com/verify/" + id + "/" + code );
+	}
+
 }

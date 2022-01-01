@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class AuthRequestingService implements AuthRequesting {
 
-	private static final String VERIFY_ENDPOINT = ApiPath.HOST + ApiPath.AUTH_VERIFY;
+	private static final String VERIFY_ENDPOINT = ApiPath.HOST + "/verify";
 
 	private static final String EMAIL_SUBJECT = "FlightLog Email Account Verification";
 
@@ -152,12 +152,16 @@ public class AuthRequestingService implements AuthRequesting {
 		humanInterface.email( message );
 	}
 
-	private String generateEmailAddressVerificationMessage( String subject, UUID id, String code ) {
-		String link = VERIFY_ENDPOINT + "/" + id + "/" + code;
+	// This link is intentionally not a link to /api/auth/verify
+	// it is supposed to request the verify page at the browser.
+	String generateVerifyLink( UUID id, String code ) {
+		return VERIFY_ENDPOINT + "/" + id + "/" + code;
+	}
 
+	private String generateEmailAddressVerificationMessage( String subject, UUID id, String code ) {
 		Map<String, Object> values = new HashMap<>();
 		values.put( "subject", subject );
-		values.put( "link", link );
+		values.put( "link", generateVerifyLink( id, code ) );
 		values.put( "code", code );
 
 		PebbleEngine engine = new PebbleEngine.Builder().build();
