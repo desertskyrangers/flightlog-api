@@ -24,11 +24,14 @@ public class InitialConfig {
 	}
 
 	void init() {
-		UserToken credential = new UserToken();
-		credential.principal( "tester" );
-		credential.credential( new BCryptPasswordEncoder().encode( "tester" ) );
+		UserToken usernameToken = new UserToken();
+		usernameToken.principal( "tester" );
+		usernameToken.credential( new BCryptPasswordEncoder().encode( "tester" ) );
+		UserToken emailToken = new UserToken();
+		emailToken.principal( "tester@noreply.com" );
+		emailToken.credential( new BCryptPasswordEncoder().encode( "tester" ) );
 		UserAccount user = new UserAccount();
-		user.credentials( Set.of( credential ) );
+		user.tokens( Set.of( usernameToken, emailToken ) );
 		user.firstName( "Test" );
 		user.lastName( "user" );
 		statePersisting.upsert( user );

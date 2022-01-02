@@ -73,7 +73,7 @@ public class UserEntity {
 		user.smsNumber( entity.getSmsNumber() );
 		if( entity.getSmsNumber() != null ) user.smsProvider( SmsProvider.valueOf( entity.getSmsNumber().toUpperCase() ) );
 		user.smsVerified( entity.getSmsVerified() != null && entity.getSmsVerified() );
-		user.credentials( entity.getTokens().stream().map( c -> TokenEntity.toUserCredential( c ).userAccount( user ) ).collect( Collectors.toSet() ) );
+		user.tokens( entity.getTokens().stream().map( c -> TokenEntity.toUserCredential( c ).userAccount( user ) ).collect( Collectors.toSet() ) );
 		user.roles( entity.getRoles() );
 
 		return user;
@@ -95,7 +95,7 @@ public class UserEntity {
 		entity.setSmsNumber( user.smsNumber() );
 		if( user.smsProvider() != null ) entity.setSmsNumber( user.smsProvider().name().toLowerCase() );
 		entity.setSmsVerified( user.smsVerified() );
-		if( includeTokens ) entity.setTokens( user.credentials().stream().map( TokenEntity::from ).peek( c -> c.setUserAccount( entity ) ).collect( Collectors.toSet() ) );
+		if( includeTokens ) entity.setTokens( user.tokens().stream().map( TokenEntity::from ).peek( c -> c.setUserAccount( entity ) ).collect( Collectors.toSet() ) );
 		entity.setRoles( user.roles() );
 
 		return entity;

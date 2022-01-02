@@ -33,7 +33,7 @@ public class AppUserDetailsServiceTest {
 
 		UserAccount user = new UserAccount();
 		credential.userAccount( user );
-		user.credentials( Set.of( credential ) );
+		user.tokens( Set.of( credential ) );
 
 		when( stateRetrieving.findUserTokenByPrincipal( username ) ).thenReturn( Optional.of( credential ) );
 

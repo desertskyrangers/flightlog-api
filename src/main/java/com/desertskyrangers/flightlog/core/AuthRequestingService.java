@@ -15,6 +15,7 @@ import com.mitchellbosecke.pebble.template.PebbleTemplate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -38,10 +39,13 @@ public class AuthRequestingService implements AuthRequesting {
 
 	private final HumanInterface humanInterface;
 
-	public AuthRequestingService( StatePersisting statePersisting, StateRetrieving stateRetrieving, HumanInterface humanInterface ) {
+	private final PasswordEncoder passwordEncoder;
+
+	public AuthRequestingService( StatePersisting statePersisting, StateRetrieving stateRetrieving, HumanInterface humanInterface, PasswordEncoder passwordEncoder ) {
 		this.statePersisting = statePersisting;
 		this.stateRetrieving = stateRetrieving;
 		this.humanInterface = humanInterface;
+		this.passwordEncoder = passwordEncoder;
 	}
 
 	@Scheduled( fixedRate = 1, timeUnit = TimeUnit.MINUTES )
@@ -56,30 +60,72 @@ public class AuthRequestingService implements AuthRequesting {
 	}
 
 	@Override
-	public List<String> requestUserRegister( UserAccount account, UserToken credentials, Verification verification ) {
-		log.info( "Creating account username=" + credentials.principal() + " email=" + account.email() );
+	public List<String> requestUserRegister( String username, String email, String password, UUID verifyId ) {
+		log.info( "Creating account username=" + username + " email=" + email );
 
-		// Block repeat attempts to generate the same account
-		Optional<UserToken> optional = stateRetrieving.findUserTokenByPrincipal( credentials.principal() );
-		if( optional.isPresent() ) return List.of( "Username not available" );
+		List<String> messages = new ArrayList<>();
 
-		// Store the new account
-		account.credentials().add( credentials );
+		// Check and create tokens
+		Set<UserToken> tokens = new HashSet<>();
+		String encodedPassword = passwordEncoder.encode( password );
+		stateRetrieving.findUserTokenByPrincipal( username ).ifPresentOrElse( t -> {
+			messages.add( "Username not available" );
+		}, () -> tokens.add( new UserToken().principal( username ).credential( encodedPassword ) ) );
+		stateRetrieving.findUserTokenByPrincipal( email ).ifPresentOrElse( t -> {
+			messages.add( "Email not available" );
+		}, () -> tokens.add( new UserToken().principal( email ).credential( encodedPassword ) ) );
+		if( !messages.isEmpty() ) return messages;
+
+		// Create the account
+		UserAccount account = new UserAccount();
+		account.email( email );
+		account.tokens( tokens );
 		statePersisting.upsert( account );
 
 		// Generate the verification code
 		String code = Text.lpad( String.valueOf( new Random().nextInt( 1000000 ) ), 6, '0' );
 
 		// Store the verification record
-		statePersisting.upsert( verification.userId( account.id() ).code( code ).type( Verification.EMAIL_VERIFY_TYPE ) );
+		Verification verification = new Verification().id( verifyId );
+		verification.userId( account.id() );
+		verification.code( code );
+		verification.type( Verification.EMAIL_VERIFY_TYPE );
+		statePersisting.upsert( verification );
 
 		log.warn( "verification code: " + verification.code() );
 
 		// Send the message to verify the email address
-		sendEmailAddressVerificationMessage( account, credentials, verification );
+		sendEmailAddressVerificationMessage( account, username, verification );
 
 		return List.of();
 	}
+
+//	@Override
+//	public List<String> requestUserRegister( UserAccount account, Collection<UserToken> tokens, Verification verification ) {
+//		UserToken token = tokens.iterator().next();
+//		log.info( "Creating account username=" + token.principal() + " email=" + account.email() );
+//
+//		// Block repeat attempts to generate the same account
+//		Optional<UserToken> optional = stateRetrieving.findUserTokenByPrincipal( token.principal() );
+//		if( optional.isPresent() ) return List.of( "Username not available" );
+//
+//		// Store the new account
+//		account.tokens().add( token );
+//		statePersisting.upsert( account );
+//
+//		// Generate the verification code
+//		String code = Text.lpad( String.valueOf( new Random().nextInt( 1000000 ) ), 6, '0' );
+//
+//		// Store the verification record
+//		statePersisting.upsert( verification.userId( account.id() ).code( code ).type( Verification.EMAIL_VERIFY_TYPE ) );
+//
+//		log.warn( "verification code: " + verification.code() );
+//
+//		// Send the message to verify the email address
+//		sendEmailAddressVerificationMessage( account, token.principal(), verification );
+//
+//		return List.of();
+//	}
 
 	@Override
 	public List<String> requestUserVerifyResend( UUID id ) {
@@ -88,12 +134,12 @@ public class AuthRequestingService implements AuthRequesting {
 		// Lookup the verification from the state store
 		stateRetrieving.findVerification( id ).ifPresent( v -> {
 			stateRetrieving.findUserAccount( v.userId() ).ifPresent( u -> {
-				UserToken credential = u.credentials().iterator().next();
+				UserToken credential = u.tokens().iterator().next();
 
 				log.warn( "verification code resent: " + v.code() );
 
 				// Send the message to verify the email address
-				sendEmailAddressVerificationMessage( u, credential, v );
+				sendEmailAddressVerificationMessage( u, credential.principal(), v );
 				messages.add( "Verification email resent" );
 			} );
 		} );
@@ -143,7 +189,7 @@ public class AuthRequestingService implements AuthRequesting {
 	@Override
 	public UserToken getUserCredential( UUID userId ) {
 		UserAccount account = stateRetrieving.findUserAccount( userId ).orElseThrow();
-		return account.credentials().iterator().next();
+		return account.tokens().iterator().next();
 	}
 
 	void setEmailVerified( UserAccount account, boolean verified ) {
@@ -159,13 +205,13 @@ public class AuthRequestingService implements AuthRequesting {
 	}
 
 	@Async
-	void sendEmailAddressVerificationMessage( UserAccount account, UserToken credentials, Verification verification ) {
+	void sendEmailAddressVerificationMessage( UserAccount account, String name, Verification verification ) {
 		String subject = EMAIL_SUBJECT;
 		String verificationMessage = generateEmailAddressVerificationMessage( subject, verification.id(), verification.code() );
 		if( verificationMessage == null ) return;
 
 		EmailMessage message = new EmailMessage();
-		message.recipient( account.email(), credentials.principal() );
+		message.recipient( account.email(), name );
 		message.subject( subject );
 		message.message( verificationMessage );
 		message.isHtml( true );

@@ -10,6 +10,7 @@ import com.desertskyrangers.flightlog.util.Json;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -20,10 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
@@ -53,6 +51,9 @@ public class AuthControllerTests {
 	@MockBean
 	private AuthRequesting mockAuthRequesting;
 
+	@Captor
+	ArgumentCaptor<Collection<UserToken>> tokenCaptor;
+
 	@Test
 	public void whenApiAuthRegister_thenSuccessResponse() throws Exception {
 		// given
@@ -65,19 +66,17 @@ public class AuthControllerTests {
 		this.mockMvc.perform( post( ApiPath.AUTH_REGISTER ).with( csrf() ).content( content ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isAccepted() );
 
 		// then
-		ArgumentCaptor<UserAccount> accountCaptor = ArgumentCaptor.forClass( UserAccount.class );
-		ArgumentCaptor<UserToken> credentialsCaptor = ArgumentCaptor.forClass( UserToken.class );
-		ArgumentCaptor<Verification> verificationCaptor = ArgumentCaptor.forClass( Verification.class );
-		verify( mockAuthRequesting, times( 1 ) ).requestUserRegister( accountCaptor.capture(), credentialsCaptor.capture(), verificationCaptor.capture() );
+		ArgumentCaptor<String> usernameCaptor = ArgumentCaptor.forClass( String.class );
+		ArgumentCaptor<String> emailCaptor = ArgumentCaptor.forClass( String.class );
+		ArgumentCaptor<String> passwordCaptor = ArgumentCaptor.forClass( String.class );
+		ArgumentCaptor<UUID> verificationCaptor = ArgumentCaptor.forClass( UUID.class );
+		verify( mockAuthRequesting, times( 1 ) ).requestUserRegister( usernameCaptor.capture(), emailCaptor.capture(), passwordCaptor.capture(), verificationCaptor.capture() );
 
-		UserAccount account = accountCaptor.getValue();
-		assertThat( account.email() ).isEqualTo( email );
-
-		UserToken credentials = credentialsCaptor.getValue();
-		assertThat( credentials.principal() ).isEqualTo( username );
-		assertThat( passwordEncoder.matches( password, credentials.credential() ) ).isTrue();
+		assertThat( usernameCaptor.getValue() ).isEqualTo( username );
+		assertThat( emailCaptor.getValue() ).isEqualTo( email );
+		assertThat( passwordCaptor.getValue() ).isEqualTo( password );
+		assertThat( verificationCaptor.getValue() ).isNotNull();
 	}
-
 
 	@Test
 	public void whenApiAuthResend_thenSuccessResponse() throws Exception {
@@ -101,7 +100,7 @@ public class AuthControllerTests {
 		Map<String, Object> request = Map.of();
 		String content = Json.stringify( request );
 
-		Map<String, Object> result = Map.of( "messages", List.of( "Username required", "Password required", "EmailRequired" ) );
+		Map<String, Object> result = Map.of( "messages", List.of( "Username required", "Password required", "Email required" ) );
 		this.mockMvc
 			.perform( post( ApiPath.AUTH_REGISTER ).with( csrf() ).content( content ).contentType( MediaType.APPLICATION_JSON ) )
 			.andExpect( status().isBadRequest() )
@@ -133,7 +132,10 @@ public class AuthControllerTests {
 		String content = Json.stringify( request );
 
 		Map<String, Object> result = Map.of( "messages", List.of( "ID required", "Code required" ) );
-		this.mockMvc.perform( post( ApiPath.AUTH_VERIFY ).with( csrf() ).content( content ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isBadRequest() ).andExpect( content().json( Json.stringify( result ) ) );
+		this.mockMvc
+			.perform( post( ApiPath.AUTH_VERIFY ).with( csrf() ).content( content ).contentType( MediaType.APPLICATION_JSON ) )
+			.andExpect( status().isBadRequest() )
+			.andExpect( content().json( Json.stringify( result ) ) );
 	}
 
 	@Test
@@ -147,7 +149,7 @@ public class AuthControllerTests {
 		credential.principal( username );
 		credential.credential( passwordEncoder.encode( password ) );
 		UserAccount user = new UserAccount();
-		user.credentials( Set.of( credential ) );
+		user.tokens( Set.of( credential ) );
 		credential.userAccount( user );
 		statePersisting.upsert( user );
 
@@ -159,9 +161,9 @@ public class AuthControllerTests {
 		// Parse the JSON content
 		Map<String, Object> json = Json.asMap( result.getResponse().getContentAsString() );
 		// Get the jwt map from the json map
-		Map<?,?> jwt = (Map<?,?>)json.get("jwt");
+		Map<?, ?> jwt = (Map<?, ?>)json.get( "jwt" );
 		// Validate the generated token
-		jwtTokenProvider.validateToken( jwt.get("token").toString() );
+		jwtTokenProvider.validateToken( jwt.get( "token" ).toString() );
 	}
 
 	@Test

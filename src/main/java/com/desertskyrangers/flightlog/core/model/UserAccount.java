@@ -31,7 +31,7 @@ public class UserAccount {
 	private boolean smsVerified;
 
 	@EqualsAndHashCode.Exclude
-	private Set<UserToken> credentials = new CopyOnWriteArraySet<>();
+	private Set<UserToken> tokens = new CopyOnWriteArraySet<>();
 
 	@EqualsAndHashCode.Exclude
 	private Set<String> roles = new CopyOnWriteArraySet<>();
@@ -40,7 +40,7 @@ public class UserAccount {
 		id( UUID.randomUUID() );
 	}
 
-	public void setRoles( Set<String> roles ) {
+	public void roles( Set<String> roles ) {
 		this.roles = roles == null ? Set.of() : roles;
 	}
 

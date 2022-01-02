@@ -6,8 +6,6 @@ import com.desertskyrangers.flightlog.adapter.api.model.ReactLoginRequest;
 import com.desertskyrangers.flightlog.adapter.api.model.ReactLoginResponse;
 import com.desertskyrangers.flightlog.adapter.api.model.ReactRegisterRequest;
 import com.desertskyrangers.flightlog.adapter.api.model.ReactRegisterResponse;
-import com.desertskyrangers.flightlog.core.model.UserAccount;
-import com.desertskyrangers.flightlog.core.model.UserToken;
 import com.desertskyrangers.flightlog.core.model.Verification;
 import com.desertskyrangers.flightlog.port.AuthRequesting;
 import com.desertskyrangers.flightlog.port.UserManagement;
@@ -67,11 +65,10 @@ public class AuthController {
 		List<String> messages = new ArrayList<>();
 		if( Text.isBlank( request.getUsername() ) ) messages.add( "Username required" );
 		if( Text.isBlank( request.getPassword() ) ) messages.add( "Password required" );
-		if( Text.isBlank( request.getEmail() ) ) messages.add( "EmailRequired" );
-		if( userManagement.findByUsername( request.getUsername() ).isPresent() ) messages.add( "Username unavailable" );
+		if( Text.isBlank( request.getEmail() ) ) messages.add( "Email required" );
+		if( userManagement.findByUsername( request.getUsername() ).isPresent() ) messages.add( "Username not available" );
 
 		// FIXME Check for invalid data
-		// - Username only uses valid characters (do I need this if only for authentication?)
 		// - Username is not taken
 		// - Username is long enough (>4 chars)
 		// - Username is not too long (~64 chars)
@@ -83,15 +80,12 @@ public class AuthController {
 		if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactRegisterResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
 
 		try {
-			UserAccount account = new UserAccount().email( request.getEmail() );
-			UserToken credentials = new UserToken().userAccount( account ).principal( request.getUsername() ).credential( passwordEncoder.encode( request.getPassword() ) );
-			Verification verification = new Verification();
-
-			messages.addAll( authRequesting.requestUserRegister( account, credentials, verification ) );
+			UUID verificationId = UUID.randomUUID();
+			messages.addAll( authRequesting.requestUserRegister( request.getUsername(), request.getEmail(), request.getPassword(), verificationId ) );
 			if( messages.isEmpty() ) {
 				// Generate the JWT token like login
 				String jwt = authenticate( new ReactLoginRequest().setUsername( request.getUsername() ).setPassword( request.getPassword() ).setRemember( false ) );
-				ReactRegisterResponse response = new ReactRegisterResponse().setId( verification.id().toString() ).setJwt( new JwtToken( jwt ) );
+				ReactRegisterResponse response = new ReactRegisterResponse().setId( verificationId.toString() ).setJwt( new JwtToken( jwt ) );
 				return new ResponseEntity<>( response, HttpStatus.ACCEPTED );
 			} else {
 				return new ResponseEntity<>( new ReactRegisterResponse().setMessages( messages ), HttpStatus.FORBIDDEN );
