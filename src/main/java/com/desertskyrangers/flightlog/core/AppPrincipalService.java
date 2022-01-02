@@ -18,8 +18,6 @@ public class AppPrincipalService implements UserDetailsService {
 
 	@Override
 	public AppPrincipal loadUserByUsername( String username ) throws UsernameNotFoundException {
-		log.warn( "looking for username=" + username );
-
 		return stateRetrieving.findUserCredentialByUsername( username ).map( AppPrincipal::new ).orElse( null );
 	}
 

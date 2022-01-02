@@ -8,6 +8,6 @@ import java.util.UUID;
 
 public interface UserCredentialRepo extends JpaRepository<CredentialEntity, UUID> {
 
-	Optional<CredentialEntity> findByUsername( String username);
+	Optional<CredentialEntity> findByUsername( String username );
 
 }

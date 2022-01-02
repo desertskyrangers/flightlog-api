@@ -11,6 +11,8 @@ public interface AuthRequesting {
 
 	List<String> requestUserRegister( UserAccount account, UserCredential credentials, Verification verification );
 
+	List<String> requestUserVerifyResend( UUID id );
+
 	List<String> requestUserVerify( Verification verification );
 
 	@Deprecated

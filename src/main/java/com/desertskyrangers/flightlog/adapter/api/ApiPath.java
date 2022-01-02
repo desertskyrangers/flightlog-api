@@ -12,6 +12,8 @@ public interface ApiPath {
 
 	String AUTH_VERIFY = AUTH + "/verify";
 
+	String AUTH_RESEND = AUTH + "/resend";
+
 	String AUTH_LOGIN = AUTH + "/login";
 
 	String AUTH_LOGOUT = AUTH + "/logout";

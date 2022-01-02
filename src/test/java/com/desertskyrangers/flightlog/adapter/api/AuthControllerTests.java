@@ -78,6 +78,24 @@ public class AuthControllerTests {
 		assertThat( passwordEncoder.matches( password, credentials.password() ) ).isTrue();
 	}
 
+
+	@Test
+	public void whenApiAuthResend_thenSuccessResponse() throws Exception {
+		// given
+		UUID id = UUID.randomUUID();
+		String content = Json.stringify( Map.of( "id", id.toString() ) );
+
+		// when
+		this.mockMvc.perform( post( ApiPath.AUTH_RESEND ).with( csrf() ).content( content ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() );
+
+		// then
+		ArgumentCaptor<UUID> idCaptor = ArgumentCaptor.forClass( UUID.class );
+		verify( mockAuthRequesting, times( 1 ) ).requestUserVerifyResend( idCaptor.capture() );
+
+		UUID capturedId = idCaptor.getValue();
+		assertThat( capturedId ).isEqualTo( id );
+	}
+
 	@Test
 	public void whenApiAuthRegisterBadRequest_thenHandleErrorGracefully() throws Exception {
 		Map<String, Object> request = Map.of();

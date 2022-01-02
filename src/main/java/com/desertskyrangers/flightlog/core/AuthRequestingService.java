@@ -82,6 +82,26 @@ public class AuthRequestingService implements AuthRequesting {
 	}
 
 	@Override
+	public List<String> requestUserVerifyResend( UUID id ) {
+		List<String> messages = new ArrayList<>();
+
+		// Lookup the verification from the state store
+		stateRetrieving.findVerification( id ).ifPresent( v -> {
+			stateRetrieving.findUserAccount( v.userId() ).ifPresent( u -> {
+				UserCredential credential = u.credentials().iterator().next();
+
+				log.warn( "verification code resent: " + v.code() );
+
+				// Send the message to verify the email address
+				sendEmailAddressVerificationMessage( u, credential, v );
+				messages.add( "Verification email resent" );
+			} );
+		} );
+
+		return messages;
+	}
+
+	@Override
 	public List<String> requestUserVerify( Verification verification ) {
 		List<String> messages = new ArrayList<>();
 

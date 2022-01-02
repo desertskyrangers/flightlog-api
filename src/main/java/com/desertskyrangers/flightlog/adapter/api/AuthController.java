@@ -102,7 +102,24 @@ public class AuthController {
 		}
 	}
 
-	@PostMapping( path = ApiPath.AUTH_VERIFY, consumes = "application/json", produces = "application/json" )
+	@PostMapping( path = ApiPath.AUTH_RESEND, consumes = "application/json", produces = "application/json" )
+	ResponseEntity<Map<String, Object>> resend( @RequestBody Map<String, Object> request ) {
+		String id = (String)request.get( "id" );
+
+		List<String> messages = new ArrayList<>();
+		if( Text.isBlank( id ) ) messages.add( "ID required" );
+
+		try {
+			messages.addAll( authRequesting.requestUserVerifyResend( UUID.fromString( id ) ) );
+		} catch( Exception exception ) {
+			log.error( "Verification resend error, id=" + id, exception );
+			return new ResponseEntity<>( Map.of( "messages", List.of( "Verification resend error" ) ), HttpStatus.INTERNAL_SERVER_ERROR );
+		}
+
+		return new ResponseEntity<>( Map.of( "messages", messages ), HttpStatus.OK );
+	}
+
+		@PostMapping( path = ApiPath.AUTH_VERIFY, consumes = "application/json", produces = "application/json" )
 	ResponseEntity<Map<String, Object>> verify( @RequestBody Map<String, Object> request ) {
 		String id = (String)request.get( "id" );
 		String code = (String)request.get( "code" );
@@ -126,7 +143,6 @@ public class AuthController {
 
 	@PostMapping( path = ApiPath.AUTH_LOGIN, consumes = "application/json", produces = "application/json" )
 	ResponseEntity<ReactLoginResponse> login( @RequestBody ReactLoginRequest request ) {
-		log.info( "login request username=" + request.getUsername() );
 		List<String> messages = new ArrayList<>();
 		if( Text.isBlank( request.getUsername() ) ) messages.add( "Username required" );
 		if( Text.isBlank( request.getPassword() ) ) messages.add( "Password required" );
@@ -135,6 +151,7 @@ public class AuthController {
 		// Authenticate
 		try {
 			new ReactLoginResponse().setJwt( new JwtToken( authenticate( request ) ) );
+			log.info( "user login username=" + request.getUsername() );
 			return new ResponseEntity<>( new ReactLoginResponse().setJwt( new JwtToken( authenticate( request ) ) ), HttpStatus.OK );
 		} catch( UsernameNotFoundException | BadCredentialsException exception ) {
 			log.warn( "Authentication failure: " + request.getUsername(), exception );
