@@ -1,6 +1,5 @@
 package com.desertskyrangers.flightlog.port;
 
-import com.desertskyrangers.flightlog.core.model.UserToken;
 import com.desertskyrangers.flightlog.core.model.Verification;
 
 import java.util.List;
@@ -14,6 +13,4 @@ public interface AuthRequesting {
 
 	List<String> requestUserVerify( Verification verification );
 
-	@Deprecated
-	UserToken getUserCredential( UUID userId );
 }

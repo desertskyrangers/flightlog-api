@@ -13,9 +13,7 @@ import com.desertskyrangers.flightlog.util.Text;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -147,7 +145,16 @@ public class AuthController {
 			new ReactLoginResponse().setJwt( new JwtToken( authenticate( request ) ) );
 			log.info( "user login username=" + request.getUsername() );
 			return new ResponseEntity<>( new ReactLoginResponse().setJwt( new JwtToken( authenticate( request ) ) ), HttpStatus.OK );
-		} catch( UsernameNotFoundException | BadCredentialsException exception ) {
+		} catch( UsernameNotFoundException exception ) {
+			log.warn( "Unknown not found: " + request.getUsername(), exception );
+			return new ResponseEntity<>( new ReactLoginResponse().setMessages( List.of( "Account not found" ) ), HttpStatus.UNAUTHORIZED );
+		} catch( DisabledException exception ) {
+			log.warn( "Account disabled: " + request.getUsername(), exception );
+			return new ResponseEntity<>( new ReactLoginResponse().setMessages( List.of( "Account disabled" ) ), HttpStatus.UNAUTHORIZED );
+		} catch( LockedException exception ) {
+			log.warn( "Account locked: " + request.getUsername(), exception );
+			return new ResponseEntity<>( new ReactLoginResponse().setMessages( List.of( "Account locked" ) ), HttpStatus.UNAUTHORIZED );
+		} catch( BadCredentialsException exception ) {
 			log.warn( "Authentication failure: " + request.getUsername(), exception );
 			return new ResponseEntity<>( new ReactLoginResponse().setMessages( List.of( "Authentication failure" ) ), HttpStatus.UNAUTHORIZED );
 		} catch( AuthenticationException exception ) {

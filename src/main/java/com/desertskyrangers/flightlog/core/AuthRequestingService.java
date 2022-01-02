@@ -185,13 +185,6 @@ public class AuthRequestingService implements AuthRequesting {
 		return messages;
 	}
 
-	@Deprecated
-	@Override
-	public UserToken getUserCredential( UUID userId ) {
-		UserAccount account = stateRetrieving.findUserAccount( userId ).orElseThrow();
-		return account.tokens().iterator().next();
-	}
-
 	void setEmailVerified( UserAccount account, boolean verified ) {
 		account.emailVerified( verified );
 		statePersisting.upsert( account );
