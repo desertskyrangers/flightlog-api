@@ -3,7 +3,7 @@ package com.desertskyrangers.flightlog.core;
 import com.desertskyrangers.flightlog.adapter.api.ApiPath;
 import com.desertskyrangers.flightlog.core.model.EmailMessage;
 import com.desertskyrangers.flightlog.core.model.UserAccount;
-import com.desertskyrangers.flightlog.core.model.UserCredential;
+import com.desertskyrangers.flightlog.core.model.UserToken;
 import com.desertskyrangers.flightlog.core.model.Verification;
 import com.desertskyrangers.flightlog.port.AuthRequesting;
 import com.desertskyrangers.flightlog.port.HumanInterface;
@@ -56,11 +56,11 @@ public class AuthRequestingService implements AuthRequesting {
 	}
 
 	@Override
-	public List<String> requestUserRegister( UserAccount account, UserCredential credentials, Verification verification ) {
-		log.info( "Creating account username=" + credentials.username() + " email=" + account.email() );
+	public List<String> requestUserRegister( UserAccount account, UserToken credentials, Verification verification ) {
+		log.info( "Creating account username=" + credentials.principal() + " email=" + account.email() );
 
 		// Block repeat attempts to generate the same account
-		Optional<UserCredential> optional = stateRetrieving.findUserCredentialByUsername( credentials.username() );
+		Optional<UserToken> optional = stateRetrieving.findUserTokenByPrincipal( credentials.principal() );
 		if( optional.isPresent() ) return List.of( "Username not available" );
 
 		// Store the new account
@@ -88,7 +88,7 @@ public class AuthRequestingService implements AuthRequesting {
 		// Lookup the verification from the state store
 		stateRetrieving.findVerification( id ).ifPresent( v -> {
 			stateRetrieving.findUserAccount( v.userId() ).ifPresent( u -> {
-				UserCredential credential = u.credentials().iterator().next();
+				UserToken credential = u.credentials().iterator().next();
 
 				log.warn( "verification code resent: " + v.code() );
 
@@ -141,7 +141,7 @@ public class AuthRequestingService implements AuthRequesting {
 
 	@Deprecated
 	@Override
-	public UserCredential getUserCredential( UUID userId ) {
+	public UserToken getUserCredential( UUID userId ) {
 		UserAccount account = stateRetrieving.findUserAccount( userId ).orElseThrow();
 		return account.credentials().iterator().next();
 	}
@@ -159,13 +159,13 @@ public class AuthRequestingService implements AuthRequesting {
 	}
 
 	@Async
-	void sendEmailAddressVerificationMessage( UserAccount account, UserCredential credentials, Verification verification ) {
+	void sendEmailAddressVerificationMessage( UserAccount account, UserToken credentials, Verification verification ) {
 		String subject = EMAIL_SUBJECT;
 		String verificationMessage = generateEmailAddressVerificationMessage( subject, verification.id(), verification.code() );
 		if( verificationMessage == null ) return;
 
 		EmailMessage message = new EmailMessage();
-		message.recipient( account.email(), credentials.username() );
+		message.recipient( account.email(), credentials.principal() );
 		message.subject( subject );
 		message.message( verificationMessage );
 		message.isHtml( true );

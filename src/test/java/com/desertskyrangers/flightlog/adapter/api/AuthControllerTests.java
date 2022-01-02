@@ -2,7 +2,7 @@ package com.desertskyrangers.flightlog.adapter.api;
 
 import com.desertskyrangers.flightlog.adapter.api.jwt.JwtTokenProvider;
 import com.desertskyrangers.flightlog.core.model.UserAccount;
-import com.desertskyrangers.flightlog.core.model.UserCredential;
+import com.desertskyrangers.flightlog.core.model.UserToken;
 import com.desertskyrangers.flightlog.core.model.Verification;
 import com.desertskyrangers.flightlog.port.AuthRequesting;
 import com.desertskyrangers.flightlog.port.StatePersisting;
@@ -66,16 +66,16 @@ public class AuthControllerTests {
 
 		// then
 		ArgumentCaptor<UserAccount> accountCaptor = ArgumentCaptor.forClass( UserAccount.class );
-		ArgumentCaptor<UserCredential> credentialsCaptor = ArgumentCaptor.forClass( UserCredential.class );
+		ArgumentCaptor<UserToken> credentialsCaptor = ArgumentCaptor.forClass( UserToken.class );
 		ArgumentCaptor<Verification> verificationCaptor = ArgumentCaptor.forClass( Verification.class );
 		verify( mockAuthRequesting, times( 1 ) ).requestUserRegister( accountCaptor.capture(), credentialsCaptor.capture(), verificationCaptor.capture() );
 
 		UserAccount account = accountCaptor.getValue();
 		assertThat( account.email() ).isEqualTo( email );
 
-		UserCredential credentials = credentialsCaptor.getValue();
-		assertThat( credentials.username() ).isEqualTo( username );
-		assertThat( passwordEncoder.matches( password, credentials.password() ) ).isTrue();
+		UserToken credentials = credentialsCaptor.getValue();
+		assertThat( credentials.principal() ).isEqualTo( username );
+		assertThat( passwordEncoder.matches( password, credentials.credential() ) ).isTrue();
 	}
 
 
@@ -143,9 +143,9 @@ public class AuthControllerTests {
 		String password = "mockpassword";
 		String remember = "true";
 
-		UserCredential credential = new UserCredential();
-		credential.username( username );
-		credential.password( passwordEncoder.encode( password ) );
+		UserToken credential = new UserToken();
+		credential.principal( username );
+		credential.credential( passwordEncoder.encode( password ) );
 		UserAccount user = new UserAccount();
 		user.credentials( Set.of( credential ) );
 		credential.userAccount( user );

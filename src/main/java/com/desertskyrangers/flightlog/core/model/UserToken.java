@@ -8,18 +8,18 @@ import java.util.UUID;
 
 @Data
 @Accessors( fluent = true )
-public class UserCredential {
+public class UserToken {
 
 	private UUID id;
+
+	private String principal;
+
+	private String credential;
 
 	@EqualsAndHashCode.Exclude
 	private UserAccount userAccount;
 
-	private String username;
-
-	private String password;
-
-	public UserCredential() {
+	public UserToken() {
 		id(UUID.randomUUID());
 	}
 

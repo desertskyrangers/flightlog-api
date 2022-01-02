@@ -46,9 +46,9 @@ public class UserEntity {
 	private Boolean smsVerified;
 
 	@OneToMany( cascade = CascadeType.ALL, fetch = FetchType.EAGER )
-	@CollectionTable( name = "usercredential", joinColumns = @JoinColumn( name = "userid" ) )
+	@CollectionTable( name = "usertoken", joinColumns = @JoinColumn( name = "userid" ) )
 	@EqualsAndHashCode.Exclude
-	private Set<CredentialEntity> credentials = new HashSet<>();
+	private Set<TokenEntity> tokens = new HashSet<>();
 
 	@ElementCollection
 	@Column( name = "roles", nullable = false )
@@ -73,7 +73,7 @@ public class UserEntity {
 		user.smsNumber( entity.getSmsNumber() );
 		if( entity.getSmsNumber() != null ) user.smsProvider( SmsProvider.valueOf( entity.getSmsNumber().toUpperCase() ) );
 		user.smsVerified( entity.getSmsVerified() != null && entity.getSmsVerified() );
-		user.credentials( entity.getCredentials().stream().map( c -> CredentialEntity.toUserCredential( c ).userAccount( user ) ).collect( Collectors.toSet() ) );
+		user.credentials( entity.getTokens().stream().map( c -> TokenEntity.toUserCredential( c ).userAccount( user ) ).collect( Collectors.toSet() ) );
 		user.roles( entity.getRoles() );
 
 		return user;
@@ -83,7 +83,7 @@ public class UserEntity {
 		return fromUserAccount( user, false );
 	}
 
-	private static UserEntity fromUserAccount( UserAccount user, boolean includeCredential ) {
+	private static UserEntity fromUserAccount( UserAccount user, boolean includeTokens ) {
 		UserEntity entity = new UserEntity();
 
 		entity.setId( user.id() );
@@ -95,7 +95,7 @@ public class UserEntity {
 		entity.setSmsNumber( user.smsNumber() );
 		if( user.smsProvider() != null ) entity.setSmsNumber( user.smsProvider().name().toLowerCase() );
 		entity.setSmsVerified( user.smsVerified() );
-		if( includeCredential ) entity.setCredentials( user.credentials().stream().map( CredentialEntity::from ).peek( c -> c.setUserAccount( entity ) ).collect( Collectors.toSet() ) );
+		if( includeTokens ) entity.setTokens( user.credentials().stream().map( TokenEntity::from ).peek( c -> c.setUserAccount( entity ) ).collect( Collectors.toSet() ) );
 		entity.setRoles( user.roles() );
 
 		return entity;

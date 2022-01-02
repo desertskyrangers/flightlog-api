@@ -1,10 +1,10 @@
 package com.desertskyrangers.flightlog.adapter.state;
 
 import com.desertskyrangers.flightlog.adapter.state.entity.UserEntity;
-import com.desertskyrangers.flightlog.adapter.state.entity.CredentialEntity;
+import com.desertskyrangers.flightlog.adapter.state.entity.TokenEntity;
 import com.desertskyrangers.flightlog.adapter.state.entity.VerificationEntity;
 import com.desertskyrangers.flightlog.core.model.UserAccount;
-import com.desertskyrangers.flightlog.core.model.UserCredential;
+import com.desertskyrangers.flightlog.core.model.UserToken;
 import com.desertskyrangers.flightlog.core.model.Verification;
 import com.desertskyrangers.flightlog.port.StateRetrieving;
 import org.springframework.stereotype.Service;
@@ -20,24 +20,24 @@ public class StateRetrievingService implements StateRetrieving {
 
 	private final UserAccountRepo userAccountRepo;
 
-	private final UserCredentialRepo userCredentialRepo;
+	private final UserTokenRepo userTokenRepo;
 
 	private final VerificationRepo verificationRepo;
 
-	public StateRetrievingService( UserAccountRepo userAccountRepo, UserCredentialRepo userCredentialRepo, VerificationRepo verificationRepo ) {
+	public StateRetrievingService( UserAccountRepo userAccountRepo, UserTokenRepo userTokenRepo, VerificationRepo verificationRepo ) {
 		this.userAccountRepo = userAccountRepo;
-		this.userCredentialRepo = userCredentialRepo;
+		this.userTokenRepo = userTokenRepo;
 		this.verificationRepo = verificationRepo;
 	}
 
 	@Override
-	public Optional<UserCredential> findUserCredential( UUID id ) {
-		return userCredentialRepo.findById( id ).map( CredentialEntity::toUserCredential );
+	public Optional<UserToken> findUserCredential( UUID id ) {
+		return userTokenRepo.findById( id ).map( TokenEntity::toUserCredential );
 	}
 
 	@Override
-	public Optional<UserCredential> findUserCredentialByUsername( String username ) {
-		return userCredentialRepo.findByUsername( username ).map( CredentialEntity::toUserCredentialDeep );
+	public Optional<UserToken> findUserTokenByPrincipal( String username ) {
+		return userTokenRepo.findByPrincipal( username ).map( TokenEntity::toUserCredentialDeep );
 	}
 
 	@Override

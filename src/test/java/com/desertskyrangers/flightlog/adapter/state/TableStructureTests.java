@@ -23,23 +23,23 @@ public class TableStructureTests {
 	void testTables() throws Exception {
 		Set<String> expected = new HashSet<>();
 		expected.add( "user" );
-		expected.add( "credential" );
+		expected.add( "token" );
 		expected.add( "verification" );
-		expected.add( "usercredential" );
+		expected.add( "usertoken" );
 		expected.add( "userrole" );
 
 		assertThat( getTables() ).containsExactlyInAnyOrderElementsOf( expected );
 	}
 
 	@Test
-	void testCredential() throws Exception {
+	void testToken() throws Exception {
 		Set<String> expected = new HashSet<>();
 		expected.add( "id" );
 		expected.add( "userid" );
-		expected.add( "username" );
-		expected.add( "password" );
+		expected.add( "principal" );
+		expected.add( "credential" );
 
-		assertThat( getColumns( "credential" ) ).containsExactlyInAnyOrderElementsOf( expected );
+		assertThat( getColumns( "token" ) ).containsExactlyInAnyOrderElementsOf( expected );
 	}
 
 	@Test

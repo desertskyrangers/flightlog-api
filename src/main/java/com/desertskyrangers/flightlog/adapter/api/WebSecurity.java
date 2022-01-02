@@ -2,7 +2,7 @@ package com.desertskyrangers.flightlog.adapter.api;
 
 import com.desertskyrangers.flightlog.adapter.api.jwt.JwtFilter;
 import com.desertskyrangers.flightlog.adapter.api.jwt.JwtTokenProvider;
-import com.desertskyrangers.flightlog.core.AppPrincipalService;
+import com.desertskyrangers.flightlog.core.AppUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -20,12 +20,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class WebSecurity extends WebSecurityConfigurerAdapter {
 
-	private final AppPrincipalService appPrincipalService;
+	private final AppUserDetailsService appUserDetailsService;
 
 	private final JwtTokenProvider jwtTokenProvider;
 
-	public WebSecurity( AppPrincipalService appPrincipalService, JwtTokenProvider jwtTokenProvider ) {
-		this.appPrincipalService = appPrincipalService;
+	public WebSecurity( AppUserDetailsService appUserDetailsService, JwtTokenProvider jwtTokenProvider ) {
+		this.appUserDetailsService = appUserDetailsService;
 		this.jwtTokenProvider = jwtTokenProvider;
 	}
 
@@ -42,12 +42,12 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
 	@Override
 	public UserDetailsService userDetailsServiceBean() {
-		return appPrincipalService;
+		return appUserDetailsService;
 	}
 
 	@Override
 	protected void configure( AuthenticationManagerBuilder builder ) throws Exception {
-		builder.userDetailsService( appPrincipalService ).passwordEncoder( passwordEncoder() );
+		builder.userDetailsService( appUserDetailsService ).passwordEncoder( passwordEncoder() );
 	}
 
 	@Override

@@ -1,6 +1,6 @@
 package com.desertskyrangers.flightlog.core;
 
-import com.desertskyrangers.flightlog.core.model.UserCredential;
+import com.desertskyrangers.flightlog.core.model.UserToken;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -11,9 +11,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class AppPrincipal implements UserDetails {
 
-	private final UserCredential credential;
+	private final UserToken credential;
 
-	public AppPrincipal( UserCredential credential ) {
+	public AppPrincipal( UserToken credential ) {
 		this.credential = credential;
 	}
 
@@ -29,12 +29,12 @@ public class AppPrincipal implements UserDetails {
 
 	@Override
 	public String getPassword() {
-		return credential.password();
+		return credential.credential();
 	}
 
 	@Override
 	public String getUsername() {
-		return credential.username();
+		return credential.principal();
 	}
 
 	@Override

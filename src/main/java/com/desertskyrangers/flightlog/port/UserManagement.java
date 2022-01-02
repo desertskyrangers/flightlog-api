@@ -1,7 +1,7 @@
 package com.desertskyrangers.flightlog.port;
 
 import com.desertskyrangers.flightlog.core.model.UserAccount;
-import com.desertskyrangers.flightlog.core.model.UserCredential;
+import com.desertskyrangers.flightlog.core.model.UserToken;
 
 import java.util.Optional;
 import java.util.Set;
@@ -11,14 +11,14 @@ public interface UserManagement {
 
 	// TODO Should these methods use the Result pattern?
 
-	Set<UserCredential> find();
+	Set<UserToken> find();
 
-	UserCredential find( UUID id );
+	UserToken find( UUID id );
 
 	Optional<UserAccount> findByUsername( String username );
 
-	UserCredential update( UserCredential user );
+	UserToken update( UserToken user );
 
-	void delete( UserCredential user );
+	void delete( UserToken user );
 
 }

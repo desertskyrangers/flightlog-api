@@ -31,7 +31,7 @@ public class UserAccount {
 	private boolean smsVerified;
 
 	@EqualsAndHashCode.Exclude
-	private Set<UserCredential> credentials = new CopyOnWriteArraySet<>();
+	private Set<UserToken> credentials = new CopyOnWriteArraySet<>();
 
 	@EqualsAndHashCode.Exclude
 	private Set<String> roles = new CopyOnWriteArraySet<>();

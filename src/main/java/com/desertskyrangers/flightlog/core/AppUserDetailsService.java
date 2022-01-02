@@ -8,17 +8,17 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class AppPrincipalService implements UserDetailsService {
+public class AppUserDetailsService implements UserDetailsService {
 
 	private final StateRetrieving stateRetrieving;
 
-	public AppPrincipalService( StateRetrieving stateRetrieving ) {
+	public AppUserDetailsService( StateRetrieving stateRetrieving ) {
 		this.stateRetrieving = stateRetrieving;
 	}
 
 	@Override
 	public AppPrincipal loadUserByUsername( String username ) throws UsernameNotFoundException {
-		return stateRetrieving.findUserCredentialByUsername( username ).map( AppPrincipal::new ).orElse( null );
+		return stateRetrieving.findUserTokenByPrincipal( username ).map( AppPrincipal::new ).orElse( null );
 	}
 
 }

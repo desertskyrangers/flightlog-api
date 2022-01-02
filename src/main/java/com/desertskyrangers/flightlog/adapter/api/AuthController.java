@@ -7,7 +7,7 @@ import com.desertskyrangers.flightlog.adapter.api.model.ReactLoginResponse;
 import com.desertskyrangers.flightlog.adapter.api.model.ReactRegisterRequest;
 import com.desertskyrangers.flightlog.adapter.api.model.ReactRegisterResponse;
 import com.desertskyrangers.flightlog.core.model.UserAccount;
-import com.desertskyrangers.flightlog.core.model.UserCredential;
+import com.desertskyrangers.flightlog.core.model.UserToken;
 import com.desertskyrangers.flightlog.core.model.Verification;
 import com.desertskyrangers.flightlog.port.AuthRequesting;
 import com.desertskyrangers.flightlog.port.UserManagement;
@@ -84,7 +84,7 @@ public class AuthController {
 
 		try {
 			UserAccount account = new UserAccount().email( request.getEmail() );
-			UserCredential credentials = new UserCredential().userAccount( account ).username( request.getUsername() ).password( passwordEncoder.encode( request.getPassword() ) );
+			UserToken credentials = new UserToken().userAccount( account ).principal( request.getUsername() ).credential( passwordEncoder.encode( request.getPassword() ) );
 			Verification verification = new Verification();
 
 			messages.addAll( authRequesting.requestUserRegister( account, credentials, verification ) );
