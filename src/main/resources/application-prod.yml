@@ -20,5 +20,4 @@ spring:
     database-platform: org.hibernate.dialect.MariaDBDialect
     generate-ddl: true
     hibernate:
-      ddl-auto: create-drop
-#      ddl-auto: update
+      ddl-auto: update

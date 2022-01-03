@@ -9,6 +9,7 @@ import com.desertskyrangers.flightlog.port.AuthRequesting;
 import com.desertskyrangers.flightlog.port.HumanInterface;
 import com.desertskyrangers.flightlog.port.StatePersisting;
 import com.desertskyrangers.flightlog.port.StateRetrieving;
+import com.desertskyrangers.flightlog.util.Email;
 import com.desertskyrangers.flightlog.util.Text;
 import com.mitchellbosecke.pebble.PebbleEngine;
 import com.mitchellbosecke.pebble.template.PebbleTemplate;
@@ -61,19 +62,38 @@ public class AuthRequestingService implements AuthRequesting {
 
 	@Override
 	public List<String> requestUserRegister( String username, String email, String password, UUID verifyId ) {
-		log.info( "Creating account username=" + username + " email=" + email );
+		log.info( "Account register username=" + username + " email=" + email );
 
 		List<String> messages = new ArrayList<>();
+
+		// Check for invalid data
+		boolean usernameTooShort = username.length() < 1;
+		boolean usernameTooLong = username.length() > 63;
+		boolean passwordTooShort = password.length() < 8;
+		boolean passwordTooLong = password.length() > 127;
+		boolean validUsername = !usernameTooShort && !usernameTooLong;
+		boolean validPassword = !passwordTooShort && !passwordTooLong;
+		boolean validEmail = Email.isValid( email );
+
+		if( !validUsername ) messages.add( "Invalid username" );
+		if( !validPassword ) messages.add( "Invalid password" );
+		if( !validEmail ) messages.add( "Invalid password" );
 
 		// Check and create tokens
 		Set<UserToken> tokens = new HashSet<>();
 		String encodedPassword = passwordEncoder.encode( password );
-		stateRetrieving.findUserTokenByPrincipal( username ).ifPresentOrElse( t -> {
-			messages.add( "Username not available" );
-		}, () -> tokens.add( new UserToken().principal( username ).credential( encodedPassword ) ) );
-		stateRetrieving.findUserTokenByPrincipal( email ).ifPresentOrElse( t -> {
-			messages.add( "Email not available" );
-		}, () -> tokens.add( new UserToken().principal( email ).credential( encodedPassword ) ) );
+		if( validUsername && validPassword ) {
+			stateRetrieving.findUserTokenByPrincipal( username ).ifPresentOrElse( t -> {
+				log.warn( "Username not available: username=" + username );
+				messages.add( "Username not available" );
+			}, () -> tokens.add( new UserToken().principal( username ).credential( encodedPassword ) ) );
+		}
+		if( validEmail && validPassword ) {
+			stateRetrieving.findUserTokenByPrincipal( email ).ifPresentOrElse( t -> {
+				log.warn( "Email not available: email=" + email );
+				messages.add( "Email not available" );
+			}, () -> tokens.add( new UserToken().principal( email ).credential( encodedPassword ) ) );
+		}
 		if( !messages.isEmpty() ) return messages;
 
 		// Create the account
@@ -99,33 +119,6 @@ public class AuthRequestingService implements AuthRequesting {
 
 		return List.of();
 	}
-
-//	@Override
-//	public List<String> requestUserRegister( UserAccount account, Collection<UserToken> tokens, Verification verification ) {
-//		UserToken token = tokens.iterator().next();
-//		log.info( "Creating account username=" + token.principal() + " email=" + account.email() );
-//
-//		// Block repeat attempts to generate the same account
-//		Optional<UserToken> optional = stateRetrieving.findUserTokenByPrincipal( token.principal() );
-//		if( optional.isPresent() ) return List.of( "Username not available" );
-//
-//		// Store the new account
-//		account.tokens().add( token );
-//		statePersisting.upsert( account );
-//
-//		// Generate the verification code
-//		String code = Text.lpad( String.valueOf( new Random().nextInt( 1000000 ) ), 6, '0' );
-//
-//		// Store the verification record
-//		statePersisting.upsert( verification.userId( account.id() ).code( code ).type( Verification.EMAIL_VERIFY_TYPE ) );
-//
-//		log.warn( "verification code: " + verification.code() );
-//
-//		// Send the message to verify the email address
-//		sendEmailAddressVerificationMessage( account, token.principal(), verification );
-//
-//		return List.of();
-//	}
 
 	@Override
 	public List<String> requestUserVerifyResend( UUID id ) {

@@ -66,15 +66,6 @@ public class AuthController {
 		if( Text.isBlank( request.getEmail() ) ) messages.add( "Email required" );
 		if( userManagement.findByUsername( request.getUsername() ).isPresent() ) messages.add( "Username not available" );
 
-		// FIXME Check for invalid data
-		// - Username is not taken
-		// - Username is long enough (>4 chars)
-		// - Username is not too long (~64 chars)
-		// - Password is long enough (>8 chars)
-		// - Password is not too long (~128 chars)
-		// - Email only uses valid characters
-		// - Email is in correct format
-		// - Email is not taken (what if I have two accounts with the same email?)
 		if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactRegisterResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
 
 		try {
