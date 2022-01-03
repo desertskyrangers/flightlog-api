@@ -14,29 +14,33 @@ import java.util.Set;
 @Slf4j
 public class InitialConfig {
 
+	private final FlightLogApp app;
+
 	private final StatePersisting statePersisting;
 
 	private final StateRetrieving stateRetrieving;
 
-	public InitialConfig( StatePersisting statePersisting, StateRetrieving stateRetrieving ) {
+	public InitialConfig( FlightLogApp app, StatePersisting statePersisting, StateRetrieving stateRetrieving ) {
+		this.app = app;
 		this.statePersisting = statePersisting;
 		this.stateRetrieving = stateRetrieving;
 	}
 
 	void init() {
+		if( app.isProduction() ) return;
 		UserToken usernameToken = new UserToken();
-		usernameToken.principal( "tester" );
+		usernameToken.principal( "tia" );
 		usernameToken.credential( new BCryptPasswordEncoder().encode( "tester" ) );
 		UserToken emailToken = new UserToken();
-		emailToken.principal( "tester@noreply.com" );
+		emailToken.principal( "tia@noreply.com" );
 		emailToken.credential( new BCryptPasswordEncoder().encode( "tester" ) );
 		UserAccount user = new UserAccount();
 		user.tokens( Set.of( usernameToken, emailToken ) );
-		user.firstName( "Test" );
-		user.lastName( "user" );
+		user.firstName( "Tia" );
+		user.lastName( "Test" );
 		statePersisting.upsert( user );
 
-		log.warn( "User created=" + stateRetrieving.findUserTokenByPrincipal( "tester" ).get().principal() );
+		stateRetrieving.findUserTokenByPrincipal( usernameToken.principal() ).ifPresent( t -> log.warn( "Tester created=" + t.principal() ) );
 	}
 
 }

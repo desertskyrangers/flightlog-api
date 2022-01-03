@@ -15,16 +15,16 @@ import java.util.stream.Collectors;
 @RequestMapping( "/api/user" )
 public class UserController {
 
-	private final UserAccountService service;
+	private final UserAccountService userAccountService;
 
-	public UserController( UserAccountService service ) {
-		this.service = service;
+	public UserController( UserAccountService userAccountService ) {
+		this.userAccountService = userAccountService;
 	}
 
-	@GetMapping
-	public List<ReactRegisterRequest> findAll() {
-		return service.find().stream().map( ReactRegisterRequest::from ).collect( Collectors.toList() );
-	}
+//	@GetMapping
+//	public List<ReactRegisterRequest> findAll() {
+//		return service.find().stream().map( ReactRegisterRequest::from ).collect( Collectors.toList() );
+//	}
 
 	@GetMapping( value = "/{id}" )
 	public ReactRegisterRequest findById( @PathVariable( "id" ) Long id ) {

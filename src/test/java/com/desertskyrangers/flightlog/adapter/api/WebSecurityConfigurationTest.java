@@ -2,6 +2,7 @@ package com.desertskyrangers.flightlog.adapter.api;
 
 import com.desertskyrangers.flightlog.adapter.api.jwt.JwtToken;
 import com.desertskyrangers.flightlog.adapter.api.jwt.JwtTokenProvider;
+import com.desertskyrangers.flightlog.core.model.UserAccount;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,17 +44,23 @@ public class WebSecurityConfigurationTest {
 
 	@Test
 	public void whenLoggedUserRequestsHomePage_ThenSuccess() {
+		// given
+		UserAccount account = new UserAccount();
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String jwtToken = tokenProvider.createToken( authentication, false );
+		String jwtToken = tokenProvider.createToken( account, authentication, false );
 		HttpHeaders headers = new HttpHeaders();
 		headers.add( JwtToken.AUTHORIZATION_HEADER, JwtToken.AUTHORIZATION_TYPE + " " + jwtToken );
 		HttpEntity<String> entity = new HttpEntity<>( "parameters", headers );
-		String username = ((User)authentication.getPrincipal()).getUsername();
 
+		// when
 		ResponseEntity<String> response = restTemplate.exchange( base.toString(), HttpMethod.GET, entity, String.class );
 
+		// then
+		String username = ((User)authentication.getPrincipal()).getUsername();
 		assertThat( response.getStatusCode() ).isEqualTo( HttpStatus.OK );
 		assertThat( response.getBody() ).isEqualTo( "{\"username\":\"" + username + "\"}" );
+
+		// NEXT Check the JWT???
 	}
 
 	@Test

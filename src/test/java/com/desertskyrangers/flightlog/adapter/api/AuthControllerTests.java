@@ -42,6 +42,9 @@ public class AuthControllerTests {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
+	//	@Autowired
+	//	private StateRetrieving stateRetrieving;
+
 	@Autowired
 	private StatePersisting statePersisting;
 
@@ -57,10 +60,14 @@ public class AuthControllerTests {
 	@Test
 	public void whenApiAuthRegister_thenSuccessResponse() throws Exception {
 		// given
-		String username = "mockusername";
+		String username = "mockusernameForApiAuthRegister";
 		String password = "mockpassword";
-		String email = "mock@email.com";
+		String email = username + "@example.com";
 		String content = Json.stringify( Map.of( "username", username, "password", password, "email", email ) );
+
+		UserToken token = new UserToken().principal( username ).credential( passwordEncoder.encode( password ) );
+		UserAccount account = new UserAccount().email( email ).tokens( Set.of( token ) );
+		statePersisting.upsert( account );
 
 		// when
 		this.mockMvc.perform( post( ApiPath.AUTH_REGISTER ).with( csrf() ).content( content ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isAccepted() );
@@ -141,7 +148,7 @@ public class AuthControllerTests {
 	@Test
 	public void whenApiAuthLogin_thenSuccessResponse() throws Exception {
 		// given
-		String username = "mockusername";
+		String username = "mockusernameForApiAuthLogin";
 		String password = "mockpassword";
 		String remember = "true";
 

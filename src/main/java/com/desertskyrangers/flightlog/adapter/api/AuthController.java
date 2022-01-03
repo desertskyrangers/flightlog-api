@@ -6,6 +6,7 @@ import com.desertskyrangers.flightlog.adapter.api.model.ReactLoginRequest;
 import com.desertskyrangers.flightlog.adapter.api.model.ReactLoginResponse;
 import com.desertskyrangers.flightlog.adapter.api.model.ReactRegisterRequest;
 import com.desertskyrangers.flightlog.adapter.api.model.ReactRegisterResponse;
+import com.desertskyrangers.flightlog.core.model.UserAccount;
 import com.desertskyrangers.flightlog.core.model.Verification;
 import com.desertskyrangers.flightlog.port.AuthRequesting;
 import com.desertskyrangers.flightlog.port.UserManagement;
@@ -25,10 +26,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @RestController
@@ -64,16 +62,16 @@ public class AuthController {
 		if( Text.isBlank( request.getUsername() ) ) messages.add( "Username required" );
 		if( Text.isBlank( request.getPassword() ) ) messages.add( "Password required" );
 		if( Text.isBlank( request.getEmail() ) ) messages.add( "Email required" );
-		if( userManagement.findByUsername( request.getUsername() ).isPresent() ) messages.add( "Username not available" );
 
 		if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactRegisterResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
 
 		try {
 			UUID verificationId = UUID.randomUUID();
 			messages.addAll( authRequesting.requestUserRegister( request.getUsername(), request.getEmail(), request.getPassword(), verificationId ) );
+
 			if( messages.isEmpty() ) {
 				// Generate the JWT token like login
-				String jwt = authenticate( new ReactLoginRequest().setUsername( request.getUsername() ).setPassword( request.getPassword() ).setRemember( false ) );
+				String jwt = authenticate( request.getUsername(), request.getPassword(), false );
 				ReactRegisterResponse response = new ReactRegisterResponse().setId( verificationId.toString() ).setJwt( new JwtToken( jwt ) );
 				return new ResponseEntity<>( response, HttpStatus.ACCEPTED );
 			} else {
@@ -102,7 +100,7 @@ public class AuthController {
 		return new ResponseEntity<>( Map.of( "messages", messages ), HttpStatus.OK );
 	}
 
-		@PostMapping( path = ApiPath.AUTH_VERIFY, consumes = "application/json", produces = "application/json" )
+	@PostMapping( path = ApiPath.AUTH_VERIFY, consumes = "application/json", produces = "application/json" )
 	ResponseEntity<Map<String, Object>> verify( @RequestBody Map<String, Object> request ) {
 		String id = (String)request.get( "id" );
 		String code = (String)request.get( "code" );
@@ -129,13 +127,15 @@ public class AuthController {
 		List<String> messages = new ArrayList<>();
 		if( Text.isBlank( request.getUsername() ) ) messages.add( "Username required" );
 		if( Text.isBlank( request.getPassword() ) ) messages.add( "Password required" );
-		if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactLoginResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
+		if( !messages.isEmpty() ) {
+			log.warn( "bad request=" + messages );
+			return new ResponseEntity<>( new ReactLoginResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
+		}
 
 		// Authenticate
 		try {
-			new ReactLoginResponse().setJwt( new JwtToken( authenticate( request ) ) );
 			log.info( "user login username=" + request.getUsername() );
-			return new ResponseEntity<>( new ReactLoginResponse().setJwt( new JwtToken( authenticate( request ) ) ), HttpStatus.OK );
+			return new ResponseEntity<>( new ReactLoginResponse().setJwt( new JwtToken( authenticate( request.getUsername(), request.getPassword(), request.isRemember() ) ) ), HttpStatus.OK );
 		} catch( UsernameNotFoundException exception ) {
 			log.warn( "Account not found: " + request.getUsername() );
 			return new ResponseEntity<>( new ReactLoginResponse().setMessages( List.of( "Account not found" ) ), HttpStatus.UNAUTHORIZED );
@@ -159,13 +159,17 @@ public class AuthController {
 		return new ResponseEntity<>( null, HttpStatus.OK );
 	}
 
-	private String authenticate( ReactLoginRequest request ) {
-		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken( request.getUsername(), request.getPassword() );
+	private String authenticate( String username, String password, boolean remember ) {
+		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken( username, password );
 		Authentication authentication = this.authenticationManager.authenticate( authenticationToken );
 		SecurityContextHolder.getContext().setAuthentication( authentication );
 
+		Optional<UserAccount> optionalAccount = userManagement.findByUsername( username );
+		if( optionalAccount.isEmpty() ) return "Account not found: " + username;
+
+
 		// Create JWT token and return to requester
-		return tokenProvider.createToken( authentication, request.isRemember() );
+		return tokenProvider.createToken( optionalAccount.get(), authentication, remember );
 	}
 
 }

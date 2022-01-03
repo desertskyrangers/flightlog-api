@@ -4,9 +4,7 @@ import com.desertskyrangers.flightlog.core.model.UserAccount;
 import com.desertskyrangers.flightlog.core.model.UserToken;
 import com.desertskyrangers.flightlog.core.model.Verification;
 
-import java.util.Collection;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public interface StateRetrieving {
 
@@ -14,9 +12,11 @@ public interface StateRetrieving {
 
 	Optional<UserToken> findUserTokenByPrincipal( String username );
 
+	List<UserAccount> findAllUserAccounts();
+
 	Optional<UserAccount> findUserAccount( UUID id );
 
-	Collection<Verification> findAllVerifications();
+	List<Verification> findAllVerifications();
 
 	Optional<Verification> findVerification( UUID id );
 }

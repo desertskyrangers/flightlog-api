@@ -1,5 +1,7 @@
 package com.desertskyrangers.flightlog.adapter.api.jwt;
 
+import com.desertskyrangers.flightlog.core.AppPrincipal;
+import com.desertskyrangers.flightlog.core.model.UserAccount;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -53,8 +55,10 @@ public class JwtTokenProvider {
 		this.tokenValidityInMillisecondsForRememberMe = 1000L * jwtTokenValidityInSecondsForRememberMe;
 	}
 
-	public String createToken( Authentication authentication, boolean remember ) {
+	public String createToken( UserAccount account, Authentication authentication, boolean remember ) {
 		String authorities = authentication.getAuthorities().stream().map( GrantedAuthority::getAuthority ).collect( Collectors.joining( "," ) );
+		//log.warn( "auth=" + authentication.getClass().getName() );
+		//UsernamePasswordAuthenticationToken t = (UsernamePasswordAuthenticationToken)authentication;
 
 		long now = (new Date()).getTime();
 		Date validity;
@@ -64,7 +68,13 @@ public class JwtTokenProvider {
 			validity = new Date( now + tokenValidityInMilliseconds );
 		}
 
-		String token = Jwts.builder().setSubject( authentication.getName() ).claim( AUTHORITIES_KEY, authorities ).signWith( key, SignatureAlgorithm.HS512 ).setExpiration( validity ).compact();
+		String token = Jwts.builder()
+			.setId( account.id().toString() )
+			.setSubject( authentication.getName() )
+			.claim( AUTHORITIES_KEY, authorities )
+			.setExpiration( validity )
+			.signWith( key, SignatureAlgorithm.HS512 )
+			.compact();
 
 		// TODO Potentially store the tokens?
 

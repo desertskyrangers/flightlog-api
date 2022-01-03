@@ -50,7 +50,7 @@ public class AuthRequestingService implements AuthRequesting {
 	}
 
 	@Scheduled( fixedRate = 1, timeUnit = TimeUnit.MINUTES )
-	public void cleanupExpiredVerificationsAndAccounts() {
+	void cleanupExpiredVerificationsAndAccounts() {
 		for( Verification verification : stateRetrieving.findAllVerifications() ) {
 			if( verification.isExpired() ) {
 				stateRetrieving.findUserAccount( verification.userId() ).ifPresent( statePersisting::remove );
@@ -77,7 +77,7 @@ public class AuthRequestingService implements AuthRequesting {
 
 		if( !validUsername ) messages.add( "Invalid username" );
 		if( !validPassword ) messages.add( "Invalid password" );
-		if( !validEmail ) messages.add( "Invalid password" );
+		if( !validEmail ) messages.add( "Invalid email address" );
 
 		// Check and create tokens
 		Set<UserToken> tokens = new HashSet<>();

@@ -1,7 +1,7 @@
 package com.desertskyrangers.flightlog.adapter.state;
 
-import com.desertskyrangers.flightlog.adapter.state.entity.UserEntity;
 import com.desertskyrangers.flightlog.adapter.state.entity.TokenEntity;
+import com.desertskyrangers.flightlog.adapter.state.entity.UserEntity;
 import com.desertskyrangers.flightlog.adapter.state.entity.VerificationEntity;
 import com.desertskyrangers.flightlog.core.model.UserAccount;
 import com.desertskyrangers.flightlog.core.model.UserToken;
@@ -9,7 +9,7 @@ import com.desertskyrangers.flightlog.core.model.Verification;
 import com.desertskyrangers.flightlog.port.StateRetrieving;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -41,13 +41,18 @@ public class StateRetrievingService implements StateRetrieving {
 	}
 
 	@Override
+	public List<UserAccount> findAllUserAccounts() {
+		return userAccountRepo.findAll().stream().map( UserEntity::toUserAccount ).collect( Collectors.toList() );
+	}
+
+	@Override
 	public Optional<UserAccount> findUserAccount( UUID id ) {
 		return userAccountRepo.findById( id ).map( UserEntity::toUserAccount );
 	}
 
 	@Override
-	public Collection<Verification> findAllVerifications() {
-		return StreamSupport.stream( verificationRepo.findAll().spliterator(), false ).map( VerificationEntity::toVerification ).collect( Collectors.toSet() );
+	public List<Verification> findAllVerifications() {
+		return StreamSupport.stream( verificationRepo.findAll().spliterator(), false ).map( VerificationEntity::toVerification ).collect( Collectors.toList() );
 	}
 
 	@Override

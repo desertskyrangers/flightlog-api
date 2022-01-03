@@ -16,7 +16,7 @@ public class FlightLogApp {
 
 	public static void main( String[] args ) {
 		ConfigurableApplicationContext context =SpringApplication.run( FlightLogApp.class, args );
-		//context.getBean( InitialConfig.class ).init();
+		context.getBean( InitialConfig.class ).init();
 	}
 
 	public FlightLogApp( final ApplicationContext context ) {
