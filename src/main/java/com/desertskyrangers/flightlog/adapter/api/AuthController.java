@@ -146,16 +146,16 @@ public class AuthController {
 			log.info( "user login username=" + request.getUsername() );
 			return new ResponseEntity<>( new ReactLoginResponse().setJwt( new JwtToken( authenticate( request ) ) ), HttpStatus.OK );
 		} catch( UsernameNotFoundException exception ) {
-			log.warn( "Unknown not found: " + request.getUsername(), exception );
+			log.warn( "Account not found: " + request.getUsername() );
 			return new ResponseEntity<>( new ReactLoginResponse().setMessages( List.of( "Account not found" ) ), HttpStatus.UNAUTHORIZED );
 		} catch( DisabledException exception ) {
-			log.warn( "Account disabled: " + request.getUsername(), exception );
+			log.warn( "Account disabled: " + request.getUsername() );
 			return new ResponseEntity<>( new ReactLoginResponse().setMessages( List.of( "Account disabled" ) ), HttpStatus.UNAUTHORIZED );
 		} catch( LockedException exception ) {
-			log.warn( "Account locked: " + request.getUsername(), exception );
+			log.warn( "Account locked: " + request.getUsername() );
 			return new ResponseEntity<>( new ReactLoginResponse().setMessages( List.of( "Account locked" ) ), HttpStatus.UNAUTHORIZED );
 		} catch( BadCredentialsException exception ) {
-			log.warn( "Authentication failure: " + request.getUsername(), exception );
+			log.warn( "Authentication failure: " + request.getUsername() );
 			return new ResponseEntity<>( new ReactLoginResponse().setMessages( List.of( "Authentication failure" ) ), HttpStatus.UNAUTHORIZED );
 		} catch( AuthenticationException exception ) {
 			log.warn( "Authentication error: " + request.getUsername(), exception );
