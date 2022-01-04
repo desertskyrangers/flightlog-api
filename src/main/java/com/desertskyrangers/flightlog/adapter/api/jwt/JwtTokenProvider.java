@@ -1,6 +1,5 @@
 package com.desertskyrangers.flightlog.adapter.api.jwt;
 
-import com.desertskyrangers.flightlog.core.AppPrincipal;
 import com.desertskyrangers.flightlog.core.model.UserAccount;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -19,13 +18,12 @@ import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
 @Slf4j
 public class JwtTokenProvider {
-
-	private static final String AUTHORITIES_KEY = "auth";
 
 	private Key key;
 
@@ -43,7 +41,7 @@ public class JwtTokenProvider {
 	private Integer jwtTokenValidityInSeconds;
 
 	@Value( "${security.authentication.jwt.token-validity-in-seconds-for-remember-me}" )
-	private Integer jwtTokenValidityInSecondsForRememberMe;
+	private Integer jwtRememberedTokenValidityInSeconds;
 
 	public JwtTokenProvider() {}
 
@@ -52,39 +50,24 @@ public class JwtTokenProvider {
 		byte[] keyBytes = Decoders.BASE64.decode( jwtSecret );
 		this.key = Keys.hmacShaKeyFor( keyBytes );
 		this.tokenValidityInMilliseconds = 1000L * jwtTokenValidityInSeconds;
-		this.tokenValidityInMillisecondsForRememberMe = 1000L * jwtTokenValidityInSecondsForRememberMe;
+		this.tokenValidityInMillisecondsForRememberMe = 1000L * jwtRememberedTokenValidityInSeconds;
 	}
 
 	public String createToken( UserAccount account, Authentication authentication, boolean remember ) {
-		String authorities = authentication.getAuthorities().stream().map( GrantedAuthority::getAuthority ).collect( Collectors.joining( "," ) );
-		//log.warn( "auth=" + authentication.getClass().getName() );
-		//UsernamePasswordAuthenticationToken t = (UsernamePasswordAuthenticationToken)authentication;
+		return createToken( account, authentication, remember, System.currentTimeMillis() );
+	}
 
-		long now = (new Date()).getTime();
-		Date validity;
-		if( remember ) {
-			validity = new Date( now + tokenValidityInMillisecondsForRememberMe );
-		} else {
-			validity = new Date( now + tokenValidityInMilliseconds );
-		}
-
-		String token = Jwts.builder()
-			.setId( account.id().toString() )
-			.setSubject( authentication.getName() )
-			.claim( AUTHORITIES_KEY, authorities )
-			.setExpiration( validity )
-			.signWith( key, SignatureAlgorithm.HS512 )
-			.compact();
-
-		// TODO Potentially store the tokens?
-
-		return token;
+	public Map<String, Object> parse( String token ) {
+		return Jwts.parserBuilder().setSigningKey( key ).build().parseClaimsJws( token ).getBody();
 	}
 
 	public Authentication getAuthentication( String token ) {
 		Claims claims = Jwts.parserBuilder().setSigningKey( key ).build().parseClaimsJws( token ).getBody();
 
-		Collection<? extends GrantedAuthority> authorities = Arrays.stream( claims.get( AUTHORITIES_KEY ).toString().split( "," ) ).map( SimpleGrantedAuthority::new ).collect( Collectors.toList() );
+		Collection<? extends GrantedAuthority> authorities = Arrays
+			.stream( claims.get( JwtToken.AUTHORITIES_CLAIM_KEY ).toString().split( "," ) )
+			.map( SimpleGrantedAuthority::new )
+			.collect( Collectors.toList() );
 
 		User principal = new User( claims.getSubject(), "", authorities );
 
@@ -109,6 +92,36 @@ public class JwtTokenProvider {
 			log.trace( "JWT token compact of handler are invalid trace: {}", exception.getMessage(), exception );
 		}
 		return false;
+	}
+
+	int getJwtValidityInSeconds() {
+		return jwtTokenValidityInSeconds;
+	}
+
+	int getRememberedJwtValidityInSeconds() {
+		return jwtRememberedTokenValidityInSeconds;
+	}
+
+	String createToken( UserAccount account, Authentication authentication, boolean remember, long timestamp ) {
+		String userId = account.id().toString();
+		String subject = authentication.getName();
+		String authorities = authentication.getAuthorities().stream().map( GrantedAuthority::getAuthority ).collect( Collectors.joining( "," ) );
+
+		Date validity = new Date( timestamp + tokenValidityInMilliseconds );
+		if( remember ) validity = new Date( timestamp + tokenValidityInMillisecondsForRememberMe );
+
+		String token = Jwts
+			.builder()
+			.claim( JwtToken.USER_ID_CLAIM_KEY, userId )
+			.setSubject( subject )
+			.claim( JwtToken.AUTHORITIES_CLAIM_KEY, authorities )
+			.setExpiration( validity )
+			.signWith( key, SignatureAlgorithm.HS512 )
+			.compact();
+
+		// TODO Potentially store the tokens?
+
+		return token;
 	}
 
 }

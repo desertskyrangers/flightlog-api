@@ -1,14 +1,18 @@
 package com.desertskyrangers.flightlog.adapter.api;
 
-import com.desertskyrangers.flightlog.core.UserAccountService;
+import com.desertskyrangers.flightlog.adapter.api.model.ReactProfileResponse;
 import com.desertskyrangers.flightlog.adapter.api.model.ReactRegisterRequest;
+import com.desertskyrangers.flightlog.adapter.api.model.ReactUserAccount;
+import com.desertskyrangers.flightlog.core.UserAccountService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -21,10 +25,19 @@ public class UserController {
 		this.userAccountService = userAccountService;
 	}
 
-//	@GetMapping
-//	public List<ReactRegisterRequest> findAll() {
-//		return service.find().stream().map( ReactRegisterRequest::from ).collect( Collectors.toList() );
-//	}
+	@GetMapping( path = ApiPath.PROFILE )
+	ResponseEntity<ReactProfileResponse> profile() {
+		String username = ((User)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+		Optional<ReactUserAccount> optional = userAccountService.findByUsername( username ).map( ReactUserAccount::from );
+		if( optional.isEmpty() ) return new ResponseEntity<>( new ReactProfileResponse().setAccount( new ReactUserAccount() ), HttpStatus.OK );
+
+		return new ResponseEntity<>( new ReactProfileResponse().setAccount( optional.get() ), HttpStatus.OK );
+	}
+
+	//	@GetMapping
+	//	public List<ReactRegisterRequest> findAll() {
+	//		return service.find().stream().map( ReactRegisterRequest::from ).collect( Collectors.toList() );
+	//	}
 
 	@GetMapping( value = "/{id}" )
 	public ReactRegisterRequest findById( @PathVariable( "id" ) Long id ) {

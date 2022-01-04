@@ -50,12 +50,6 @@ public class AuthController {
 		this.passwordEncoder = passwordEncoder;
 	}
 
-	@GetMapping( path = ApiPath.PROFILE )
-	Map<String, Object> profile() {
-		String username = ((User)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-		return Map.of( "username", username );
-	}
-
 	@PostMapping( path = ApiPath.AUTH_REGISTER, consumes = "application/json", produces = "application/json" )
 	ResponseEntity<ReactRegisterResponse> register( @RequestBody ReactRegisterRequest request ) {
 		List<String> messages = new ArrayList<>();

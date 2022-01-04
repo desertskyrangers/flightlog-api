@@ -26,7 +26,7 @@ public class UserAccount {
 
 	private String smsNumber;
 
-	private SmsProvider smsProvider;
+	private SmsCarrier smsCarrier;
 
 	private boolean smsVerified;
 

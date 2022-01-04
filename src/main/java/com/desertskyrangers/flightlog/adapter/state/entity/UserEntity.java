@@ -1,6 +1,6 @@
 package com.desertskyrangers.flightlog.adapter.state.entity;
 
-import com.desertskyrangers.flightlog.core.model.SmsProvider;
+import com.desertskyrangers.flightlog.core.model.SmsCarrier;
 import com.desertskyrangers.flightlog.core.model.UserAccount;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -71,7 +71,7 @@ public class UserEntity {
 		user.email( entity.getEmail() );
 		user.emailVerified( entity.getEmailVerified() != null && entity.getEmailVerified() );
 		user.smsNumber( entity.getSmsNumber() );
-		if( entity.getSmsNumber() != null ) user.smsProvider( SmsProvider.valueOf( entity.getSmsNumber().toUpperCase() ) );
+		if( entity.getSmsNumber() != null ) user.smsCarrier( SmsCarrier.valueOf( entity.getSmsNumber().toUpperCase() ) );
 		user.smsVerified( entity.getSmsVerified() != null && entity.getSmsVerified() );
 		user.tokens( entity.getTokens().stream().map( c -> TokenEntity.toUserCredential( c ).userAccount( user ) ).collect( Collectors.toSet() ) );
 		user.roles( entity.getRoles() );
@@ -93,7 +93,7 @@ public class UserEntity {
 		entity.setEmail( user.email() );
 		entity.setEmailVerified( user.emailVerified() );
 		entity.setSmsNumber( user.smsNumber() );
-		if( user.smsProvider() != null ) entity.setSmsNumber( user.smsProvider().name().toLowerCase() );
+		if( user.smsCarrier() != null ) entity.setSmsNumber( user.smsCarrier().name().toLowerCase() );
 		entity.setSmsVerified( user.smsVerified() );
 		if( includeTokens ) entity.setTokens( user.tokens().stream().map( TokenEntity::from ).peek( c -> c.setUserAccount( entity ) ).collect( Collectors.toSet() ) );
 		entity.setRoles( user.roles() );

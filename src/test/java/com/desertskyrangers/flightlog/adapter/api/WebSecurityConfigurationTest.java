@@ -59,8 +59,6 @@ public class WebSecurityConfigurationTest {
 		String username = ((User)authentication.getPrincipal()).getUsername();
 		assertThat( response.getStatusCode() ).isEqualTo( HttpStatus.OK );
 		assertThat( response.getBody() ).isEqualTo( "{\"username\":\"" + username + "\"}" );
-
-		// NEXT Check the JWT???
 	}
 
 	@Test

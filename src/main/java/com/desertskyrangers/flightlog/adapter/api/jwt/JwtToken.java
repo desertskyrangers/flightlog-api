@@ -11,6 +11,14 @@ public class JwtToken {
 
 	public static final String AUTHORIZATION_TYPE = "Bearer";
 
+	static final String USER_ID_CLAIM_KEY = "uid";
+
+	static final String SUBJECT_CLAIM_KEY = "sub";
+
+	static final String AUTHORITIES_CLAIM_KEY = "auth";
+
+	static final String EXPIRES_CLAIM_KEY = "exp";
+
 	private String token;
 
 	public JwtToken( String token ) {
