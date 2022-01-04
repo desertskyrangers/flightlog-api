@@ -16,8 +16,7 @@ public class WebConfig implements WebMvcConfigurer {
 		registry.addMapping( ApiPath.AUTH_VERIFY ).allowedOrigins( "*" ).allowedMethods( "POST" );
 		registry.addMapping( ApiPath.AUTH_LOGIN ).allowedOrigins( "*" ).allowedMethods( "POST" );
 		registry.addMapping( ApiPath.MONITOR_STATUS ).allowedOrigins( "*" ).allowedMethods( "GET" );
-		registry.addMapping( "/**" ).allowedOrigins( "http://localhost:3000" ).allowedMethods( "OPTIONS", "HEAD", "GET", "POST", "PUT", "DELETE", "PATCH" );
-		//registry.addMapping( "/**" ).allowedOrigins( "http://localhost:3000" );
+		registry.addMapping( "/**" ).allowedMethods( "HEAD", "GET", "POST", "PUT", "DELETE", "PATCH" );
 	}
 
 }

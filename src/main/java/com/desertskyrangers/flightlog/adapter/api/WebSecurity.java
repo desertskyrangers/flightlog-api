@@ -54,7 +54,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 	protected void configure( HttpSecurity http ) throws Exception {
 		// @formatter:off
 		http
-			.csrf()
+			.cors()
+			.and().csrf()
 				.ignoringAntMatchers( ApiPath.AUTH_REGISTER )
 				.ignoringAntMatchers( ApiPath.AUTH_RESEND )
 				.ignoringAntMatchers( ApiPath.AUTH_VERIFY )
