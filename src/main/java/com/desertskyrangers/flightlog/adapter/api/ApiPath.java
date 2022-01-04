@@ -4,9 +4,9 @@ public interface ApiPath {
 
 	String HOST = "https://flightlog.desertskyrangers.com";
 
-	String ROOT = "/api";
+	String API = "/api";
 
-	String AUTH = ROOT + "/auth";
+	String AUTH = API + "/auth";
 
 	String AUTH_REGISTER = AUTH + "/register";
 
@@ -18,10 +18,10 @@ public interface ApiPath {
 
 	String AUTH_LOGOUT = AUTH + "/logout";
 
-	String MONITOR = ROOT + "/monitor";
+	String MONITOR = API + "/monitor";
 
 	String MONITOR_STATUS = MONITOR + "/status";
 
-	String PROFILE = ROOT + "/profile";
+	String PROFILE = API + "/profile";
 
 }

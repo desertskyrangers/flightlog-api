@@ -2,7 +2,10 @@ package com.desertskyrangers.flightlog.adapter.api;
 
 import com.desertskyrangers.flightlog.adapter.api.jwt.JwtToken;
 import com.desertskyrangers.flightlog.adapter.api.jwt.JwtTokenProvider;
+import com.desertskyrangers.flightlog.adapter.api.model.ReactProfileResponse;
+import com.desertskyrangers.flightlog.adapter.api.model.ReactUserAccount;
 import com.desertskyrangers.flightlog.core.model.UserAccount;
+import com.desertskyrangers.flightlog.util.Json;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +13,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
+import org.springframework.security.authentication.TestingAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import java.net.MalformedURLException;
@@ -21,13 +25,12 @@ import java.net.URL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
-@WithMockUser
 @SpringBootTest( webEnvironment = RANDOM_PORT )
-public class WebSecurityConfigurationTest {
+public class WebSecurityEnforcementTest {
 
 	private TestRestTemplate restTemplate;
 
-	private URL base;
+	private URL url;
 
 	@Autowired
 	private JwtTokenProvider tokenProvider;
@@ -38,35 +41,36 @@ public class WebSecurityConfigurationTest {
 	@BeforeEach
 	public void setUp() throws MalformedURLException {
 		restTemplate = new TestRestTemplate( "user", "password" );
-		base = new URL( "http://localhost:" + port + ApiPath.PROFILE );
-
+		url = new URL( "http://localhost:" + port + ApiPath.PROFILE );
 	}
 
 	@Test
-	public void whenLoggedUserRequestsHomePage_ThenSuccess() {
+	public void whenUserWithValidJwtRequestsProfilePage_ThenSuccess() {
 		// given
-		UserAccount account = new UserAccount();
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String jwtToken = tokenProvider.createToken( account, authentication, false );
+		Authentication authentication = new TestingAuthenticationToken( "testuser", "password", "USER" );
+		String jwtToken = tokenProvider.createToken( new UserAccount(), authentication, false );
+
 		HttpHeaders headers = new HttpHeaders();
 		headers.add( JwtToken.AUTHORIZATION_HEADER, JwtToken.AUTHORIZATION_TYPE + " " + jwtToken );
 		HttpEntity<String> entity = new HttpEntity<>( "parameters", headers );
 
 		// when
-		ResponseEntity<String> response = restTemplate.exchange( base.toString(), HttpMethod.GET, entity, String.class );
+		ResponseEntity<String> response = restTemplate.exchange( url.toString(), HttpMethod.GET, entity, String.class );
 
 		// then
-		String username = ((User)authentication.getPrincipal()).getUsername();
+		String accountJson = Json.stringify( new ReactProfileResponse().setAccount( new ReactUserAccount() ) );
 		assertThat( response.getStatusCode() ).isEqualTo( HttpStatus.OK );
-		assertThat( response.getBody() ).isEqualTo( "{\"username\":\"" + username + "\"}" );
+		assertThat( response.getBody() ).isEqualTo( accountJson );
 	}
 
 	@Test
-	@WithMockUser
-	public void whenUserWithWrongCredentials_ThenForbidden() {
-		HttpEntity<String> entity = new HttpEntity<>( "parameters", new HttpHeaders() );
+	public void whenUserWithInvalidJwtRequestsProfilePage_ThenForbidden() {
+		String jwtToken = "fake.jwt.token";
+		HttpHeaders headers = new HttpHeaders();
+		headers.add( JwtToken.AUTHORIZATION_HEADER, JwtToken.AUTHORIZATION_TYPE + " " + jwtToken );
+		HttpEntity<String> entity = new HttpEntity<>( "parameters", headers );
 
-		ResponseEntity<String> response = restTemplate.exchange( base.toString(), HttpMethod.GET, entity, String.class );
+		ResponseEntity<String> response = restTemplate.exchange( url.toString(), HttpMethod.GET, entity, String.class );
 
 		assertThat( response.getStatusCode() ).isEqualTo( HttpStatus.FORBIDDEN );
 		assertThat( response.getBody() ).isNull();

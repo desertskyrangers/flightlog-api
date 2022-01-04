@@ -16,7 +16,6 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
-@RequestMapping( "/api/user" )
 public class UserController {
 
 	private final UserAccountService userAccountService;

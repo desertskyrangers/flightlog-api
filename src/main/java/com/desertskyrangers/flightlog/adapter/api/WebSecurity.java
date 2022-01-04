@@ -53,12 +53,13 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure( HttpSecurity http ) throws Exception {
 		// @formatter:off
-		http.cors()
-			.and().csrf().ignoringAntMatchers( ApiPath.AUTH_REGISTER )
-			.and().csrf().ignoringAntMatchers( ApiPath.AUTH_RESEND )
-			.and().csrf().ignoringAntMatchers( ApiPath.AUTH_VERIFY )
-			.and().csrf().ignoringAntMatchers( ApiPath.AUTH_LOGIN )
-			.and().csrf().ignoringAntMatchers( ApiPath.AUTH_LOGOUT )
+		http
+			.csrf()
+				.ignoringAntMatchers( ApiPath.AUTH_REGISTER )
+				.ignoringAntMatchers( ApiPath.AUTH_RESEND )
+				.ignoringAntMatchers( ApiPath.AUTH_VERIFY )
+				.ignoringAntMatchers( ApiPath.AUTH_LOGIN )
+				.ignoringAntMatchers( ApiPath.AUTH_LOGOUT )
 			.and().authorizeRequests()
 				.mvcMatchers( HttpMethod.POST, ApiPath.AUTH_REGISTER ).permitAll()
 				.antMatchers( HttpMethod.POST, ApiPath.AUTH_RESEND ).permitAll()
@@ -67,7 +68,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 				.antMatchers( HttpMethod.POST, ApiPath.AUTH_LOGOUT ).permitAll()
 				.mvcMatchers( HttpMethod.GET, ApiPath.MONITOR_STATUS ).permitAll()
 				.anyRequest().authenticated()
-			.and().addFilterAfter( new JwtFilter( jwtTokenProvider ), UsernamePasswordAuthenticationFilter.class );
+			.and()
+				.addFilterAfter( new JwtFilter( jwtTokenProvider ), UsernamePasswordAuthenticationFilter.class );
 		// @formatter:on
 	}
 
