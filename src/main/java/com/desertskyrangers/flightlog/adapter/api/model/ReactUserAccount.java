@@ -19,6 +19,8 @@ public class ReactUserAccount {
 
 	private String lastName;
 
+	private String preferredName;
+
 	private String email;
 
 	private boolean emailVerified;
@@ -33,11 +35,12 @@ public class ReactUserAccount {
 		boolean emailChanged = Objects.equals( user.email(), this.getEmail() );
 		boolean smsChanged = Objects.equals( user.smsNumber(), this.getSmsNumber() );
 
-		if( getFirstName() != null ) user.firstName( this.getFirstName() );
-		if( this.getLastName() != null ) user.lastName( this.getLastName() );
-		if( this.getEmail() != null ) user.email( this.getEmail() );
+		user.firstName( this.getFirstName() );
+		user.lastName( this.getLastName() );
+		user.preferredName( this.getPreferredName() );
+		user.email( this.getEmail() );
 		user.emailVerified( !emailChanged );
-		if( this.getSmsNumber() != null ) user.smsNumber( this.getSmsNumber() );
+		user.smsNumber( this.getSmsNumber() );
 		if( Text.isNotBlank( this.getSmsCarrier() ) ) user.smsCarrier( SmsCarrier.valueOf( this.getSmsCarrier().toUpperCase() ) );
 		user.smsVerified( !smsChanged );
 
@@ -49,6 +52,7 @@ public class ReactUserAccount {
 		reactAccount.setId( account.id().toString() );
 		reactAccount.setFirstName( account.firstName() );
 		reactAccount.setLastName( account.lastName() );
+		reactAccount.setPreferredName( account.preferredName() );
 		reactAccount.setEmail( account.email() );
 		reactAccount.setEmailVerified( account.emailVerified() );
 		reactAccount.setSmsNumber( account.smsNumber() );
