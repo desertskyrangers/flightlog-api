@@ -35,17 +35,17 @@ public class UserAccountService implements UserManagement {
 	}
 
 	@Override
-	public Optional<UserAccount> findByUsername( String username ) {
+	public Optional<UserAccount> findByPrincipal( String username ) {
 		return stateRetrieving.findUserTokenByPrincipal( username ).map( UserToken::userAccount );
 	}
 
 	@Override
-	public void update( UserAccount account ) {
+	public void upsert( UserAccount account ) {
 		statePersisting.upsert( account );
 	}
 
 	@Override
-	public void delete( UserAccount account ) {
+	public void remove( UserAccount account ) {
 		statePersisting.remove( account );
 	}
 }

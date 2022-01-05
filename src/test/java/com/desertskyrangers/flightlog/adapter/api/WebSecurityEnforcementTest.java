@@ -59,7 +59,7 @@ public class WebSecurityEnforcementTest {
 
 		// then
 		String accountJson = Json.stringify( new ReactProfileResponse().setAccount( new ReactUserAccount() ) );
-		assertThat( response.getStatusCode() ).isEqualTo( HttpStatus.OK );
+		assertThat( response.getStatusCode() ).isEqualTo( HttpStatus.BAD_REQUEST );
 		assertThat( response.getBody() ).isEqualTo( accountJson );
 	}
 

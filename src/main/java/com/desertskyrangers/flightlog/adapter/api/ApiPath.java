@@ -24,4 +24,6 @@ public interface ApiPath {
 
 	String PROFILE = API + "/profile";
 
+	String USER = API + "/user";
+
 }

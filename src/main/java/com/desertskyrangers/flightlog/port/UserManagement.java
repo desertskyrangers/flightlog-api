@@ -1,11 +1,9 @@
 package com.desertskyrangers.flightlog.port;
 
 import com.desertskyrangers.flightlog.core.model.UserAccount;
-import com.desertskyrangers.flightlog.core.model.UserToken;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 public interface UserManagement {
@@ -16,10 +14,10 @@ public interface UserManagement {
 
 	Optional<UserAccount> find( UUID id );
 
-	Optional<UserAccount> findByUsername( String username );
+	Optional<UserAccount> findByPrincipal( String username );
 
-	void update( UserAccount user );
+	void upsert( UserAccount user );
 
-	void delete( UserAccount user );
+	void remove( UserAccount user );
 
 }
