@@ -56,7 +56,7 @@ public class ReactUserAccount {
 		reactAccount.setEmail( account.email() );
 		reactAccount.setEmailVerified( account.emailVerified() );
 		reactAccount.setSmsNumber( account.smsNumber() );
-		reactAccount.setSmsCarrier( account.smsCarrier() == null ? "" : account.smsCarrier().name() );
+		reactAccount.setSmsCarrier( account.smsCarrier() == null ? "" : account.smsCarrier().name().toLowerCase() );
 		reactAccount.setSmsVerified( account.smsVerified() );
 		return reactAccount;
 	}

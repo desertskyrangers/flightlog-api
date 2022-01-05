@@ -4,7 +4,8 @@ public enum SmsCarrier {
 	ATT( "AT&T", "txt.att.net", "mms.att.net" ),
 	SPRINT( "Sprint", "messaging.sprintpcs.com", "pm.sprint.com" ),
 	TMOBILE( "T-Mobile", "tmomail.net", "tmomail.net" ),
-	VERIZON( "Verizon", "vtext.com", "vzwpix.com" );
+	VERIZON( "Verizon", "vtext.com", "vzwpix.com" ),
+	NONE( "No Carrier", "", "" );
 
 	private final String title;
 

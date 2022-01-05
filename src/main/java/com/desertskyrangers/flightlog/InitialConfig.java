@@ -39,9 +39,10 @@ public class InitialConfig {
 		user.tokens( Set.of( usernameToken, emailToken ) );
 		user.firstName( "Tia" );
 		user.lastName( "Test" );
+		user.preferredName( "Tia Test");
 		user.email( "tiat@example.com" );
 		user.smsNumber( "800-555-8428" );
-		user.smsCarrier( SmsCarrier.TMOBILE );
+		user.smsCarrier( SmsCarrier.SPRINT );
 		statePersisting.upsert( user );
 
 		stateRetrieving.findUserTokenByPrincipal( usernameToken.principal() ).ifPresent( t -> log.warn( "Tester created=" + t.principal() ) );
