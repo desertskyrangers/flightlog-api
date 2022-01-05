@@ -2,6 +2,7 @@ package com.desertskyrangers.flightlog.adapter.state.entity;
 
 import com.desertskyrangers.flightlog.core.model.SmsCarrier;
 import com.desertskyrangers.flightlog.core.model.UserAccount;
+import com.desertskyrangers.flightlog.util.Text;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.Fetch;
@@ -39,8 +40,8 @@ public class UserEntity {
 	@Column( name = "smsnumber" )
 	private String smsNumber;
 
-	@Column( name = "smsprovider" )
-	private String provider;
+	@Column( name = "smscarrier" )
+	private String smsCarrier;
 
 	@Column( name = "smsverified" )
 	private Boolean smsVerified;
@@ -71,7 +72,7 @@ public class UserEntity {
 		user.email( entity.getEmail() );
 		user.emailVerified( entity.getEmailVerified() != null && entity.getEmailVerified() );
 		user.smsNumber( entity.getSmsNumber() );
-		if( entity.getSmsNumber() != null ) user.smsCarrier( SmsCarrier.valueOf( entity.getSmsNumber().toUpperCase() ) );
+		if( Text.isNotBlank( entity.getSmsCarrier() ) ) user.smsCarrier( SmsCarrier.valueOf( entity.getSmsCarrier().toUpperCase() ) );
 		user.smsVerified( entity.getSmsVerified() != null && entity.getSmsVerified() );
 		user.tokens( entity.getTokens().stream().map( c -> TokenEntity.toUserCredential( c ).userAccount( user ) ).collect( Collectors.toSet() ) );
 		user.roles( entity.getRoles() );
@@ -93,7 +94,7 @@ public class UserEntity {
 		entity.setEmail( user.email() );
 		entity.setEmailVerified( user.emailVerified() );
 		entity.setSmsNumber( user.smsNumber() );
-		if( user.smsCarrier() != null ) entity.setSmsNumber( user.smsCarrier().name().toLowerCase() );
+		if( user.smsCarrier() != null ) entity.setSmsCarrier( user.smsCarrier().name().toLowerCase() );
 		entity.setSmsVerified( user.smsVerified() );
 		if( includeTokens ) entity.setTokens( user.tokens().stream().map( TokenEntity::from ).peek( c -> c.setUserAccount( entity ) ).collect( Collectors.toSet() ) );
 		entity.setRoles( user.roles() );

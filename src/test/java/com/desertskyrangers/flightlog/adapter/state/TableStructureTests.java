@@ -54,7 +54,7 @@ public class TableStructureTests {
 		expected.add( "email" );
 		expected.add( "emailverified" );
 		expected.add( "smsnumber" );
-		expected.add( "smsprovider" );
+		expected.add( "smscarrier" );
 		expected.add( "smsverified" );
 
 		assertThat( getColumns( "user" ) ).containsExactlyInAnyOrderElementsOf( expected );

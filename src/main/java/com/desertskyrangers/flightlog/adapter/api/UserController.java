@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -64,18 +65,7 @@ public class UserController {
 		Optional<UserAccount> optional = userAccountService.find( id );
 		if( optional.isEmpty() ) return new ResponseEntity<>( new ReactProfileResponse().setAccount( new ReactUserAccount() ), HttpStatus.BAD_REQUEST );
 
-		UserAccount user = optional.get();
-		boolean emailChanged = Objects.equals( user.email(), account.getEmail() );
-		boolean smsChanged = Objects.equals( user.smsNumber(), account.getSmsNumber() );
-
-		// Change the user account values if needed
-		if( account.getFirstName() != null ) user.firstName( account.getFirstName() );
-		if( account.getLastName() != null ) user.lastName( account.getLastName() );
-		if( account.getEmail() != null ) user.email( account.getEmail() );
-		user.emailVerified( !emailChanged );
-		if( account.getSmsNumber() != null ) user.smsNumber( account.getSmsNumber() );
-		if( Text.isNotBlank( account.getSmsCarrier() ) ) user.smsCarrier( SmsCarrier.valueOf( account.getSmsCarrier().toUpperCase() ) );
-		user.smsVerified( !smsChanged );
+		UserAccount user = account.update( optional.get() );
 
 		// Update the user account
 		userAccountService.upsert( user );

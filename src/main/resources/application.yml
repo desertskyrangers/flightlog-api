@@ -21,6 +21,12 @@ logging:
     com:
       desertskyrangers:
         perform: INFO
+    org:
+      springframework:
+        security:
+          web:
+            csrf:
+              CsrfFilter: DEBUG
 
 spring:
   application:

@@ -11,11 +11,11 @@ public class WebConfig implements WebMvcConfigurer {
 
 	@Override
 	public void addCorsMappings( CorsRegistry registry ) {
+		registry.addMapping( ApiPath.MONITOR_STATUS ).allowedOrigins( "*" ).allowedMethods( "GET" );
 		registry.addMapping( ApiPath.AUTH_REGISTER ).allowedOrigins( "*" ).allowedMethods( "POST" );
 		registry.addMapping( ApiPath.AUTH_RESEND ).allowedOrigins( "*" ).allowedMethods( "POST" );
 		registry.addMapping( ApiPath.AUTH_VERIFY ).allowedOrigins( "*" ).allowedMethods( "POST" );
 		registry.addMapping( ApiPath.AUTH_LOGIN ).allowedOrigins( "*" ).allowedMethods( "POST" );
-		registry.addMapping( ApiPath.MONITOR_STATUS ).allowedOrigins( "*" ).allowedMethods( "GET" );
 		registry.addMapping( "/**" ).allowedMethods( "HEAD", "GET", "POST", "PUT", "DELETE", "PATCH" );
 	}
 

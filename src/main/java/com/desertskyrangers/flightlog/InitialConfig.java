@@ -1,5 +1,6 @@
 package com.desertskyrangers.flightlog;
 
+import com.desertskyrangers.flightlog.core.model.SmsCarrier;
 import com.desertskyrangers.flightlog.core.model.UserAccount;
 import com.desertskyrangers.flightlog.core.model.UserToken;
 import com.desertskyrangers.flightlog.port.StatePersisting;
@@ -38,6 +39,9 @@ public class InitialConfig {
 		user.tokens( Set.of( usernameToken, emailToken ) );
 		user.firstName( "Tia" );
 		user.lastName( "Test" );
+		user.email( "tiat@example.com" );
+		user.smsNumber( "800-555-8428" );
+		user.smsCarrier( SmsCarrier.TMOBILE );
 		statePersisting.upsert( user );
 
 		stateRetrieving.findUserTokenByPrincipal( usernameToken.principal() ).ifPresent( t -> log.warn( "Tester created=" + t.principal() ) );
