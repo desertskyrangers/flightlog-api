@@ -1,18 +1,25 @@
 package com.desertskyrangers.flightlog.core.model;
 
 public enum SmsCarrier {
-	ATT("txt.att.net","mms.att.net"),
-	SPRINT("messaging.sprintpcs.com","pm.sprint.com"),
-	TMOBILE("tmomail.net","tmomail.net"),
-	VERIZON("vtext.com","vzwpix.com");
+	ATT( "AT&T", "txt.att.net", "mms.att.net" ),
+	SPRINT( "Sprint", "messaging.sprintpcs.com", "pm.sprint.com" ),
+	TMOBILE( "T-Mobile", "tmomail.net", "tmomail.net" ),
+	VERIZON( "Verizon", "vtext.com", "vzwpix.com" );
 
-	private String smsGateway;
+	private final String title;
 
-	private String mmsGateway;
+	private final String smsGateway;
 
-	SmsCarrier( String smsGateway, String mmsGateway ) {
+	private final String mmsGateway;
+
+	SmsCarrier( String title, String smsGateway, String mmsGateway ) {
+		this.title = title;
 		this.smsGateway = smsGateway;
 		this.mmsGateway = mmsGateway;
+	}
+
+	public String getTitle() {
+		return title;
 	}
 
 	public String getSmsGateway() {
