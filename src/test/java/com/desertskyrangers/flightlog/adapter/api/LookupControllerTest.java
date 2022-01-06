@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WithMockUser
 @SpringBootTest
 @AutoConfigureMockMvc
-public class SmsControllerTest {
+public class LookupControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;

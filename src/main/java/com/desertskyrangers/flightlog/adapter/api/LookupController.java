@@ -1,7 +1,6 @@
 package com.desertskyrangers.flightlog.adapter.api;
 
 import com.desertskyrangers.flightlog.adapter.api.model.ReactSmsCarrier;
-import com.desertskyrangers.flightlog.core.UserAccountService;
 import com.desertskyrangers.flightlog.core.model.SmsCarrier;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -14,7 +13,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-public class SmsController {
+public class LookupController {
 
 	@GetMapping( path = ApiPath.SMS_CARRIERS )
 	ResponseEntity<List<ReactSmsCarrier>> smsCarriers() {
