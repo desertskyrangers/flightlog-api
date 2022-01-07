@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.Map;
 
-@Slf4j
 @RestController
+@Slf4j
 public class MonitorController {
 
 	@Value("${spring.application.version:unknown}") String version;

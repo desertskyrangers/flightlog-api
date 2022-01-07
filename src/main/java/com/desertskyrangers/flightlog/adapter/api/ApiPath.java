@@ -24,8 +24,12 @@ public interface ApiPath {
 
 	String PROFILE = API + "/profile";
 
-	String SMS_CARRIERS = API + "/sms/carriers";
+	String SMS = API + "/sms";
+
+	String SMS_CARRIERS = SMS + "/carriers";
 
 	String USER = API + "/user";
+
+	String USER_AIRCRAFT = USER + "/aircraft";
 
 }

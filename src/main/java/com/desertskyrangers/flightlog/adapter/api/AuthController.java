@@ -26,8 +26,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
 
-@Slf4j
 @RestController
+@Slf4j
 public class AuthController {
 
 	private final AuthRequesting authRequesting;
