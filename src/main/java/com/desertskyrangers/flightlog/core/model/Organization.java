@@ -7,12 +7,13 @@ import java.util.UUID;
 
 @Data
 @Accessors( fluent = true )
-public class Uav {
+public class Organization {
 
 	UUID id;
 
-	UavOwnerType ownerType;
+	String name;
 
-	UUID ownerId;
+	// This is a user account id
+	UUID owner;
 
 }

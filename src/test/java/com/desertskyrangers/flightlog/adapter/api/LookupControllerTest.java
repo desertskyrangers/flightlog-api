@@ -27,7 +27,7 @@ public class LookupControllerTest {
 
 	@Test
 	void testGetSmsCarriers() throws Exception {
-		List<ReactSmsCarrier> response = Arrays.stream( SmsCarrier.values() ).map( c -> new ReactSmsCarrier( c.name().toLowerCase(), c.getTitle() ) ).toList();
+		List<ReactSmsCarrier> response = Arrays.stream( SmsCarrier.values() ).map( c -> new ReactSmsCarrier( c.name().toLowerCase(), c.getName() ) ).toList();
 		this.mockMvc.perform( get( ApiPath.SMS_CARRIERS ) ).andExpect( status().isOk() ).andExpect( content().json( Json.stringify( response ), true ) );
 	}
 

@@ -1,6 +1,6 @@
 package com.desertskyrangers.flightlog.core.model;
 
-public enum UavOwnerType {
+public enum AircraftOwnerType {
 
 	USER,
 	ORG

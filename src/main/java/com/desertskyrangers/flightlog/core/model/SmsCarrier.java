@@ -7,20 +7,20 @@ public enum SmsCarrier {
 	VERIZON( "Verizon", "vtext.com", "vzwpix.com" ),
 	NONE( "No Carrier", "", "" );
 
-	private final String title;
+	private final String name;
 
 	private final String smsGateway;
 
 	private final String mmsGateway;
 
-	SmsCarrier( String title, String smsGateway, String mmsGateway ) {
-		this.title = title;
+	SmsCarrier( String name, String smsGateway, String mmsGateway ) {
+		this.name = name;
 		this.smsGateway = smsGateway;
 		this.mmsGateway = mmsGateway;
 	}
 
-	public String getTitle() {
-		return title;
+	public String getName() {
+		return name;
 	}
 
 	public String getSmsGateway() {
