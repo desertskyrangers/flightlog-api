@@ -1,8 +1,6 @@
 package com.desertskyrangers.flightlog;
 
-import com.desertskyrangers.flightlog.core.model.SmsCarrier;
-import com.desertskyrangers.flightlog.core.model.User;
-import com.desertskyrangers.flightlog.core.model.UserToken;
+import com.desertskyrangers.flightlog.core.model.*;
 import com.desertskyrangers.flightlog.port.StatePersisting;
 import com.desertskyrangers.flightlog.port.StateRetrieving;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Set;
+import java.util.UUID;
 
 @Configuration
 @Slf4j
@@ -44,6 +43,15 @@ public class InitialConfig {
 		user.smsNumber( "800-555-8428" );
 		user.smsCarrier( SmsCarrier.SPRINT );
 		statePersisting.upsert( user );
+
+		Aircraft aftyn = new Aircraft().id( UUID.randomUUID() ).name( "AFTYN" ).type( AircraftType.FIXEDWING ).status( AircraftStatus.DESTROYED ).owner( user.id() ).ownerType( AircraftOwnerType.USER );
+		Aircraft bianca = new Aircraft().id( UUID.randomUUID() ).name( "BIANCA" ).type( AircraftType.FIXEDWING ).status( AircraftStatus.DESTROYED ).owner( user.id() ).ownerType( AircraftOwnerType.USER );
+		Aircraft gemma = new Aircraft().id( UUID.randomUUID() ).name( "GEMMA" ).type( AircraftType.MULTIROTOR ).status( AircraftStatus.AIRWORTHY ).owner( user.id() ).ownerType( AircraftOwnerType.USER );
+		Aircraft helena = new Aircraft().id( UUID.randomUUID() ).name( "HELENA" ).type( AircraftType.HELICOPTER ).status( AircraftStatus.INOPERATIVE ).owner( user.id() ).ownerType( AircraftOwnerType.USER );
+		statePersisting.upsert( aftyn );
+		statePersisting.upsert( bianca );
+		statePersisting.upsert( gemma );
+		statePersisting.upsert( helena );
 
 		stateRetrieving.findUserTokenByPrincipal( usernameToken.principal() ).ifPresent( t -> log.warn( "Tester created=" + t.principal() ) );
 	}
