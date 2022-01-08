@@ -1,6 +1,10 @@
 package com.desertskyrangers.flightlog.adapter.api;
 
+import com.desertskyrangers.flightlog.adapter.api.model.ReactAircraftStatus;
+import com.desertskyrangers.flightlog.adapter.api.model.ReactAircraftType;
 import com.desertskyrangers.flightlog.adapter.api.model.ReactSmsCarrier;
+import com.desertskyrangers.flightlog.core.model.AircraftStatus;
+import com.desertskyrangers.flightlog.core.model.AircraftType;
 import com.desertskyrangers.flightlog.core.model.SmsCarrier;
 import com.desertskyrangers.flightlog.util.Json;
 import org.junit.jupiter.api.Test;
@@ -24,6 +28,18 @@ public class LookupControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;
+
+	@Test
+	void testGetAircraftStatuses() throws Exception {
+		List<ReactAircraftStatus> response = Arrays.stream( AircraftStatus.values() ).map( c -> new ReactAircraftStatus( c.name().toLowerCase(), c.getName() ) ).toList();
+		this.mockMvc.perform( get( ApiPath.AIRCRAFT_STATUS ) ).andExpect( status().isOk() ).andExpect( content().json( Json.stringify( response ), true ) );
+	}
+
+	@Test
+	void testGetAircraftTypes() throws Exception {
+		List<ReactAircraftType> response = Arrays.stream( AircraftType.values() ).map( c -> new ReactAircraftType( c.name().toLowerCase(), c.getName() ) ).toList();
+		this.mockMvc.perform( get( ApiPath.AIRCRAFT_TYPE ) ).andExpect( status().isOk() ).andExpect( content().json( Json.stringify( response ), true ) );
+	}
 
 	@Test
 	void testGetSmsCarriers() throws Exception {

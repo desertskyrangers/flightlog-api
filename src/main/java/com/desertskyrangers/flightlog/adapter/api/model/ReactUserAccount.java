@@ -1,7 +1,7 @@
 package com.desertskyrangers.flightlog.adapter.api.model;
 
 import com.desertskyrangers.flightlog.core.model.SmsCarrier;
-import com.desertskyrangers.flightlog.core.model.UserAccount;
+import com.desertskyrangers.flightlog.core.model.User;
 import com.desertskyrangers.flightlog.util.Text;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -31,7 +31,7 @@ public class ReactUserAccount {
 
 	private boolean smsVerified;
 
-	public UserAccount update( UserAccount user ) {
+	public User update( User user ) {
 		boolean emailChanged = Objects.equals( user.email(), this.getEmail() );
 		boolean smsChanged = Objects.equals( user.smsNumber(), this.getSmsNumber() );
 
@@ -47,7 +47,7 @@ public class ReactUserAccount {
 		return user;
 	}
 
-	public static ReactUserAccount from( UserAccount account ) {
+	public static ReactUserAccount from( User account ) {
 		ReactUserAccount reactAccount = new ReactUserAccount();
 		reactAccount.setId( account.id().toString() );
 		reactAccount.setFirstName( account.firstName() );
@@ -61,7 +61,7 @@ public class ReactUserAccount {
 		return reactAccount;
 	}
 
-	public static UserAccount to( ReactUserAccount user ) {
-		return new UserAccount().id( UUID.fromString( user.id ) ).email( user.getEmail() );
+	public static User to( ReactUserAccount user ) {
+		return new User().id( UUID.fromString( user.id ) ).email( user.getEmail() );
 	}
 }

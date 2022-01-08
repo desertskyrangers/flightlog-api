@@ -10,7 +10,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 @Data
 @Accessors( fluent = true )
-public class UserAccount {
+public class User {
 
 	private UUID id;
 
@@ -36,7 +36,7 @@ public class UserAccount {
 	@EqualsAndHashCode.Exclude
 	private Set<String> roles = new CopyOnWriteArraySet<>();
 
-	public UserAccount() {
+	public User() {
 		id( UUID.randomUUID() );
 	}
 

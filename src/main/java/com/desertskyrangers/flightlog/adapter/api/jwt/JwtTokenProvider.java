@@ -1,6 +1,6 @@
 package com.desertskyrangers.flightlog.adapter.api.jwt;
 
-import com.desertskyrangers.flightlog.core.model.UserAccount;
+import com.desertskyrangers.flightlog.core.model.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -10,7 +10,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -53,7 +52,7 @@ public class JwtTokenProvider {
 		this.tokenValidityInMillisecondsForRememberMe = 1000L * jwtRememberedTokenValidityInSeconds;
 	}
 
-	public String createToken( UserAccount account, Authentication authentication, boolean remember ) {
+	public String createToken( User account, Authentication authentication, boolean remember ) {
 		return createToken( account, authentication, remember, System.currentTimeMillis() );
 	}
 
@@ -69,7 +68,7 @@ public class JwtTokenProvider {
 			.map( SimpleGrantedAuthority::new )
 			.collect( Collectors.toList() );
 
-		User principal = new User( claims.getSubject(), "", authorities );
+		org.springframework.security.core.userdetails.User principal = new org.springframework.security.core.userdetails.User( claims.getSubject(), "", authorities );
 
 		return new UsernamePasswordAuthenticationToken( principal, token, authorities );
 	}
@@ -102,7 +101,7 @@ public class JwtTokenProvider {
 		return jwtRememberedTokenValidityInSeconds;
 	}
 
-	String createToken( UserAccount account, Authentication authentication, boolean remember, long timestamp ) {
+	String createToken( User account, Authentication authentication, boolean remember, long timestamp ) {
 		String userId = account.id().toString();
 		String subject = authentication.getName();
 		String authorities = authentication.getAuthorities().stream().map( GrantedAuthority::getAuthority ).collect( Collectors.joining( "," ) );

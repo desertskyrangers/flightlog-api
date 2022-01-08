@@ -1,7 +1,7 @@
 package com.desertskyrangers.flightlog;
 
 import com.desertskyrangers.flightlog.core.model.SmsCarrier;
-import com.desertskyrangers.flightlog.core.model.UserAccount;
+import com.desertskyrangers.flightlog.core.model.User;
 import com.desertskyrangers.flightlog.core.model.UserToken;
 import com.desertskyrangers.flightlog.port.StatePersisting;
 import com.desertskyrangers.flightlog.port.StateRetrieving;
@@ -35,7 +35,7 @@ public class InitialConfig {
 		UserToken emailToken = new UserToken();
 		emailToken.principal( "tia@noreply.com" );
 		emailToken.credential( new BCryptPasswordEncoder().encode( "tester" ) );
-		UserAccount user = new UserAccount();
+		User user = new User();
 		user.tokens( Set.of( usernameToken, emailToken ) );
 		user.firstName( "Tia" );
 		user.lastName( "Test" );

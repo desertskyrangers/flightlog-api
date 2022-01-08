@@ -4,7 +4,7 @@ import com.desertskyrangers.flightlog.adapter.state.entity.AircraftEntity;
 import com.desertskyrangers.flightlog.adapter.state.entity.UserEntity;
 import com.desertskyrangers.flightlog.adapter.state.entity.VerificationEntity;
 import com.desertskyrangers.flightlog.core.model.Aircraft;
-import com.desertskyrangers.flightlog.core.model.UserAccount;
+import com.desertskyrangers.flightlog.core.model.User;
 import com.desertskyrangers.flightlog.core.model.Verification;
 import com.desertskyrangers.flightlog.port.StatePersisting;
 import org.springframework.stereotype.Service;
@@ -25,12 +25,12 @@ public class StatePersistingService implements StatePersisting {
 	}
 
 	@Override
-	public void upsert( UserAccount account ) {
+	public void upsert( User account ) {
 		userAccountRepo.save( UserEntity.from( account ) );
 	}
 
 	@Override
-	public void remove( UserAccount account ) {
+	public void remove( User account ) {
 		userAccountRepo.deleteById( account.id() );
 	}
 

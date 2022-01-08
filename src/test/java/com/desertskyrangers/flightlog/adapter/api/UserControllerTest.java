@@ -4,8 +4,8 @@ import com.desertskyrangers.flightlog.adapter.api.jwt.JwtToken;
 import com.desertskyrangers.flightlog.adapter.api.jwt.JwtTokenProvider;
 import com.desertskyrangers.flightlog.adapter.api.model.ReactProfileResponse;
 import com.desertskyrangers.flightlog.adapter.api.model.ReactUserAccount;
-import com.desertskyrangers.flightlog.core.UserAccountService;
-import com.desertskyrangers.flightlog.core.model.UserAccount;
+import com.desertskyrangers.flightlog.core.UserService;
+import com.desertskyrangers.flightlog.core.model.User;
 import com.desertskyrangers.flightlog.core.model.UserToken;
 import com.desertskyrangers.flightlog.util.Json;
 import org.junit.jupiter.api.AfterEach;
@@ -19,7 +19,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -44,36 +43,41 @@ public class UserControllerTest {
 	private MockMvc mockMvc;
 
 	@Autowired
-	private UserAccountService userAccountService;
+	private UserService userService;
 
 	@Autowired
 	private JwtTokenProvider tokenProvider;
 
-	private UserAccount account;
+	private User account;
 
 	private HttpHeaders headers;
 
 	@BeforeEach
 	void setup() {
-		// given
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String username = Objects.toString( ((User)authentication.getPrincipal()).getUsername() );
-		String password = Objects.toString( authentication.getCredentials() );
+		if( authentication != null ) {
+			String username = authentication.getName();
+			String password = Objects.toString( authentication.getCredentials() );
 
-		account = new UserAccount();
-		account.lastName( username );
-		account.tokens( Set.of( new UserToken().principal( username ).credential( password ) ) );
-		userAccountService.upsert( account );
+			// Delete the exising mock user account
+			userService.findByPrincipal( authentication.getName() ).ifPresent( u -> userService.remove( u ) );
 
-		String jwtToken = tokenProvider.createToken( account, authentication, false );
+			// Create mock user account
+			account = new User();
+			account.lastName( username );
+			account.tokens( Set.of( new UserToken().principal( username ).credential( password ) ) );
+			userService.upsert( account );
 
-		headers = new HttpHeaders();
-		headers.add( JwtToken.AUTHORIZATION_HEADER, JwtToken.AUTHORIZATION_TYPE + " " + jwtToken );
+			String jwtToken = tokenProvider.createToken( account, authentication, false );
+
+			headers = new HttpHeaders();
+			headers.add( JwtToken.AUTHORIZATION_HEADER, JwtToken.AUTHORIZATION_TYPE + " " + jwtToken );
+		}
 	}
 
 	@AfterEach
 	void teardown() {
-		userAccountService.remove( account );
+		userService.remove( account );
 	}
 
 	@Test
@@ -114,7 +118,7 @@ public class UserControllerTest {
 		String resultContent = result.getResponse().getContentAsString();
 		assertThat( resultContent ).isEqualTo( accountJson );
 		Map<String, Object> map = Json.asMap( resultContent );
-		Map<String,Object> account = (Map<String,Object>)map.get( "account" );
+		Map<String, Object> account = (Map<String, Object>)map.get( "account" );
 		assertThat( account.get( "firstName" ) ).isEqualTo( "Anton" );
 	}
 }

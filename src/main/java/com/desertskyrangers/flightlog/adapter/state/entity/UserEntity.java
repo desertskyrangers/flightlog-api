@@ -1,7 +1,7 @@
 package com.desertskyrangers.flightlog.adapter.state.entity;
 
 import com.desertskyrangers.flightlog.core.model.SmsCarrier;
-import com.desertskyrangers.flightlog.core.model.UserAccount;
+import com.desertskyrangers.flightlog.core.model.User;
 import com.desertskyrangers.flightlog.util.Text;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -58,12 +58,12 @@ public class UserEntity {
 	@EqualsAndHashCode.Exclude
 	private Set<String> roles = new HashSet<>();
 
-	public static UserEntity from( UserAccount user ) {
+	public static UserEntity from( User user ) {
 		return fromUserAccount( user, true );
 	}
 
-	public static UserAccount toUserAccount( UserEntity entity ) {
-		UserAccount user = new UserAccount();
+	public static User toUserAccount( UserEntity entity ) {
+		User user = new User();
 
 		user.id( entity.getId() );
 		user.firstName( entity.getFirstName() );
@@ -74,17 +74,17 @@ public class UserEntity {
 		user.smsNumber( entity.getSmsNumber() );
 		if( Text.isNotBlank( entity.getSmsCarrier() ) ) user.smsCarrier( SmsCarrier.valueOf( entity.getSmsCarrier().toUpperCase() ) );
 		user.smsVerified( entity.getSmsVerified() != null && entity.getSmsVerified() );
-		user.tokens( entity.getTokens().stream().map( c -> TokenEntity.toUserCredential( c ).userAccount( user ) ).collect( Collectors.toSet() ) );
+		user.tokens( entity.getTokens().stream().map( c -> TokenEntity.toUserCredential( c ).user( user ) ).collect( Collectors.toSet() ) );
 		user.roles( entity.getRoles() );
 
 		return user;
 	}
 
-	static UserEntity fromWithoutCredential( UserAccount user ) {
+	static UserEntity fromWithoutCredential( User user ) {
 		return fromUserAccount( user, false );
 	}
 
-	private static UserEntity fromUserAccount( UserAccount user, boolean includeTokens ) {
+	private static UserEntity fromUserAccount( User user, boolean includeTokens ) {
 		UserEntity entity = new UserEntity();
 
 		entity.setId( user.id() );

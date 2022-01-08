@@ -2,7 +2,7 @@ package com.desertskyrangers.flightlog.core;
 
 import com.desertskyrangers.flightlog.adapter.api.ApiPath;
 import com.desertskyrangers.flightlog.core.model.EmailMessage;
-import com.desertskyrangers.flightlog.core.model.UserAccount;
+import com.desertskyrangers.flightlog.core.model.User;
 import com.desertskyrangers.flightlog.core.model.UserToken;
 import com.desertskyrangers.flightlog.core.model.Verification;
 import com.desertskyrangers.flightlog.port.AuthRequesting;
@@ -97,7 +97,7 @@ public class AuthRequestingService implements AuthRequesting {
 		if( !messages.isEmpty() ) return messages;
 
 		// Create the account
-		UserAccount account = new UserAccount();
+		User account = new User();
 		account.email( email );
 		account.tokens( tokens );
 		statePersisting.upsert( account );
@@ -178,20 +178,20 @@ public class AuthRequestingService implements AuthRequesting {
 		return messages;
 	}
 
-	void setEmailVerified( UserAccount account, boolean verified ) {
+	void setEmailVerified( User account, boolean verified ) {
 		account.emailVerified( verified );
 		statePersisting.upsert( account );
 		log.info( "Email verified=" + verified + " address=" + account.email() );
 	}
 
-	void setSmsVerified( UserAccount account, boolean verified ) {
+	void setSmsVerified( User account, boolean verified ) {
 		account.smsVerified( verified );
 		statePersisting.upsert( account );
 		log.info( "SMS verified=" + verified + " number=" + account.smsNumber() );
 	}
 
 	@Async
-	void sendEmailAddressVerificationMessage( UserAccount account, String name, Verification verification ) {
+	void sendEmailAddressVerificationMessage( User account, String name, Verification verification ) {
 		String subject = EMAIL_SUBJECT;
 		String verificationMessage = generateEmailAddressVerificationMessage( subject, verification.id(), verification.code() );
 		if( verificationMessage == null ) return;

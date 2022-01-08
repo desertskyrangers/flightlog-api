@@ -45,7 +45,7 @@ public class AircraftEntity {
 		entity.setModel( aircraft.model() );
 		entity.setStatus( aircraft.status().name().toLowerCase() );
 		entity.setOwner( aircraft.ownerId() );
-		entity.setOwnerType( aircraft.ownerType().name().toLowerCase() );
+		if( aircraft.ownerType() != null ) entity.setOwnerType( aircraft.ownerType().name().toLowerCase() );
 
 		return entity;
 	}

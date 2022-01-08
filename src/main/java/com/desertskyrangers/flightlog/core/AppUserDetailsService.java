@@ -17,8 +17,8 @@ public class AppUserDetailsService implements UserDetailsService {
 	}
 
 	@Override
-	public AppPrincipal loadUserByUsername( String username ) throws UsernameNotFoundException {
-		return stateRetrieving.findUserTokenByPrincipal( username ).map( AppPrincipal::new ).orElseThrow( () -> new UsernameNotFoundException( username ) );
+	public AppTokenDetails loadUserByUsername( String username ) throws UsernameNotFoundException {
+		return stateRetrieving.findUserTokenByPrincipal( username ).map( AppTokenDetails::new ).orElseThrow( () -> new UsernameNotFoundException( username ) );
 	}
 
 }

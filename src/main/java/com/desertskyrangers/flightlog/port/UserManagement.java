@@ -1,6 +1,6 @@
 package com.desertskyrangers.flightlog.port;
 
-import com.desertskyrangers.flightlog.core.model.UserAccount;
+import com.desertskyrangers.flightlog.core.model.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,14 +10,14 @@ public interface UserManagement {
 
 	// TODO Should these methods use the Result pattern?
 
-	List<UserAccount> find();
+	List<User> find();
 
-	Optional<UserAccount> find( UUID id );
+	Optional<User> find( UUID id );
 
-	Optional<UserAccount> findByPrincipal( String username );
+	Optional<User> findByPrincipal( String username );
 
-	void upsert( UserAccount user );
+	void upsert( User user );
 
-	void remove( UserAccount user );
+	void remove( User user );
 
 }

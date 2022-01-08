@@ -1,6 +1,6 @@
 package com.desertskyrangers.flightlog.core;
 
-import com.desertskyrangers.flightlog.core.model.UserAccount;
+import com.desertskyrangers.flightlog.core.model.User;
 import com.desertskyrangers.flightlog.core.model.UserToken;
 import com.desertskyrangers.flightlog.port.StateRetrieving;
 import org.junit.jupiter.api.Test;
@@ -31,8 +31,8 @@ public class AppUserDetailsServiceTest {
 		String password = "password";
 		UserToken credential = new UserToken().principal( username ).credential( password );
 
-		UserAccount user = new UserAccount();
-		credential.userAccount( user );
+		User user = new User();
+		credential.user( user );
 		user.tokens( Set.of( credential ) );
 
 		when( stateRetrieving.findUserTokenByPrincipal( username ) ).thenReturn( Optional.of( credential ) );
@@ -41,8 +41,8 @@ public class AppUserDetailsServiceTest {
 		UserDetails details = appUserDetailsService.loadUserByUsername( username );
 
 		// then
-		assertThat( details ).isInstanceOf( AppPrincipal.class );
-		AppPrincipal principal = (AppPrincipal)details;
+		assertThat( details ).isInstanceOf( AppTokenDetails.class );
+		AppTokenDetails principal = (AppTokenDetails)details;
 		assertThat( principal.getUsername() ).isEqualTo( username );
 		assertThat( principal.getPassword() ).isEqualTo( password );
 		assertThat( principal.getAuthorities() ).containsExactlyInAnyOrder( AppRole.USER );

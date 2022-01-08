@@ -6,7 +6,7 @@ import com.desertskyrangers.flightlog.adapter.api.model.ReactLoginRequest;
 import com.desertskyrangers.flightlog.adapter.api.model.ReactLoginResponse;
 import com.desertskyrangers.flightlog.adapter.api.model.ReactRegisterRequest;
 import com.desertskyrangers.flightlog.adapter.api.model.ReactRegisterResponse;
-import com.desertskyrangers.flightlog.core.model.UserAccount;
+import com.desertskyrangers.flightlog.core.model.User;
 import com.desertskyrangers.flightlog.core.model.Verification;
 import com.desertskyrangers.flightlog.port.AuthRequesting;
 import com.desertskyrangers.flightlog.port.UserManagement;
@@ -156,7 +156,7 @@ public class AuthController {
 		Authentication authentication = this.authenticationManager.authenticate( authenticationToken );
 		SecurityContextHolder.getContext().setAuthentication( authentication );
 
-		Optional<UserAccount> optionalAccount = userManagement.findByPrincipal( username );
+		Optional<User> optionalAccount = userManagement.findByPrincipal( username );
 		if( optionalAccount.isEmpty() ) return "Account not found: " + username;
 
 

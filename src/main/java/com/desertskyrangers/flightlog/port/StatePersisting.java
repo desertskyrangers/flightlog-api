@@ -1,15 +1,14 @@
 package com.desertskyrangers.flightlog.port;
 
-import com.desertskyrangers.flightlog.adapter.state.entity.AircraftEntity;
 import com.desertskyrangers.flightlog.core.model.Aircraft;
-import com.desertskyrangers.flightlog.core.model.UserAccount;
+import com.desertskyrangers.flightlog.core.model.User;
 import com.desertskyrangers.flightlog.core.model.Verification;
 
 public interface StatePersisting {
 
-	void upsert( UserAccount account );
+	void upsert( User account );
 
-	void remove( UserAccount account );
+	void remove( User account );
 
 	void upsert( Verification verification );
 

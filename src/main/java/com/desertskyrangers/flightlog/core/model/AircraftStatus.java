@@ -18,4 +18,17 @@ public enum AircraftStatus {
 		return name;
 	}
 
+	public static boolean isValid( String string ) {
+		try {
+			valueOf( string.toUpperCase() );
+			return true;
+		} catch( IllegalArgumentException exception ) {
+			return false;
+		}
+	}
+
+	public static boolean isNotValid( String string ) {
+		return !isValid( string );
+	}
+
 }

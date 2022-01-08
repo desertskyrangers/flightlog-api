@@ -1,6 +1,6 @@
 package com.desertskyrangers.flightlog.core;
 
-import com.desertskyrangers.flightlog.core.model.UserAccount;
+import com.desertskyrangers.flightlog.core.model.User;
 import com.desertskyrangers.flightlog.core.model.Verification;
 import com.desertskyrangers.flightlog.port.StatePersisting;
 import com.desertskyrangers.flightlog.port.StateRetrieving;
@@ -32,13 +32,13 @@ public class AuthRequestingServiceTest {
 	@InjectMocks
 	private AuthRequestingService service;
 
-	private UserAccount account;
+	private User account;
 
 	private Verification stored;
 
 	@BeforeEach
 	void setup() {
-		account = new UserAccount();
+		account = new User();
 
 		UUID id = UUID.randomUUID();
 		String code = "000000";

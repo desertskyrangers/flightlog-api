@@ -17,7 +17,7 @@ public class UserToken {
 	private String credential;
 
 	@EqualsAndHashCode.Exclude
-	private UserAccount userAccount;
+	private User user;
 
 	public UserToken() {
 		id(UUID.randomUUID());

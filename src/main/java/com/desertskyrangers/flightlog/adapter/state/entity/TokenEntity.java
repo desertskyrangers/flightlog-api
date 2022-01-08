@@ -27,7 +27,7 @@ public class TokenEntity {
 	public static TokenEntity from( UserToken token ) {
 		TokenEntity entity = new TokenEntity();
 		entity.setId( token.id() );
-		if( token.userAccount() != null ) entity.setUserAccount( UserEntity.fromWithoutCredential( token.userAccount() ) );
+		if( token.user() != null ) entity.setUserAccount( UserEntity.fromWithoutCredential( token.user() ) );
 		entity.setPrincipal( token.principal() );
 		entity.setCredential( token.credential() );
 		return entity;
@@ -47,7 +47,7 @@ public class TokenEntity {
 		credential.id( entity.getId() );
 		credential.principal( entity.getPrincipal() );
 		credential.credential( entity.getCredential() );
-		if( includeAccount && entity.getUserAccount() != null ) credential.userAccount( UserEntity.toUserAccount( entity.getUserAccount() ) );
+		if( includeAccount && entity.getUserAccount() != null ) credential.user( UserEntity.toUserAccount( entity.getUserAccount() ) );
 
 		return credential;
 	}

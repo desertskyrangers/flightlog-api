@@ -9,12 +9,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
-public class AppPrincipal implements UserDetails {
+public class AppTokenDetails implements UserDetails {
 
-	private final UserToken credential;
+	private final UserToken token;
 
-	public AppPrincipal( UserToken credential ) {
-		this.credential = credential;
+	public AppTokenDetails( UserToken token ) {
+		this.token = token;
 	}
 
 	@Override
@@ -22,19 +22,19 @@ public class AppPrincipal implements UserDetails {
 		// Authorities can be assigned directly (not implemented)
 		// and authorities can come through the user roles.
 
-		Set<AppRole> authorities = credential.userAccount().roles().stream().map( r -> AppRole.valueOf( r.toUpperCase() ) ).collect( Collectors.toSet() );
+		Set<AppRole> authorities = token.user().roles().stream().map( r -> AppRole.valueOf( r.toUpperCase() ) ).collect( Collectors.toSet() );
 		authorities.add( AppRole.USER );
 		return authorities;
 	}
 
 	@Override
-	public String getPassword() {
-		return credential.credential();
+	public String getUsername() {
+		return token.principal();
 	}
 
 	@Override
-	public String getUsername() {
-		return credential.principal();
+	public String getPassword() {
+		return token.credential();
 	}
 
 	@Override

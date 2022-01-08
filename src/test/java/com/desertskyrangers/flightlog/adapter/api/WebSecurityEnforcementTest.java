@@ -4,7 +4,7 @@ import com.desertskyrangers.flightlog.adapter.api.jwt.JwtToken;
 import com.desertskyrangers.flightlog.adapter.api.jwt.JwtTokenProvider;
 import com.desertskyrangers.flightlog.adapter.api.model.ReactProfileResponse;
 import com.desertskyrangers.flightlog.adapter.api.model.ReactUserAccount;
-import com.desertskyrangers.flightlog.core.model.UserAccount;
+import com.desertskyrangers.flightlog.core.model.User;
 import com.desertskyrangers.flightlog.util.Json;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,10 +14,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.security.authentication.TestingAuthenticationToken;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.test.context.support.WithMockUser;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -48,7 +45,7 @@ public class WebSecurityEnforcementTest {
 	public void whenUserWithValidJwtRequestsProfilePage_ThenSuccess() {
 		// given
 		Authentication authentication = new TestingAuthenticationToken( "testuser", "password", "USER" );
-		String jwtToken = tokenProvider.createToken( new UserAccount(), authentication, false );
+		String jwtToken = tokenProvider.createToken( new User(), authentication, false );
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.add( JwtToken.AUTHORIZATION_HEADER, JwtToken.AUTHORIZATION_TYPE + " " + jwtToken );

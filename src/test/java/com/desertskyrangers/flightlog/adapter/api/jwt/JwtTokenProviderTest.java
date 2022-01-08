@@ -1,6 +1,6 @@
 package com.desertskyrangers.flightlog.adapter.api.jwt;
 
-import com.desertskyrangers.flightlog.core.model.UserAccount;
+import com.desertskyrangers.flightlog.core.model.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,7 +20,7 @@ public class JwtTokenProviderTest {
 	@Test
 	void testCreateToken() {
 		// given
-		UserAccount account = new UserAccount();
+		User account = new User();
 		Authentication authentication = new TestingAuthenticationToken( "username", "password", "TESTER" );
 		boolean remember = false;
 		long timestamp = System.currentTimeMillis();
@@ -40,7 +40,7 @@ public class JwtTokenProviderTest {
 	@Test
 	void testCreateRememberedToken() {
 		// given
-		UserAccount account = new UserAccount();
+		User account = new User();
 		Authentication authentication = new TestingAuthenticationToken( "username", "password", "TESTER" );
 		boolean remember = true;
 		long timestamp = System.currentTimeMillis();

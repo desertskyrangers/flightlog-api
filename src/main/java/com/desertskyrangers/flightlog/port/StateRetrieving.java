@@ -1,6 +1,6 @@
 package com.desertskyrangers.flightlog.port;
 
-import com.desertskyrangers.flightlog.core.model.UserAccount;
+import com.desertskyrangers.flightlog.core.model.User;
 import com.desertskyrangers.flightlog.core.model.UserToken;
 import com.desertskyrangers.flightlog.core.model.Verification;
 
@@ -12,9 +12,9 @@ public interface StateRetrieving {
 
 	Optional<UserToken> findUserTokenByPrincipal( String username );
 
-	List<UserAccount> findAllUserAccounts();
+	List<User> findAllUserAccounts();
 
-	Optional<UserAccount> findUserAccount( UUID id );
+	Optional<User> findUserAccount( UUID id );
 
 	List<Verification> findAllVerifications();
 

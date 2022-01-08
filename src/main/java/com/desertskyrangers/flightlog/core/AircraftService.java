@@ -1,17 +1,24 @@
 package com.desertskyrangers.flightlog.core;
 
 import com.desertskyrangers.flightlog.core.model.Aircraft;
+import com.desertskyrangers.flightlog.port.StatePersisting;
+import org.springframework.stereotype.Service;
 
-import java.util.UUID;
-
+@Service
 public class AircraftService {
 
-	public void upsert(Aircraft aircraft ) {
+	private final StatePersisting statePersisting;
 
+	public AircraftService( StatePersisting statePersisting ) {
+		this.statePersisting = statePersisting;
 	}
 
-	public void remove( UUID id ) {
-		//
+	public void upsert( Aircraft aircraft ) {
+		statePersisting.upsert( aircraft );
+	}
+
+	public void remove( Aircraft aircraft ) {
+		statePersisting.remove( aircraft );
 	}
 
 }

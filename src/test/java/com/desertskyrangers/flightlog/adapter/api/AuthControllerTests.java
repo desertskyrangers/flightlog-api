@@ -1,7 +1,7 @@
 package com.desertskyrangers.flightlog.adapter.api;
 
 import com.desertskyrangers.flightlog.adapter.api.jwt.JwtTokenProvider;
-import com.desertskyrangers.flightlog.core.model.UserAccount;
+import com.desertskyrangers.flightlog.core.model.User;
 import com.desertskyrangers.flightlog.core.model.UserToken;
 import com.desertskyrangers.flightlog.core.model.Verification;
 import com.desertskyrangers.flightlog.port.AuthRequesting;
@@ -66,7 +66,7 @@ public class AuthControllerTests {
 		String content = Json.stringify( Map.of( "username", username, "password", password, "email", email ) );
 
 		UserToken token = new UserToken().principal( username ).credential( passwordEncoder.encode( password ) );
-		UserAccount account = new UserAccount().email( email ).tokens( Set.of( token ) );
+		User account = new User().email( email ).tokens( Set.of( token ) );
 		statePersisting.upsert( account );
 
 		// when
@@ -155,9 +155,9 @@ public class AuthControllerTests {
 		UserToken credential = new UserToken();
 		credential.principal( username );
 		credential.credential( passwordEncoder.encode( password ) );
-		UserAccount user = new UserAccount();
+		User user = new User();
 		user.tokens( Set.of( credential ) );
-		credential.userAccount( user );
+		credential.user( user );
 		statePersisting.upsert( user );
 
 		// when
