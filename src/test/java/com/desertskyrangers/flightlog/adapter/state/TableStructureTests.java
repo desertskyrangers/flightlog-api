@@ -27,7 +27,7 @@ public class TableStructureTests {
 		expected.add( "verification" );
 		expected.add( "usertoken" );
 		expected.add( "userrole" );
-		expected.add( "uav" );
+		expected.add( "aircraft" );
 		expected.add( "org" );
 
 		assertThat( getTables() ).containsExactlyInAnyOrderElementsOf( expected );
@@ -73,14 +73,18 @@ public class TableStructureTests {
 	}
 
 	@Test
-	void testUav() throws Exception {
+	void testAircraft() throws Exception {
 		Set<String> expected = new HashSet<>();
 		expected.add( "id" );
-		expected.add( "ownerid" );
+		expected.add( "name" );
+		expected.add( "type" );
+		expected.add( "make" );
+		expected.add( "model" );
+		expected.add( "status" );
+		expected.add( "owner" );
 		expected.add( "ownertype" );
-		//expected.add( "type" );
 
-		assertThat( getColumns( "uav" ) ).containsAll( expected );
+		assertThat( getColumns( "aircraft" ) ).containsAll( expected );
 	}
 
 

@@ -9,10 +9,20 @@ import java.util.UUID;
 @Accessors( fluent = true )
 public class Aircraft {
 
-	UUID id;
+	private UUID id;
 
-	AircraftOwnerType ownerType;
+	private String name;
 
-	UUID ownerId;
+	private AircraftType type;
+
+	private String make;
+
+	private String model;
+
+	private AircraftStatus status;
+
+	private UUID ownerId;
+
+	private AircraftOwnerType ownerType;
 
 }

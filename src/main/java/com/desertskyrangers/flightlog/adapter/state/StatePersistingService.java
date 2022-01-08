@@ -1,7 +1,9 @@
 package com.desertskyrangers.flightlog.adapter.state;
 
+import com.desertskyrangers.flightlog.adapter.state.entity.AircraftEntity;
 import com.desertskyrangers.flightlog.adapter.state.entity.UserEntity;
 import com.desertskyrangers.flightlog.adapter.state.entity.VerificationEntity;
+import com.desertskyrangers.flightlog.core.model.Aircraft;
 import com.desertskyrangers.flightlog.core.model.UserAccount;
 import com.desertskyrangers.flightlog.core.model.Verification;
 import com.desertskyrangers.flightlog.port.StatePersisting;
@@ -14,9 +16,12 @@ public class StatePersistingService implements StatePersisting {
 
 	private final VerificationRepo verificationRepo;
 
-	public StatePersistingService( UserAccountRepo userAccountRepo, VerificationRepo verificationRepo ) {
+	private final AircraftRepo aircraftRepo;
+
+	public StatePersistingService( UserAccountRepo userAccountRepo, VerificationRepo verificationRepo, AircraftRepo aircraftRepo ) {
 		this.userAccountRepo = userAccountRepo;
 		this.verificationRepo = verificationRepo;
+		this.aircraftRepo = aircraftRepo;
 	}
 
 	@Override
@@ -37,6 +42,16 @@ public class StatePersistingService implements StatePersisting {
 	@Override
 	public void remove( Verification verification ) {
 		verificationRepo.deleteById( verification.id() );
+	}
+
+	@Override
+	public void upsert( Aircraft aircraft ) {
+		aircraftRepo.save( AircraftEntity.from( aircraft ) );
+	}
+
+	@Override
+	public void remove( Aircraft aircraft ) {
+		aircraftRepo.deleteById( aircraft.id() );
 	}
 
 }
