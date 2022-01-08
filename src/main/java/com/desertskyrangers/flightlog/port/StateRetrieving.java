@@ -1,12 +1,19 @@
 package com.desertskyrangers.flightlog.port;
 
+import com.desertskyrangers.flightlog.core.model.Aircraft;
 import com.desertskyrangers.flightlog.core.model.User;
 import com.desertskyrangers.flightlog.core.model.UserToken;
 import com.desertskyrangers.flightlog.core.model.Verification;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 public interface StateRetrieving {
+
+	Optional<Aircraft> findAircraft( UUID id );
+
+	List<Aircraft> findAircraftByOwner( UUID id );
 
 	Optional<UserToken> findUserCredential( UUID id );
 

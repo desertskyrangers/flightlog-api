@@ -2,8 +2,8 @@ package com.desertskyrangers.flightlog.adapter.api;
 
 import com.desertskyrangers.flightlog.adapter.api.model.ReactProfileResponse;
 import com.desertskyrangers.flightlog.adapter.api.model.ReactUserAccount;
-import com.desertskyrangers.flightlog.core.UserService;
 import com.desertskyrangers.flightlog.core.model.User;
+import com.desertskyrangers.flightlog.port.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

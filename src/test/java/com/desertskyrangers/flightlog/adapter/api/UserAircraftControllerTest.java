@@ -1,11 +1,9 @@
 package com.desertskyrangers.flightlog.adapter.api;
 
 import com.desertskyrangers.flightlog.adapter.api.model.ReactAircraft;
-import com.desertskyrangers.flightlog.core.UserService;
-import com.desertskyrangers.flightlog.core.model.AircraftStatus;
-import com.desertskyrangers.flightlog.core.model.AircraftType;
-import com.desertskyrangers.flightlog.core.model.User;
-import com.desertskyrangers.flightlog.core.model.UserToken;
+import com.desertskyrangers.flightlog.core.model.*;
+import com.desertskyrangers.flightlog.port.AircraftService;
+import com.desertskyrangers.flightlog.port.UserService;
 import com.desertskyrangers.flightlog.util.Json;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,10 +32,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class UserAircraftControllerTest {
 
 	@Autowired
+	private AircraftService aircraftService;
+
+	@Autowired
 	private UserService userService;
 
 	@Autowired
 	private MockMvc mockMvc;
+
+	private User user;
 
 	@BeforeEach
 	void setup() {
@@ -49,7 +52,7 @@ public class UserAircraftControllerTest {
 			userService.findByPrincipal( authentication.getName() ).ifPresent( u -> userService.remove( u ) );
 
 			// Create mock user account
-			User user = new User();
+			user = new User();
 			UserToken token = new UserToken().principal( username );
 			user.tokens( Set.of( token ) );
 			token.user( user );
@@ -60,17 +63,16 @@ public class UserAircraftControllerTest {
 
 	@Test
 	void testGetAircraftPage() throws Exception {
-		// FIXME Still need to user "real" data
+		// given
+		Aircraft aftyn = new Aircraft().id( UUID.randomUUID() ).name( "AFTYN" ).type( AircraftType.FIXEDWING ).status( AircraftStatus.DESTROYED ).owner( user.id() ).ownerType( AircraftOwnerType.USER );
+		Aircraft bianca = new Aircraft().id( UUID.randomUUID() ).name( "BIANCA" ).type( AircraftType.FIXEDWING ).status( AircraftStatus.DESTROYED ).owner( user.id() ).ownerType( AircraftOwnerType.USER );
+		aircraftService.upsert( aftyn );
+		aircraftService.upsert( bianca );
 
-		//		ReactAircraft aftyn = new ReactAircraft().setName( "AFTYN" );
-		//		ReactAircraft bianca = new ReactAircraft().setName( "BIANCA" );
-		//		List<ReactAircraft> response = List.of( aftyn, bianca );
-
-		//		Aircraft aircraft0 = new Aircraft().name( "AFTYN" );
-		//		Aircraft aircraft1 = new Aircraft().name( "BIANCA" );
-
+		// when
 		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_AIRCRAFT + "/0" ) ).andExpect( status().isOk() ).andReturn();
 
+		// then
 		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
 		List<?> aircraftList = (List<?>)map.get( "aircraft" );
 		Map<?, ?> messagesMap = (Map<?, ?>)map.get( "messages" );
@@ -93,6 +95,8 @@ public class UserAircraftControllerTest {
 		aircraft.setModel( "Bixler 2" );
 		aircraft.setType( AircraftType.FIXEDWING.name().toLowerCase() );
 		aircraft.setStatus( AircraftStatus.DESTROYED.name().toLowerCase() );
+		aircraft.setOwner( user.id().toString() );
+		aircraft.setOwnerType( AircraftOwnerType.USER.name().toLowerCase() );
 
 		this.mockMvc.perform( post( ApiPath.USER_AIRCRAFT ).content( Json.stringify( aircraft ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
 	}
@@ -106,6 +110,8 @@ public class UserAircraftControllerTest {
 		aircraft.setModel( "Bixler 2" );
 		aircraft.setType( "invalid" );
 		aircraft.setStatus( AircraftStatus.DESTROYED.name().toLowerCase() );
+		aircraft.setOwner( user.id().toString() );
+		aircraft.setOwnerType( AircraftOwnerType.USER.name().toLowerCase() );
 
 		this.mockMvc.perform( post( ApiPath.USER_AIRCRAFT ).content( Json.stringify( aircraft ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isBadRequest() ).andReturn();
 	}
@@ -119,6 +125,8 @@ public class UserAircraftControllerTest {
 		aircraft.setModel( "Bixler 2" );
 		aircraft.setType( AircraftType.FIXEDWING.name().toLowerCase() );
 		aircraft.setStatus( AircraftStatus.DESTROYED.name().toLowerCase() );
+		aircraft.setOwner( user.id().toString() );
+		aircraft.setOwnerType( AircraftOwnerType.USER.name().toLowerCase() );
 
 		this.mockMvc.perform( put( ApiPath.USER_AIRCRAFT ).content( Json.stringify( aircraft ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
 	}
@@ -132,6 +140,8 @@ public class UserAircraftControllerTest {
 		aircraft.setModel( "Bixler 2" );
 		aircraft.setType( "invalid" );
 		aircraft.setStatus( AircraftStatus.DESTROYED.name().toLowerCase() );
+		aircraft.setOwner( user.id().toString() );
+		aircraft.setOwnerType( AircraftOwnerType.USER.name().toLowerCase() );
 
 		this.mockMvc.perform( put( ApiPath.USER_AIRCRAFT ).content( Json.stringify( aircraft ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isBadRequest() ).andReturn();
 	}

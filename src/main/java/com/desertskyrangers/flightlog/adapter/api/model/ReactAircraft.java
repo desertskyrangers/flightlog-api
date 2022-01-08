@@ -31,6 +31,21 @@ public class ReactAircraft {
 
 	private String ownerType;
 
+	public static ReactAircraft from( Aircraft aircraft ) {
+		ReactAircraft result = new ReactAircraft();
+
+		result.setId( aircraft.id().toString() );
+		result.setName( aircraft.name() );
+		result.setType( aircraft.type().name().toLowerCase() );
+		result.setMake( aircraft.make() );
+		result.setModel( aircraft.model() );
+		result.setStatus( aircraft.status().name().toLowerCase() );
+		result.setOwner( aircraft.owner().toString() );
+		result.setOwnerType( aircraft.ownerType().name().toLowerCase() );
+
+		return result;
+	}
+
 	public static Aircraft toAircraft( ReactAircraft reactAircraft ) {
 		Aircraft aircraft = new Aircraft();
 
@@ -40,8 +55,8 @@ public class ReactAircraft {
 		aircraft.make( reactAircraft.getMake() );
 		aircraft.model( reactAircraft.getModel() );
 		aircraft.status( AircraftStatus.valueOf( reactAircraft.getStatus().toUpperCase() ) );
-		aircraft.ownerId( UUID.fromString( reactAircraft.getOwner() ) );
-		aircraft.ownerType( AircraftOwnerType.valueOf( reactAircraft.getOwnerType().toUpperCase() ));
+		aircraft.owner( UUID.fromString( reactAircraft.getOwner() ) );
+		aircraft.ownerType( AircraftOwnerType.valueOf( reactAircraft.getOwnerType().toUpperCase() ) );
 
 		return aircraft;
 	}

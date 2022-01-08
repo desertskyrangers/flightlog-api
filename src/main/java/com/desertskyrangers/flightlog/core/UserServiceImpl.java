@@ -4,7 +4,7 @@ import com.desertskyrangers.flightlog.core.model.User;
 import com.desertskyrangers.flightlog.core.model.UserToken;
 import com.desertskyrangers.flightlog.port.StatePersisting;
 import com.desertskyrangers.flightlog.port.StateRetrieving;
-import com.desertskyrangers.flightlog.port.UserManagement;
+import com.desertskyrangers.flightlog.port.UserService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,13 +12,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class UserService implements UserManagement {
+public class UserServiceImpl implements UserService {
 
 	private final StateRetrieving stateRetrieving;
 
 	private final StatePersisting statePersisting;
 
-	public UserService( StateRetrieving stateRetrieving, StatePersisting statePersisting ) {
+	public UserServiceImpl( StateRetrieving stateRetrieving, StatePersisting statePersisting ) {
 		this.stateRetrieving = stateRetrieving;
 		this.statePersisting = statePersisting;
 	}

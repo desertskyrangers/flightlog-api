@@ -21,7 +21,7 @@ public class Aircraft {
 
 	private AircraftStatus status;
 
-	private UUID ownerId;
+	private UUID owner;
 
 	private AircraftOwnerType ownerType;
 

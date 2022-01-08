@@ -1,8 +1,10 @@
 package com.desertskyrangers.flightlog.adapter.state;
 
+import com.desertskyrangers.flightlog.adapter.state.entity.AircraftEntity;
 import com.desertskyrangers.flightlog.adapter.state.entity.TokenEntity;
 import com.desertskyrangers.flightlog.adapter.state.entity.UserEntity;
 import com.desertskyrangers.flightlog.adapter.state.entity.VerificationEntity;
+import com.desertskyrangers.flightlog.core.model.Aircraft;
 import com.desertskyrangers.flightlog.core.model.User;
 import com.desertskyrangers.flightlog.core.model.UserToken;
 import com.desertskyrangers.flightlog.core.model.Verification;
@@ -18,16 +20,29 @@ import java.util.stream.StreamSupport;
 @Service
 public class StateRetrievingService implements StateRetrieving {
 
+	private final AircraftRepo aircraftRepo;
+
 	private final UserAccountRepo userAccountRepo;
 
 	private final UserTokenRepo userTokenRepo;
 
 	private final VerificationRepo verificationRepo;
 
-	public StateRetrievingService( UserAccountRepo userAccountRepo, UserTokenRepo userTokenRepo, VerificationRepo verificationRepo ) {
+	public StateRetrievingService( AircraftRepo aircraftRepo, UserAccountRepo userAccountRepo, UserTokenRepo userTokenRepo, VerificationRepo verificationRepo ) {
+		this.aircraftRepo = aircraftRepo;
 		this.userAccountRepo = userAccountRepo;
 		this.userTokenRepo = userTokenRepo;
 		this.verificationRepo = verificationRepo;
+	}
+
+	@Override
+	public Optional<Aircraft> findAircraft( UUID id ) {
+		return aircraftRepo.findById( id ).map( AircraftEntity::toAircraft );
+	}
+
+	@Override
+	public List<Aircraft> findAircraftByOwner( UUID owner ) {
+		return aircraftRepo.findAircraftByOwner( owner ).stream().map( AircraftEntity::toAircraft ).collect( Collectors.toList() );
 	}
 
 	@Override

@@ -9,7 +9,7 @@ import com.desertskyrangers.flightlog.adapter.api.model.ReactRegisterResponse;
 import com.desertskyrangers.flightlog.core.model.User;
 import com.desertskyrangers.flightlog.core.model.Verification;
 import com.desertskyrangers.flightlog.port.AuthRequesting;
-import com.desertskyrangers.flightlog.port.UserManagement;
+import com.desertskyrangers.flightlog.port.UserService;
 import com.desertskyrangers.flightlog.util.Text;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -32,7 +32,7 @@ public class AuthController {
 
 	private final AuthRequesting authRequesting;
 
-	private final UserManagement userManagement;
+	private final UserService userService;
 
 	private final JwtTokenProvider tokenProvider;
 
@@ -40,9 +40,9 @@ public class AuthController {
 
 	private final PasswordEncoder passwordEncoder;
 
-	public AuthController( AuthRequesting authRequesting, UserManagement userManagement, JwtTokenProvider tokenProvider, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder ) {
+	public AuthController( AuthRequesting authRequesting, UserService userService, JwtTokenProvider tokenProvider, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder ) {
 		this.authRequesting = authRequesting;
-		this.userManagement = userManagement;
+		this.userService = userService;
 		this.tokenProvider = tokenProvider;
 		this.authenticationManager = authenticationManager;
 		this.passwordEncoder = passwordEncoder;
@@ -156,7 +156,7 @@ public class AuthController {
 		Authentication authentication = this.authenticationManager.authenticate( authenticationToken );
 		SecurityContextHolder.getContext().setAuthentication( authentication );
 
-		Optional<User> optionalAccount = userManagement.findByPrincipal( username );
+		Optional<User> optionalAccount = userService.findByPrincipal( username );
 		if( optionalAccount.isEmpty() ) return "Account not found: " + username;
 
 

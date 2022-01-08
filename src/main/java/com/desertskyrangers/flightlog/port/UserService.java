@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface UserManagement {
+public interface UserService {
 
 	// TODO Should these methods use the Result pattern?
 
