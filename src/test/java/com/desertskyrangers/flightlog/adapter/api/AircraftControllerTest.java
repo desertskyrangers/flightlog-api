@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WithMockUser
 @SpringBootTest
 @AutoConfigureMockMvc
-public class UserAircraftControllerTest {
+public class AircraftControllerTest {
 
 	@Autowired
 	private AircraftService aircraftService;
@@ -58,32 +58,29 @@ public class UserAircraftControllerTest {
 			token.user( user );
 			userService.upsert( user );
 		}
-
 	}
 
 	@Test
-	void testGetAircraftPage() throws Exception {
+	void getAircraftWithSuccess() throws Exception {
 		// given
-		Aircraft aftyn = new Aircraft().id( UUID.randomUUID() ).name( "AFTYN" ).type( AircraftType.FIXEDWING ).status( AircraftStatus.DESTROYED ).owner( user.id() ).ownerType( AircraftOwnerType.USER );
-		Aircraft bianca = new Aircraft().id( UUID.randomUUID() ).name( "BIANCA" ).type( AircraftType.FIXEDWING ).status( AircraftStatus.DESTROYED ).owner( user.id() ).ownerType( AircraftOwnerType.USER );
-		aircraftService.upsert( aftyn );
-		aircraftService.upsert( bianca );
+		Aircraft aircraft = new Aircraft();
+		aircraft.id( UUID.randomUUID() );
+		aircraft.name( "Aftyn" );
+		aircraft.make( "Hobby King" );
+		aircraft.model( "Bixler 2" );
+		aircraft.type( AircraftType.FIXEDWING );
+		aircraft.status( AircraftStatus.DESTROYED );
+		aircraft.owner( user.id() );
+		aircraft.ownerType( AircraftOwnerType.USER );
+		aircraftService.upsert( aircraft );
 
 		// when
-		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_AIRCRAFT + "/0" ) ).andExpect( status().isOk() ).andReturn();
+		MvcResult result = this.mockMvc.perform( get( ApiPath.AIRCRAFT + "/" + aircraft.id() ) ).andExpect( status().isOk() ).andReturn();
 
 		// then
-		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
-		List<?> aircraftList = (List<?>)map.get( "aircraft" );
-		Map<?, ?> messagesMap = (Map<?, ?>)map.get( "messages" );
-
-		assertThat( aircraftList.size() ).isEqualTo( 2 );
-		assertThat( messagesMap ).isNull();
-
-		Map<?, ?> aircraft0 = (Map<?, ?>)aircraftList.get( 0 );
-		Map<?, ?> aircraft1 = (Map<?, ?>)aircraftList.get( 1 );
-		assertThat( aircraft0.get( "name" ) ).isEqualTo( "AFTYN" );
-		assertThat( aircraft1.get( "name" ) ).isEqualTo( "BIANCA" );
+		Map<?,?> map = Json.asMap( result.getResponse().getContentAsString() );
+		Map<?,?> resultAircraft = (Map<?,?>)map.get("aircraft");
+		assertThat( resultAircraft.get("name")).isEqualTo( "Aftyn" );
 	}
 
 	@Test
@@ -98,7 +95,7 @@ public class UserAircraftControllerTest {
 		aircraft.setOwner( user.id().toString() );
 		aircraft.setOwnerType( AircraftOwnerType.USER.name().toLowerCase() );
 
-		this.mockMvc.perform( post( ApiPath.USER_AIRCRAFT ).content( Json.stringify( aircraft ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
+		this.mockMvc.perform( post( ApiPath.AIRCRAFT ).content( Json.stringify( aircraft ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
 	}
 
 	@Test
@@ -113,7 +110,7 @@ public class UserAircraftControllerTest {
 		aircraft.setOwner( user.id().toString() );
 		aircraft.setOwnerType( AircraftOwnerType.USER.name().toLowerCase() );
 
-		this.mockMvc.perform( post( ApiPath.USER_AIRCRAFT ).content( Json.stringify( aircraft ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isBadRequest() ).andReturn();
+		this.mockMvc.perform( post( ApiPath.AIRCRAFT ).content( Json.stringify( aircraft ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isBadRequest() ).andReturn();
 	}
 
 	@Test
@@ -128,7 +125,7 @@ public class UserAircraftControllerTest {
 		aircraft.setOwner( user.id().toString() );
 		aircraft.setOwnerType( AircraftOwnerType.USER.name().toLowerCase() );
 
-		this.mockMvc.perform( put( ApiPath.USER_AIRCRAFT ).content( Json.stringify( aircraft ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
+		this.mockMvc.perform( put( ApiPath.AIRCRAFT ).content( Json.stringify( aircraft ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
 	}
 
 	@Test
@@ -143,7 +140,7 @@ public class UserAircraftControllerTest {
 		aircraft.setOwner( user.id().toString() );
 		aircraft.setOwnerType( AircraftOwnerType.USER.name().toLowerCase() );
 
-		this.mockMvc.perform( put( ApiPath.USER_AIRCRAFT ).content( Json.stringify( aircraft ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isBadRequest() ).andReturn();
+		this.mockMvc.perform( put( ApiPath.AIRCRAFT ).content( Json.stringify( aircraft ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isBadRequest() ).andReturn();
 	}
 
 }

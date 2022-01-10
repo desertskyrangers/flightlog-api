@@ -4,8 +4,8 @@ import com.desertskyrangers.flightlog.adapter.api.jwt.JwtToken;
 import com.desertskyrangers.flightlog.adapter.api.jwt.JwtTokenProvider;
 import com.desertskyrangers.flightlog.adapter.api.model.ReactProfileResponse;
 import com.desertskyrangers.flightlog.adapter.api.model.ReactUserAccount;
-import com.desertskyrangers.flightlog.core.model.User;
-import com.desertskyrangers.flightlog.core.model.UserToken;
+import com.desertskyrangers.flightlog.core.model.*;
+import com.desertskyrangers.flightlog.port.AircraftService;
 import com.desertskyrangers.flightlog.port.UserService;
 import com.desertskyrangers.flightlog.util.Json;
 import org.junit.jupiter.api.AfterEach;
@@ -23,9 +23,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -46,9 +44,12 @@ public class UserControllerTest {
 	private UserService userService;
 
 	@Autowired
+	private AircraftService aircraftService;
+
+	@Autowired
 	private JwtTokenProvider tokenProvider;
 
-	private User account;
+	private User user;
 
 	private HttpHeaders headers;
 
@@ -63,12 +64,12 @@ public class UserControllerTest {
 			userService.findByPrincipal( authentication.getName() ).ifPresent( u -> userService.remove( u ) );
 
 			// Create mock user account
-			account = new User();
-			account.lastName( username );
-			account.tokens( Set.of( new UserToken().principal( username ).credential( password ) ) );
-			userService.upsert( account );
+			user = new User();
+			user.lastName( username );
+			user.tokens( Set.of( new UserToken().principal( username ).credential( password ) ) );
+			userService.upsert( user );
 
-			String jwtToken = tokenProvider.createToken( account, authentication, false );
+			String jwtToken = tokenProvider.createToken( user, authentication, false );
 
 			headers = new HttpHeaders();
 			headers.add( JwtToken.AUTHORIZATION_HEADER, JwtToken.AUTHORIZATION_TYPE + " " + jwtToken );
@@ -77,7 +78,7 @@ public class UserControllerTest {
 
 	@AfterEach
 	void teardown() {
-		userService.remove( account );
+		userService.remove( user );
 	}
 
 	@Test
@@ -86,30 +87,30 @@ public class UserControllerTest {
 		MvcResult result = this.mockMvc.perform( get( ApiPath.PROFILE ).with( csrf() ).headers( headers ) ).andExpect( status().isOk() ).andReturn();
 
 		// then
-		String accountJson = Json.stringify( new ReactProfileResponse().setAccount( ReactUserAccount.from( account ) ) );
+		String accountJson = Json.stringify( new ReactProfileResponse().setAccount( ReactUserAccount.from( user ) ) );
 		assertThat( result.getResponse().getContentAsString() ).isEqualTo( accountJson );
 	}
 
 	@Test
 	void testGetAccount() throws Exception {
 		// when
-		MvcResult result = this.mockMvc.perform( get( ApiPath.USER + "/" + account.id() ).with( csrf() ).headers( headers ) ).andExpect( status().isOk() ).andReturn();
+		MvcResult result = this.mockMvc.perform( get( ApiPath.USER + "/" + user.id() ).with( csrf() ).headers( headers ) ).andExpect( status().isOk() ).andReturn();
 
 		// then
-		String accountJson = Json.stringify( new ReactProfileResponse().setAccount( ReactUserAccount.from( account ) ) );
+		String accountJson = Json.stringify( new ReactProfileResponse().setAccount( ReactUserAccount.from( user ) ) );
 		assertThat( result.getResponse().getContentAsString() ).isEqualTo( accountJson );
 	}
 
 	@Test
 	void testUpdateAccount() throws Exception {
 		// given
-		ReactUserAccount reactAccount = ReactUserAccount.from( account );
+		ReactUserAccount reactAccount = ReactUserAccount.from( user );
 		reactAccount.setFirstName( "Anton" );
 
 		// when
 		String content = Json.stringify( reactAccount );
 		MvcResult result = this.mockMvc
-			.perform( put( ApiPath.USER + "/" + account.id() ).content( content ).contentType( "application/json" ).with( csrf() ).headers( headers ) )
+			.perform( put( ApiPath.USER + "/" + user.id() ).content( content ).contentType( "application/json" ).with( csrf() ).headers( headers ) )
 			.andExpect( status().isOk() )
 			.andReturn();
 
@@ -117,8 +118,34 @@ public class UserControllerTest {
 		String accountJson = Json.stringify( new ReactProfileResponse().setAccount( reactAccount ) );
 		String resultContent = result.getResponse().getContentAsString();
 		assertThat( resultContent ).isEqualTo( accountJson );
-		Map<String, Object> map = Json.asMap( resultContent );
-		Map<String, Object> account = (Map<String, Object>)map.get( "account" );
+		Map<?, ?> map = Json.asMap( resultContent );
+		Map<?, ?> account = (Map<?, ?>)map.get( "account" );
 		assertThat( account.get( "firstName" ) ).isEqualTo( "Anton" );
 	}
+
+	@Test
+	void testGetAircraftPage() throws Exception {
+		// given
+		Aircraft aftyn = new Aircraft().id( UUID.randomUUID() ).name( "AFTYN" ).type( AircraftType.FIXEDWING ).status( AircraftStatus.DESTROYED ).owner( user.id() ).ownerType( AircraftOwnerType.USER );
+		Aircraft bianca = new Aircraft().id( UUID.randomUUID() ).name( "BIANCA" ).type( AircraftType.FIXEDWING ).status( AircraftStatus.DESTROYED ).owner( user.id() ).ownerType( AircraftOwnerType.USER );
+		aircraftService.upsert( aftyn );
+		aircraftService.upsert( bianca );
+
+		// when
+		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_AIRCRAFT + "/0" ) ).andExpect( status().isOk() ).andReturn();
+
+		// then
+		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
+		List<?> aircraftList = (List<?>)map.get( "aircraft" );
+		Map<?, ?> messagesMap = (Map<?, ?>)map.get( "messages" );
+
+		assertThat( aircraftList.size() ).isEqualTo( 2 );
+		assertThat( messagesMap ).isNull();
+
+		Map<?, ?> aircraft0 = (Map<?, ?>)aircraftList.get( 0 );
+		Map<?, ?> aircraft1 = (Map<?, ?>)aircraftList.get( 1 );
+		assertThat( aircraft0.get( "name" ) ).isEqualTo( "AFTYN" );
+		assertThat( aircraft1.get( "name" ) ).isEqualTo( "BIANCA" );
+	}
+
 }

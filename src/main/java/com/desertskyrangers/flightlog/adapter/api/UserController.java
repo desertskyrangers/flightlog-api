@@ -1,15 +1,22 @@
 package com.desertskyrangers.flightlog.adapter.api;
 
+import com.desertskyrangers.flightlog.adapter.api.model.ReactAircraft;
+import com.desertskyrangers.flightlog.adapter.api.model.ReactAircraftPageResponse;
 import com.desertskyrangers.flightlog.adapter.api.model.ReactProfileResponse;
 import com.desertskyrangers.flightlog.adapter.api.model.ReactUserAccount;
 import com.desertskyrangers.flightlog.core.model.User;
+import com.desertskyrangers.flightlog.port.AircraftService;
 import com.desertskyrangers.flightlog.port.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,8 +26,11 @@ public class UserController {
 
 	private final UserService userService;
 
-	public UserController( UserService userService ) {
+	private final AircraftService aircraftService;
+
+	public UserController( UserService userService, AircraftService aircraftService ) {
 		this.userService = userService;
+		this.aircraftService = aircraftService;
 	}
 
 	@GetMapping( path = ApiPath.PROFILE )
@@ -72,6 +82,24 @@ public class UserController {
 	@ResponseStatus( HttpStatus.OK )
 	public void delete( @PathVariable( "id" ) UUID id ) {
 		userService.find( id ).ifPresent( userService::remove );
+	}
+
+	@GetMapping( path = ApiPath.USER_AIRCRAFT + "/{page}" )
+	ResponseEntity<ReactAircraftPageResponse> getAircraftPage( Authentication authentication, @PathVariable int page ) {
+		List<String> messages = new ArrayList<>();
+
+		try {
+			String username = authentication.getName();
+			User user = userService.findByPrincipal( username ).orElseThrow( () -> new UsernameNotFoundException( username ) );
+
+			List<ReactAircraft> aircraftPage = aircraftService.findByOwner( user.id() ).stream().map( ReactAircraft::from ).toList();
+			return new ResponseEntity<>( new ReactAircraftPageResponse().setAircraft( aircraftPage ), HttpStatus.OK );
+		} catch( Exception exception ) {
+			log.error( "Error creating new aircraft", exception );
+			messages.add( exception.getMessage() );
+		}
+
+		return new ResponseEntity<>( new ReactAircraftPageResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
 	}
 
 }

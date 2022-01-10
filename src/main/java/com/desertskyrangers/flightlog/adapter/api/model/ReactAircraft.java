@@ -55,8 +55,8 @@ public class ReactAircraft {
 		aircraft.make( reactAircraft.getMake() );
 		aircraft.model( reactAircraft.getModel() );
 		aircraft.status( AircraftStatus.valueOf( reactAircraft.getStatus().toUpperCase() ) );
-		aircraft.owner( UUID.fromString( reactAircraft.getOwner() ) );
-		aircraft.ownerType( AircraftOwnerType.valueOf( reactAircraft.getOwnerType().toUpperCase() ) );
+		if( reactAircraft.getOwner() != null ) aircraft.owner( UUID.fromString( reactAircraft.getOwner() ) );
+		if( reactAircraft.getOwnerType() != null ) aircraft.ownerType( AircraftOwnerType.valueOf( reactAircraft.getOwnerType().toUpperCase() ) );
 
 		return aircraft;
 	}

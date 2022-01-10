@@ -9,7 +9,7 @@ import java.util.UUID;
 @Accessors( fluent = true )
 public class Organization {
 
-	UUID id;
+	UUID id = UUID.randomUUID();
 
 	String name;
 

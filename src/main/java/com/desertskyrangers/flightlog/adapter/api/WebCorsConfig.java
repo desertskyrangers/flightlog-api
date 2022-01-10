@@ -7,7 +7,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebMvc
-public class WebConfig implements WebMvcConfigurer {
+public class WebCorsConfig implements WebMvcConfigurer {
 
 	@Override
 	public void addCorsMappings( CorsRegistry registry ) {
@@ -16,7 +16,8 @@ public class WebConfig implements WebMvcConfigurer {
 		registry.addMapping( ApiPath.AUTH_RESEND ).allowedOrigins( "*" ).allowedMethods( "POST" );
 		registry.addMapping( ApiPath.AUTH_VERIFY ).allowedOrigins( "*" ).allowedMethods( "POST" );
 		registry.addMapping( ApiPath.AUTH_LOGIN ).allowedOrigins( "*" ).allowedMethods( "POST" );
-		registry.addMapping( "/**" ).allowedMethods( "HEAD", "GET", "POST", "PUT", "DELETE", "PATCH" );
+		// NOTE AUTH_LOGOUT should not be allowed from all origins
+		registry.addMapping( ApiPath.API + "/**" ).allowedMethods( "GET", "POST", "PUT", "DELETE" );
 	}
 
 }

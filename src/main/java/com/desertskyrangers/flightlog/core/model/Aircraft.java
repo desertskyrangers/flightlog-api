@@ -9,7 +9,7 @@ import java.util.UUID;
 @Accessors( fluent = true )
 public class Aircraft {
 
-	private UUID id;
+	private UUID id = UUID.randomUUID();
 
 	private String name;
 

@@ -6,6 +6,8 @@ public interface ApiPath {
 
 	String API = "/api";
 
+	String AIRCRAFT = API + "/aircraft";
+
 	String AUTH = API + "/auth";
 
 	String AUTH_REGISTER = AUTH + "/register";

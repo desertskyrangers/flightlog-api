@@ -10,7 +10,7 @@ import java.util.UUID;
 @Accessors( fluent = true )
 public class UserToken {
 
-	private UUID id;
+	private UUID id = UUID.randomUUID();
 
 	private String principal;
 
@@ -18,9 +18,5 @@ public class UserToken {
 
 	@EqualsAndHashCode.Exclude
 	private User user;
-
-	public UserToken() {
-		id(UUID.randomUUID());
-	}
 
 }

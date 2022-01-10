@@ -15,20 +15,15 @@ public class Verification {
 
 	public static final long CODE_TIMEOUT = 600000;
 
-	private UUID id;
+	private UUID id = UUID.randomUUID();
 
 	private UUID userId;
 
-	private Long timestamp;
+	private Long timestamp = System.currentTimeMillis();
 
 	private String code;
 
 	private String type;
-
-	public Verification() {
-		id( UUID.randomUUID() );
-		timestamp( System.currentTimeMillis() );
-	}
 
 	public boolean isValid() {
 		return isValid( System.currentTimeMillis() );

@@ -1,7 +1,6 @@
 package com.desertskyrangers.flightlog.adapter.api;
 
 import com.desertskyrangers.flightlog.adapter.api.model.ReactAircraft;
-import com.desertskyrangers.flightlog.adapter.api.model.ReactAircraftPageResponse;
 import com.desertskyrangers.flightlog.adapter.api.model.ReactAircraftResponse;
 import com.desertskyrangers.flightlog.core.model.*;
 import com.desertskyrangers.flightlog.port.AircraftService;
@@ -21,36 +20,37 @@ import java.util.UUID;
 
 @RestController
 @Slf4j
-public class UserAircraftController {
+public class AircraftController {
 
 	private final AircraftService aircraftService;
 
 	private final UserService userService;
 
-	public UserAircraftController( AircraftService aircraftService, UserService userService ) {
+	public AircraftController( AircraftService aircraftService, UserService userService ) {
 		this.aircraftService = aircraftService;
 		this.userService = userService;
 	}
 
-	@GetMapping( path = ApiPath.USER_AIRCRAFT + "/{page}" )
-	ResponseEntity<ReactAircraftPageResponse> getAircraftPage( Authentication authentication, @PathVariable int page ) {
+	@GetMapping( path = ApiPath.AIRCRAFT + "/{id}" )
+	ResponseEntity<ReactAircraftResponse> getAircraft( @PathVariable UUID id ) {
+		log.info( "Get aircraft" );
 		List<String> messages = new ArrayList<>();
-
 		try {
-			String username = authentication.getName();
-			User user = userService.findByPrincipal( username ).orElseThrow( () -> new UsernameNotFoundException( username ) );
-
-			List<ReactAircraft> aircraftPage = aircraftService.findByOwner( user.id() ).stream().map( ReactAircraft::from ).toList();
-			return new ResponseEntity<>( new ReactAircraftPageResponse().setAircraft( aircraftPage ), HttpStatus.OK );
+			Optional<Aircraft> optional = aircraftService.find( id );
+			if( optional.isPresent() ) {
+				return new ResponseEntity<>( new ReactAircraftResponse().setAircraft( ReactAircraft.from( optional.get() ) ), HttpStatus.OK );
+			} else {
+				messages.add( "Aircraft id not found: " + id );
+			}
 		} catch( Exception exception ) {
-			log.error( "Error creating new aircraft", exception );
+			log.error( "Error getting aircraft", exception );
 			messages.add( exception.getMessage() );
 		}
 
-		return new ResponseEntity<>( new ReactAircraftPageResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
+		return new ResponseEntity<>( new ReactAircraftResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
 	}
 
-	@PostMapping( path = ApiPath.USER_AIRCRAFT )
+	@PostMapping( path = ApiPath.AIRCRAFT )
 	ResponseEntity<ReactAircraftResponse> newAircraft( Authentication authentication, @RequestBody ReactAircraft request ) {
 		String name = request.getName();
 		String type = request.getType();
@@ -69,6 +69,8 @@ public class UserAircraftController {
 			User user = userService.findByPrincipal( username ).orElseThrow( () -> new UsernameNotFoundException( username ) );
 
 			request.setId( UUID.randomUUID().toString() );
+
+			// TODO Allow user to select a different owner
 			request.setOwner( user.id().toString() );
 			request.setOwnerType( AircraftOwnerType.USER.name().toLowerCase() );
 			aircraftService.upsert( ReactAircraft.toAircraft( request ) );
@@ -81,8 +83,8 @@ public class UserAircraftController {
 		return new ResponseEntity<>( new ReactAircraftResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
 	}
 
-	@PutMapping( path = ApiPath.USER_AIRCRAFT )
-	ResponseEntity<ReactAircraftResponse> updateAircraft( @RequestBody ReactAircraft request ) {
+	@PutMapping( path = ApiPath.AIRCRAFT )
+	ResponseEntity<ReactAircraftResponse> updateAircraft(  Authentication authentication, @RequestBody ReactAircraft request ) {
 		log.info( "Update aircraft" );
 		String id = request.getId();
 		String name = request.getName();
@@ -99,6 +101,13 @@ public class UserAircraftController {
 		if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactAircraftResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
 
 		try {
+			// Default to user ownership for now
+			String username = authentication.getName();
+			User user = userService.findByPrincipal( username ).orElseThrow( () -> new UsernameNotFoundException( username ) );
+
+			// TODO Allow user to select a different owner
+			request.setOwner( user.id().toString() );
+			request.setOwnerType( AircraftOwnerType.USER.name().toLowerCase() );
 			aircraftService.upsert( ReactAircraft.toAircraft( request ) );
 			return new ResponseEntity<>( new ReactAircraftResponse().setAircraft( request ), HttpStatus.OK );
 		} catch( Exception exception ) {
@@ -109,7 +118,7 @@ public class UserAircraftController {
 		return new ResponseEntity<>( new ReactAircraftResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
 	}
 
-	@DeleteMapping( path = ApiPath.USER_AIRCRAFT )
+	@DeleteMapping( path = ApiPath.AIRCRAFT )
 	ResponseEntity<ReactAircraftResponse> deleteAircraft( @RequestBody UUID id ) {
 		log.info( "Delete aircraft" );
 		List<String> messages = new ArrayList<>();

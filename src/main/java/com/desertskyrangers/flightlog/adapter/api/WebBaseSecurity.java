@@ -18,13 +18,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-public class WebSecurity extends WebSecurityConfigurerAdapter {
+public class WebBaseSecurity extends WebSecurityConfigurerAdapter {
 
 	private final AppUserDetailsService appUserDetailsService;
 
 	private final JwtTokenProvider jwtTokenProvider;
 
-	public WebSecurity( AppUserDetailsService appUserDetailsService, JwtTokenProvider jwtTokenProvider ) {
+	public WebBaseSecurity( AppUserDetailsService appUserDetailsService, JwtTokenProvider jwtTokenProvider ) {
 		this.appUserDetailsService = appUserDetailsService;
 		this.jwtTokenProvider = jwtTokenProvider;
 	}
@@ -66,7 +66,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 				.antMatchers( HttpMethod.POST, ApiPath.AUTH_RESEND ).permitAll()
 				.antMatchers( HttpMethod.POST, ApiPath.AUTH_VERIFY ).permitAll()
 				.mvcMatchers( HttpMethod.POST, ApiPath.AUTH_LOGIN ).permitAll()
-				.antMatchers( HttpMethod.POST, ApiPath.AUTH_LOGOUT ).permitAll()
+				.mvcMatchers( HttpMethod.POST, ApiPath.AUTH_LOGOUT ).permitAll()
 				.mvcMatchers( HttpMethod.GET, ApiPath.MONITOR_STATUS ).permitAll()
 				.anyRequest().authenticated()
 			.and()
