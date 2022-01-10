@@ -13,10 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @Slf4j
@@ -84,7 +81,7 @@ public class AircraftController {
 	}
 
 	@PutMapping( path = ApiPath.AIRCRAFT )
-	ResponseEntity<ReactAircraftResponse> updateAircraft(  Authentication authentication, @RequestBody ReactAircraft request ) {
+	ResponseEntity<ReactAircraftResponse> updateAircraft( Authentication authentication, @RequestBody ReactAircraft request ) {
 		log.info( "Update aircraft" );
 		String id = request.getId();
 		String name = request.getName();
@@ -119,15 +116,16 @@ public class AircraftController {
 	}
 
 	@DeleteMapping( path = ApiPath.AIRCRAFT )
-	ResponseEntity<ReactAircraftResponse> deleteAircraft( @RequestBody UUID id ) {
+	ResponseEntity<ReactAircraftResponse> deleteAircraft( @RequestBody Map<String, Object> aircraft ) {
+		UUID id = UUID.fromString( String.valueOf( aircraft.get( "id" ) ) );
 		log.info( "Delete aircraft" );
 		List<String> messages = new ArrayList<>();
 		try {
 			Optional<Aircraft> optional = aircraftService.find( id );
 			if( optional.isPresent() ) {
-				Aircraft aircraft = optional.get();
-				aircraftService.remove( aircraft );
-				return new ResponseEntity<>( new ReactAircraftResponse().setAircraft( ReactAircraft.from( aircraft ) ), HttpStatus.OK );
+				Aircraft deletedAircraft = optional.get();
+				aircraftService.remove( deletedAircraft );
+				return new ResponseEntity<>( new ReactAircraftResponse().setAircraft( ReactAircraft.from( deletedAircraft ) ), HttpStatus.OK );
 			} else {
 				messages.add( "Aircraft id not found: " + id );
 			}

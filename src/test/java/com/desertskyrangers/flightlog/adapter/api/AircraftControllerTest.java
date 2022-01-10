@@ -143,4 +143,27 @@ public class AircraftControllerTest {
 		this.mockMvc.perform( put( ApiPath.AIRCRAFT ).content( Json.stringify( aircraft ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isBadRequest() ).andReturn();
 	}
 
+	@Test
+	void deleteAircraftWithSuccess() throws Exception {
+		// given
+		Aircraft aircraft = new Aircraft();
+		aircraft.id( UUID.randomUUID() );
+		aircraft.name( "Aftyn" );
+		aircraft.make( "Hobby King" );
+		aircraft.model( "Bixler 2" );
+		aircraft.type( AircraftType.FIXEDWING );
+		aircraft.status( AircraftStatus.DESTROYED );
+		aircraft.owner( user.id() );
+		aircraft.ownerType( AircraftOwnerType.USER );
+		aircraftService.upsert( aircraft );
+
+		// when
+		MvcResult result = this.mockMvc.perform( delete( ApiPath.AIRCRAFT ).content( "{\"id\":\"" + aircraft.id() + "\"}" ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
+
+		// then
+		Map<?,?> map = Json.asMap( result.getResponse().getContentAsString() );
+		Map<?,?> resultAircraft = (Map<?,?>)map.get("aircraft");
+		assertThat( resultAircraft.get("name")).isEqualTo( "Aftyn" );
+	}
+
 }
