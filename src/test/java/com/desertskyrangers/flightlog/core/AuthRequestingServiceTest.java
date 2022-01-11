@@ -151,7 +151,7 @@ public class AuthRequestingServiceTest {
 
 		// This link is intentionally not a link to /api/auth/verify
 		// it is supposed to request the verify page at the browser.
-		assertThat( service.generateVerifyLink( id, code )).isEqualTo( "https://flightlog.desertskyrangers.com/verify/" + id + "/" + code );
+		assertThat( service.generateVerifyLink( id, code )).isEqualTo( "https://flightlog.desertskyrangers.org/verify/" + id + "/" + code );
 	}
 
 }

@@ -18,9 +18,9 @@ import java.io.UnsupportedEncodingException;
 @Slf4j
 public class HumanInterfaceService implements HumanInterface {
 
-	private static final String FROM_ADDRESS = "flightlog@desertskyrangers.com";
+	private static final String FROM_ADDRESS = "flightlog@desertskyrangers.org";
 	private static final String FROM_NAME = "FlightLog";
-	private static final String REPLY_TO_ADDRESS = "noreply@desertskyrangers.com";
+	private static final String REPLY_TO_ADDRESS = "noreply@desertskyrangers.org";
 	private static final String REPLY_TO_NAME = "Desert Sky Rangers";
 
 	private final FlightLogApp app;

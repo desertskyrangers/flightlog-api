@@ -58,13 +58,13 @@ jobs:
         uses: github/codeql-action/analyze@v1
 
       - name: Copy Server JAR
-        run: scp -B build/libs/flightlog-*.jar travis@desertskyrangers.com:/opt/dsr/store/latest/flightlog/server.jar
+        run: scp -B build/libs/flightlog-*.jar travis@desertskyrangers.org:/opt/dsr/store/latest/flightlog/server.jar
 
 #      - name: Copy Provider Icon
 #        run: |
-#          scp -B server/target/main/images/desertskyrangers.png travis@desertskyrangers.com:/opt/dsr/store/stable/desertskyrangers/provider.png
-#          scp -B server/target/main/images/desertskyrangers-dark.png travis@desertskyrangers.com:/opt/dsr/store/stable/desertskyrangers/provider-dark.png
-#          scp -B server/target/main/images/desertskyrangers-light.png travis@desertskyrangers.com:/opt/dsr/store/stable/desertskyrangers/provider-light.png
+#          scp -B server/target/main/images/desertskyrangers.png travis@desertskyrangers.org:/opt/dsr/store/stable/desertskyrangers/provider.png
+#          scp -B server/target/main/images/desertskyrangers-dark.png travis@desertskyrangers.org:/opt/dsr/store/stable/desertskyrangers/provider-dark.png
+#          scp -B server/target/main/images/desertskyrangers-light.png travis@desertskyrangers.org:/opt/dsr/store/stable/desertskyrangers/provider-light.png
 
       - name: Update the Website
-        run: ssh travis@desertskyrangers.com /home/ecco/bin/update-flightlog-server
+        run: ssh travis@desertskyrangers.org /home/ecco/bin/update-flightlog-server

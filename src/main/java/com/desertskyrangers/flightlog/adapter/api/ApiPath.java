@@ -2,7 +2,7 @@ package com.desertskyrangers.flightlog.adapter.api;
 
 public interface ApiPath {
 
-	String HOST = "https://flightlog.desertskyrangers.com";
+	String HOST = "https://flightlog.desertskyrangers.org";
 
 	String API = "/api";
 
