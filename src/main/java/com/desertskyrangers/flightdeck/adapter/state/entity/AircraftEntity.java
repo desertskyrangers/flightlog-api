@@ -32,6 +32,8 @@ public class AircraftEntity {
 
 	private String status;
 
+	private String connector;
+
 	@Column( nullable = false, columnDefinition = "BINARY(16)" )
 	private UUID owner;
 

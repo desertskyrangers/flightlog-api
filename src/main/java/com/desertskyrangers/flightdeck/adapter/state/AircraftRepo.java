@@ -10,4 +10,6 @@ public interface AircraftRepo extends JpaRepository<AircraftEntity, UUID> {
 
 	List<AircraftEntity> findAircraftByOwner( UUID owner );
 
+	List<AircraftEntity> findAircraftByOwnerOrderByName( UUID owner );
+
 }

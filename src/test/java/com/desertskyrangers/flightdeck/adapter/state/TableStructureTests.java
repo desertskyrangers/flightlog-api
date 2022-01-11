@@ -22,15 +22,82 @@ public class TableStructureTests {
 	@Test
 	void testTables() throws Exception {
 		Set<String> expected = new HashSet<>();
+		expected.add( "aircraft" );
+		expected.add( "battery" );
+		expected.add( "flight" );
+		expected.add( "flightbattery" );
+		expected.add( "org" );
 		expected.add( "user" );
-		expected.add( "token" );
-		expected.add( "verification" );
 		expected.add( "usertoken" );
 		expected.add( "userrole" );
-		expected.add( "aircraft" );
-		expected.add( "org" );
+		expected.add( "token" );
+		expected.add( "verification" );
 
 		assertThat( getTables() ).containsExactlyInAnyOrderElementsOf( expected );
+	}
+
+	@Test
+	void testAircraft() throws Exception {
+		Set<String> expected = new HashSet<>();
+		expected.add( "id" );
+		expected.add( "name" );
+		expected.add( "type" );
+		expected.add( "make" );
+		expected.add( "model" );
+		expected.add( "status" );
+		expected.add( "connector" );
+		expected.add( "owner" );
+		expected.add( "ownertype" );
+
+		assertThat( getColumns( "aircraft" ) ).containsAll( expected );
+	}
+
+	@Test
+	void testBattery() throws Exception {
+		Set<String> expected = new HashSet<>();
+		expected.add( "id" );
+		expected.add( "name" );
+		expected.add( "make" );
+		expected.add( "model" );
+		expected.add( "cycles" );
+		expected.add( "capacity" );
+		expected.add( "chargerating" );
+		expected.add( "dischargerating" );
+		expected.add( "connector" );
+		expected.add( "status" );
+
+		assertThat( getColumns( "battery" ) ).containsExactlyInAnyOrderElementsOf( expected );
+	}
+
+	@Test
+	void testFlight() throws Exception {
+		Set<String> expected = new HashSet<>();
+		expected.add( "id" );
+		expected.add( "aircraftid" );
+		expected.add( "timestamp" );
+		expected.add( "duration" );
+
+		assertThat( getColumns( "flight" ) ).containsExactlyInAnyOrderElementsOf( expected );
+	}
+
+	@Test
+	void testFlightBattery() throws Exception {
+		Set<String> expected = new HashSet<>();
+		expected.add( "flightid" );
+		expected.add( "batteryid" );
+
+		assertThat( getColumns( "flightbattery" ) ).containsExactlyInAnyOrderElementsOf( expected );
+	}
+
+	@Test
+	void testOrg() throws Exception {
+		Set<String> expected = new HashSet<>();
+		expected.add( "id" );
+		expected.add( "name" );
+		expected.add( "ownerid" );
+		//expected.add( "type" );
+
+		assertThat( getColumns( "org" ) ).containsAll( expected );
 	}
 
 	@Test
@@ -72,32 +139,6 @@ public class TableStructureTests {
 		assertThat( getColumns( "verification" ) ).containsAll( expected );
 	}
 
-	@Test
-	void testAircraft() throws Exception {
-		Set<String> expected = new HashSet<>();
-		expected.add( "id" );
-		expected.add( "name" );
-		expected.add( "type" );
-		expected.add( "make" );
-		expected.add( "model" );
-		expected.add( "status" );
-		expected.add( "owner" );
-		expected.add( "ownertype" );
-
-		assertThat( getColumns( "aircraft" ) ).containsAll( expected );
-	}
-
-
-	@Test
-	void testOrg() throws Exception {
-		Set<String> expected = new HashSet<>();
-		expected.add( "id" );
-		expected.add( "name" );
-		expected.add( "ownerid" );
-		//expected.add( "type" );
-
-		assertThat( getColumns( "org" ) ).containsAll( expected );
-	}
 
 	private Set<String> getTables() throws SQLException {
 		try( Connection connection = datasource.getConnection() ) {

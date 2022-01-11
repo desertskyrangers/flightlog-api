@@ -42,7 +42,7 @@ public class StateRetrievingService implements StateRetrieving {
 
 	@Override
 	public List<Aircraft> findAircraftByOwner( UUID owner ) {
-		return aircraftRepo.findAircraftByOwner( owner ).stream().map( AircraftEntity::toAircraft ).collect( Collectors.toList() );
+		return aircraftRepo.findAircraftByOwnerOrderByName( owner ).stream().map( AircraftEntity::toAircraft ).collect( Collectors.toList() );
 	}
 
 	@Override
