@@ -1,11 +1,13 @@
 package com.desertskyrangers.flightdeck.adapter.state.entity;
 
+import com.desertskyrangers.flightdeck.core.model.Flight;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Data
 @Entity
@@ -30,10 +32,38 @@ public class FlightEntity {
 
 	private long duration;
 
-	// location
-	// notes
+	@Column( length = 1020 )
+	private String notes;
+
+	// departure location
+	// arrival location
 
 	// weather ?
 	// airspace ?
 
+	public static FlightEntity from( Flight flight ) {
+		FlightEntity entity = new FlightEntity();
+
+		entity.setId( flight.id() );
+		entity.setAircraft( AircraftEntity.from( flight.aircraft() ) );
+		entity.setBatteries( flight.batteries().stream().map( BatteryEntity::from ).collect( Collectors.toSet() ) );
+		entity.setTimestamp( flight.timestamp() );
+		entity.setDuration( flight.duration() );
+		entity.setNotes( flight.notes() );
+
+		return entity;
+	}
+
+	public static Flight toFlight( FlightEntity entity ) {
+		Flight flight = new Flight();
+
+		flight.id( entity.getId() );
+		flight.aircraft( AircraftEntity.toAircraft( entity.getAircraft() ) );
+		flight.batteries( entity.getBatteries().stream().map( BatteryEntity::toBattery ).collect( Collectors.toSet() ) );
+		flight.timestamp( entity.getTimestamp() );
+		flight.duration( entity.getDuration() );
+		flight.notes( entity.getNotes() );
+
+		return flight;
+	}
 }

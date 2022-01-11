@@ -33,15 +33,15 @@ public class TokenEntity {
 		return entity;
 	}
 
-	public static UserToken toUserCredential( TokenEntity entity ) {
-		return toUserCredential( entity, false );
+	public static UserToken toUserToken( TokenEntity entity ) {
+		return toUserToken( entity, false );
 	}
 
-	public static UserToken toUserCredentialDeep( TokenEntity entity ) {
-		return toUserCredential( entity, true );
+	public static UserToken toUserTokenDeep( TokenEntity entity ) {
+		return toUserToken( entity, true );
 	}
 
-	private static UserToken toUserCredential( TokenEntity entity, boolean includeAccount ) {
+	private static UserToken toUserToken( TokenEntity entity, boolean includeAccount ) {
 		UserToken credential = new UserToken();
 
 		credential.id( entity.getId() );

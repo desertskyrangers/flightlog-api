@@ -59,12 +59,15 @@ public class TableStructureTests {
 		expected.add( "name" );
 		expected.add( "make" );
 		expected.add( "model" );
+		expected.add( "connector" );
+		expected.add( "status" );
+
+		expected.add( "type" );
+		expected.add( "cells" );
 		expected.add( "cycles" );
 		expected.add( "capacity" );
 		expected.add( "chargerating" );
 		expected.add( "dischargerating" );
-		expected.add( "connector" );
-		expected.add( "status" );
 
 		assertThat( getColumns( "battery" ) ).containsExactlyInAnyOrderElementsOf( expected );
 	}
@@ -76,6 +79,7 @@ public class TableStructureTests {
 		expected.add( "aircraftid" );
 		expected.add( "timestamp" );
 		expected.add( "duration" );
+		expected.add( "notes" );
 
 		assertThat( getColumns( "flight" ) ).containsExactlyInAnyOrderElementsOf( expected );
 	}

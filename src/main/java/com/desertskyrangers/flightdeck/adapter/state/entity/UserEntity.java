@@ -74,7 +74,7 @@ public class UserEntity {
 		user.smsNumber( entity.getSmsNumber() );
 		if( Text.isNotBlank( entity.getSmsCarrier() ) ) user.smsCarrier( SmsCarrier.valueOf( entity.getSmsCarrier().toUpperCase() ) );
 		user.smsVerified( entity.getSmsVerified() != null && entity.getSmsVerified() );
-		user.tokens( entity.getTokens().stream().map( c -> TokenEntity.toUserCredential( c ).user( user ) ).collect( Collectors.toSet() ) );
+		user.tokens( entity.getTokens().stream().map( c -> TokenEntity.toUserToken( c ).user( user ) ).collect( Collectors.toSet() ) );
 		user.roles( entity.getRoles() );
 
 		return user;

@@ -1,5 +1,8 @@
 package com.desertskyrangers.flightdeck.adapter.state.entity;
 
+import com.desertskyrangers.flightdeck.core.model.Battery;
+import com.desertskyrangers.flightdeck.core.model.BatteryStatus;
+import com.desertskyrangers.flightdeck.core.model.BatteryType;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -23,6 +26,14 @@ public class BatteryEntity {
 
 	private String model;
 
+	private String connector;
+
+	private String status;
+
+	private String type;
+
+	private int cells;
+
 	private int cycles;
 
 	private int capacity;
@@ -33,8 +44,42 @@ public class BatteryEntity {
 	@Column( name = "dischargerating" )
 	private int dischargeRating;
 
-	private String connector;
+	public static BatteryEntity from( Battery battery ) {
+		BatteryEntity entity = new BatteryEntity();
 
-	private String status;
+		entity.setId( battery.id() );
+		entity.setName( battery.name() );
+		entity.setMake( battery.make() );
+		entity.setModel( battery.model() );
+		entity.setConnector( battery.connector() );
+		if( battery.status() != null ) entity.setStatus( battery.status().name().toLowerCase() );
+		if( battery.type() != null ) entity.setType( battery.type().name().toLowerCase() );
+		entity.setCells( battery.cells() );
+		entity.setCycles( battery.cycles() );
+		entity.setCapacity( battery.capacity() );
+		entity.setChargeRating( battery.chargeRating() );
+		entity.setDischargeRating( battery.dischargeRating() );
+
+		return entity;
+	}
+
+	public static Battery toBattery( BatteryEntity entity ) {
+		Battery battery = new Battery();
+
+		battery.id( entity.getId() );
+		battery.name( entity.getName() );
+		battery.make( entity.getMake() );
+		battery.model( entity.getModel() );
+		battery.connector( entity.getConnector() );
+		if( entity.getStatus() != null ) battery.status( BatteryStatus.valueOf( entity.getStatus().toUpperCase() ) );
+		if( entity.getType() != null ) battery.type( BatteryType.valueOf( entity.getType().toUpperCase() ) );
+		battery.cells( entity.getCells() );
+		battery.cycles( entity.getCycles() );
+		battery.capacity( entity.getCapacity() );
+		battery.chargeRating( entity.getChargeRating() );
+		battery.dischargeRating( entity.getDischargeRating() );
+
+		return battery;
+	}
 
 }

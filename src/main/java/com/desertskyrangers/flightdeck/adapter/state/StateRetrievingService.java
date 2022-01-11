@@ -47,12 +47,12 @@ public class StateRetrievingService implements StateRetrieving {
 
 	@Override
 	public Optional<UserToken> findUserCredential( UUID id ) {
-		return userTokenRepo.findById( id ).map( TokenEntity::toUserCredential );
+		return userTokenRepo.findById( id ).map( TokenEntity::toUserToken );
 	}
 
 	@Override
 	public Optional<UserToken> findUserTokenByPrincipal( String username ) {
-		return userTokenRepo.findByPrincipal( username ).map( TokenEntity::toUserCredentialDeep );
+		return userTokenRepo.findByPrincipal( username ).map( TokenEntity::toUserTokenDeep );
 	}
 
 	@Override
