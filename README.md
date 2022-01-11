@@ -1,3 +1,3 @@
-# FlightLog API
-The FlightLog application API.
+# FlightDeck API
+The FlightDeck application API.
 

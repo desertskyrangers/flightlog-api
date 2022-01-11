@@ -13,7 +13,7 @@ security:
 
 logging:
   file:
-    name: flightlog.log
+    name: flightdeck.log
   level:
     # Start with only WARN messages
     root: INFO
@@ -30,7 +30,7 @@ logging:
 
 spring:
   application:
-    name: FlightLog
+    name: FlightDeck
     version: ${version}
   datasource:
     driver-class-name: org.h2.Driver

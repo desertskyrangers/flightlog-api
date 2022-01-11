@@ -6,7 +6,7 @@ env:
   JAVA_VERSION: "17"
   DSR_GPG_PASSWORD: ${{ secrets.DSR_GPG_PASSWORD }}
   DSR_REPO_USERNAME: ${{ secrets.DSR_REPO_USERNAME }}
-  WEBSITE_DEPLOY_PATH: '/opt/dsr/flightlog/api'
+  WEBSITE_DEPLOY_PATH: '/opt/dsr/flightdeck/api'
 
 jobs:
   build:
@@ -58,7 +58,7 @@ jobs:
         uses: github/codeql-action/analyze@v1
 
       - name: Copy Server JAR
-        run: scp -B build/libs/flightlog-*.jar travis@desertskyrangers.org:/opt/dsr/store/latest/flightlog/server.jar
+        run: scp -B build/libs/flightdeck-*.jar travis@desertskyrangers.org:/opt/dsr/store/latest/flightdeck/server.jar
 
 #      - name: Copy Provider Icon
 #        run: |
@@ -67,4 +67,4 @@ jobs:
 #          scp -B server/target/main/images/desertskyrangers-light.png travis@desertskyrangers.org:/opt/dsr/store/stable/desertskyrangers/provider-light.png
 
       - name: Update the Website
-        run: ssh travis@desertskyrangers.org /home/ecco/bin/update-flightlog-server
+        run: ssh travis@desertskyrangers.org /home/ecco/bin/update-flightdeck-server
