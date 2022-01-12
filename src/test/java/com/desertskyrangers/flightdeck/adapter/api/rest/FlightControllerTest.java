@@ -1,7 +1,11 @@
 package com.desertskyrangers.flightdeck.adapter.api.rest;
 
 import com.desertskyrangers.flightdeck.adapter.api.ApiPath;
+import com.desertskyrangers.flightdeck.core.model.Aircraft;
+import com.desertskyrangers.flightdeck.core.model.Battery;
 import com.desertskyrangers.flightdeck.core.model.Flight;
+import com.desertskyrangers.flightdeck.port.AircraftService;
+import com.desertskyrangers.flightdeck.port.BatteryService;
 import com.desertskyrangers.flightdeck.port.FlightService;
 import com.desertskyrangers.flightdeck.util.Json;
 import org.junit.jupiter.api.Test;
@@ -19,13 +23,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class FlightControllerTest extends BaseControllerTest {
 
 	@Autowired
+	private AircraftService aircraftService;
+
+	@Autowired
+	private BatteryService batteryService;
+
+	@Autowired
 	private FlightService flightService;
 
 	@Autowired
 	private MockMvc mockMvc;
 
 	@Test
-	void getBatteryWithSuccess() throws Exception {
+	void getFlightWithSuccess() throws Exception {
 		// given
 		Flight flight = createTestFlight();
 		flightService.upsert( flight );
@@ -40,11 +50,15 @@ public class FlightControllerTest extends BaseControllerTest {
 	}
 
 	private Flight createTestFlight() {
+		Aircraft aircraft = createTestAircraft();
+		aircraftService.upsert(aircraft);
+		Battery battery = createTestBattery();
+		batteryService.upsert(battery);
 		Flight flight = new Flight();
-		flight.pilot(getUser());
+		flight.pilot( getMockUser());
 		//flight.observer( "Oscar Observer");
-		//flight.aircraft( createTestAircraft() );
-		//flight.batteries( Set.of( createTestBattery() ) );
+		flight.aircraft( aircraft );
+		flight.batteries( Set.of( battery ) );
 		flight.timestamp( System.currentTimeMillis() );
 		flight.duration(1000);
 		flight.notes("Just a test flight");

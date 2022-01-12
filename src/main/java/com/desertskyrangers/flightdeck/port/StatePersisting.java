@@ -16,6 +16,8 @@ public interface StatePersisting {
 
 	void remove( Flight flight );
 
+	void removeAllFlights();
+
 	void upsert( User account );
 
 	void remove( User account );

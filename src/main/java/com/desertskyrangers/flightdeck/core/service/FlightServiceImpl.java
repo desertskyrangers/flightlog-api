@@ -41,4 +41,5 @@ public class FlightServiceImpl implements FlightService {
 	public void remove( Flight flight ) {
 		statePersisting.remove( flight );
 	}
+
 }

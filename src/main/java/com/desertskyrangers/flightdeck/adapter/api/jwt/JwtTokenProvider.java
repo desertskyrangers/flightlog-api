@@ -101,8 +101,8 @@ public class JwtTokenProvider {
 		return jwtRememberedTokenValidityInSeconds;
 	}
 
-	String createToken( User account, Authentication authentication, boolean remember, long timestamp ) {
-		String userId = account.id().toString();
+	String createToken( User user, Authentication authentication, boolean remember, long timestamp ) {
+		String userId = user.id().toString();
 		String subject = authentication.getName();
 		String authorities = authentication.getAuthorities().stream().map( GrantedAuthority::getAuthority ).collect( Collectors.joining( "," ) );
 

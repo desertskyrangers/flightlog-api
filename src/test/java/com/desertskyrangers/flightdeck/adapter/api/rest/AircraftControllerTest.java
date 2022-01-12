@@ -42,6 +42,11 @@ public class AircraftControllerTest extends BaseControllerTest {
 	}
 
 	@Test
+	void getAircraftWithBadRequest() throws Exception {
+		this.mockMvc.perform( get( ApiPath.AIRCRAFT + "/" + "bad-id" ) ).andExpect( status().isBadRequest() ).andReturn();
+	}
+
+	@Test
 	void testNewAircraftWithSuccess() throws Exception {
 		ReactAircraft aircraft = createTestReactAircraft();
 		aircraft.setId( "new" );
@@ -86,19 +91,6 @@ public class AircraftControllerTest extends BaseControllerTest {
 		Map<?,?> map = Json.asMap( result.getResponse().getContentAsString() );
 		Map<?,?> resultAircraft = (Map<?,?>)map.get("aircraft");
 		assertThat( resultAircraft.get("name")).isEqualTo( "Aftyn" );
-	}
-
-	private Aircraft createTestAircraft() {
-		Aircraft aircraft = new Aircraft();
-		aircraft.id( UUID.randomUUID() );
-		aircraft.name( "Aftyn" );
-		aircraft.make( "Hobby King" );
-		aircraft.model( "Bixler 2" );
-		aircraft.type( AircraftType.FIXEDWING );
-		aircraft.status( AircraftStatus.DESTROYED );
-		aircraft.owner( getUser().id() );
-		aircraft.ownerType( OwnerType.USER );
-		return aircraft;
 	}
 
 	private ReactAircraft createTestReactAircraft() {

@@ -5,7 +5,10 @@ import com.desertskyrangers.flightdeck.adapter.api.jwt.JwtToken;
 import com.desertskyrangers.flightdeck.adapter.api.jwt.JwtTokenProvider;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactProfileResponse;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactUserAccount;
-import com.desertskyrangers.flightdeck.core.model.*;
+import com.desertskyrangers.flightdeck.core.model.Aircraft;
+import com.desertskyrangers.flightdeck.core.model.AircraftStatus;
+import com.desertskyrangers.flightdeck.core.model.AircraftType;
+import com.desertskyrangers.flightdeck.core.model.OwnerType;
 import com.desertskyrangers.flightdeck.port.AircraftService;
 import com.desertskyrangers.flightdeck.port.UserService;
 import com.desertskyrangers.flightdeck.util.Json;
@@ -25,7 +28,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -37,7 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ExtendWith( MockitoExtension.class )
-public class UserControllerTest {
+public class UserControllerTest extends BaseControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -51,36 +56,23 @@ public class UserControllerTest {
 	@Autowired
 	private JwtTokenProvider tokenProvider;
 
-	private User user;
+	//private User user;
 
 	private HttpHeaders headers;
 
 	@BeforeEach
 	void setup() {
+		super.setup();
+
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if( authentication != null ) {
-			String username = authentication.getName();
-			String password = Objects.toString( authentication.getCredentials() );
-
-			// Delete the exising mock user account
-			userService.findByPrincipal( authentication.getName() ).ifPresent( u -> userService.remove( u ) );
-
-			// Create mock user account
-			user = new User();
-			user.lastName( username );
-			user.tokens( Set.of( new UserToken().principal( username ).credential( password ) ) );
-			userService.upsert( user );
-
-			String jwtToken = tokenProvider.createToken( user, authentication, false );
-
-			headers = new HttpHeaders();
-			headers.add( JwtToken.AUTHORIZATION_HEADER, JwtToken.AUTHORIZATION_TYPE + " " + jwtToken );
-		}
+		String jwtToken = tokenProvider.createToken( getMockUser(), authentication, false );
+		headers = new HttpHeaders();
+		headers.add( JwtToken.AUTHORIZATION_HEADER, JwtToken.AUTHORIZATION_TYPE + " " + jwtToken );
 	}
 
 	@AfterEach
 	void teardown() {
-		userService.remove( user );
+		userService.remove( getMockUser() );
 	}
 
 	@Test
@@ -89,30 +81,30 @@ public class UserControllerTest {
 		MvcResult result = this.mockMvc.perform( MockMvcRequestBuilders.get( ApiPath.PROFILE ).with( csrf() ).headers( headers ) ).andExpect( status().isOk() ).andReturn();
 
 		// then
-		String accountJson = Json.stringify( new ReactProfileResponse().setAccount( ReactUserAccount.from( user ) ) );
+		String accountJson = Json.stringify( new ReactProfileResponse().setAccount( ReactUserAccount.from( getMockUser() ) ) );
 		assertThat( result.getResponse().getContentAsString() ).isEqualTo( accountJson );
 	}
 
 	@Test
 	void testGetAccount() throws Exception {
 		// when
-		MvcResult result = this.mockMvc.perform( get( ApiPath.USER + "/" + user.id() ).with( csrf() ).headers( headers ) ).andExpect( status().isOk() ).andReturn();
+		MvcResult result = this.mockMvc.perform( get( ApiPath.USER + "/" + getMockUser().id() ).with( csrf() ).headers( headers ) ).andExpect( status().isOk() ).andReturn();
 
 		// then
-		String accountJson = Json.stringify( new ReactProfileResponse().setAccount( ReactUserAccount.from( user ) ) );
+		String accountJson = Json.stringify( new ReactProfileResponse().setAccount( ReactUserAccount.from( getMockUser() ) ) );
 		assertThat( result.getResponse().getContentAsString() ).isEqualTo( accountJson );
 	}
 
 	@Test
 	void testUpdateAccount() throws Exception {
 		// given
-		ReactUserAccount reactAccount = ReactUserAccount.from( user );
+		ReactUserAccount reactAccount = ReactUserAccount.from( getMockUser() );
 		reactAccount.setFirstName( "Anton" );
 
 		// when
 		String content = Json.stringify( reactAccount );
 		MvcResult result = this.mockMvc
-			.perform( put( ApiPath.USER + "/" + user.id() ).content( content ).contentType( "application/json" ).with( csrf() ).headers( headers ) )
+			.perform( put( ApiPath.USER + "/" + getMockUser().id() ).content( content ).contentType( "application/json" ).with( csrf() ).headers( headers ) )
 			.andExpect( status().isOk() )
 			.andReturn();
 
@@ -128,8 +120,8 @@ public class UserControllerTest {
 	@Test
 	void testGetAircraftPage() throws Exception {
 		// given
-		Aircraft aftyn = new Aircraft().id( UUID.randomUUID() ).name( "AFTYN" ).type( AircraftType.FIXEDWING ).status( AircraftStatus.DESTROYED ).owner( user.id() ).ownerType( OwnerType.USER );
-		Aircraft bianca = new Aircraft().id( UUID.randomUUID() ).name( "BIANCA" ).type( AircraftType.FIXEDWING ).status( AircraftStatus.DESTROYED ).owner( user.id() ).ownerType( OwnerType.USER );
+		Aircraft aftyn = new Aircraft().id( UUID.randomUUID() ).name( "AFTYN" ).type( AircraftType.FIXEDWING ).status( AircraftStatus.DESTROYED ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
+		Aircraft bianca = new Aircraft().id( UUID.randomUUID() ).name( "BIANCA" ).type( AircraftType.FIXEDWING ).status( AircraftStatus.DESTROYED ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
 		aircraftService.upsert( aftyn );
 		aircraftService.upsert( bianca );
 

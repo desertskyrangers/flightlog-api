@@ -58,6 +58,11 @@ public class StatePersistingService implements StatePersisting {
 	}
 
 	@Override
+	public void removeAllFlights() {
+		flightRepo.deleteAll();
+	}
+
+	@Override
 	public void upsert( User account ) {
 		userAccountRepo.save( UserEntity.from( account ) );
 	}
