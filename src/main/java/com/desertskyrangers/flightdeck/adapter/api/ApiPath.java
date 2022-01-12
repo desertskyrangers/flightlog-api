@@ -22,6 +22,8 @@ public interface ApiPath {
 
 	String AUTH_LOGOUT = AUTH + "/logout";
 
+	String FLIGHT = API + "/flight";
+
 	String MONITOR = API + "/monitor";
 
 	String MONITOR_STATUS = MONITOR + "/status";

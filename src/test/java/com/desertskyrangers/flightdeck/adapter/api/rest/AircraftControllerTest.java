@@ -29,15 +29,7 @@ public class AircraftControllerTest extends BaseControllerTest {
 	@Test
 	void testGetAircraftWithSuccess() throws Exception {
 		// given
-		Aircraft aircraft = new Aircraft();
-		aircraft.id( UUID.randomUUID() );
-		aircraft.name( "Aftyn" );
-		aircraft.make( "Hobby King" );
-		aircraft.model( "Bixler 2" );
-		aircraft.type( AircraftType.FIXEDWING );
-		aircraft.status( AircraftStatus.DESTROYED );
-		aircraft.owner( getUser().id() );
-		aircraft.ownerType( OwnerType.USER );
+		Aircraft aircraft = createTestAircraft();
 		aircraftService.upsert( aircraft );
 
 		// when
@@ -51,60 +43,32 @@ public class AircraftControllerTest extends BaseControllerTest {
 
 	@Test
 	void testNewAircraftWithSuccess() throws Exception {
-		ReactAircraft aircraft = new ReactAircraft();
+		ReactAircraft aircraft = createTestReactAircraft();
 		aircraft.setId( "new" );
-		aircraft.setName( "Aftyn" );
-		aircraft.setMake( "Hobby King" );
-		aircraft.setModel( "Bixler 2" );
-		aircraft.setType( AircraftType.FIXEDWING.name().toLowerCase() );
-		aircraft.setStatus( AircraftStatus.DESTROYED.name().toLowerCase() );
-		aircraft.setOwner( getUser().id().toString() );
-		aircraft.setOwnerType( OwnerType.USER.name().toLowerCase() );
 
 		this.mockMvc.perform( post( ApiPath.AIRCRAFT ).content( Json.stringify( aircraft ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
 	}
 
 	@Test
 	void testNewAircraftWithBadRequest() throws Exception {
-		ReactAircraft aircraft = new ReactAircraft();
+		ReactAircraft aircraft = createTestReactAircraft();
 		aircraft.setId( "new" );
-		aircraft.setName( "Aftyn" );
-		aircraft.setMake( "Hobby King" );
-		aircraft.setModel( "Bixler 2" );
 		aircraft.setType( "invalid" );
-		aircraft.setStatus( AircraftStatus.DESTROYED.name().toLowerCase() );
-		aircraft.setOwner( getUser().id().toString() );
-		aircraft.setOwnerType( OwnerType.USER.name().toLowerCase() );
 
 		this.mockMvc.perform( post( ApiPath.AIRCRAFT ).content( Json.stringify( aircraft ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isBadRequest() ).andReturn();
 	}
 
 	@Test
 	void testUpdateAircraftWithSuccess() throws Exception {
-		ReactAircraft aircraft = new ReactAircraft();
-		aircraft.setId( UUID.randomUUID().toString() );
-		aircraft.setName( "Aftyn" );
-		aircraft.setMake( "Hobby King" );
-		aircraft.setModel( "Bixler 2" );
-		aircraft.setType( AircraftType.FIXEDWING.name().toLowerCase() );
-		aircraft.setStatus( AircraftStatus.DESTROYED.name().toLowerCase() );
-		aircraft.setOwner( getUser().id().toString() );
-		aircraft.setOwnerType( OwnerType.USER.name().toLowerCase() );
+		ReactAircraft aircraft = createTestReactAircraft();
 
 		this.mockMvc.perform( put( ApiPath.AIRCRAFT ).content( Json.stringify( aircraft ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
 	}
 
 	@Test
 	void testUpdateAircraftWithBadRequest() throws Exception {
-		ReactAircraft aircraft = new ReactAircraft();
-		aircraft.setId( UUID.randomUUID().toString() );
-		aircraft.setName( "Aftyn" );
-		aircraft.setMake( "Hobby King" );
-		aircraft.setModel( "Bixler 2" );
+		ReactAircraft aircraft = createTestReactAircraft();
 		aircraft.setType( "invalid" );
-		aircraft.setStatus( AircraftStatus.DESTROYED.name().toLowerCase() );
-		aircraft.setOwner( getUser().id().toString() );
-		aircraft.setOwnerType( OwnerType.USER.name().toLowerCase() );
 
 		this.mockMvc.perform( put( ApiPath.AIRCRAFT ).content( Json.stringify( aircraft ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isBadRequest() ).andReturn();
 	}
@@ -112,15 +76,7 @@ public class AircraftControllerTest extends BaseControllerTest {
 	@Test
 	void deleteAircraftWithSuccess() throws Exception {
 		// given
-		Aircraft aircraft = new Aircraft();
-		aircraft.id( UUID.randomUUID() );
-		aircraft.name( "Aftyn" );
-		aircraft.make( "Hobby King" );
-		aircraft.model( "Bixler 2" );
-		aircraft.type( AircraftType.FIXEDWING );
-		aircraft.status( AircraftStatus.DESTROYED );
-		aircraft.owner( getUser().id() );
-		aircraft.ownerType( OwnerType.USER );
+		Aircraft aircraft = createTestAircraft();
 		aircraftService.upsert( aircraft );
 
 		// when
@@ -132,4 +88,20 @@ public class AircraftControllerTest extends BaseControllerTest {
 		assertThat( resultAircraft.get("name")).isEqualTo( "Aftyn" );
 	}
 
+	private Aircraft createTestAircraft() {
+		Aircraft aircraft = new Aircraft();
+		aircraft.id( UUID.randomUUID() );
+		aircraft.name( "Aftyn" );
+		aircraft.make( "Hobby King" );
+		aircraft.model( "Bixler 2" );
+		aircraft.type( AircraftType.FIXEDWING );
+		aircraft.status( AircraftStatus.DESTROYED );
+		aircraft.owner( getUser().id() );
+		aircraft.ownerType( OwnerType.USER );
+		return aircraft;
+	}
+
+	private ReactAircraft createTestReactAircraft() {
+		return ReactAircraft.from( createTestAircraft() );
+	}
 }
