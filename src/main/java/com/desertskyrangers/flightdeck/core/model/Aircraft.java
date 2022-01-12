@@ -23,6 +23,6 @@ public class Aircraft {
 
 	private UUID owner;
 
-	private AircraftOwnerType ownerType;
+	private OwnerType ownerType;
 
 }

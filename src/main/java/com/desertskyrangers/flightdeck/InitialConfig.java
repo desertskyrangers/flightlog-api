@@ -44,10 +44,10 @@ public class InitialConfig {
 		user.smsCarrier( SmsCarrier.SPRINT );
 		statePersisting.upsert( user );
 
-		Aircraft aftyn = new Aircraft().id( UUID.randomUUID() ).name( "AFTYN" ).type( AircraftType.FIXEDWING ).make("Hobby King").model("Bixler 2").status( AircraftStatus.DESTROYED ).owner( user.id() ).ownerType( AircraftOwnerType.USER );
-		Aircraft bianca = new Aircraft().id( UUID.randomUUID() ).name( "BIANCA" ).type( AircraftType.FIXEDWING ).make("Hobby King").model("Bixler 2").status( AircraftStatus.DESTROYED ).owner( user.id() ).ownerType( AircraftOwnerType.USER );
-		Aircraft gemma = new Aircraft().id( UUID.randomUUID() ).name( "GEMMA" ).type( AircraftType.MULTIROTOR ).status( AircraftStatus.AIRWORTHY ).owner( user.id() ).ownerType( AircraftOwnerType.USER );
-		Aircraft helena = new Aircraft().id( UUID.randomUUID() ).name( "HELENA" ).type( AircraftType.HELICOPTER ).status( AircraftStatus.INOPERATIVE ).owner( user.id() ).ownerType( AircraftOwnerType.USER );
+		Aircraft aftyn = new Aircraft().id( UUID.randomUUID() ).name( "AFTYN" ).type( AircraftType.FIXEDWING ).make("Hobby King").model("Bixler 2").status( AircraftStatus.DESTROYED ).owner( user.id() ).ownerType( OwnerType.USER );
+		Aircraft bianca = new Aircraft().id( UUID.randomUUID() ).name( "BIANCA" ).type( AircraftType.FIXEDWING ).make("Hobby King").model("Bixler 2").status( AircraftStatus.DESTROYED ).owner( user.id() ).ownerType( OwnerType.USER );
+		Aircraft gemma = new Aircraft().id( UUID.randomUUID() ).name( "GEMMA" ).type( AircraftType.MULTIROTOR ).status( AircraftStatus.AIRWORTHY ).owner( user.id() ).ownerType( OwnerType.USER );
+		Aircraft helena = new Aircraft().id( UUID.randomUUID() ).name( "HELENA" ).type( AircraftType.HELICOPTER ).status( AircraftStatus.INOPERATIVE ).owner( user.id() ).ownerType( OwnerType.USER );
 		statePersisting.upsert( aftyn );
 		statePersisting.upsert( bianca );
 		statePersisting.upsert( gemma );

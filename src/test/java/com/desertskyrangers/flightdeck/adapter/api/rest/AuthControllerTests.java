@@ -1,10 +1,11 @@
-package com.desertskyrangers.flightdeck.adapter.api;
+package com.desertskyrangers.flightdeck.adapter.api.rest;
 
+import com.desertskyrangers.flightdeck.adapter.api.ApiPath;
 import com.desertskyrangers.flightdeck.adapter.api.jwt.JwtTokenProvider;
 import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.core.model.UserToken;
 import com.desertskyrangers.flightdeck.core.model.Verification;
-import com.desertskyrangers.flightdeck.port.AuthRequesting;
+import com.desertskyrangers.flightdeck.port.AuthService;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
 import com.desertskyrangers.flightdeck.util.Json;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.*;
 
@@ -52,7 +54,7 @@ public class AuthControllerTests {
 	private JwtTokenProvider jwtTokenProvider;
 
 	@MockBean
-	private AuthRequesting mockAuthRequesting;
+	private AuthService mockAuthService;
 
 	@Captor
 	ArgumentCaptor<Collection<UserToken>> tokenCaptor;
@@ -70,14 +72,14 @@ public class AuthControllerTests {
 		statePersisting.upsert( account );
 
 		// when
-		this.mockMvc.perform( post( ApiPath.AUTH_REGISTER ).with( csrf() ).content( content ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isAccepted() );
+		this.mockMvc.perform( MockMvcRequestBuilders.post( ApiPath.AUTH_REGISTER ).with( csrf() ).content( content ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isAccepted() );
 
 		// then
 		ArgumentCaptor<String> usernameCaptor = ArgumentCaptor.forClass( String.class );
 		ArgumentCaptor<String> emailCaptor = ArgumentCaptor.forClass( String.class );
 		ArgumentCaptor<String> passwordCaptor = ArgumentCaptor.forClass( String.class );
 		ArgumentCaptor<UUID> verificationCaptor = ArgumentCaptor.forClass( UUID.class );
-		verify( mockAuthRequesting, times( 1 ) ).requestUserRegister( usernameCaptor.capture(), emailCaptor.capture(), passwordCaptor.capture(), verificationCaptor.capture() );
+		verify( mockAuthService, times( 1 ) ).requestUserRegister( usernameCaptor.capture(), emailCaptor.capture(), passwordCaptor.capture(), verificationCaptor.capture() );
 
 		assertThat( usernameCaptor.getValue() ).isEqualTo( username );
 		assertThat( emailCaptor.getValue() ).isEqualTo( email );
@@ -96,7 +98,7 @@ public class AuthControllerTests {
 
 		// then
 		ArgumentCaptor<UUID> idCaptor = ArgumentCaptor.forClass( UUID.class );
-		verify( mockAuthRequesting, times( 1 ) ).requestUserVerifyResend( idCaptor.capture() );
+		verify( mockAuthService, times( 1 ) ).requestUserVerifyResend( idCaptor.capture() );
 
 		UUID capturedId = idCaptor.getValue();
 		assertThat( capturedId ).isEqualTo( id );
@@ -126,7 +128,7 @@ public class AuthControllerTests {
 
 		// then
 		ArgumentCaptor<Verification> argumentCaptor = ArgumentCaptor.forClass( Verification.class );
-		verify( mockAuthRequesting, times( 1 ) ).requestUserVerify( argumentCaptor.capture() );
+		verify( mockAuthService, times( 1 ) ).requestUserVerify( argumentCaptor.capture() );
 
 		Verification verification = argumentCaptor.getValue();
 		assertThat( verification.id() ).isEqualTo( id );

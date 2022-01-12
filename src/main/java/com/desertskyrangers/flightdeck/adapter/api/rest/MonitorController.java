@@ -1,5 +1,6 @@
-package com.desertskyrangers.flightdeck.adapter.api;
+package com.desertskyrangers.flightdeck.adapter.api.rest;
 
+import com.desertskyrangers.flightdeck.adapter.api.ApiPath;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;

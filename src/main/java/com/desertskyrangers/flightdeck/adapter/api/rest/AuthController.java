@@ -1,5 +1,6 @@
-package com.desertskyrangers.flightdeck.adapter.api;
+package com.desertskyrangers.flightdeck.adapter.api.rest;
 
+import com.desertskyrangers.flightdeck.adapter.api.ApiPath;
 import com.desertskyrangers.flightdeck.adapter.api.jwt.JwtToken;
 import com.desertskyrangers.flightdeck.adapter.api.jwt.JwtTokenProvider;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactLoginRequest;
@@ -8,7 +9,7 @@ import com.desertskyrangers.flightdeck.adapter.api.model.ReactRegisterRequest;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactRegisterResponse;
 import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.core.model.Verification;
-import com.desertskyrangers.flightdeck.port.AuthRequesting;
+import com.desertskyrangers.flightdeck.port.AuthService;
 import com.desertskyrangers.flightdeck.port.UserService;
 import com.desertskyrangers.flightdeck.util.Text;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +31,7 @@ import java.util.*;
 @Slf4j
 public class AuthController {
 
-	private final AuthRequesting authRequesting;
+	private final AuthService authService;
 
 	private final UserService userService;
 
@@ -40,8 +41,8 @@ public class AuthController {
 
 	private final PasswordEncoder passwordEncoder;
 
-	public AuthController( AuthRequesting authRequesting, UserService userService, JwtTokenProvider tokenProvider, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder ) {
-		this.authRequesting = authRequesting;
+	public AuthController( AuthService authService, UserService userService, JwtTokenProvider tokenProvider, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder ) {
+		this.authService = authService;
 		this.userService = userService;
 		this.tokenProvider = tokenProvider;
 		this.authenticationManager = authenticationManager;
@@ -59,7 +60,7 @@ public class AuthController {
 
 		try {
 			UUID verificationId = UUID.randomUUID();
-			messages.addAll( authRequesting.requestUserRegister( request.getUsername(), request.getEmail(), request.getPassword(), verificationId ) );
+			messages.addAll( authService.requestUserRegister( request.getUsername(), request.getEmail(), request.getPassword(), verificationId ) );
 
 			if( messages.isEmpty() ) {
 				// Generate the JWT token like login
@@ -83,7 +84,7 @@ public class AuthController {
 		if( Text.isBlank( id ) ) messages.add( "ID required" );
 
 		try {
-			messages.addAll( authRequesting.requestUserVerifyResend( UUID.fromString( id ) ) );
+			messages.addAll( authService.requestUserVerifyResend( UUID.fromString( id ) ) );
 		} catch( Exception exception ) {
 			log.error( "Verification resend error, id=" + id, exception );
 			return new ResponseEntity<>( Map.of( "messages", List.of( "Verification resend error" ) ), HttpStatus.INTERNAL_SERVER_ERROR );
@@ -104,7 +105,7 @@ public class AuthController {
 
 		try {
 			Verification verification = new Verification().id( UUID.fromString( id ) ).code( code );
-			messages.addAll( authRequesting.requestUserVerify( verification ) );
+			messages.addAll( authService.requestUserVerify( verification ) );
 			if( !messages.isEmpty() ) return new ResponseEntity<>( Map.of( "messages", messages ), HttpStatus.FORBIDDEN );
 		} catch( Exception exception ) {
 			log.error( "Verification error, id=" + id, exception );

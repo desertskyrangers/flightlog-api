@@ -1,5 +1,6 @@
-package com.desertskyrangers.flightdeck.adapter.api;
+package com.desertskyrangers.flightdeck.adapter.api.rest;
 
+import com.desertskyrangers.flightdeck.adapter.api.ApiPath;
 import com.desertskyrangers.flightdeck.util.Json;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +32,7 @@ public class MonitorControllerTests {
 		Map<String, String> response = new HashMap<>();
 		response.put( "running", "true" );
 		response.put( "version", version );
-		this.mockMvc.perform( get( ApiPath.MONITOR_STATUS ) ).andExpect( status().isOk() ).andExpect( content().json( Json.stringify( response ), true ) );
+		this.mockMvc.perform( MockMvcRequestBuilders.get( ApiPath.MONITOR_STATUS ) ).andExpect( status().isOk() ).andExpect( content().json( Json.stringify( response ), true ) );
 	}
 
 }

@@ -20,7 +20,7 @@ public enum BatteryStatus {
 		try {
 			valueOf( string.toUpperCase() );
 			return true;
-		} catch( IllegalArgumentException exception ) {
+		} catch( NullPointerException | IllegalArgumentException exception ) {
 			return false;
 		}
 	}

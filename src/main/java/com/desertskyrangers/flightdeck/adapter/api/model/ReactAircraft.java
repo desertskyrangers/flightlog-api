@@ -1,7 +1,7 @@
 package com.desertskyrangers.flightdeck.adapter.api.model;
 
 import com.desertskyrangers.flightdeck.core.model.Aircraft;
-import com.desertskyrangers.flightdeck.core.model.AircraftOwnerType;
+import com.desertskyrangers.flightdeck.core.model.OwnerType;
 import com.desertskyrangers.flightdeck.core.model.AircraftStatus;
 import com.desertskyrangers.flightdeck.core.model.AircraftType;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -56,7 +56,7 @@ public class ReactAircraft {
 		aircraft.model( reactAircraft.getModel() );
 		aircraft.status( AircraftStatus.valueOf( reactAircraft.getStatus().toUpperCase() ) );
 		if( reactAircraft.getOwner() != null ) aircraft.owner( UUID.fromString( reactAircraft.getOwner() ) );
-		if( reactAircraft.getOwnerType() != null ) aircraft.ownerType( AircraftOwnerType.valueOf( reactAircraft.getOwnerType().toUpperCase() ) );
+		if( reactAircraft.getOwnerType() != null ) aircraft.ownerType( OwnerType.valueOf( reactAircraft.getOwnerType().toUpperCase() ) );
 
 		return aircraft;
 	}

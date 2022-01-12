@@ -1,5 +1,6 @@
-package com.desertskyrangers.flightdeck.adapter.api;
+package com.desertskyrangers.flightdeck.adapter.api.rest;
 
+import com.desertskyrangers.flightdeck.adapter.api.ApiPath;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactAircraftStatus;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactAircraftType;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactSmsCarrier;
@@ -13,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,7 +34,7 @@ public class LookupControllerTest {
 	@Test
 	void testGetAircraftStatuses() throws Exception {
 		List<ReactAircraftStatus> response = Arrays.stream( AircraftStatus.values() ).map( c -> new ReactAircraftStatus( c.name().toLowerCase(), c.getName() ) ).toList();
-		this.mockMvc.perform( get( ApiPath.AIRCRAFT_STATUS ) ).andExpect( status().isOk() ).andExpect( content().json( Json.stringify( response ), true ) );
+		this.mockMvc.perform( MockMvcRequestBuilders.get( ApiPath.AIRCRAFT_STATUS ) ).andExpect( status().isOk() ).andExpect( content().json( Json.stringify( response ), true ) );
 	}
 
 	@Test

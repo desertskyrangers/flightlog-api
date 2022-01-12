@@ -1,4 +1,4 @@
-package com.desertskyrangers.flightdeck.core;
+package com.desertskyrangers.flightdeck.core.service;
 
 import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.core.model.UserToken;

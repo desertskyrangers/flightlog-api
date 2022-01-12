@@ -1,5 +1,6 @@
 package com.desertskyrangers.flightdeck.adapter.state.entity;
 
+import com.desertskyrangers.flightdeck.core.model.OwnerType;
 import com.desertskyrangers.flightdeck.core.model.Battery;
 import com.desertskyrangers.flightdeck.core.model.BatteryStatus;
 import com.desertskyrangers.flightdeck.core.model.BatteryType;
@@ -44,6 +45,12 @@ public class BatteryEntity {
 	@Column( name = "dischargerating" )
 	private int dischargeRating;
 
+	@Column( nullable = false, columnDefinition = "BINARY(16)" )
+	private UUID owner;
+
+	@Column( name = "ownertype", nullable = false )
+	private String ownerType;
+
 	public static BatteryEntity from( Battery battery ) {
 		BatteryEntity entity = new BatteryEntity();
 
@@ -59,6 +66,8 @@ public class BatteryEntity {
 		entity.setCapacity( battery.capacity() );
 		entity.setChargeRating( battery.chargeRating() );
 		entity.setDischargeRating( battery.dischargeRating() );
+		entity.setOwner( battery.owner() );
+		if( battery.ownerType() != null )entity.setOwnerType( battery.ownerType().name().toLowerCase() );
 
 		return entity;
 	}
@@ -78,6 +87,8 @@ public class BatteryEntity {
 		battery.capacity( entity.getCapacity() );
 		battery.chargeRating( entity.getChargeRating() );
 		battery.dischargeRating( entity.getDischargeRating() );
+		battery.owner( entity.getOwner() );
+		if( entity.getOwnerType() != null ) battery.ownerType( OwnerType.valueOf( entity.getOwnerType().toUpperCase() ) );
 
 		return battery;
 	}

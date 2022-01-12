@@ -17,6 +17,10 @@ public class Battery {
 
 	private String model;
 
+	private String connector;
+
+	private BatteryStatus status;
+
 	private BatteryType type;
 
 	private int cells;
@@ -29,8 +33,8 @@ public class Battery {
 
 	private int dischargeRating;
 
-	private String connector;
+	private UUID owner;
 
-	private BatteryStatus status;
+	private OwnerType ownerType;
 
 }

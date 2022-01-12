@@ -1,7 +1,7 @@
 package com.desertskyrangers.flightdeck.adapter.state.entity;
 
 import com.desertskyrangers.flightdeck.core.model.Aircraft;
-import com.desertskyrangers.flightdeck.core.model.AircraftOwnerType;
+import com.desertskyrangers.flightdeck.core.model.OwnerType;
 import com.desertskyrangers.flightdeck.core.model.AircraftStatus;
 import com.desertskyrangers.flightdeck.core.model.AircraftType;
 import lombok.Data;
@@ -50,7 +50,7 @@ public class AircraftEntity {
 		entity.setModel( aircraft.model() );
 		entity.setStatus( aircraft.status().name().toLowerCase() );
 		entity.setOwner( aircraft.owner() );
-		entity.setOwnerType( aircraft.ownerType().name().toLowerCase() );
+		if( aircraft.ownerType() != null ) entity.setOwnerType( aircraft.ownerType().name().toLowerCase() );
 
 		return entity;
 	}
@@ -65,7 +65,7 @@ public class AircraftEntity {
 		aircraft.model( entity.getModel() );
 		aircraft.status( AircraftStatus.valueOf( entity.getStatus().toUpperCase() ) );
 		aircraft.owner( entity.getOwner() );
-		aircraft.ownerType( AircraftOwnerType.valueOf( entity.getOwnerType().toUpperCase() ) );
+		if( entity.getOwnerType() != null ) aircraft.ownerType( OwnerType.valueOf( entity.getOwnerType().toUpperCase() ) );
 
 		return aircraft;
 	}

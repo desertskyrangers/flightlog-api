@@ -1,9 +1,6 @@
 package com.desertskyrangers.flightdeck.port;
 
-import com.desertskyrangers.flightdeck.core.model.Aircraft;
-import com.desertskyrangers.flightdeck.core.model.User;
-import com.desertskyrangers.flightdeck.core.model.UserToken;
-import com.desertskyrangers.flightdeck.core.model.Verification;
+import com.desertskyrangers.flightdeck.core.model.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,7 +12,19 @@ public interface StateRetrieving {
 
 	List<Aircraft> findAircraftByOwner( UUID id );
 
-	Optional<UserToken> findUserCredential( UUID id );
+	Optional<Battery> findBattery( UUID id );
+
+	List<Battery> findBatteriesByOwner( UUID id );
+
+	Optional<Flight> findFlight( UUID id );
+
+	List<Flight> findFlightsByPilot( UUID id );
+
+	List<Flight> findFlightsByAircraft( UUID id );
+
+	List<Flight> findFlightsByBattery( UUID id );
+
+	Optional<UserToken> findUserToken( UUID id );
 
 	Optional<UserToken> findUserTokenByPrincipal( String username );
 

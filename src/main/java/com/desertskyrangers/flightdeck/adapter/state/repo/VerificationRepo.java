@@ -1,4 +1,4 @@
-package com.desertskyrangers.flightdeck.adapter.state;
+package com.desertskyrangers.flightdeck.adapter.state.repo;
 
 import com.desertskyrangers.flightdeck.adapter.state.entity.VerificationEntity;
 import org.springframework.data.repository.CrudRepository;

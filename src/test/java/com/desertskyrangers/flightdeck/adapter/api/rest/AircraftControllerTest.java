@@ -1,66 +1,33 @@
-package com.desertskyrangers.flightdeck.adapter.api;
+package com.desertskyrangers.flightdeck.adapter.api.rest;
 
+import com.desertskyrangers.flightdeck.adapter.api.ApiPath;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactAircraft;
 import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.AircraftService;
-import com.desertskyrangers.flightdeck.port.UserService;
 import com.desertskyrangers.flightdeck.util.Json;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WithMockUser
-@SpringBootTest
-@AutoConfigureMockMvc
-public class AircraftControllerTest {
+public class AircraftControllerTest extends BaseControllerTest {
 
 	@Autowired
 	private AircraftService aircraftService;
 
 	@Autowired
-	private UserService userService;
-
-	@Autowired
 	private MockMvc mockMvc;
 
-	private User user;
-
-	@BeforeEach
-	void setup() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if( authentication != null ) {
-			String username = authentication.getName();
-
-			// Delete the exising mock user account
-			userService.findByPrincipal( authentication.getName() ).ifPresent( u -> userService.remove( u ) );
-
-			// Create mock user account
-			user = new User();
-			UserToken token = new UserToken().principal( username );
-			user.tokens( Set.of( token ) );
-			token.user( user );
-			userService.upsert( user );
-		}
-	}
-
 	@Test
-	void getAircraftWithSuccess() throws Exception {
+	void testGetAircraftWithSuccess() throws Exception {
 		// given
 		Aircraft aircraft = new Aircraft();
 		aircraft.id( UUID.randomUUID() );
@@ -69,8 +36,8 @@ public class AircraftControllerTest {
 		aircraft.model( "Bixler 2" );
 		aircraft.type( AircraftType.FIXEDWING );
 		aircraft.status( AircraftStatus.DESTROYED );
-		aircraft.owner( user.id() );
-		aircraft.ownerType( AircraftOwnerType.USER );
+		aircraft.owner( getUser().id() );
+		aircraft.ownerType( OwnerType.USER );
 		aircraftService.upsert( aircraft );
 
 		// when
@@ -91,8 +58,8 @@ public class AircraftControllerTest {
 		aircraft.setModel( "Bixler 2" );
 		aircraft.setType( AircraftType.FIXEDWING.name().toLowerCase() );
 		aircraft.setStatus( AircraftStatus.DESTROYED.name().toLowerCase() );
-		aircraft.setOwner( user.id().toString() );
-		aircraft.setOwnerType( AircraftOwnerType.USER.name().toLowerCase() );
+		aircraft.setOwner( getUser().id().toString() );
+		aircraft.setOwnerType( OwnerType.USER.name().toLowerCase() );
 
 		this.mockMvc.perform( post( ApiPath.AIRCRAFT ).content( Json.stringify( aircraft ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
 	}
@@ -106,8 +73,8 @@ public class AircraftControllerTest {
 		aircraft.setModel( "Bixler 2" );
 		aircraft.setType( "invalid" );
 		aircraft.setStatus( AircraftStatus.DESTROYED.name().toLowerCase() );
-		aircraft.setOwner( user.id().toString() );
-		aircraft.setOwnerType( AircraftOwnerType.USER.name().toLowerCase() );
+		aircraft.setOwner( getUser().id().toString() );
+		aircraft.setOwnerType( OwnerType.USER.name().toLowerCase() );
 
 		this.mockMvc.perform( post( ApiPath.AIRCRAFT ).content( Json.stringify( aircraft ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isBadRequest() ).andReturn();
 	}
@@ -121,8 +88,8 @@ public class AircraftControllerTest {
 		aircraft.setModel( "Bixler 2" );
 		aircraft.setType( AircraftType.FIXEDWING.name().toLowerCase() );
 		aircraft.setStatus( AircraftStatus.DESTROYED.name().toLowerCase() );
-		aircraft.setOwner( user.id().toString() );
-		aircraft.setOwnerType( AircraftOwnerType.USER.name().toLowerCase() );
+		aircraft.setOwner( getUser().id().toString() );
+		aircraft.setOwnerType( OwnerType.USER.name().toLowerCase() );
 
 		this.mockMvc.perform( put( ApiPath.AIRCRAFT ).content( Json.stringify( aircraft ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
 	}
@@ -136,8 +103,8 @@ public class AircraftControllerTest {
 		aircraft.setModel( "Bixler 2" );
 		aircraft.setType( "invalid" );
 		aircraft.setStatus( AircraftStatus.DESTROYED.name().toLowerCase() );
-		aircraft.setOwner( user.id().toString() );
-		aircraft.setOwnerType( AircraftOwnerType.USER.name().toLowerCase() );
+		aircraft.setOwner( getUser().id().toString() );
+		aircraft.setOwnerType( OwnerType.USER.name().toLowerCase() );
 
 		this.mockMvc.perform( put( ApiPath.AIRCRAFT ).content( Json.stringify( aircraft ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isBadRequest() ).andReturn();
 	}
@@ -152,8 +119,8 @@ public class AircraftControllerTest {
 		aircraft.model( "Bixler 2" );
 		aircraft.type( AircraftType.FIXEDWING );
 		aircraft.status( AircraftStatus.DESTROYED );
-		aircraft.owner( user.id() );
-		aircraft.ownerType( AircraftOwnerType.USER );
+		aircraft.owner( getUser().id() );
+		aircraft.ownerType( OwnerType.USER );
 		aircraftService.upsert( aircraft );
 
 		// when

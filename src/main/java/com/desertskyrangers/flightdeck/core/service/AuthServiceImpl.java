@@ -1,11 +1,11 @@
-package com.desertskyrangers.flightdeck.core;
+package com.desertskyrangers.flightdeck.core.service;
 
 import com.desertskyrangers.flightdeck.adapter.api.ApiPath;
 import com.desertskyrangers.flightdeck.core.model.EmailMessage;
 import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.core.model.UserToken;
 import com.desertskyrangers.flightdeck.core.model.Verification;
-import com.desertskyrangers.flightdeck.port.AuthRequesting;
+import com.desertskyrangers.flightdeck.port.AuthService;
 import com.desertskyrangers.flightdeck.port.HumanInterface;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
 import com.desertskyrangers.flightdeck.port.StateRetrieving;
@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
-public class AuthRequestingService implements AuthRequesting {
+public class AuthServiceImpl implements AuthService {
 
 	private static final String VERIFY_ENDPOINT = ApiPath.HOST + "/verify";
 
@@ -42,7 +42,7 @@ public class AuthRequestingService implements AuthRequesting {
 
 	private final PasswordEncoder passwordEncoder;
 
-	public AuthRequestingService( StatePersisting statePersisting, StateRetrieving stateRetrieving, HumanInterface humanInterface, PasswordEncoder passwordEncoder ) {
+	public AuthServiceImpl( StatePersisting statePersisting, StateRetrieving stateRetrieving, HumanInterface humanInterface, PasswordEncoder passwordEncoder ) {
 		this.statePersisting = statePersisting;
 		this.stateRetrieving = stateRetrieving;
 		this.humanInterface = humanInterface;

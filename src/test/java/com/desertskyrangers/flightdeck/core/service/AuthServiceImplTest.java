@@ -1,4 +1,4 @@
-package com.desertskyrangers.flightdeck.core;
+package com.desertskyrangers.flightdeck.core.service;
 
 import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.core.model.Verification;
@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-public class AuthRequestingServiceTest {
+public class AuthServiceImplTest {
 
 	@Mock
 	private StatePersisting statePersisting;
@@ -30,7 +30,7 @@ public class AuthRequestingServiceTest {
 	//	private HumanInterface humanInterface;
 
 	@InjectMocks
-	private AuthRequestingService service;
+	private AuthServiceImpl service;
 
 	private User account;
 

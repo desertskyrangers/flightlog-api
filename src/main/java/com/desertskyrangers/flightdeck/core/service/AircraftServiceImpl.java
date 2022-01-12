@@ -1,4 +1,4 @@
-package com.desertskyrangers.flightdeck.core;
+package com.desertskyrangers.flightdeck.core.service;
 
 import com.desertskyrangers.flightdeck.core.model.Aircraft;
 import com.desertskyrangers.flightdeck.port.AircraftService;

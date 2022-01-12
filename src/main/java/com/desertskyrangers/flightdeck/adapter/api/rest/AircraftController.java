@@ -1,5 +1,6 @@
-package com.desertskyrangers.flightdeck.adapter.api;
+package com.desertskyrangers.flightdeck.adapter.api.rest;
 
+import com.desertskyrangers.flightdeck.adapter.api.ApiPath;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactAircraft;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactAircraftResponse;
 import com.desertskyrangers.flightdeck.core.model.*;
@@ -69,7 +70,7 @@ public class AircraftController {
 
 			// TODO Allow user to select a different owner
 			request.setOwner( user.id().toString() );
-			request.setOwnerType( AircraftOwnerType.USER.name().toLowerCase() );
+			request.setOwnerType( OwnerType.USER.name().toLowerCase() );
 			aircraftService.upsert( ReactAircraft.toAircraft( request ) );
 			return new ResponseEntity<>( new ReactAircraftResponse().setAircraft( request ), HttpStatus.OK );
 		} catch( Exception exception ) {
@@ -104,7 +105,7 @@ public class AircraftController {
 
 			// TODO Allow user to select a different owner
 			request.setOwner( user.id().toString() );
-			request.setOwnerType( AircraftOwnerType.USER.name().toLowerCase() );
+			request.setOwnerType( OwnerType.USER.name().toLowerCase() );
 			aircraftService.upsert( ReactAircraft.toAircraft( request ) );
 			return new ResponseEntity<>( new ReactAircraftResponse().setAircraft( request ), HttpStatus.OK );
 		} catch( Exception exception ) {

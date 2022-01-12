@@ -12,7 +12,9 @@ public class Flight {
 
 	private UUID id = UUID.randomUUID();
 
-	private String name;
+	private User pilot;
+
+	private User observer;
 
 	private Aircraft aircraft;
 

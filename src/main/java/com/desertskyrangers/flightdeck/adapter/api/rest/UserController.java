@@ -1,5 +1,6 @@
-package com.desertskyrangers.flightdeck.adapter.api;
+package com.desertskyrangers.flightdeck.adapter.api.rest;
 
+import com.desertskyrangers.flightdeck.adapter.api.ApiPath;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactAircraft;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactAircraftPageResponse;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactProfileResponse;

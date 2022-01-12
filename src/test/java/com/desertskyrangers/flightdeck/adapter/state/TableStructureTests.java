@@ -61,6 +61,8 @@ public class TableStructureTests {
 		expected.add( "model" );
 		expected.add( "connector" );
 		expected.add( "status" );
+		expected.add( "owner" );
+		expected.add( "ownertype" );
 
 		expected.add( "type" );
 		expected.add( "cells" );
@@ -76,6 +78,8 @@ public class TableStructureTests {
 	void testFlight() throws Exception {
 		Set<String> expected = new HashSet<>();
 		expected.add( "id" );
+		expected.add( "pilotid" );
+		expected.add( "observerid" );
 		expected.add( "aircraftid" );
 		expected.add( "timestamp" );
 		expected.add( "duration" );

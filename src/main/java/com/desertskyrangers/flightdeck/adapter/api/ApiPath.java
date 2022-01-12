@@ -8,6 +8,8 @@ public interface ApiPath {
 
 	String AIRCRAFT = API + "/aircraft";
 
+	String BATTERY = API + "/battery";
+
 	String AUTH = API + "/auth";
 
 	String AUTH_REGISTER = AUTH + "/register";
