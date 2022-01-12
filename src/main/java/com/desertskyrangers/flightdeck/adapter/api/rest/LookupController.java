@@ -41,4 +41,8 @@ public class LookupController {
 		return new ResponseEntity<>( Arrays.stream( SmsCarrier.values() ).map( c -> new ReactOption( c.name().toLowerCase(), c.getName() ) ).toList(), HttpStatus.OK );
 	}
 
+	// User aircraft options
+	// User battery options
+	// User pilot options
+	// User observer options
 }
