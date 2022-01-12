@@ -3,10 +3,9 @@ package com.desertskyrangers.flightdeck.adapter.api.rest;
 import com.desertskyrangers.flightdeck.adapter.api.ApiPath;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactAircraftStatus;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactAircraftType;
+import com.desertskyrangers.flightdeck.adapter.api.model.ReactOption;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactSmsCarrier;
-import com.desertskyrangers.flightdeck.core.model.AircraftStatus;
-import com.desertskyrangers.flightdeck.core.model.AircraftType;
-import com.desertskyrangers.flightdeck.core.model.SmsCarrier;
+import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.util.Json;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,19 +32,31 @@ public class LookupControllerTest {
 
 	@Test
 	void testGetAircraftStatuses() throws Exception {
-		List<ReactAircraftStatus> response = Arrays.stream( AircraftStatus.values() ).map( c -> new ReactAircraftStatus( c.name().toLowerCase(), c.getName() ) ).toList();
+		List<ReactOption> response = Arrays.stream( AircraftStatus.values() ).map( c -> new ReactOption( c.name().toLowerCase(), c.getName() ) ).toList();
 		this.mockMvc.perform( MockMvcRequestBuilders.get( ApiPath.AIRCRAFT_STATUS ) ).andExpect( status().isOk() ).andExpect( content().json( Json.stringify( response ), true ) );
 	}
 
 	@Test
 	void testGetAircraftTypes() throws Exception {
-		List<ReactAircraftType> response = Arrays.stream( AircraftType.values() ).map( c -> new ReactAircraftType( c.name().toLowerCase(), c.getName() ) ).toList();
+		List<ReactOption> response = Arrays.stream( AircraftType.values() ).map( c -> new ReactOption( c.name().toLowerCase(), c.getName() ) ).toList();
 		this.mockMvc.perform( get( ApiPath.AIRCRAFT_TYPE ) ).andExpect( status().isOk() ).andExpect( content().json( Json.stringify( response ), true ) );
 	}
 
 	@Test
+	void testGetBatteryStatuses() throws Exception {
+		List<ReactOption> response = Arrays.stream( BatteryStatus.values() ).map( c -> new ReactOption( c.name().toLowerCase(), c.getName() ) ).toList();
+		this.mockMvc.perform( MockMvcRequestBuilders.get( ApiPath.BATTERY_STATUS ) ).andExpect( status().isOk() ).andExpect( content().json( Json.stringify( response ), true ) );
+	}
+
+	@Test
+	void testGetBatteryTypes() throws Exception {
+		List<ReactOption> response = Arrays.stream( BatteryType.values() ).map( c -> new ReactOption( c.name().toLowerCase(), c.getName() ) ).toList();
+		this.mockMvc.perform( get( ApiPath.BATTERY_TYPE ) ).andExpect( status().isOk() ).andExpect( content().json( Json.stringify( response ), true ) );
+	}
+
+	@Test
 	void testGetSmsCarriers() throws Exception {
-		List<ReactSmsCarrier> response = Arrays.stream( SmsCarrier.values() ).map( c -> new ReactSmsCarrier( c.name().toLowerCase(), c.getName() ) ).toList();
+		List<ReactOption> response = Arrays.stream( SmsCarrier.values() ).map( c -> new ReactOption( c.name().toLowerCase(), c.getName() ) ).toList();
 		this.mockMvc.perform( get( ApiPath.SMS_CARRIERS ) ).andExpect( status().isOk() ).andExpect( content().json( Json.stringify( response ), true ) );
 	}
 

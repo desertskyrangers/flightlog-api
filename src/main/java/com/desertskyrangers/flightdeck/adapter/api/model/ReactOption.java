@@ -9,7 +9,7 @@ import lombok.experimental.Accessors;
 @Accessors( chain = true )
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReactAircraftStatus {
+public class ReactOption {
 
 	private String id;
 
