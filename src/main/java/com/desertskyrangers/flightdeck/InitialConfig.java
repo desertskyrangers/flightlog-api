@@ -106,7 +106,7 @@ public class InitialConfig {
 		statePersisting.upsert( c4s2650turnigy );
 		statePersisting.upsert( d4s2650turnigy );
 
-		stateRetrieving.findUserTokenByPrincipal( usernameToken.principal() ).ifPresent( t -> log.warn( "Tester created=" + t.principal() ) );
+		stateRetrieving.findUserTokenByPrincipal( usernameToken.principal() ).ifPresent( t -> log.warn( "Testing data created" ) );
 	}
 
 }
