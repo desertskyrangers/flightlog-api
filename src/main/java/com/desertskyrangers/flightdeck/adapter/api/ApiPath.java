@@ -50,4 +50,6 @@ public interface ApiPath {
 
 	String USER_BATTERY = USER + "/battery";
 
+	String USER_FLIGHT = USER + "/flight";
+
 }

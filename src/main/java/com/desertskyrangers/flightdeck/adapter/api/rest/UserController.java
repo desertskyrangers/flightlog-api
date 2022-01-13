@@ -2,9 +2,13 @@ package com.desertskyrangers.flightdeck.adapter.api.rest;
 
 import com.desertskyrangers.flightdeck.adapter.api.ApiPath;
 import com.desertskyrangers.flightdeck.adapter.api.model.*;
+import com.desertskyrangers.flightdeck.core.model.Aircraft;
+import com.desertskyrangers.flightdeck.core.model.Battery;
+import com.desertskyrangers.flightdeck.core.model.BatteryStatus;
 import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.port.AircraftService;
 import com.desertskyrangers.flightdeck.port.BatteryService;
+import com.desertskyrangers.flightdeck.port.FlightService;
 import com.desertskyrangers.flightdeck.port.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -14,10 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @Slf4j
@@ -27,11 +28,14 @@ public class UserController {
 
 	private final BatteryService batteryService;
 
+	private final FlightService flightService;
+
 	private final UserService userService;
 
-	public UserController( AircraftService aircraftService, BatteryService batteryService, UserService userService ) {
+	public UserController( AircraftService aircraftService, BatteryService batteryService, FlightService flightService, UserService userService ) {
 		this.aircraftService = aircraftService;
 		this.batteryService = batteryService;
+		this.flightService = flightService;
 		this.userService = userService;
 	}
 
@@ -104,6 +108,22 @@ public class UserController {
 		return new ResponseEntity<>( new ReactAircraftPageResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
 	}
 
+	@GetMapping( path = ApiPath.USER_AIRCRAFT + "/lookup" )
+	ResponseEntity<List<ReactOption>> getAircraftLookup(Authentication authentication) {
+		String username = authentication.getName();
+		User user = userService.findByPrincipal( username ).orElseThrow( () -> new UsernameNotFoundException( username ) );
+		List<Aircraft> objects = aircraftService.findByOwner( user.id() );
+		return new ResponseEntity<>( objects.stream().map( c -> new ReactOption( c.id().toString(), c.name() ) ).toList(), HttpStatus.OK );
+	}
+
+	@GetMapping( path = ApiPath.USER_BATTERY + "/lookup" )
+	ResponseEntity<List<ReactOption>> getBatteryLookup(Authentication authentication) {
+		String username = authentication.getName();
+		User user = userService.findByPrincipal( username ).orElseThrow( () -> new UsernameNotFoundException( username ) );
+		List<Battery> objects = batteryService.findByOwner( user.id() );
+		return new ResponseEntity<>( objects.stream().map( c -> new ReactOption( c.id().toString(), c.name() ) ).toList(), HttpStatus.OK );
+	}
+
 	@GetMapping( path = ApiPath.USER_BATTERY + "/{page}" )
 	ResponseEntity<ReactBatteryPageResponse> getBatteryPage( Authentication authentication, @PathVariable int page ) {
 		List<String> messages = new ArrayList<>();
@@ -120,6 +140,24 @@ public class UserController {
 		}
 
 		return new ResponseEntity<>( new ReactBatteryPageResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
+	}
+
+	@GetMapping( path = ApiPath.USER_FLIGHT + "/{page}" )
+	ResponseEntity<ReactFlightPageResponse> getFlightPage( Authentication authentication, @PathVariable int page ) {
+		List<String> messages = new ArrayList<>();
+
+		try {
+			String username = authentication.getName();
+			User user = userService.findByPrincipal( username ).orElseThrow( () -> new UsernameNotFoundException( username ) );
+
+			List<ReactFlight> flightPage = flightService.findByPilot( user.id() ).stream().map( ReactFlight::from ).toList();
+			return new ResponseEntity<>( new ReactFlightPageResponse().setFlights( flightPage ), HttpStatus.OK );
+		} catch( Exception exception ) {
+			log.error( "Error creating new battery", exception );
+			messages.add( exception.getMessage() );
+		}
+
+		return new ResponseEntity<>( new ReactFlightPageResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
 	}
 
 }
