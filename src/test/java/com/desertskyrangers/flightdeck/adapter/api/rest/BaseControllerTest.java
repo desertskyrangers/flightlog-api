@@ -74,7 +74,7 @@ public abstract class BaseControllerTest {
 		battery.name( "C 4S 2650 Turnigy" );
 		battery.make( "Hobby King" );
 		battery.model( "Turnigy 2650 4S" );
-		battery.connector( "XT60" );
+		battery.connector( BatteryConnector.XT60 );
 		battery.status( BatteryStatus.DESTROYED );
 
 		battery.type( BatteryType.LIPO );

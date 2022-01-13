@@ -26,6 +26,11 @@ public class LookupController {
 		return new ResponseEntity<>( Arrays.stream( AircraftType.values() ).map( c -> new ReactOption( c.name().toLowerCase(), c.getName() ) ).toList(), HttpStatus.OK );
 	}
 
+	@GetMapping( path = ApiPath.BATTERY_CONNECTOR )
+	ResponseEntity<List<ReactOption>> batteryConnector() {
+		return new ResponseEntity<>( Arrays.stream( BatteryConnector.values() ).map( c -> new ReactOption( c.name().toLowerCase(), c.getName() ) ).toList(), HttpStatus.OK );
+	}
+
 	@GetMapping( path = ApiPath.BATTERY_STATUS )
 	ResponseEntity<List<ReactOption>> batteryStatus() {
 		return new ResponseEntity<>( Arrays.stream( BatteryStatus.values() ).map( c -> new ReactOption( c.name().toLowerCase(), c.getName() ) ).toList(), HttpStatus.OK );

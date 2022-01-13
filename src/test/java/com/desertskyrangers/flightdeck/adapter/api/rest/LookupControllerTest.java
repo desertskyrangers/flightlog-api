@@ -1,10 +1,7 @@
 package com.desertskyrangers.flightdeck.adapter.api.rest;
 
 import com.desertskyrangers.flightdeck.adapter.api.ApiPath;
-import com.desertskyrangers.flightdeck.adapter.api.model.ReactAircraftStatus;
-import com.desertskyrangers.flightdeck.adapter.api.model.ReactAircraftType;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactOption;
-import com.desertskyrangers.flightdeck.adapter.api.model.ReactSmsCarrier;
 import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.util.Json;
 import org.junit.jupiter.api.Test;
@@ -40,6 +37,12 @@ public class LookupControllerTest {
 	void testGetAircraftTypes() throws Exception {
 		List<ReactOption> response = Arrays.stream( AircraftType.values() ).map( c -> new ReactOption( c.name().toLowerCase(), c.getName() ) ).toList();
 		this.mockMvc.perform( get( ApiPath.AIRCRAFT_TYPE ) ).andExpect( status().isOk() ).andExpect( content().json( Json.stringify( response ), true ) );
+	}
+
+	@Test
+	void testGetBatteryConnectors() throws Exception {
+		List<ReactOption> response = Arrays.stream( BatteryConnector.values() ).map( c -> new ReactOption( c.name().toLowerCase(), c.getName() ) ).toList();
+		this.mockMvc.perform( MockMvcRequestBuilders.get( ApiPath.BATTERY_CONNECTOR ) ).andExpect( status().isOk() ).andExpect( content().json( Json.stringify( response ), true ) );
 	}
 
 	@Test

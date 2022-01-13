@@ -1,9 +1,6 @@
 package com.desertskyrangers.flightdeck.adapter.state.entity;
 
-import com.desertskyrangers.flightdeck.core.model.OwnerType;
-import com.desertskyrangers.flightdeck.core.model.Battery;
-import com.desertskyrangers.flightdeck.core.model.BatteryStatus;
-import com.desertskyrangers.flightdeck.core.model.BatteryType;
+import com.desertskyrangers.flightdeck.core.model.*;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -56,10 +53,10 @@ public class BatteryEntity {
 
 		entity.setId( battery.id() );
 		entity.setName( battery.name() );
+		if( battery.status() != null ) entity.setStatus( battery.status().name().toLowerCase() );
 		entity.setMake( battery.make() );
 		entity.setModel( battery.model() );
-		entity.setConnector( battery.connector() );
-		if( battery.status() != null ) entity.setStatus( battery.status().name().toLowerCase() );
+		if( battery.connector() != null ) entity.setConnector( battery.connector().name().toLowerCase() );
 		if( battery.type() != null ) entity.setType( battery.type().name().toLowerCase() );
 		entity.setCells( battery.cells() );
 		entity.setCycles( battery.cycles() );
@@ -77,10 +74,10 @@ public class BatteryEntity {
 
 		battery.id( entity.getId() );
 		battery.name( entity.getName() );
+		if( entity.getStatus() != null ) battery.status( BatteryStatus.valueOf( entity.getStatus().toUpperCase() ) );
 		battery.make( entity.getMake() );
 		battery.model( entity.getModel() );
-		battery.connector( entity.getConnector() );
-		if( entity.getStatus() != null ) battery.status( BatteryStatus.valueOf( entity.getStatus().toUpperCase() ) );
+		if( entity.getConnector() != null ) battery.connector( BatteryConnector.valueOf( entity.getConnector().toUpperCase()) );
 		if( entity.getType() != null ) battery.type( BatteryType.valueOf( entity.getType().toUpperCase() ) );
 		battery.cells( entity.getCells() );
 		battery.cycles( entity.getCycles() );

@@ -17,7 +17,7 @@ public class Battery {
 
 	private String model;
 
-	private String connector;
+	private BatteryConnector connector;
 
 	private BatteryStatus status;
 

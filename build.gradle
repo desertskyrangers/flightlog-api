@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.desertskyrangers'
-version = '0.2.3'
+version = '0.3.0'
 sourceCompatibility = JavaVersion.VERSION_17
 
 configurations {
@@ -43,7 +43,6 @@ dependencies {
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
-	//testImplementation 'org.testcontainers:junit-jupiter'
 }
 
 dependencyManagement {
@@ -66,6 +65,6 @@ bootJar {
 
 processResources {
 	filesMatching('*.yml') {
-		expand 'version': project.property("version")
+		expand 'version': project.property('version')
 	}
 }

@@ -1,12 +1,10 @@
 package com.desertskyrangers.flightdeck.adapter.api.rest;
 
 import com.desertskyrangers.flightdeck.adapter.api.ApiPath;
-import com.desertskyrangers.flightdeck.adapter.api.model.ReactAircraft;
-import com.desertskyrangers.flightdeck.adapter.api.model.ReactAircraftPageResponse;
-import com.desertskyrangers.flightdeck.adapter.api.model.ReactProfileResponse;
-import com.desertskyrangers.flightdeck.adapter.api.model.ReactUserAccount;
+import com.desertskyrangers.flightdeck.adapter.api.model.*;
 import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.port.AircraftService;
+import com.desertskyrangers.flightdeck.port.BatteryService;
 import com.desertskyrangers.flightdeck.port.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -25,13 +23,16 @@ import java.util.UUID;
 @Slf4j
 public class UserController {
 
-	private final UserService userService;
-
 	private final AircraftService aircraftService;
 
-	public UserController( UserService userService, AircraftService aircraftService ) {
-		this.userService = userService;
+	private final BatteryService batteryService;
+
+	private final UserService userService;
+
+	public UserController( AircraftService aircraftService, BatteryService batteryService, UserService userService ) {
 		this.aircraftService = aircraftService;
+		this.batteryService = batteryService;
+		this.userService = userService;
 	}
 
 	@GetMapping( path = ApiPath.PROFILE )
@@ -101,6 +102,24 @@ public class UserController {
 		}
 
 		return new ResponseEntity<>( new ReactAircraftPageResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
+	}
+
+	@GetMapping( path = ApiPath.USER_BATTERY + "/{page}" )
+	ResponseEntity<ReactBatteryPageResponse> getBatteryPage( Authentication authentication, @PathVariable int page ) {
+		List<String> messages = new ArrayList<>();
+
+		try {
+			String username = authentication.getName();
+			User user = userService.findByPrincipal( username ).orElseThrow( () -> new UsernameNotFoundException( username ) );
+
+			List<ReactBattery> batteryPage = batteryService.findByOwner( user.id() ).stream().map( ReactBattery::from ).toList();
+			return new ResponseEntity<>( new ReactBatteryPageResponse().setBatteries( batteryPage ), HttpStatus.OK );
+		} catch( Exception exception ) {
+			log.error( "Error creating new battery", exception );
+			messages.add( exception.getMessage() );
+		}
+
+		return new ResponseEntity<>( new ReactBatteryPageResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
 	}
 
 }

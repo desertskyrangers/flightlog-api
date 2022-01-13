@@ -17,6 +17,8 @@ public class MonitorController {
 
 	@GetMapping( ApiPath.MONITOR_STATUS )
 	public Map<String, String> whenApiMonitorStatus_thenSuccessResponse() {
+		log.error( "version=" + version );
+
 		Map<String, String> response = new HashMap<>();
 		response.put( "running", "true" );
 		response.put( "version", version );

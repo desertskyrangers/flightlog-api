@@ -36,6 +36,8 @@ public interface ApiPath {
 
 	String AIRCRAFT_TYPE = LOOKUP + "/aircraft/type";
 
+	String BATTERY_CONNECTOR = LOOKUP + "/battery/connector";
+
 	String BATTERY_STATUS = LOOKUP + "/battery/status";
 
 	String BATTERY_TYPE = LOOKUP + "/battery/type";
@@ -45,5 +47,7 @@ public interface ApiPath {
 	String USER = API + "/user";
 
 	String USER_AIRCRAFT = USER + "/aircraft";
+
+	String USER_BATTERY = USER + "/battery";
 
 }
