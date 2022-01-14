@@ -4,7 +4,6 @@ import com.desertskyrangers.flightdeck.adapter.api.ApiPath;
 import com.desertskyrangers.flightdeck.adapter.api.model.*;
 import com.desertskyrangers.flightdeck.core.model.Aircraft;
 import com.desertskyrangers.flightdeck.core.model.Battery;
-import com.desertskyrangers.flightdeck.core.model.BatteryStatus;
 import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.port.AircraftService;
 import com.desertskyrangers.flightdeck.port.BatteryService;
@@ -15,14 +14,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @Slf4j
-public class UserController {
+public class UserController extends BaseController {
 
 	private final AircraftService aircraftService;
 
@@ -95,9 +96,7 @@ public class UserController {
 		List<String> messages = new ArrayList<>();
 
 		try {
-			String username = authentication.getName();
-			User user = userService.findByPrincipal( username ).orElseThrow( () -> new UsernameNotFoundException( username ) );
-
+			User user = findUser( authentication );
 			List<ReactAircraft> aircraftPage = aircraftService.findByOwner( user.id() ).stream().map( ReactAircraft::from ).toList();
 			return new ResponseEntity<>( new ReactAircraftPageResponse().setAircraft( aircraftPage ), HttpStatus.OK );
 		} catch( Exception exception ) {
@@ -108,30 +107,12 @@ public class UserController {
 		return new ResponseEntity<>( new ReactAircraftPageResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
 	}
 
-	@GetMapping( path = ApiPath.USER_AIRCRAFT + "/lookup" )
-	ResponseEntity<List<ReactOption>> getAircraftLookup(Authentication authentication) {
-		String username = authentication.getName();
-		User user = userService.findByPrincipal( username ).orElseThrow( () -> new UsernameNotFoundException( username ) );
-		List<Aircraft> objects = aircraftService.findByOwner( user.id() );
-		return new ResponseEntity<>( objects.stream().map( c -> new ReactOption( c.id().toString(), c.name() ) ).toList(), HttpStatus.OK );
-	}
-
-	@GetMapping( path = ApiPath.USER_BATTERY + "/lookup" )
-	ResponseEntity<List<ReactOption>> getBatteryLookup(Authentication authentication) {
-		String username = authentication.getName();
-		User user = userService.findByPrincipal( username ).orElseThrow( () -> new UsernameNotFoundException( username ) );
-		List<Battery> objects = batteryService.findByOwner( user.id() );
-		return new ResponseEntity<>( objects.stream().map( c -> new ReactOption( c.id().toString(), c.name() ) ).toList(), HttpStatus.OK );
-	}
-
 	@GetMapping( path = ApiPath.USER_BATTERY + "/{page}" )
 	ResponseEntity<ReactBatteryPageResponse> getBatteryPage( Authentication authentication, @PathVariable int page ) {
 		List<String> messages = new ArrayList<>();
 
 		try {
-			String username = authentication.getName();
-			User user = userService.findByPrincipal( username ).orElseThrow( () -> new UsernameNotFoundException( username ) );
-
+			User user = findUser( authentication );
 			List<ReactBattery> batteryPage = batteryService.findByOwner( user.id() ).stream().map( ReactBattery::from ).toList();
 			return new ResponseEntity<>( new ReactBatteryPageResponse().setBatteries( batteryPage ), HttpStatus.OK );
 		} catch( Exception exception ) {
@@ -147,9 +128,7 @@ public class UserController {
 		List<String> messages = new ArrayList<>();
 
 		try {
-			String username = authentication.getName();
-			User user = userService.findByPrincipal( username ).orElseThrow( () -> new UsernameNotFoundException( username ) );
-
+			User user = findUser( authentication );
 			List<ReactFlight> flightPage = flightService.findByPilot( user.id() ).stream().map( ReactFlight::from ).toList();
 			return new ResponseEntity<>( new ReactFlightPageResponse().setFlights( flightPage ), HttpStatus.OK );
 		} catch( Exception exception ) {
@@ -158,6 +137,36 @@ public class UserController {
 		}
 
 		return new ResponseEntity<>( new ReactFlightPageResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
+	}
+
+	@GetMapping( path = ApiPath.USER_AIRCRAFT_LOOKUP )
+	ResponseEntity<List<ReactOption>> getAircraftLookup( Authentication authentication ) {
+		User user = findUser( authentication );
+		List<Aircraft> objects = aircraftService.findByOwner( user.id() );
+		return new ResponseEntity<>( objects.stream().map( c -> new ReactOption( c.id().toString(), c.name() ) ).toList(), HttpStatus.OK );
+	}
+
+	@GetMapping( path = ApiPath.USER_BATTERY_LOOKUP )
+	ResponseEntity<List<ReactOption>> getBatteryLookup( Authentication authentication ) {
+		User user = findUser( authentication );
+		List<Battery> objects = batteryService.findByOwner( user.id() );
+		return new ResponseEntity<>( objects.stream().map( c -> new ReactOption( c.id().toString(), c.name() ) ).toList(), HttpStatus.OK );
+	}
+
+	@GetMapping( path = ApiPath.USER_OBSERVER_LOOKUP )
+	ResponseEntity<List<ReactOption>> getObserverLookup( Authentication authentication ) {
+		User user = findUser( authentication );
+		// TODO Add users from associated orgs
+		List<User> objects = List.of( user, unlistedUser() );
+		return new ResponseEntity<>( objects.stream().map( c -> new ReactOption( c.id().toString(), c.preferredName() ) ).toList(), HttpStatus.OK );
+	}
+
+	@GetMapping( path = ApiPath.USER_PILOT_LOOKUP )
+	ResponseEntity<List<ReactOption>> getPilotLookup( Authentication authentication ) {
+		User user = findUser( authentication );
+		// TODO Add users from associated orgs
+		List<User> objects = List.of( user, unlistedUser() );
+		return new ResponseEntity<>( objects.stream().map( c -> new ReactOption( c.id().toString(), c.preferredName() ) ).toList(), HttpStatus.OK );
 	}
 
 }

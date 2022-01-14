@@ -12,7 +12,7 @@ public interface FlightService {
 
 	List<Flight> findByPilot( UUID owner );
 
-	void upsert( Flight flight );
+	void upsert( FlightUpsertRequest flight );
 
 	void remove( Flight flight );
 

@@ -6,7 +6,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Json {
@@ -26,6 +28,15 @@ public class Json {
 
 	public static Map<String, Object> asMap( String json ) {
 		TypeReference<HashMap<String, Object>> type = new TypeReference<>() {};
+		try {
+			return new ObjectMapper().readValue( json, type );
+		} catch( JsonProcessingException exception ) {
+			throw new ResponseStatusException( HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage(), exception );
+		}
+	}
+
+	public static List<Object> asList( String json ) {
+		TypeReference<ArrayList<Object>> type = new TypeReference<>() {};
 		try {
 			return new ObjectMapper().readValue( json, type );
 		} catch( JsonProcessingException exception ) {

@@ -194,4 +194,40 @@ public class UserControllerTest extends BaseControllerTest {
 		assertThat( flight1.get( "aircraft" ) ).isEqualTo( aftyn.id().toString() );
 	}
 
+	@Test
+	void testGetAircraftLookup() throws Exception {
+		statePersisting.upsert( createTestAircraft() );
+		statePersisting.upsert( createTestAircraft() );
+		statePersisting.upsert( createTestAircraft() );
+		statePersisting.upsert( createTestAircraft() );
+		statePersisting.upsert( createTestAircraft() );
+		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_AIRCRAFT_LOOKUP ) ).andExpect( status().isOk() ).andReturn();
+		List<Object> list = Json.asList( result.getResponse().getContentAsString() );
+		assertThat( list.size() ).isEqualTo( 5 );
+	}
+
+	@Test
+	void testGetBatteryLookup() throws Exception {
+		statePersisting.upsert( createTestBattery() );
+		statePersisting.upsert( createTestBattery() );
+		statePersisting.upsert( createTestBattery() );
+		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_BATTERY_LOOKUP ) ).andExpect( status().isOk() ).andReturn();
+		List<Object> list = Json.asList( result.getResponse().getContentAsString() );
+		assertThat( list.size() ).isEqualTo( 3 );
+	}
+
+	@Test
+	void testGetObserverLookup() throws Exception {
+		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_OBSERVER_LOOKUP ) ).andExpect( status().isOk() ).andReturn();
+		List<Object> list = Json.asList( result.getResponse().getContentAsString() );
+		assertThat( list.size() ).isEqualTo( 2 );
+	}
+
+	@Test
+	void testGetPilotLookup() throws Exception {
+		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_PILOT_LOOKUP ) ).andExpect( status().isOk() ).andReturn();
+		List<Object> list = Json.asList( result.getResponse().getContentAsString() );
+		assertThat( list.size() ).isEqualTo( 2 );
+	}
+
 }

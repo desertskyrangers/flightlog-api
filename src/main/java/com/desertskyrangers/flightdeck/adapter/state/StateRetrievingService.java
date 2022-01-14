@@ -100,6 +100,7 @@ public class StateRetrievingService implements StateRetrieving {
 
 	@Override
 	public Optional<User> findUserAccount( UUID id ) {
+		if( id == null ) return Optional.empty();
 		return userAccountRepo.findById( id ).map( UserEntity::toUserAccount );
 	}
 

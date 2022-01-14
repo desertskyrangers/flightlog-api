@@ -14,7 +14,11 @@ public class Flight {
 
 	private User pilot;
 
+	private String unlistedPilot;
+
 	private User observer;
+
+	private String unlistedObserver;
 
 	private Aircraft aircraft;
 
@@ -22,7 +26,7 @@ public class Flight {
 
 	private long timestamp;
 
-	private long duration;
+	private int duration;
 
 	private String notes;
 

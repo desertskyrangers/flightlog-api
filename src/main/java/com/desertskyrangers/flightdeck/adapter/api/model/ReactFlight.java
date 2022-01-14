@@ -1,6 +1,8 @@
 package com.desertskyrangers.flightdeck.adapter.api.model;
 
 import com.desertskyrangers.flightdeck.core.model.Flight;
+import com.desertskyrangers.flightdeck.core.model.User;
+import com.desertskyrangers.flightdeck.port.FlightUpsertRequest;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -17,7 +19,11 @@ public class ReactFlight {
 
 	private String pilot;
 
+	private String unlistedPilot;
+
 	private String observer;
+
+	private String unlistedObserver;
 
 	private String aircraft;
 
@@ -25,7 +31,7 @@ public class ReactFlight {
 
 	private long timestamp;
 
-	private long duration;
+	private int duration;
 
 	private String notes;
 
@@ -34,7 +40,9 @@ public class ReactFlight {
 
 		reactFlight.setId( flight.id().toString() );
 		if( flight.pilot() != null ) reactFlight.setPilot( flight.pilot().id().toString() );
+		reactFlight.setUnlistedPilot( flight.unlistedPilot() );
 		if( flight.observer() != null ) reactFlight.setObserver( flight.observer().id().toString() );
+		reactFlight.setUnlistedObserver( flight.unlistedObserver() );
 		if( flight.aircraft() != null ) reactFlight.setAircraft( flight.aircraft().id().toString() );
 		if( flight.batteries() != null ) reactFlight.setBatteries( flight.batteries().stream().map( b -> b.id().toString() ).toList() );
 		reactFlight.setTimestamp( flight.timestamp() );
@@ -44,18 +52,38 @@ public class ReactFlight {
 		return reactFlight;
 	}
 
-	public static Flight toFlight( ReactFlight reactFlight ) {
-		Flight flight = new Flight();
+	//	public static Flight toFlight( ReactFlight reactFlight ) {
+	//		Flight flight = new Flight();
+	//
+	//		flight.id( UUID.fromString( reactFlight.getId() ) );
+	//		// pilot is unable to be set here
+	//		// observer is unable to be set here
+	//		// aircraft is unable to be set here
+	//		// batteries are unable to be set here
+	//		flight.timestamp( reactFlight.getTimestamp() );
+	//		flight.duration( reactFlight.getDuration() );
+	//		flight.notes( reactFlight.getNotes() );
+	//
+	//		return flight;
+	//	}
 
-		flight.id( UUID.fromString( reactFlight.getId() ) );
-		// pilot is unable to be set here
-		// observer is unable to be set here
-		// aircraft is unable to be set here
-		// batteries are unable to be set here
-		flight.timestamp( reactFlight.getTimestamp() );
-		flight.duration( reactFlight.getDuration() );
-		flight.notes( reactFlight.getNotes() );
+	public static FlightUpsertRequest toUpsertRequest( User user, ReactFlight flight ) {
+		FlightUpsertRequest request = new FlightUpsertRequest();
 
-		return flight;
+		request.user( user );
+
+		request.id( UUID.fromString( flight.getId() ) );
+		request.pilot( UUID.fromString( flight.getPilot() ) );
+		request.unlistedPilot( flight.getUnlistedPilot() );
+		request.observer( UUID.fromString( flight.getObserver() ) );
+		request.unlistedObserver( flight.getUnlistedObserver() );
+		request.aircraft( UUID.fromString( flight.getAircraft() ) );
+		request.batteries( flight.getBatteries() == null ? List.of() : flight.getBatteries().stream().map( UUID::fromString ).toList() );
+		request.timestamp( flight.getTimestamp() );
+		request.duration( flight.getDuration() );
+		request.notes( flight.getNotes() );
+
+		return request;
 	}
+
 }

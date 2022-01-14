@@ -22,9 +22,15 @@ public class FlightEntity {
 	@JoinColumn( name = "pilotid", nullable = false, columnDefinition = "BINARY(16)" )
 	private UserEntity pilot;
 
+	@Column( name = "unlistedpilot" )
+	private String unlistedPilot;
+
 	@ManyToOne( fetch = FetchType.EAGER )
 	@JoinColumn( name = "observerid", columnDefinition = "BINARY(16)" )
 	private UserEntity observer;
+
+	@Column( name = "unlistedobserver" )
+	private String unlistedObserver;
 
 	@ManyToOne( fetch = FetchType.EAGER )
 	@JoinColumn( name = "aircraftid", nullable = false, columnDefinition = "BINARY(16)" )
@@ -37,7 +43,7 @@ public class FlightEntity {
 
 	private long timestamp;
 
-	private long duration;
+	private int duration;
 
 	@Column( length = 1000 )
 	private String notes;

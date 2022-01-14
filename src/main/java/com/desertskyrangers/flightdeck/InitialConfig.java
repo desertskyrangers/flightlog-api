@@ -4,14 +4,19 @@ import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
 import com.desertskyrangers.flightdeck.port.StateRetrieving;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 @Configuration
 @Slf4j
 public class InitialConfig {
+
+	private static final UUID UNLISTED_USER_ID = UUID.fromString( "6e0c4460-357b-4a86-901d-e2ba16000c59" );
 
 	private final FlightDeckApp app;
 
@@ -19,14 +24,42 @@ public class InitialConfig {
 
 	private final StateRetrieving stateRetrieving;
 
+	private User unlisted;
+
 	public InitialConfig( FlightDeckApp app, StatePersisting statePersisting, StateRetrieving stateRetrieving ) {
 		this.app = app;
 		this.statePersisting = statePersisting;
 		this.stateRetrieving = stateRetrieving;
 	}
 
+	@Bean
+	User unlistedUser() {
+		if( unlisted == null ) {
+			Optional<User> optional = stateRetrieving.findUserAccount( UNLISTED_USER_ID );
+			if( optional.isPresent() ) {
+				unlisted = optional.get();
+			} else {
+				unlisted = new User();
+				unlisted.id( UNLISTED_USER_ID );
+				unlisted.lastName( "Unlisted" );
+				unlisted.preferredName( "Unlisted" );
+				statePersisting.upsert( unlisted );
+			}
+		}
+
+		return unlisted;
+	}
+
 	void init() {
+		User unlisted = new User();
+		unlisted.id( UUID.fromString( "6e0c4460-357b-4a86-901d-e2ba16000c59" ) );
+		unlisted.lastName( "Unlisted" );
+		unlisted.preferredName( "Unlisted" );
+		Optional<User> optional = stateRetrieving.findUserAccount( unlisted.id() );
+		if( optional.isEmpty() ) statePersisting.upsert( unlisted );
+
 		if( app.isProduction() ) return;
+
 		UserToken usernameToken = new UserToken();
 		usernameToken.principal( "tia" );
 		usernameToken.credential( new BCryptPasswordEncoder().encode( "tester" ) );
@@ -68,7 +101,7 @@ public class InitialConfig {
 
 		Battery b4s2650turnigy = new Battery()
 			.name( "B 4S 2650 Turnigy" )
-			.status(BatteryStatus.AVAILABLE)
+			.status( BatteryStatus.AVAILABLE )
 			.make( "Hobby King" )
 			.model( "Turnigy" )
 			.connector( BatteryConnector.XT60 )
@@ -80,7 +113,7 @@ public class InitialConfig {
 			.ownerType( OwnerType.USER );
 		Battery c4s2650turnigy = new Battery()
 			.name( "C 4S 2650 Turnigy" )
-			.status(BatteryStatus.AVAILABLE)
+			.status( BatteryStatus.AVAILABLE )
 			.make( "Hobby King" )
 			.model( "Turnigy" )
 			.connector( BatteryConnector.XT60 )
@@ -92,7 +125,7 @@ public class InitialConfig {
 			.ownerType( OwnerType.USER );
 		Battery d4s2650turnigy = new Battery()
 			.name( "D 4S 2650 Turnigy" )
-			.status(BatteryStatus.AVAILABLE)
+			.status( BatteryStatus.AVAILABLE )
 			.make( "Hobby King" )
 			.model( "Turnigy" )
 			.connector( BatteryConnector.XT60 )

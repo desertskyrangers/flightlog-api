@@ -37,7 +37,7 @@ public class TableStructureTests {
 	}
 
 	@Test
-	void testAircraft() throws Exception {
+	void testAircraftTable() throws Exception {
 		Set<String> expected = new HashSet<>();
 		expected.add( "id" );
 		expected.add( "name" );
@@ -53,7 +53,7 @@ public class TableStructureTests {
 	}
 
 	@Test
-	void testBattery() throws Exception {
+	void testBatteryTable() throws Exception {
 		Set<String> expected = new HashSet<>();
 		expected.add( "id" );
 		expected.add( "name" );
@@ -75,11 +75,13 @@ public class TableStructureTests {
 	}
 
 	@Test
-	void testFlight() throws Exception {
+	void testFlightTable() throws Exception {
 		Set<String> expected = new HashSet<>();
 		expected.add( "id" );
 		expected.add( "pilotid" );
+		expected.add( "unlistedpilot" );
 		expected.add( "observerid" );
+		expected.add( "unlistedobserver" );
 		expected.add( "aircraftid" );
 		expected.add( "timestamp" );
 		expected.add( "duration" );
@@ -89,7 +91,7 @@ public class TableStructureTests {
 	}
 
 	@Test
-	void testFlightBattery() throws Exception {
+	void testFlightBatteryTable() throws Exception {
 		Set<String> expected = new HashSet<>();
 		expected.add( "flightid" );
 		expected.add( "batteryid" );
@@ -98,7 +100,7 @@ public class TableStructureTests {
 	}
 
 	@Test
-	void testOrg() throws Exception {
+	void testOrgTable() throws Exception {
 		Set<String> expected = new HashSet<>();
 		expected.add( "id" );
 		expected.add( "name" );
@@ -109,7 +111,7 @@ public class TableStructureTests {
 	}
 
 	@Test
-	void testToken() throws Exception {
+	void testTokenTable() throws Exception {
 		Set<String> expected = new HashSet<>();
 		expected.add( "id" );
 		expected.add( "userid" );
@@ -120,7 +122,7 @@ public class TableStructureTests {
 	}
 
 	@Test
-	void testUser() throws Exception {
+	void testUserTable() throws Exception {
 		Set<String> expected = new HashSet<>();
 		expected.add( "id" );
 		expected.add( "firstname" );
@@ -136,7 +138,7 @@ public class TableStructureTests {
 	}
 
 	@Test
-	void testVerification() throws Exception {
+	void testVerificationTable() throws Exception {
 		Set<String> expected = new HashSet<>();
 		expected.add( "id" );
 		expected.add( "userid" );
@@ -146,7 +148,6 @@ public class TableStructureTests {
 
 		assertThat( getColumns( "verification" ) ).containsAll( expected );
 	}
-
 
 	private Set<String> getTables() throws SQLException {
 		try( Connection connection = datasource.getConnection() ) {

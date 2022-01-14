@@ -4,31 +4,27 @@ import com.desertskyrangers.flightdeck.adapter.api.ApiPath;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactFlight;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactFlightResponse;
 import com.desertskyrangers.flightdeck.core.model.Flight;
+import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.port.FlightService;
 import com.desertskyrangers.flightdeck.port.UserService;
+import com.desertskyrangers.flightdeck.util.Text;
+import com.desertskyrangers.flightdeck.util.Uuid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @Slf4j
-public class FlightController {
+public class FlightController extends BaseController {
 
 	private final FlightService flightService;
 
-	private final UserService userService;
-
-	public FlightController( FlightService flightService, UserService userService ) {
+	public FlightController( FlightService flightService ) {
 		this.flightService = flightService;
-		this.userService = userService;
 	}
 
 	@GetMapping( path = ApiPath.FLIGHT + "/{id}" )
@@ -50,5 +46,62 @@ public class FlightController {
 		return new ResponseEntity<>( new ReactFlightResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
 	}
 
+	@PostMapping( path = ApiPath.FLIGHT )
+	ResponseEntity<ReactFlightResponse> newFlight( Authentication authentication, @RequestBody ReactFlight request ) {
+		// Replace 'new' with random id
+		request.setId( UUID.randomUUID().toString() );
+		return updateFlight( authentication, request );
+	}
+
+	@PutMapping( path = ApiPath.FLIGHT )
+	ResponseEntity<ReactFlightResponse> updateFlight( Authentication authentication, @RequestBody ReactFlight request ) {
+		String id = request.getId();
+		String pilot = request.getPilot();
+		String observer = request.getObserver();
+		String aircraft = request.getAircraft();
+
+		List<String> messages = new ArrayList<>();
+		if( Text.isBlank( id ) ) messages.add( "ID required" );
+		if( Text.isNotBlank( id ) && Uuid.isNotValid( id ) ) messages.add( "Invalid flight id" );
+		if( Text.isBlank( pilot ) ) messages.add( "Pilot required" );
+		if( Text.isNotBlank( pilot ) && Uuid.isNotValid( pilot ) ) messages.add( "Invalid pilot id" );
+		if( Text.isNotBlank( observer ) && Uuid.isNotValid( observer ) ) messages.add( "Invalid observer id" );
+		if( Text.isBlank( aircraft ) ) messages.add( "Aircraft required" );
+		if( Text.isNotBlank( aircraft ) && Uuid.isNotValid( aircraft ) ) messages.add( "Invalid aircraft id" );
+		if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactFlightResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
+
+		try {
+			User user = findUser( authentication );
+			flightService.upsert( ReactFlight.toUpsertRequest( user, request ) );
+			return new ResponseEntity<>( new ReactFlightResponse().setFlight( request ), HttpStatus.OK );
+		} catch( Exception exception ) {
+			log.error( "Error updating flight", exception );
+			messages.add( exception.getMessage() );
+		}
+
+		return new ResponseEntity<>( new ReactFlightResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
+	}
+
+	@DeleteMapping( path = ApiPath.FLIGHT )
+	ResponseEntity<ReactFlightResponse> deleteFlight( @RequestBody Map<String, Object> flight ) {
+		UUID id = UUID.fromString( String.valueOf( flight.get( "id" ) ) );
+		log.info( "Delete flight" );
+		List<String> messages = new ArrayList<>();
+		try {
+			Optional<Flight> optional = flightService.find( id );
+			if( optional.isPresent() ) {
+				Flight deletedFlight = optional.get();
+				flightService.remove( deletedFlight );
+				return new ResponseEntity<>( new ReactFlightResponse().setFlight( ReactFlight.from( deletedFlight ) ), HttpStatus.OK );
+			} else {
+				messages.add( "Flight id not found: " + id );
+			}
+		} catch( Exception exception ) {
+			log.error( "Error removing flight", exception );
+			messages.add( exception.getMessage() );
+		}
+
+		return new ResponseEntity<>( new ReactFlightResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
+	}
 
 }
