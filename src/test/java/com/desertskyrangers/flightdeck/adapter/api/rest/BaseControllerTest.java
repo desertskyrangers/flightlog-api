@@ -26,6 +26,9 @@ public abstract class BaseControllerTest {
 	@Autowired
 	private UserService userService;
 
+	@Autowired
+	private User unlistedUser;
+
 	private User mockUser;
 
 	@BeforeEach
@@ -50,6 +53,10 @@ public abstract class BaseControllerTest {
 			token.user( mockUser );
 			userService.upsert( mockUser );
 		}
+	}
+
+	protected User getUnlistedUser() {
+		return unlistedUser;
 	}
 
 	protected User getMockUser() {

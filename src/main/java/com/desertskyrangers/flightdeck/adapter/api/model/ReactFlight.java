@@ -35,6 +35,10 @@ public class ReactFlight {
 
 	private String notes;
 
+	private String name;
+
+	private String type;
+
 	public static ReactFlight from( Flight flight ) {
 		ReactFlight reactFlight = new ReactFlight();
 
@@ -48,6 +52,10 @@ public class ReactFlight {
 		reactFlight.setTimestamp( flight.timestamp() );
 		reactFlight.setDuration( flight.duration() );
 		reactFlight.setNotes( flight.notes() );
+
+		// Use aircraft info for the name and type...for now
+		if( flight.aircraft() != null ) reactFlight.setName( flight.aircraft().name() );
+		if( flight.aircraft() != null ) reactFlight.setType( flight.aircraft().type().name().toLowerCase() );
 
 		return reactFlight;
 	}

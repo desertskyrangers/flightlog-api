@@ -105,7 +105,8 @@ public class FlightControllerTest extends BaseControllerTest {
 		statePersisting.upsert( battery );
 		Flight flight = new Flight();
 		flight.pilot( getMockUser() );
-		//flight.observer( "Oscar Observer");
+		flight.observer( getUnlistedUser() );
+		flight.unlistedObserver( "Oscar Observer");
 		flight.aircraft( aircraft );
 		flight.batteries( Set.of( battery ) );
 		flight.timestamp( System.currentTimeMillis() );

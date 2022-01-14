@@ -93,7 +93,7 @@ public class InitialConfig {
 			.owner( user.id() )
 			.ownerType( OwnerType.USER );
 		Aircraft gemma = new Aircraft().name( "GEMMA" ).type( AircraftType.MULTIROTOR ).status( AircraftStatus.AIRWORTHY ).owner( user.id() ).ownerType( OwnerType.USER );
-		Aircraft helena = new Aircraft().name( "HELENA" ).type( AircraftType.HELICOPTER ).status( AircraftStatus.INOPERATIVE ).owner( user.id() ).ownerType( OwnerType.USER );
+		Aircraft helena = new Aircraft().name( "HOPE" ).type( AircraftType.HELICOPTER ).status( AircraftStatus.INOPERATIVE ).owner( user.id() ).ownerType( OwnerType.USER );
 		statePersisting.upsert( aftyn );
 		statePersisting.upsert( bianca );
 		statePersisting.upsert( gemma );
