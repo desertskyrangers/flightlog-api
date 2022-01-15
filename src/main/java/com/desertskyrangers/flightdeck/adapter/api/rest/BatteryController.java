@@ -75,7 +75,7 @@ public class BatteryController {
 			return new ResponseEntity<>( new ReactBatteryResponse().setBattery( request ), HttpStatus.OK );
 		} catch( Exception exception ) {
 			log.error( "Error creating new battery", exception );
-			messages.add( exception.getMessage() );
+			messages.add( "Unexpected error creating new battery. Please contact support." );
 		}
 
 		return new ResponseEntity<>( new ReactBatteryResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
@@ -110,7 +110,7 @@ public class BatteryController {
 			return new ResponseEntity<>( new ReactBatteryResponse().setBattery( request ), HttpStatus.OK );
 		} catch( Exception exception ) {
 			log.error( "Error updating battery", exception );
-			messages.add( exception.getMessage() );
+			messages.add( "Unexpected error updating battery. Please contact support." );
 		}
 
 		return new ResponseEntity<>( new ReactBatteryResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
@@ -132,7 +132,7 @@ public class BatteryController {
 			}
 		} catch( Exception exception ) {
 			log.error( "Error removing battery", exception );
-			messages.add( exception.getMessage() );
+			messages.add( "Unexpected error removing battery. Please contact support." );
 		}
 
 		return new ResponseEntity<>( new ReactBatteryResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
