@@ -150,7 +150,9 @@ public class UserController extends BaseController {
 	ResponseEntity<List<ReactOption>> getBatteryLookup( Authentication authentication ) {
 		User user = findUser( authentication );
 		List<Battery> objects = batteryService.findByOwner( user.id() );
-		return new ResponseEntity<>( objects.stream().map( c -> new ReactOption( c.id().toString(), c.name() ) ).toList(), HttpStatus.OK );
+		List<ReactOption> options = new ArrayList<>( objects.stream().map( c -> new ReactOption( c.id().toString(), c.name() ) ).toList() );
+		options.add( new ReactOption( "", "No battery specified" ) );
+		return new ResponseEntity<>( options, HttpStatus.OK );
 	}
 
 	@GetMapping( path = ApiPath.USER_OBSERVER_LOOKUP )

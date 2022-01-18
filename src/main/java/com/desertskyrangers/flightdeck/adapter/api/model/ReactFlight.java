@@ -3,6 +3,7 @@ package com.desertskyrangers.flightdeck.adapter.api.model;
 import com.desertskyrangers.flightdeck.core.model.Flight;
 import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.port.FlightUpsertRequest;
+import com.desertskyrangers.flightdeck.util.Text;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -86,7 +87,7 @@ public class ReactFlight {
 		request.observer( UUID.fromString( flight.getObserver() ) );
 		request.unlistedObserver( flight.getUnlistedObserver() );
 		request.aircraft( UUID.fromString( flight.getAircraft() ) );
-		request.batteries( flight.getBatteries() == null ? List.of() : flight.getBatteries().stream().map( UUID::fromString ).toList() );
+		request.batteries( flight.getBatteries() == null ? List.of() : flight.getBatteries().stream().filter( Text::isNotBlank ).map( UUID::fromString ).toList() );
 		request.timestamp( flight.getTimestamp() );
 		request.duration( flight.getDuration() );
 		request.notes( flight.getNotes() );
