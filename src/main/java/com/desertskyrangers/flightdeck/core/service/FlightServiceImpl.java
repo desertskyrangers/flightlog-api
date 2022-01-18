@@ -36,6 +36,11 @@ public class FlightServiceImpl implements FlightService {
 	}
 
 	@Override
+	public List<Flight> findFlightsByUser( UUID user ) {
+		return stateRetrieving.findFlightsByUser( user );
+	}
+
+	@Override
 	public void upsert( FlightUpsertRequest request ) {
 		User pilot = stateRetrieving.findUserAccount( request.pilot() ).orElse( null );
 		User observer = stateRetrieving.findUserAccount( request.observer() ).orElse( null );

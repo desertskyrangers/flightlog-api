@@ -20,9 +20,13 @@ public interface StateRetrieving {
 
 	List<Flight> findFlightsByPilot( UUID id );
 
+	List<Flight> findFlightsByObserver( UUID id );
+
 	List<Flight> findFlightsByAircraft( UUID id );
 
 	List<Flight> findFlightsByBattery( UUID id );
+
+	List<Flight> findFlightsByUser( UUID id );
 
 	Optional<UserToken> findUserToken( UUID id );
 

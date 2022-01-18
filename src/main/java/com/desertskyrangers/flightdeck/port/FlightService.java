@@ -12,6 +12,8 @@ public interface FlightService {
 
 	List<Flight> findByPilot( UUID owner );
 
+	List<Flight> findFlightsByUser( UUID user );
+
 	void upsert( FlightUpsertRequest flight );
 
 	void remove( Flight flight );

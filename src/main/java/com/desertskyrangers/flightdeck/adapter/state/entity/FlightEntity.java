@@ -59,7 +59,9 @@ public class FlightEntity {
 
 		entity.setId( flight.id() );
 		if( flight.pilot() != null ) entity.setPilot( UserEntity.from( flight.pilot() ) );
+		entity.setUnlistedPilot( flight.unlistedPilot() );
 		if( flight.observer() != null ) entity.setObserver( UserEntity.from( flight.observer() ) );
+		entity.setUnlistedObserver( flight.unlistedObserver() );
 		if( flight.aircraft() != null ) entity.setAircraft( AircraftEntity.from( flight.aircraft() ) );
 		if( flight.batteries() != null ) entity.setBatteries( flight.batteries().stream().map( BatteryEntity::from ).collect( Collectors.toSet() ) );
 		entity.setTimestamp( flight.timestamp() );
@@ -74,7 +76,9 @@ public class FlightEntity {
 
 		flight.id( entity.getId() );
 		if( entity.getPilot() != null ) flight.pilot( UserEntity.toUserAccount( entity.getPilot() ) );
+		flight.unlistedPilot( entity.getUnlistedPilot() );
 		if( entity.getObserver() != null ) flight.observer( UserEntity.toUserAccount( entity.getObserver() ) );
+		flight.unlistedObserver( entity.getUnlistedObserver() );
 		if( entity.getAircraft() != null ) flight.aircraft( AircraftEntity.toAircraft( entity.getAircraft() ) );
 		if( entity.getBatteries() != null ) flight.batteries( entity.getBatteries().stream().map( BatteryEntity::toBattery ).collect( Collectors.toSet() ) );
 		flight.timestamp( entity.getTimestamp() );

@@ -68,10 +68,10 @@ public class StateRetrievingService implements StateRetrieving {
 		return flightRepo.findFlightEntitiesByPilot_IdOrderByTimestampDesc( id ).stream().map( FlightEntity::toFlight ).toList();
 	}
 
-	//	@Override
-	//	public List<Flight> findFlightsByObserver( UUID id ) {
-	//		return null;
-	//	}
+		@Override
+		public List<Flight> findFlightsByObserver( UUID id ) {
+			return flightRepo.findFlightEntitiesByObserver_IdOrderByTimestampDesc( id ).stream().map( FlightEntity::toFlight ).toList();
+		}
 
 	@Override
 	public List<Flight> findFlightsByAircraft( UUID id ) {
@@ -81,6 +81,17 @@ public class StateRetrievingService implements StateRetrieving {
 	@Override
 	public List<Flight> findFlightsByBattery( UUID id ) {
 		return null;
+	}
+
+	/**
+	 * This returns the list of flights where the user is a pilot, observer, or aircraft owner.
+	 *
+	 * @param id The user id
+	 * @return The list of flights
+	 */
+	@Override
+	public List<Flight> findFlightsByUser( UUID id ) {
+		return flightRepo.findFlightEntitiesByPilot_IdOrObserver_IdOrAircraft_OwnerOrderByTimestampDesc( id,id,id ).stream().map( FlightEntity::toFlight ).toList();
 	}
 
 	@Override

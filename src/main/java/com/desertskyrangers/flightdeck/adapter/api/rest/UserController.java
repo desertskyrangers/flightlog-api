@@ -129,7 +129,7 @@ public class UserController extends BaseController {
 
 		try {
 			User user = findUser( authentication );
-			List<ReactFlight> flightPage = flightService.findByPilot( user.id() ).stream().map( ReactFlight::from ).toList();
+			List<ReactFlight> flightPage = flightService.findFlightsByUser( user.id() ).stream().map( ReactFlight::from ).toList();
 			return new ResponseEntity<>( new ReactFlightPageResponse().setFlights( flightPage ), HttpStatus.OK );
 		} catch( Exception exception ) {
 			log.error( "Error creating new battery", exception );
