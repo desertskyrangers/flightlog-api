@@ -24,6 +24,8 @@ public class ReactBattery {
 
 	private String connector;
 
+	private String unlistedConnector;
+
 	private String type;
 
 	private int cells;
@@ -49,6 +51,7 @@ public class ReactBattery {
 		result.setMake( battery.make() );
 		result.setModel( battery.model() );
 		if( battery.connector() != null ) result.setConnector( battery.connector().name().toLowerCase() );
+		if( battery.unlistedConnector() != null ) result.setUnlistedConnector( battery.unlistedConnector() );
 
 		if( battery.type() != null ) result.setType( battery.type().name().toLowerCase() );
 		result.setCells( battery.cells() );
@@ -72,6 +75,7 @@ public class ReactBattery {
 		battery.make( reactBattery.getMake() );
 		battery.model( reactBattery.getModel() );
 		if( reactBattery.getConnector() != null ) battery.connector( BatteryConnector.valueOf( reactBattery.getConnector().toUpperCase() ) );
+		battery.unlistedConnector( reactBattery.getUnlistedConnector() );
 
 		if( reactBattery.getType() != null ) battery.type( BatteryType.valueOf( reactBattery.getType().toUpperCase() ) );
 		battery.cells( reactBattery.getCells() );

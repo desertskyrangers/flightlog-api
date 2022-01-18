@@ -211,9 +211,10 @@ public class UserControllerTest extends BaseControllerTest {
 		statePersisting.upsert( createTestBattery() );
 		statePersisting.upsert( createTestBattery() );
 		statePersisting.upsert( createTestBattery() );
+		// Plus the 'No battery specified' option
 		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_BATTERY_LOOKUP ) ).andExpect( status().isOk() ).andReturn();
 		List<Object> list = Json.asList( result.getResponse().getContentAsString() );
-		assertThat( list.size() ).isEqualTo( 3 );
+		assertThat( list.size() ).isEqualTo( 4 );
 	}
 
 	@Test

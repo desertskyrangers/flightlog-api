@@ -60,6 +60,7 @@ public class TableStructureTests {
 		expected.add( "make" );
 		expected.add( "model" );
 		expected.add( "connector" );
+		expected.add( "unlistedconnector");
 		expected.add( "status" );
 		expected.add( "owner" );
 		expected.add( "ownertype" );

@@ -13,7 +13,8 @@ public enum BatteryConnector {
 	JST( "JST" ),
 	MOLEX( "Molex" ),
 	SERVO( "Servo" ),
-	TRX( "TRX" );
+	TRX( "TRX" ),
+	UNLISTED("Unlisted");
 
 	private final String name;
 

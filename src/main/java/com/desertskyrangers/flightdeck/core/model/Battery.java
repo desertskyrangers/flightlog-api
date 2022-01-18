@@ -19,6 +19,8 @@ public class Battery {
 
 	private BatteryConnector connector;
 
+	private String unlistedConnector;
+
 	private BatteryStatus status;
 
 	private BatteryType type;
