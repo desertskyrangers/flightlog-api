@@ -37,6 +37,20 @@ public class UserController extends BaseController {
 		this.userService = userService;
 	}
 
+	@GetMapping( path = ApiPath.DASHBOARD )
+	ResponseEntity<ReactDashboardResponse> dashboard( Authentication authentication ) {
+		User user = findUser( authentication );
+
+		int flightCount = flightService.getPilotFlightCount( user.id() );
+		long flightTime = flightService.getPilotFlightTime( user.id() );
+
+		ReactDashboard dashboard = new ReactDashboard();
+		dashboard.setPilotFlightCount( flightCount );
+		dashboard.setPilotFlightTime( flightTime );
+
+		return new ResponseEntity<>( new ReactDashboardResponse().setDashboard( dashboard ), HttpStatus.OK );
+	}
+
 	@GetMapping( path = ApiPath.PROFILE )
 	ResponseEntity<ReactProfileResponse> profile() {
 		String username = ((org.springframework.security.core.userdetails.User)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
@@ -91,7 +105,9 @@ public class UserController extends BaseController {
 		if( optional.isEmpty() ) return new ResponseEntity<>( Map.of( "messages", List.of( "User not found: " + id ) ), HttpStatus.BAD_REQUEST );
 
 		// Check that passwords match
-		if( !userService.isCurrentPassword( optional.get(), request.getCurrentPassword() ) ) return new ResponseEntity<>( Map.of( "messages", List.of( "Current password mismatch" ) ), HttpStatus.BAD_REQUEST );
+		if( !userService.isCurrentPassword( optional.get(), request.getCurrentPassword() ) ) {
+			return new ResponseEntity<>( Map.of( "messages", List.of( "Current password mismatch" ) ), HttpStatus.BAD_REQUEST );
+		}
 
 		// Update the user account
 		userService.updatePassword( optional.get(), request.getPassword() );

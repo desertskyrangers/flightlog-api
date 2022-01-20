@@ -39,4 +39,9 @@ public interface StateRetrieving {
 	List<Verification> findAllVerifications();
 
 	Optional<Verification> findVerification( UUID id );
+
+	int getPilotFlightCount( UUID id );
+
+	long getPilotFlightTime( UUID id );
+
 }

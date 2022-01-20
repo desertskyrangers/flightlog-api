@@ -66,4 +66,14 @@ public class FlightServiceImpl implements FlightService {
 		statePersisting.remove( flight );
 	}
 
+	@Override
+	public int getPilotFlightCount( UUID user ) {
+		return stateRetrieving.getPilotFlightCount( user );
+	}
+
+	@Override
+	public long getPilotFlightTime( UUID user ) {
+		return stateRetrieving.getPilotFlightTime( user );
+	}
+
 }

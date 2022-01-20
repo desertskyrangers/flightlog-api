@@ -19,4 +19,8 @@ public interface FlightService {
 
 	void remove( Flight flight );
 
+	int getPilotFlightCount( UUID user );
+
+	long getPilotFlightTime( UUID user );
+
 }

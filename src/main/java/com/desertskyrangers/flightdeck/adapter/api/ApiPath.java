@@ -19,6 +19,8 @@ public interface ApiPath {
 	String AUTH_RESEND = AUTH + "/resend";
 	String AUTH_VERIFY = AUTH + "/verify";
 
+	String DASHBOARD = API + "/dashboard";
+
 	String FLIGHT = API + "/flight";
 
 	String MONITOR = API + "/monitor";

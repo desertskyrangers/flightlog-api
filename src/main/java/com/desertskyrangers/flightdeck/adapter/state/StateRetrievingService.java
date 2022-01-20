@@ -68,10 +68,10 @@ public class StateRetrievingService implements StateRetrieving {
 		return flightRepo.findFlightEntitiesByPilot_IdOrderByTimestampDesc( id ).stream().map( FlightEntity::toFlight ).toList();
 	}
 
-		@Override
-		public List<Flight> findFlightsByObserver( UUID id ) {
-			return flightRepo.findFlightEntitiesByObserver_IdOrderByTimestampDesc( id ).stream().map( FlightEntity::toFlight ).toList();
-		}
+	@Override
+	public List<Flight> findFlightsByObserver( UUID id ) {
+		return flightRepo.findFlightEntitiesByObserver_IdOrderByTimestampDesc( id ).stream().map( FlightEntity::toFlight ).toList();
+	}
 
 	@Override
 	public List<Flight> findFlightsByAircraft( UUID id ) {
@@ -91,7 +91,7 @@ public class StateRetrievingService implements StateRetrieving {
 	 */
 	@Override
 	public List<Flight> findFlightsByUser( UUID id ) {
-		return flightRepo.findFlightEntitiesByPilot_IdOrObserver_IdOrAircraft_OwnerOrderByTimestampDesc( id,id,id ).stream().map( FlightEntity::toFlight ).toList();
+		return flightRepo.findFlightEntitiesByPilot_IdOrObserver_IdOrAircraft_OwnerOrderByTimestampDesc( id, id, id ).stream().map( FlightEntity::toFlight ).toList();
 	}
 
 	@Override
@@ -124,4 +124,15 @@ public class StateRetrievingService implements StateRetrieving {
 	public Optional<Verification> findVerification( UUID id ) {
 		return verificationRepo.findById( id ).map( VerificationEntity::toVerification );
 	}
+
+	@Override
+	public int getPilotFlightCount( UUID id ) {
+		return flightRepo.countByPilot_Id( id );
+	}
+
+	@Override
+	public long getPilotFlightTime( UUID id ) {
+		return flightRepo.getFlightTimeByPilot_Id( id );
+	}
+
 }
