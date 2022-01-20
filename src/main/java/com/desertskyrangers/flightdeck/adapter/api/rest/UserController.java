@@ -66,7 +66,7 @@ public class UserController extends BaseController {
 		Optional<User> optional = userService.find( id );
 		if( optional.isEmpty() ) return new ResponseEntity<>( new ReactProfileResponse().setAccount( new ReactUserAccount() ), HttpStatus.BAD_REQUEST );
 
-		User user = account.update( optional.get() );
+		User user = account.updateFrom( optional.get() );
 
 		// Update the user account
 		userService.upsert( user );

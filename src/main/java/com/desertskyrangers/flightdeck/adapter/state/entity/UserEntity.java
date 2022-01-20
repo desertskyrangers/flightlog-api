@@ -23,6 +23,8 @@ public class UserEntity {
 	@Column( columnDefinition = "BINARY(16)" )
 	private UUID id;
 
+	private String username;
+
 	@Column( name = "firstname" )
 	private String firstName;
 
@@ -66,6 +68,7 @@ public class UserEntity {
 		User user = new User();
 
 		user.id( entity.getId() );
+		user.username( entity.getUsername() );
 		user.firstName( entity.getFirstName() );
 		user.lastName( entity.getLastName() );
 		user.preferredName( entity.getPreferredName() );
@@ -88,6 +91,7 @@ public class UserEntity {
 		UserEntity entity = new UserEntity();
 
 		entity.setId( user.id() );
+		entity.setUsername( user.username() );
 		entity.setFirstName( user.firstName() );
 		entity.setLastName( user.lastName() );
 		entity.setPreferredName( user.preferredName() );

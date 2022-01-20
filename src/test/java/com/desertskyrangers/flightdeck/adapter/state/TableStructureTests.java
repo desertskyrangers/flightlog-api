@@ -126,6 +126,7 @@ public class TableStructureTests {
 	void testUserTable() throws Exception {
 		Set<String> expected = new HashSet<>();
 		expected.add( "id" );
+		expected.add( "username" );
 		expected.add( "firstname" );
 		expected.add( "lastname" );
 		expected.add( "preferredname" );

@@ -131,25 +131,30 @@ public class AuthServiceImpl implements AuthService {
 		if( !validPassword ) messages.add( "Invalid password" );
 		if( !validEmail ) messages.add( "Invalid email address" );
 
-		// Check and create tokens
+		// Check token availability
 		Set<UserToken> tokens = new HashSet<>();
-		String encodedPassword = passwordEncoder.encode( password );
 		if( validUsername && validPassword ) {
-			stateRetrieving.findUserTokenByPrincipal( username ).ifPresentOrElse( t -> {
+			stateRetrieving.findUserTokenByPrincipal( username ).ifPresent( t -> {
 				log.warn( "Username not available: username=" + username );
 				messages.add( "Username not available" );
-			}, () -> tokens.add( new UserToken().principal( username ).credential( encodedPassword ) ) );
+			} );
 		}
 		if( validEmail && validPassword ) {
-			stateRetrieving.findUserTokenByPrincipal( email ).ifPresentOrElse( t -> {
+			stateRetrieving.findUserTokenByPrincipal( email ).ifPresent( t -> {
 				log.warn( "Email not available: email=" + email );
 				messages.add( "Email not available" );
-			}, () -> tokens.add( new UserToken().principal( email ).credential( encodedPassword ) ) );
+			} );
 		}
 		if( !messages.isEmpty() ) return messages;
 
+		// Create the tokens
+		String encodedPassword = passwordEncoder.encode( password );
+		tokens.add( new UserToken().principal( username ).credential( encodedPassword ) );
+		tokens.add( new UserToken().principal( email ).credential( encodedPassword ) );
+
 		// Create the account
 		User account = new User();
+		account.username( username );
 		account.email( email );
 		account.tokens( tokens );
 		statePersisting.upsert( account );

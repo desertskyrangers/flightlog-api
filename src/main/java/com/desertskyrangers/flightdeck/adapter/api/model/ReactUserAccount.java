@@ -15,6 +15,8 @@ public class ReactUserAccount {
 
 	private String id;
 
+	private String username;
+
 	private String firstName;
 
 	private String lastName;
@@ -31,10 +33,11 @@ public class ReactUserAccount {
 
 	private boolean smsVerified;
 
-	public User update( User user ) {
+	public User updateFrom( User user ) {
 		boolean emailChanged = Objects.equals( user.email(), this.getEmail() );
 		boolean smsChanged = Objects.equals( user.smsNumber(), this.getSmsNumber() );
 
+		user.username( this.getUsername() );
 		user.firstName( this.getFirstName() );
 		user.lastName( this.getLastName() );
 		user.preferredName( this.getPreferredName() );
@@ -50,6 +53,7 @@ public class ReactUserAccount {
 	public static ReactUserAccount from( User account ) {
 		ReactUserAccount reactAccount = new ReactUserAccount();
 		reactAccount.setId( account.id().toString() );
+		reactAccount.setUsername( account.username() );
 		reactAccount.setFirstName( account.firstName() );
 		reactAccount.setLastName( account.lastName() );
 		reactAccount.setPreferredName( account.preferredName() );

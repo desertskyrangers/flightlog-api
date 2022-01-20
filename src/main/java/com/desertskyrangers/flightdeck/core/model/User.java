@@ -14,6 +14,8 @@ public class User {
 
 	private UUID id = UUID.randomUUID();
 
+	private String username;
+
 	private String firstName;
 
 	private String lastName;

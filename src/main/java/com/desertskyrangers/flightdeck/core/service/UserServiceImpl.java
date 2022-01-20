@@ -45,8 +45,14 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void upsert( User user ) {
-		// If the email address has changed, the email auth token needs to be updated also
 		find( user.id() ).ifPresent( current -> {
+			// If the username has changed, the username auth token needs to be updated also
+			if( !Objects.equals( user.username(), current.username() ) ) {
+				for( UserToken token : user.tokens() ) {
+					if( token.principal().equals( current.username() ) ) token.principal( user.username() );
+				}
+			}
+			// If the email address has changed, the email auth token needs to be updated also
 			if( !Objects.equals( user.email(), current.email() ) ) {
 				for( UserToken token : user.tokens() ) {
 					if( token.principal().equals( current.email() ) ) token.principal( user.email() );
