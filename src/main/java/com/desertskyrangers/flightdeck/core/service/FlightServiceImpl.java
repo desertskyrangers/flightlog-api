@@ -1,19 +1,17 @@
 package com.desertskyrangers.flightdeck.core.service;
 
-import com.desertskyrangers.flightdeck.core.model.Aircraft;
-import com.desertskyrangers.flightdeck.core.model.Battery;
-import com.desertskyrangers.flightdeck.core.model.Flight;
-import com.desertskyrangers.flightdeck.core.model.User;
+import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.FlightService;
-import com.desertskyrangers.flightdeck.core.model.FlightUpsertRequest;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
 import com.desertskyrangers.flightdeck.port.StateRetrieving;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class FlightServiceImpl implements FlightService {
 
 	private final StatePersisting statePersisting;
@@ -45,7 +43,7 @@ public class FlightServiceImpl implements FlightService {
 		User pilot = stateRetrieving.findUserAccount( request.pilot() ).orElse( null );
 		User observer = stateRetrieving.findUserAccount( request.observer() ).orElse( null );
 		Aircraft aircraft = stateRetrieving.findAircraft( request.aircraft() ).orElse( null );
-		Set<Battery> batteries = request.batteries().stream().map( id -> stateRetrieving.findBattery( id ).orElse( null ) ).filter( Objects::isNull ).collect( Collectors.toSet() );
+		Set<Battery> batteries = request.batteries().stream().map( id -> stateRetrieving.findBattery( id ).orElse( null ) ).filter( Objects::nonNull ).collect( Collectors.toSet() );
 
 		// Convert request to a core flight object
 		Flight flight = new Flight();

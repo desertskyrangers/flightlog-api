@@ -145,14 +145,15 @@ public class InitialConfig {
 		f1.pilot( user );
 		f1.observer( user );
 		f1.aircraft( aftyn );
-		f1.timestamp(1642259543957L);
-		f1.duration(240);
+		f1.batteries( Set.of( d4s2650turnigy ) );
+		f1.timestamp( 1642259543957L );
+		f1.duration( 240 );
 		Flight f2 = new Flight();
 		f2.pilot( user );
 		f2.observer( user );
 		f2.aircraft( bianca );
-		f2.timestamp(1642268904574L);
-		f2.duration(54);
+		f2.timestamp( 1642268904574L );
+		f2.duration( 54 );
 		statePersisting.upsert( f1 );
 		statePersisting.upsert( f2 );
 
