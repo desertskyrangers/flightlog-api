@@ -20,6 +20,10 @@ public interface UserService {
 
 	void remove( User user );
 
+	boolean isCurrentPassword( User user, String password );
+
+	void updatePassword( User user, String password );
+
 	Optional<User> findVerificationUser( UUID verificationId );
 
 }

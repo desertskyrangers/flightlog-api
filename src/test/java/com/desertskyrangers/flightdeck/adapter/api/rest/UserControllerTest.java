@@ -116,6 +116,21 @@ public class UserControllerTest extends BaseControllerTest {
 	}
 
 	@Test
+	void testUpdatePassword() throws Exception {
+		// given
+		ReactUserAccount reactAccount = ReactUserAccount.from( getMockUser() );
+
+		// when
+		String content = Json.stringify( Map.of("id", reactAccount.getId(), "currentPassword", "password", "password", "newmockpassword"));
+		MvcResult result = this.mockMvc
+			.perform( put( ApiPath.USER + "/" + getMockUser().id() + "/password" ).content( content ).contentType( "application/json" ).with( csrf() ).headers( headers ) )
+			.andExpect( status().isOk() )
+			.andReturn();
+
+		// then
+	}
+
+	@Test
 	void testGetAircraftPage() throws Exception {
 		// given
 		Aircraft aftyn = new Aircraft().name( "AFTYN" ).type( AircraftType.FIXEDWING ).status( AircraftStatus.DESTROYED ).owner( getMockUser().id() ).ownerType( OwnerType.USER );

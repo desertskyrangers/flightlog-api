@@ -5,6 +5,7 @@ import com.desertskyrangers.flightdeck.core.model.UserToken;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
 import com.desertskyrangers.flightdeck.port.StateRetrieving;
 import com.desertskyrangers.flightdeck.port.UserService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,9 +20,12 @@ public class UserServiceImpl implements UserService {
 
 	private final StatePersisting statePersisting;
 
-	public UserServiceImpl( StateRetrieving stateRetrieving, StatePersisting statePersisting ) {
+	private final PasswordEncoder passwordEncoder;
+
+	public UserServiceImpl( StateRetrieving stateRetrieving, StatePersisting statePersisting, PasswordEncoder passwordEncoder ) {
 		this.stateRetrieving = stateRetrieving;
 		this.statePersisting = statePersisting;
+		this.passwordEncoder = passwordEncoder;
 	}
 
 	@Override
@@ -40,22 +44,43 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void upsert( User account ) {
+	public void upsert( User user ) {
 		// If the email address has changed, the email auth token needs to be updated also
-		find( account.id() ).ifPresent( current -> {
-			if( !Objects.equals( account.email(), current.email() ) ) {
-				for( UserToken token : account.tokens() ) {
-					if( token.principal().equals( current.email() ) ) token.principal( account.email() );
+		find( user.id() ).ifPresent( current -> {
+			if( !Objects.equals( user.email(), current.email() ) ) {
+				for( UserToken token : user.tokens() ) {
+					if( token.principal().equals( current.email() ) ) token.principal( user.email() );
 				}
 			}
 		} );
 
-		statePersisting.upsert( account );
+		statePersisting.upsert( user );
 	}
 
 	@Override
 	public void remove( User account ) {
 		statePersisting.remove( account );
+	}
+
+	@Override
+	public boolean isCurrentPassword( User user, String password ) {
+		Optional<User> optional = find( user.id() );
+		if( optional.isEmpty() ) return false;
+		for( UserToken token : optional.get().tokens() ) {
+			if( passwordEncoder.matches( password, token.credential() ) ) return true;
+		}
+		return false;
+	}
+
+	@Override
+	public void updatePassword( User user, String password ) {
+		find( user.id() ).ifPresent( current -> {
+			String encodedPassword = passwordEncoder.encode( password );
+			for( UserToken token : user.tokens() ) {
+				token.credential( encodedPassword );
+				statePersisting.upsert( token );
+			}
+		} );
 	}
 
 	@Override

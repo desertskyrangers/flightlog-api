@@ -16,10 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @Slf4j
@@ -63,17 +60,9 @@ public class UserController extends BaseController {
 		return new ResponseEntity<>( new ReactProfileResponse().setAccount( optional.get() ), HttpStatus.OK );
 	}
 
-	//	@PostMapping
-	//	@ResponseStatus( HttpStatus.CREATED )
-	//	public UUID create( @RequestBody ReactRegisterRequest resource ) {
-	//		//		Preconditions.checkNotNull(resource);
-	//		//		return service.create(resource);
-	//		return UUID.randomUUID();
-	//	}
-
 	@PutMapping( value = ApiPath.USER + "/{id}" )
 	@ResponseStatus( HttpStatus.OK )
-	public ResponseEntity<ReactProfileResponse> update( @PathVariable( "id" ) UUID id, @RequestBody ReactUserAccount account ) {
+	ResponseEntity<ReactProfileResponse> update( @PathVariable( "id" ) UUID id, @RequestBody ReactUserAccount account ) {
 		Optional<User> optional = userService.find( id );
 		if( optional.isEmpty() ) return new ResponseEntity<>( new ReactProfileResponse().setAccount( new ReactUserAccount() ), HttpStatus.BAD_REQUEST );
 
@@ -87,8 +76,27 @@ public class UserController extends BaseController {
 
 	@DeleteMapping( value = ApiPath.USER + "/{id}" )
 	@ResponseStatus( HttpStatus.OK )
-	public void delete( @PathVariable( "id" ) UUID id ) {
+	void delete( @PathVariable( "id" ) UUID id ) {
 		userService.find( id ).ifPresent( userService::remove );
+	}
+
+	@PutMapping( value = ApiPath.USER + "/{id}/password" )
+	@ResponseStatus( HttpStatus.OK )
+	ResponseEntity<Map<String, Object>> updatePassword( @PathVariable( "id" ) UUID id, @RequestBody ReactPasswordChangeRequest request ) {
+		// Check that ids match
+		if( !Objects.equals( id.toString(), request.getId() ) ) return new ResponseEntity<>( Map.of( "messages", List.of( "User id mismatch" ) ), HttpStatus.BAD_REQUEST );
+
+		// Check the user exists
+		Optional<User> optional = userService.find( id );
+		if( optional.isEmpty() ) return new ResponseEntity<>( Map.of( "messages", List.of( "User not found: " + id ) ), HttpStatus.BAD_REQUEST );
+
+		// Check that passwords match
+		if( !userService.isCurrentPassword( optional.get(), request.getCurrentPassword() ) ) return new ResponseEntity<>( Map.of( "messages", List.of( "Current password mismatch" ) ), HttpStatus.BAD_REQUEST );
+
+		// Update the user account
+		userService.updatePassword( optional.get(), request.getPassword() );
+
+		return new ResponseEntity<>( HttpStatus.OK );
 	}
 
 	@GetMapping( path = ApiPath.USER_AIRCRAFT + "/{page}" )

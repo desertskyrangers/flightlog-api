@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.Objects;
@@ -22,6 +23,9 @@ public abstract class BaseControllerTest {
 
 	@Autowired
 	private StatePersisting statePersisting;
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	@Autowired
 	private UserService userService;
@@ -40,6 +44,7 @@ public abstract class BaseControllerTest {
 		if( authentication != null ) {
 			String username = authentication.getName();
 			String password = Objects.toString( authentication.getCredentials() );
+			String encodedPassword = passwordEncoder.encode( password );
 
 			// Delete the exising mock user account
 			userService.findByPrincipal( authentication.getName() ).ifPresent( u -> userService.remove( u ) );
@@ -47,8 +52,7 @@ public abstract class BaseControllerTest {
 			// Create mock user account
 			mockUser = new User();
 			mockUser.lastName( username );
-			mockUser.tokens( Set.of( new UserToken().principal( username ).credential( password ) ) );
-			UserToken token = new UserToken().principal( username );
+			UserToken token = new UserToken().principal( username ).credential( encodedPassword );
 			mockUser.tokens( Set.of( token ) );
 			token.user( mockUser );
 			userService.upsert( mockUser );

@@ -5,10 +5,7 @@ import com.desertskyrangers.flightdeck.core.model.EmailMessage;
 import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.core.model.UserToken;
 import com.desertskyrangers.flightdeck.core.model.Verification;
-import com.desertskyrangers.flightdeck.port.AuthService;
-import com.desertskyrangers.flightdeck.port.HumanInterface;
-import com.desertskyrangers.flightdeck.port.StatePersisting;
-import com.desertskyrangers.flightdeck.port.StateRetrieving;
+import com.desertskyrangers.flightdeck.port.*;
 import com.desertskyrangers.flightdeck.util.Email;
 import com.desertskyrangers.flightdeck.util.Text;
 import com.mitchellbosecke.pebble.PebbleEngine;
@@ -48,19 +45,22 @@ public class AuthServiceImpl implements AuthService {
 
 	private final PasswordEncoder passwordEncoder;
 
-	public AuthServiceImpl( StatePersisting statePersisting, StateRetrieving stateRetrieving, HumanInterface humanInterface, PasswordEncoder passwordEncoder ) {
+	private final UserService userService;
+
+	public AuthServiceImpl( StatePersisting statePersisting, StateRetrieving stateRetrieving, HumanInterface humanInterface, PasswordEncoder passwordEncoder, UserService userService ) {
 		this.statePersisting = statePersisting;
 		this.stateRetrieving = stateRetrieving;
 		this.humanInterface = humanInterface;
 		this.passwordEncoder = passwordEncoder;
+		this.userService = userService;
 	}
 
 	@Scheduled( fixedRate = 1, timeUnit = TimeUnit.MINUTES )
 	void cleanupExpiredVerificationsAndAccounts() {
 		for( Verification verification : stateRetrieving.findAllVerifications() ) {
 			if( verification.isExpired() ) {
-				stateRetrieving.findUserAccount( verification.userId() ).ifPresent( statePersisting::remove );
 				statePersisting.remove( verification );
+				//stateRetrieving.findUserAccount( verification.userId() ).ifPresent( statePersisting::remove );
 				log.info( "Verification expired: " + verification.id() );
 			}
 		}
@@ -88,9 +88,8 @@ public class AuthServiceImpl implements AuthService {
 
 	@Override
 	public List<String> requestUserReset( Verification verification, String password ) {
-		log.info("Requesting user reset...");
+		log.info( "Requesting user reset..." );
 		List<String> messages = new ArrayList<>();
-
 
 		Optional<Verification> optional = stateRetrieving.findVerification( verification.id() );
 		if( optional.isPresent() ) {
@@ -103,13 +102,7 @@ public class AuthServiceImpl implements AuthService {
 			if( isExpired ) messages.add( "Recovery code expired" );
 
 			if( messages.size() == 0 ) {
-				stateRetrieving.findUserAccount( storedVerification.userId() ).ifPresent( u -> {
-					String encodedPassword = passwordEncoder.encode( password );
-					for( UserToken token : u.tokens() ) {
-						token.credential( encodedPassword );
-						statePersisting.upsert( token );
-					}
-				} );
+				stateRetrieving.findUserAccount( storedVerification.userId() ).ifPresent( u -> userService.updatePassword( u, password ) );
 				statePersisting.remove( storedVerification );
 			}
 		} else {
