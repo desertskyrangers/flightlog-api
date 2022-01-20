@@ -45,6 +45,9 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void upsert( User user ) {
+		// FIXME Check for token availability, similar to AuthService.register()
+
+		// Update security tokens if needed
 		find( user.id() ).ifPresent( current -> {
 			// If the username has changed, the username auth token needs to be updated also
 			if( !Objects.equals( user.username(), current.username() ) ) {
@@ -57,6 +60,8 @@ public class UserServiceImpl implements UserService {
 				for( UserToken token : user.tokens() ) {
 					if( token.principal().equals( current.email() ) ) token.principal( user.email() );
 				}
+
+				// TODO Email address needs to be verified again
 			}
 		} );
 
