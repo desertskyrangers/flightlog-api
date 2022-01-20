@@ -3,14 +3,13 @@ package com.desertskyrangers.flightdeck.adapter.api.rest;
 import com.desertskyrangers.flightdeck.adapter.api.ApiPath;
 import com.desertskyrangers.flightdeck.adapter.api.jwt.JwtToken;
 import com.desertskyrangers.flightdeck.adapter.api.jwt.JwtTokenProvider;
-import com.desertskyrangers.flightdeck.adapter.api.model.ReactLoginRequest;
-import com.desertskyrangers.flightdeck.adapter.api.model.ReactLoginResponse;
-import com.desertskyrangers.flightdeck.adapter.api.model.ReactRegisterRequest;
-import com.desertskyrangers.flightdeck.adapter.api.model.ReactRegisterResponse;
+import com.desertskyrangers.flightdeck.adapter.api.model.*;
 import com.desertskyrangers.flightdeck.core.model.User;
+import com.desertskyrangers.flightdeck.core.model.UserToken;
 import com.desertskyrangers.flightdeck.core.model.Verification;
 import com.desertskyrangers.flightdeck.port.AuthService;
 import com.desertskyrangers.flightdeck.port.UserService;
+import com.desertskyrangers.flightdeck.util.PasswordChecker;
 import com.desertskyrangers.flightdeck.util.Text;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -49,11 +48,53 @@ public class AuthController {
 		this.passwordEncoder = passwordEncoder;
 	}
 
+	@PostMapping( path = ApiPath.AUTH_RECOVER, consumes = "application/json", produces = "application/json" )
+	ResponseEntity<ReactRecoverResponse> register( @RequestBody ReactRecoverRequest request ) {
+		List<String> messages = new ArrayList<>();
+		if( Text.isBlank( request.getUsername() ) ) messages.add( "Username or email required" );
+
+		if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactRecoverResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
+
+		try {
+			messages.addAll( authService.requestUserRecover( request.getUsername() ) );
+		} catch( Exception exception ) {
+			log.error( "Error during account sign up, username=" + request.getUsername(), exception );
+			return new ResponseEntity<>( new ReactRecoverResponse().setMessages( List.of( "There was an error recovering the account" ) ), HttpStatus.INTERNAL_SERVER_ERROR );
+		}
+
+		return new ResponseEntity<>( new ReactRecoverResponse().setMessages( messages ), HttpStatus.OK );
+	}
+
+	@PostMapping( path = ApiPath.AUTH_RESET, consumes = "application/json", produces = "application/json" )
+	ResponseEntity<ReactResetResponse> reset( @RequestBody ReactResetRequest request ) {
+		List<String> messages = new ArrayList<>();
+		if( Text.isBlank( request.getId() ) ) messages.add( "Reset id required" );
+		if( Text.isBlank( request.getPassword() ) ) {
+			messages.add( "Password required" );
+		} else {
+			if( PasswordChecker.isNotValid( request.getPassword() ) ) messages.add( "Invalid password" );
+		}
+		if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactResetResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
+
+		try {
+			Verification verification = new Verification().id( UUID.fromString( request.getId() ) );
+			messages.addAll( authService.requestUserReset( verification, request.getPassword() ) );
+			return new ResponseEntity<>( new ReactResetResponse().setMessages( messages ), HttpStatus.OK );
+		} catch( Exception exception ) {
+			log.error( "Error during account reset, id=" + request.getId(), exception );
+			return new ResponseEntity<>( new ReactResetResponse().setMessages( List.of( "There was an error resetting the account" ) ), HttpStatus.INTERNAL_SERVER_ERROR );
+		}
+	}
+
 	@PostMapping( path = ApiPath.AUTH_REGISTER, consumes = "application/json", produces = "application/json" )
 	ResponseEntity<ReactRegisterResponse> register( @RequestBody ReactRegisterRequest request ) {
 		List<String> messages = new ArrayList<>();
 		if( Text.isBlank( request.getUsername() ) ) messages.add( "Username required" );
-		if( Text.isBlank( request.getPassword() ) ) messages.add( "Password required" );
+		if( Text.isBlank( request.getPassword() ) ) {
+			messages.add( "Password required" );
+		} else {
+			if( PasswordChecker.isNotValid( request.getPassword() ) ) messages.add( "Invalid password" );
+		}
 		if( Text.isBlank( request.getEmail() ) ) messages.add( "Email required" );
 
 		if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactRegisterResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
@@ -159,7 +200,6 @@ public class AuthController {
 
 		Optional<User> optionalAccount = userService.findByPrincipal( username );
 		if( optionalAccount.isEmpty() ) return "Account not found: " + username;
-
 
 		// Create JWT token and return to requester
 		return tokenProvider.createToken( optionalAccount.get(), authentication, remember );

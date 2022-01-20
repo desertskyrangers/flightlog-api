@@ -21,20 +21,20 @@ public class StateRetrievingService implements StateRetrieving {
 
 	private final FlightRepo flightRepo;
 
-	private final UserAccountRepo userAccountRepo;
+	private final UserRepo userRepo;
 
-	private final UserTokenRepo userTokenRepo;
+	private final TokenRepo tokenRepo;
 
 	private final VerificationRepo verificationRepo;
 
 	public StateRetrievingService(
-		AircraftRepo aircraftRepo, BatteryRepo batteryRepo, FlightRepo flightRepo, UserAccountRepo userAccountRepo, UserTokenRepo userTokenRepo, VerificationRepo verificationRepo
+		AircraftRepo aircraftRepo, BatteryRepo batteryRepo, FlightRepo flightRepo, UserRepo userRepo, TokenRepo tokenRepo, VerificationRepo verificationRepo
 	) {
 		this.aircraftRepo = aircraftRepo;
 		this.batteryRepo = batteryRepo;
 		this.flightRepo = flightRepo;
-		this.userAccountRepo = userAccountRepo;
-		this.userTokenRepo = userTokenRepo;
+		this.userRepo = userRepo;
+		this.tokenRepo = tokenRepo;
 		this.verificationRepo = verificationRepo;
 	}
 
@@ -96,23 +96,23 @@ public class StateRetrievingService implements StateRetrieving {
 
 	@Override
 	public Optional<UserToken> findUserToken( UUID id ) {
-		return userTokenRepo.findById( id ).map( TokenEntity::toUserToken );
+		return tokenRepo.findById( id ).map( TokenEntity::toUserToken );
 	}
 
 	@Override
 	public Optional<UserToken> findUserTokenByPrincipal( String username ) {
-		return userTokenRepo.findByPrincipal( username ).map( TokenEntity::toUserTokenDeep );
+		return tokenRepo.findByPrincipal( username ).map( TokenEntity::toUserTokenDeep );
 	}
 
 	@Override
 	public List<User> findAllUserAccounts() {
-		return userAccountRepo.findAll().stream().map( UserEntity::toUserAccount ).collect( Collectors.toList() );
+		return userRepo.findAll().stream().map( UserEntity::toUserAccount ).collect( Collectors.toList() );
 	}
 
 	@Override
 	public Optional<User> findUserAccount( UUID id ) {
 		if( id == null ) return Optional.empty();
-		return userAccountRepo.findById( id ).map( UserEntity::toUserAccount );
+		return userRepo.findById( id ).map( UserEntity::toUserAccount );
 	}
 
 	@Override

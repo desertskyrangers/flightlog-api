@@ -2,7 +2,7 @@ package com.desertskyrangers.flightdeck.adapter.api.model;
 
 import com.desertskyrangers.flightdeck.core.model.Flight;
 import com.desertskyrangers.flightdeck.core.model.User;
-import com.desertskyrangers.flightdeck.port.FlightUpsertRequest;
+import com.desertskyrangers.flightdeck.core.model.FlightUpsertRequest;
 import com.desertskyrangers.flightdeck.util.Text;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;

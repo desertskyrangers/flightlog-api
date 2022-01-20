@@ -7,7 +7,11 @@ import java.util.UUID;
 
 public interface AuthService {
 
-	List<String> requestUserRegister( String username, String email, String password, UUID verifyId  );
+	List<String> requestUserRecover( String username );
+
+	List<String> requestUserReset( Verification verification, String password );
+
+	List<String> requestUserRegister( String username, String email, String password, UUID verifyId );
 
 	List<String> requestUserVerifyResend( UUID id );
 

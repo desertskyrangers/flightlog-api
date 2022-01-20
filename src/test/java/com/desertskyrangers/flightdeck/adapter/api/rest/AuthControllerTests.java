@@ -11,8 +11,8 @@ import com.desertskyrangers.flightdeck.util.Json;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,11 +23,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -36,16 +38,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ExtendWith( MockitoExtension.class )
-public class AuthControllerTests {
+public class AuthControllerTests extends BaseControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-
-	//	@Autowired
-	//	private StateRetrieving stateRetrieving;
 
 	@Autowired
 	private StatePersisting statePersisting;
@@ -56,8 +55,76 @@ public class AuthControllerTests {
 	@MockBean
 	private AuthService mockAuthService;
 
-	@Captor
-	ArgumentCaptor<Collection<UserToken>> tokenCaptor;
+	@Test
+	public void whenApiAuthRecover_thenSuccessResponse() throws Exception {
+		String username = "mockusernameForApiAuthRegister";
+		String content = Json.stringify( Map.of( "username", username ) );
+
+		this.mockMvc.perform( MockMvcRequestBuilders.post( ApiPath.AUTH_RECOVER ).with( csrf() ).content( content ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() );
+	}
+
+	@Test
+	public void whenApiAuthRecoverBadRequest_thenHandleErrorGracefully() throws Exception {
+		// given
+		Map<String, Object> request = Map.of();
+		String content = Json.stringify( request );
+
+		// when/then
+		Map<String, Object> result = Map.of( "messages", List.of( "Username or email required" ) );
+		this.mockMvc
+			.perform( post( ApiPath.AUTH_RECOVER ).with( csrf() ).content( content ).contentType( MediaType.APPLICATION_JSON ) )
+			.andExpect( status().isBadRequest() )
+			.andExpect( content().json( Json.stringify( result ) ) );
+	}
+
+	@Test
+	public void whenApiAuthReset_thenSuccessResponse() throws Exception {
+		// given
+		Verification verification = new Verification().userId( getMockUser().id() );
+		String password = "newmockpassword";
+		statePersisting.upsert( verification );
+
+		// when/then
+		String content = Json.stringify( Map.of( "id", verification.id().toString(), "password", password ) );
+		this.mockMvc.perform( MockMvcRequestBuilders.post( ApiPath.AUTH_RESET ).with( csrf() ).content( content ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() );
+	}
+
+	@Test
+	public void whenApiAuthResetMissingId_thenHandleErrorGracefully() throws Exception {
+		// given
+		String content = Json.stringify( Map.of( "password", "mockpassword" ) );
+
+		// when/then
+		Map<String, Object> result = Map.of( "messages", List.of( "Reset id required" ) );
+		this.mockMvc
+			.perform( post( ApiPath.AUTH_RESET ).with( csrf() ).content( content ).contentType( MediaType.APPLICATION_JSON ) )
+			.andExpect( status().isBadRequest() )
+			.andExpect( content().json( Json.stringify( result ) ) );
+	}
+
+	@Test
+	public void whenApiAuthResetMissingPassword_thenHandleErrorGracefully() throws Exception {
+		String id = UUID.randomUUID().toString();
+		String content = Json.stringify( Map.of( "id", id ) );
+
+		Map<String, Object> result = Map.of( "messages", List.of( "Password required" ) );
+		this.mockMvc
+			.perform( post( ApiPath.AUTH_RESET ).with( csrf() ).content( content ).contentType( MediaType.APPLICATION_JSON ) )
+			.andExpect( status().isBadRequest() )
+			.andExpect( content().json( Json.stringify( result ) ) );
+	}
+
+	@Test
+	public void whenApiAuthResetBadPassword_thenHandleErrorGracefully() throws Exception {
+		String id = UUID.randomUUID().toString();
+		String content = Json.stringify( Map.of( "id", id, "password", "pwd" ) );
+
+		Map<String, Object> result = Map.of( "messages", List.of( "Invalid password" ) );
+		this.mockMvc
+			.perform( post( ApiPath.AUTH_RESET ).with( csrf() ).content( content ).contentType( MediaType.APPLICATION_JSON ) )
+			.andExpect( status().isBadRequest() )
+			.andExpect( content().json( Json.stringify( result ) ) );
+	}
 
 	@Test
 	public void whenApiAuthRegister_thenSuccessResponse() throws Exception {
@@ -88,6 +155,18 @@ public class AuthControllerTests {
 	}
 
 	@Test
+	public void whenApiAuthRegisterBadRequest_thenHandleErrorGracefully() throws Exception {
+		Map<String, Object> request = Map.of();
+		String content = Json.stringify( request );
+
+		Map<String, Object> result = Map.of( "messages", List.of( "Username required", "Password required", "Email required" ) );
+		this.mockMvc
+			.perform( post( ApiPath.AUTH_REGISTER ).with( csrf() ).content( content ).contentType( MediaType.APPLICATION_JSON ) )
+			.andExpect( status().isBadRequest() )
+			.andExpect( content().json( Json.stringify( result ) ) );
+	}
+
+	@Test
 	public void whenApiAuthResend_thenSuccessResponse() throws Exception {
 		// given
 		UUID id = UUID.randomUUID();
@@ -102,18 +181,6 @@ public class AuthControllerTests {
 
 		UUID capturedId = idCaptor.getValue();
 		assertThat( capturedId ).isEqualTo( id );
-	}
-
-	@Test
-	public void whenApiAuthRegisterBadRequest_thenHandleErrorGracefully() throws Exception {
-		Map<String, Object> request = Map.of();
-		String content = Json.stringify( request );
-
-		Map<String, Object> result = Map.of( "messages", List.of( "Username required", "Password required", "Email required" ) );
-		this.mockMvc
-			.perform( post( ApiPath.AUTH_REGISTER ).with( csrf() ).content( content ).contentType( MediaType.APPLICATION_JSON ) )
-			.andExpect( status().isBadRequest() )
-			.andExpect( content().json( Json.stringify( result ) ) );
 	}
 
 	@Test

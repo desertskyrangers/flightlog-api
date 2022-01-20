@@ -20,4 +20,6 @@ public interface UserService {
 
 	void remove( User user );
 
+	Optional<User> findVerificationUser( UUID verificationId );
+
 }

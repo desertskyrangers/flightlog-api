@@ -57,4 +57,10 @@ public class UserServiceImpl implements UserService {
 	public void remove( User account ) {
 		statePersisting.remove( account );
 	}
+
+	@Override
+	public Optional<User> findVerificationUser( UUID verificationId ) {
+		return stateRetrieving.findVerification( verificationId ).flatMap( v -> stateRetrieving.findUserAccount( v.userId() ) );
+	}
+
 }

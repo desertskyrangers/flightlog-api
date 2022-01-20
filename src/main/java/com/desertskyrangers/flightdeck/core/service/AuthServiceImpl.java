@@ -28,11 +28,17 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class AuthServiceImpl implements AuthService {
 
+	private static final String RESET_ENDPOINT = ApiPath.HOST + "/reset";
+
 	private static final String VERIFY_ENDPOINT = ApiPath.HOST + "/verify";
 
-	private static final String EMAIL_SUBJECT = "FlightDeck Email Account Verification";
+	private static final String RECOVERY_EMAIL_SUBJECT = "FlightDeck Account Recovery";
 
-	private static final String TEMPLATES_VERIFY_EMAIL_HTML = "templates/verify-email.html";
+	private static final String RECOVERY_EMAIL_TEMPLATE = "templates/account-recovery.html";
+
+	private static final String VERIFY_EMAIL_SUBJECT = "FlightDeck Email Account Verification";
+
+	private static final String VERIFY_EMAIL_TEMPLATE = "templates/verify-email.html";
 
 	private final StatePersisting statePersisting;
 
@@ -58,6 +64,59 @@ public class AuthServiceImpl implements AuthService {
 				log.info( "Verification expired: " + verification.id() );
 			}
 		}
+	}
+
+	@Override
+	public List<String> requestUserRecover( String username ) {
+		log.info( "Account recover username=" + username );
+		List<String> messages = new ArrayList<>();
+
+		Optional<UserToken> optional = stateRetrieving.findUserTokenByPrincipal( username );
+		if( optional.isPresent() ) {
+			UserToken token = optional.get();
+			User user = token.user();
+			Verification verification = statePersisting.upsert( new Verification().userId( user.id() ) );
+			sendAccountRecoveryMessage( user, verification.id().toString() );
+			log.warn( "recovery code: " + verification.id() );
+			messages.add( "Recovery email sent" );
+		} else {
+			messages.add( "Username or email not found" );
+		}
+
+		return messages;
+	}
+
+	@Override
+	public List<String> requestUserReset( Verification verification, String password ) {
+		log.info("Requesting user reset...");
+		List<String> messages = new ArrayList<>();
+
+
+		Optional<Verification> optional = stateRetrieving.findVerification( verification.id() );
+		if( optional.isPresent() ) {
+			Verification storedVerification = optional.get();
+
+			boolean isValid = storedVerification.isValid( verification.timestamp() );
+			boolean isExpired = storedVerification.isExpired( verification.timestamp() );
+
+			if( !isValid ) messages.add( "Invalid recovery timestamp" );
+			if( isExpired ) messages.add( "Recovery code expired" );
+
+			if( messages.size() == 0 ) {
+				stateRetrieving.findUserAccount( storedVerification.userId() ).ifPresent( u -> {
+					String encodedPassword = passwordEncoder.encode( password );
+					for( UserToken token : u.tokens() ) {
+						token.credential( encodedPassword );
+						statePersisting.upsert( token );
+					}
+				} );
+				statePersisting.remove( storedVerification );
+			}
+		} else {
+			messages.add( "Recovery code expired" );
+		}
+
+		return messages;
 	}
 
 	@Override
@@ -191,17 +250,38 @@ public class AuthServiceImpl implements AuthService {
 	}
 
 	@Async
-	void sendEmailAddressVerificationMessage( User account, String name, Verification verification ) {
-		String subject = EMAIL_SUBJECT;
-		String verificationMessage = generateEmailAddressVerificationMessage( subject, verification.id(), verification.code() );
-		if( verificationMessage == null ) return;
+	void sendAccountRecoveryMessage( User account, String id ) {
+		String subject = RECOVERY_EMAIL_SUBJECT;
+		String link = generateRecoveryLink( id );
+		String message = createFromTemplate( RECOVERY_EMAIL_TEMPLATE, Map.of( "subject", subject, "link", link ) );
+		if( message == null ) return;
 
-		EmailMessage message = new EmailMessage();
-		message.recipient( account.email(), name );
-		message.subject( subject );
-		message.message( verificationMessage );
-		message.isHtml( true );
-		humanInterface.email( message );
+		EmailMessage email = new EmailMessage();
+		email.recipient( account.email(), account.preferredName() );
+		email.subject( subject );
+		email.message( message );
+		email.isHtml( true );
+		humanInterface.email( email );
+	}
+
+	// This link is intentionally not a link to /api/auth/recover
+	// it is supposed to request the reset page at the browser.
+	String generateRecoveryLink( String id ) {
+		return RESET_ENDPOINT + "?id=" + id;
+	}
+
+	@Async
+	void sendEmailAddressVerificationMessage( User account, String name, Verification verification ) {
+		String subject = VERIFY_EMAIL_SUBJECT;
+		String message = generateEmailAddressVerificationMessage( subject, verification.id(), verification.code() );
+		if( message == null ) return;
+
+		EmailMessage email = new EmailMessage();
+		email.recipient( account.email(), name );
+		email.subject( subject );
+		email.message( message );
+		email.isHtml( true );
+		humanInterface.email( email );
 	}
 
 	// This link is intentionally not a link to /api/auth/verify
@@ -215,15 +295,19 @@ public class AuthServiceImpl implements AuthService {
 		values.put( "subject", subject );
 		values.put( "link", generateVerifyLink( id, code ) );
 		values.put( "code", code );
+		return createFromTemplate( VERIFY_EMAIL_TEMPLATE, values );
+	}
 
+	private String createFromTemplate( String template, Map<String, Object> values ) {
 		PebbleEngine engine = new PebbleEngine.Builder().build();
-		PebbleTemplate compiledTemplate = engine.getTemplate( TEMPLATES_VERIFY_EMAIL_HTML );
+		PebbleTemplate compiledTemplate = engine.getTemplate( template );
 
 		StringWriter writer = new StringWriter();
 		try {
 			compiledTemplate.evaluate( writer, values );
 		} catch( IOException exception ) {
 			log.error( "Unable to process email template", exception );
+			return null;
 		}
 		return writer.toString();
 	}

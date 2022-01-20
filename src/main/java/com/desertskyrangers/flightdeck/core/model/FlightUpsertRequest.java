@@ -1,4 +1,4 @@
-package com.desertskyrangers.flightdeck.port;
+package com.desertskyrangers.flightdeck.core.model;
 
 import com.desertskyrangers.flightdeck.core.model.User;
 import lombok.Data;

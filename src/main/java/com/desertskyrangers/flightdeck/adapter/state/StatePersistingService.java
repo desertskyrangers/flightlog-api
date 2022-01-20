@@ -15,15 +15,20 @@ public class StatePersistingService implements StatePersisting {
 
 	private final FlightRepo flightRepo;
 
-	private final UserAccountRepo userAccountRepo;
+	private final TokenRepo tokenRepo;
+
+	private final UserRepo userRepo;
 
 	private final VerificationRepo verificationRepo;
 
-	public StatePersistingService( AircraftRepo aircraftRepo, BatteryRepo batteryRepo, FlightRepo flightRepo, UserAccountRepo userAccountRepo, VerificationRepo verificationRepo ) {
+	public StatePersistingService(
+		AircraftRepo aircraftRepo, BatteryRepo batteryRepo, FlightRepo flightRepo, TokenRepo tokenRepo, UserRepo userRepo, VerificationRepo verificationRepo
+	) {
 		this.aircraftRepo = aircraftRepo;
 		this.batteryRepo = batteryRepo;
 		this.flightRepo = flightRepo;
-		this.userAccountRepo = userAccountRepo;
+		this.tokenRepo = tokenRepo;
+		this.userRepo = userRepo;
 		this.verificationRepo = verificationRepo;
 	}
 
@@ -63,23 +68,30 @@ public class StatePersistingService implements StatePersisting {
 	}
 
 	@Override
+	public void upsert( UserToken token ) {
+		tokenRepo.save( TokenEntity.from( token ) );
+	}
+
+	@Override
 	public void upsert( User account ) {
-		userAccountRepo.save( UserEntity.from( account ) );
+		userRepo.save( UserEntity.from( account ) );
 	}
 
 	@Override
 	public void remove( User account ) {
-		userAccountRepo.deleteById( account.id() );
+		userRepo.deleteById( account.id() );
 	}
 
 	@Override
-	public void upsert( Verification verification ) {
+	public Verification upsert( Verification verification ) {
 		verificationRepo.save( VerificationEntity.from( verification ) );
+		return verification;
 	}
 
 	@Override
-	public void remove( Verification verification ) {
+	public Verification remove( Verification verification ) {
 		verificationRepo.deleteById( verification.id() );
+		return verification;
 	}
 
 }

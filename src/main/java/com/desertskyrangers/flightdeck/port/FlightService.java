@@ -1,6 +1,7 @@
 package com.desertskyrangers.flightdeck.port;
 
 import com.desertskyrangers.flightdeck.core.model.Flight;
+import com.desertskyrangers.flightdeck.core.model.FlightUpsertRequest;
 
 import java.util.List;
 import java.util.Optional;

@@ -22,8 +22,10 @@ public interface StatePersisting {
 
 	void remove( User account );
 
-	void upsert( Verification verification );
+	void upsert( UserToken token );
 
-	void remove( Verification verification );
+	Verification upsert( Verification verification );
+
+	Verification remove( Verification verification );
 
 }

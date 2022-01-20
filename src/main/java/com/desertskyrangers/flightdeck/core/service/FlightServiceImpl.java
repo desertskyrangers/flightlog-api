@@ -5,7 +5,7 @@ import com.desertskyrangers.flightdeck.core.model.Battery;
 import com.desertskyrangers.flightdeck.core.model.Flight;
 import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.port.FlightService;
-import com.desertskyrangers.flightdeck.port.FlightUpsertRequest;
+import com.desertskyrangers.flightdeck.core.model.FlightUpsertRequest;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
 import com.desertskyrangers.flightdeck.port.StateRetrieving;
 import org.springframework.stereotype.Service;
