@@ -127,12 +127,14 @@ public class StateRetrievingService implements StateRetrieving {
 
 	@Override
 	public int getPilotFlightCount( UUID id ) {
-		return flightRepo.countByPilot_Id( id );
+		Integer count = flightRepo.countByPilot_Id( id );
+		return count == null ? 0 : count;
 	}
 
 	@Override
 	public long getPilotFlightTime( UUID id ) {
-		return flightRepo.getFlightTimeByPilot_Id( id );
+		Long time = flightRepo.getFlightTimeByPilot_Id( id );
+		return time == null ? 0 : flightRepo.getFlightTimeByPilot_Id( id );
 	}
 
 }

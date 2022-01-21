@@ -154,8 +154,8 @@ public class InitialConfig {
 		f2.aircraft( bianca );
 		f2.timestamp( 1642268904574L );
 		f2.duration( 54 );
-		statePersisting.upsert( f1 );
-		statePersisting.upsert( f2 );
+		//statePersisting.upsert( f1 );
+		//statePersisting.upsert( f2 );
 
 		stateRetrieving.findUserTokenByPrincipal( usernameToken.principal() ).ifPresent( t -> log.warn( "Testing data created" ) );
 	}

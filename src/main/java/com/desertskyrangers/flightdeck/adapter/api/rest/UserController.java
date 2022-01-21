@@ -39,16 +39,21 @@ public class UserController extends BaseController {
 
 	@GetMapping( path = ApiPath.DASHBOARD )
 	ResponseEntity<ReactDashboardResponse> dashboard( Authentication authentication ) {
-		User user = findUser( authentication );
+		try {
+			User user = findUser( authentication );
 
-		int flightCount = flightService.getPilotFlightCount( user.id() );
-		long flightTime = flightService.getPilotFlightTime( user.id() );
+			int flightCount = flightService.getPilotFlightCount( user.id() );
+			long flightTime = flightService.getPilotFlightTime( user.id() );
 
-		ReactDashboard dashboard = new ReactDashboard();
-		dashboard.setPilotFlightCount( flightCount );
-		dashboard.setPilotFlightTime( flightTime );
+			ReactDashboard dashboard = new ReactDashboard();
+			dashboard.setPilotFlightCount( flightCount );
+			dashboard.setPilotFlightTime( flightTime );
 
-		return new ResponseEntity<>( new ReactDashboardResponse().setDashboard( dashboard ), HttpStatus.OK );
+			return new ResponseEntity<>( new ReactDashboardResponse().setDashboard( dashboard ), HttpStatus.OK );
+		} catch( Exception exception ) {
+			log.error( "Error generating dashboard", exception );
+			return new ResponseEntity<>( new ReactDashboardResponse().setMessages( List.of( "Error generating dashboard" ) ), HttpStatus.INTERNAL_SERVER_ERROR );
+		}
 	}
 
 	@GetMapping( path = ApiPath.PROFILE )
