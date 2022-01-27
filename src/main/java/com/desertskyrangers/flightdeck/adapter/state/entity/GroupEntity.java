@@ -8,11 +8,14 @@ import java.util.UUID;
 @Data
 @Entity
 @Table( name = "org" )
-public class OrgEntity {
+public class GroupEntity {
 
 	@Id
 	@Column( columnDefinition = "BINARY(16)" )
 	private UUID id;
+
+	@Column(nullable = false)
+	String type;
 
 	@Column(nullable = false)
 	String name;

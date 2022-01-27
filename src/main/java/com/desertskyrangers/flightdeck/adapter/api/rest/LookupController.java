@@ -41,6 +41,11 @@ public class LookupController {
 		return new ResponseEntity<>( Arrays.stream( BatteryType.values() ).map( c -> new ReactOption( c.name().toLowerCase(), c.getName() ) ).toList(), HttpStatus.OK );
 	}
 
+	@GetMapping( path = ApiPath.GROUP_TYPE )
+	ResponseEntity<List<ReactOption>> groupType() {
+		return new ResponseEntity<>( Arrays.stream( GroupType.values() ).map( c -> new ReactOption( c.name().toLowerCase(), c.getName() ) ).toList(), HttpStatus.OK );
+	}
+
 	@GetMapping( path = ApiPath.SMS_CARRIERS )
 	ResponseEntity<List<ReactOption>> smsCarriers() {
 		return new ResponseEntity<>( Arrays.stream( SmsCarrier.values() ).map( c -> new ReactOption( c.name().toLowerCase(), c.getName() ) ).toList(), HttpStatus.OK );

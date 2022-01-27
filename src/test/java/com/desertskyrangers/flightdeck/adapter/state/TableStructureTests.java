@@ -103,9 +103,9 @@ public class TableStructureTests {
 	void testOrgTable() throws Exception {
 		Set<String> expected = new HashSet<>();
 		expected.add( "id" );
+		expected.add( "type" );
 		expected.add( "name" );
 		expected.add( "ownerid" );
-		//expected.add( "type" );
 
 		assertThat( getColumns( "org" ) ).containsAll( expected );
 	}

@@ -7,9 +7,11 @@ import java.util.UUID;
 
 @Data
 @Accessors( fluent = true )
-public class Organization {
+public class Group {
 
 	UUID id = UUID.randomUUID();
+
+	GroupType type;
 
 	String name;
 

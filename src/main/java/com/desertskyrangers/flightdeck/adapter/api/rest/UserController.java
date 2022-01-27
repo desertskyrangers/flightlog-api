@@ -5,6 +5,7 @@ import com.desertskyrangers.flightdeck.adapter.api.model.*;
 import com.desertskyrangers.flightdeck.core.model.Aircraft;
 import com.desertskyrangers.flightdeck.core.model.Battery;
 import com.desertskyrangers.flightdeck.core.model.User;
+import com.desertskyrangers.flightdeck.port.GroupService;
 import com.desertskyrangers.flightdeck.port.AircraftService;
 import com.desertskyrangers.flightdeck.port.BatteryService;
 import com.desertskyrangers.flightdeck.port.FlightService;
@@ -28,12 +29,15 @@ public class UserController extends BaseController {
 
 	private final FlightService flightService;
 
+	private final GroupService groupService;
+
 	private final UserService userService;
 
-	public UserController( AircraftService aircraftService, BatteryService batteryService, FlightService flightService, UserService userService ) {
+	public UserController( AircraftService aircraftService, BatteryService batteryService, FlightService flightService, GroupService groupService, UserService userService ) {
 		this.aircraftService = aircraftService;
 		this.batteryService = batteryService;
 		this.flightService = flightService;
+		this.groupService = groupService;
 		this.userService = userService;
 	}
 
@@ -166,6 +170,22 @@ public class UserController extends BaseController {
 		}
 
 		return new ResponseEntity<>( new ReactFlightPageResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
+	}
+
+	@GetMapping( path = ApiPath.USER_GROUP + "/{page}" )
+	ResponseEntity<ReactGroupPageResponse> getOrgPage( Authentication authentication, @PathVariable int page ) {
+		List<String> messages = new ArrayList<>();
+
+		try {
+			User user = findUser( authentication );
+			List<ReactGroup> groupPage = groupService.findGroupsByUser( user.id() ).stream().map( ReactGroup::from ).toList();
+			return new ResponseEntity<>( new ReactGroupPageResponse().setGroups( groupPage ), HttpStatus.OK );
+		} catch( Exception exception ) {
+			log.error( "Error creating new battery", exception );
+			messages.add( exception.getMessage() );
+		}
+
+		return new ResponseEntity<>( new ReactGroupPageResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
 	}
 
 	@GetMapping( path = ApiPath.USER_AIRCRAFT_LOOKUP )

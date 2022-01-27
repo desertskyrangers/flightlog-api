@@ -58,6 +58,12 @@ public class LookupControllerTest {
 	}
 
 	@Test
+	void testGetGroupTypes() throws Exception {
+		List<ReactOption> response = Arrays.stream( GroupType.values() ).map( c -> new ReactOption( c.name().toLowerCase(), c.getName() ) ).toList();
+		this.mockMvc.perform( get( ApiPath.GROUP_TYPE ) ).andExpect( status().isOk() ).andExpect( content().json( Json.stringify( response ), true ) );
+	}
+
+	@Test
 	void testGetSmsCarriers() throws Exception {
 		List<ReactOption> response = Arrays.stream( SmsCarrier.values() ).map( c -> new ReactOption( c.name().toLowerCase(), c.getName() ) ).toList();
 		this.mockMvc.perform( get( ApiPath.SMS_CARRIERS ) ).andExpect( status().isOk() ).andExpect( content().json( Json.stringify( response ), true ) );
