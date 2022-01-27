@@ -39,9 +39,6 @@ public class BatteryEntity {
 
 	private int capacity;
 
-	@Column( name = "chargerating" )
-	private int chargeRating;
-
 	@Column( name = "dischargerating" )
 	private int dischargeRating;
 
@@ -65,7 +62,6 @@ public class BatteryEntity {
 		entity.setCells( battery.cells() );
 		entity.setCycles( battery.cycles() );
 		entity.setCapacity( battery.capacity() );
-		entity.setChargeRating( battery.chargeRating() );
 		entity.setDischargeRating( battery.dischargeRating() );
 		entity.setOwner( battery.owner() );
 		if( battery.ownerType() != null ) entity.setOwnerType( battery.ownerType().name().toLowerCase() );
@@ -87,7 +83,6 @@ public class BatteryEntity {
 		battery.cells( entity.getCells() );
 		battery.cycles( entity.getCycles() );
 		battery.capacity( entity.getCapacity() );
-		battery.chargeRating( entity.getChargeRating() );
 		battery.dischargeRating( entity.getDischargeRating() );
 		battery.owner( entity.getOwner() );
 		if( entity.getOwnerType() != null ) battery.ownerType( OwnerType.valueOf( entity.getOwnerType().toUpperCase() ) );

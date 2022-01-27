@@ -31,8 +31,6 @@ public class Battery {
 
 	private int capacity;
 
-	private int chargeRating;
-
 	private int dischargeRating;
 
 	private UUID owner;

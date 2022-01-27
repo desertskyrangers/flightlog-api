@@ -92,7 +92,6 @@ public abstract class BaseControllerTest {
 		battery.cells( 4 );
 		battery.cycles( 57 );
 		battery.capacity( 2650 );
-		battery.chargeRating( 1 );
 		battery.dischargeRating( 20 );
 
 		battery.owner( getMockUser().id() );

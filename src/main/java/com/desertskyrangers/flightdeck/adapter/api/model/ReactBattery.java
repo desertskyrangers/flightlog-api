@@ -34,8 +34,6 @@ public class ReactBattery {
 
 	private int capacity;
 
-	private int chargeRating;
-
 	private int dischargeRating;
 
 	private String owner;
@@ -57,7 +55,6 @@ public class ReactBattery {
 		result.setCells( battery.cells() );
 		result.setCycles( battery.cycles() );
 		result.setCapacity( battery.capacity() );
-		result.setChargeRating( battery.chargeRating() );
 		result.setDischargeRating( battery.dischargeRating() );
 
 		result.setOwner( battery.owner().toString() );
@@ -81,7 +78,6 @@ public class ReactBattery {
 		battery.cells( reactBattery.getCells() );
 		battery.cycles( reactBattery.getCycles() );
 		battery.capacity( reactBattery.getCapacity() );
-		battery.chargeRating( reactBattery.getChargeRating() );
 		battery.dischargeRating( reactBattery.getDischargeRating() );
 
 		if( reactBattery.getOwner() != null ) battery.owner( UUID.fromString( reactBattery.getOwner() ) );

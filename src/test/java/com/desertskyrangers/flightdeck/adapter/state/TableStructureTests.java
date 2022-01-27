@@ -69,7 +69,6 @@ public class TableStructureTests {
 		expected.add( "cells" );
 		expected.add( "cycles" );
 		expected.add( "capacity" );
-		expected.add( "chargerating" );
 		expected.add( "dischargerating" );
 
 		assertThat( getColumns( "battery" ) ).containsExactlyInAnyOrderElementsOf( expected );
