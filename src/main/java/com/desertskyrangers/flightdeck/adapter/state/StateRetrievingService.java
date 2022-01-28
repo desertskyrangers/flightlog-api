@@ -21,6 +21,8 @@ public class StateRetrievingService implements StateRetrieving {
 
 	private final FlightRepo flightRepo;
 
+	private final GroupRepo groupRepo;
+
 	private final UserRepo userRepo;
 
 	private final TokenRepo tokenRepo;
@@ -28,11 +30,12 @@ public class StateRetrievingService implements StateRetrieving {
 	private final VerificationRepo verificationRepo;
 
 	public StateRetrievingService(
-		AircraftRepo aircraftRepo, BatteryRepo batteryRepo, FlightRepo flightRepo, UserRepo userRepo, TokenRepo tokenRepo, VerificationRepo verificationRepo
+		AircraftRepo aircraftRepo, BatteryRepo batteryRepo, FlightRepo flightRepo, GroupRepo groupRepo, UserRepo userRepo, TokenRepo tokenRepo, VerificationRepo verificationRepo
 	) {
 		this.aircraftRepo = aircraftRepo;
 		this.batteryRepo = batteryRepo;
 		this.flightRepo = flightRepo;
+		this.groupRepo = groupRepo;
 		this.userRepo = userRepo;
 		this.tokenRepo = tokenRepo;
 		this.verificationRepo = verificationRepo;
@@ -92,6 +95,11 @@ public class StateRetrievingService implements StateRetrieving {
 	@Override
 	public List<Flight> findFlightsByUser( UUID id ) {
 		return flightRepo.findFlightEntitiesByPilot_IdOrObserver_IdOrAircraft_OwnerOrderByTimestampDesc( id, id, id ).stream().map( FlightEntity::toFlight ).toList();
+	}
+
+	@Override
+	public Optional<Group> findGroup( UUID id ) {
+		return groupRepo.findById( id ).map( GroupEntity::toGroup );
 	}
 
 	@Override

@@ -28,6 +28,8 @@ public interface StateRetrieving {
 
 	List<Flight> findFlightsByUser( UUID id );
 
+	Optional<Group> findGroup( UUID id );
+
 	Optional<UserToken> findUserToken( UUID id );
 
 	Optional<UserToken> findUserTokenByPrincipal( String username );

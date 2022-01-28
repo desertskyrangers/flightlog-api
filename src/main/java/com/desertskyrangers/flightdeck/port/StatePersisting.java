@@ -18,6 +18,10 @@ public interface StatePersisting {
 
 	void removeAllFlights();
 
+	void upsert( Group group );
+
+	void remove( Group group );
+
 	void upsert( User account );
 
 	void remove( User account );

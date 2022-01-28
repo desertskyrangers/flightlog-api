@@ -87,4 +87,5 @@ public class FlightEntity {
 
 		return flight;
 	}
+
 }

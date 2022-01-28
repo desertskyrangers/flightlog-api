@@ -15,6 +15,8 @@ public class StatePersistingService implements StatePersisting {
 
 	private final FlightRepo flightRepo;
 
+	private final GroupRepo groupRepo;
+
 	private final TokenRepo tokenRepo;
 
 	private final UserRepo userRepo;
@@ -22,11 +24,12 @@ public class StatePersistingService implements StatePersisting {
 	private final VerificationRepo verificationRepo;
 
 	public StatePersistingService(
-		AircraftRepo aircraftRepo, BatteryRepo batteryRepo, FlightRepo flightRepo, TokenRepo tokenRepo, UserRepo userRepo, VerificationRepo verificationRepo
+		AircraftRepo aircraftRepo, BatteryRepo batteryRepo, FlightRepo flightRepo, GroupRepo groupRepo, TokenRepo tokenRepo, UserRepo userRepo, VerificationRepo verificationRepo
 	) {
 		this.aircraftRepo = aircraftRepo;
 		this.batteryRepo = batteryRepo;
 		this.flightRepo = flightRepo;
+		this.groupRepo = groupRepo;
 		this.tokenRepo = tokenRepo;
 		this.userRepo = userRepo;
 		this.verificationRepo = verificationRepo;
@@ -65,6 +68,16 @@ public class StatePersistingService implements StatePersisting {
 	@Override
 	public void removeAllFlights() {
 		flightRepo.deleteAll();
+	}
+
+	@Override
+	public void upsert( Group group ) {
+		groupRepo.save( GroupEntity.from( group ) );
+	}
+
+	@Override
+	public void remove( Group group ) {
+		groupRepo.deleteById( group.id() );
 	}
 
 	@Override
