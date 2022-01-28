@@ -19,15 +19,15 @@ public class GroupEntity {
 	@Column( columnDefinition = "BINARY(16)" )
 	private UUID id;
 
-	@Column(nullable = false)
+	@Column( nullable = false )
 	String type;
 
-	@Column(nullable = false)
+	@Column( nullable = false )
 	String name;
 
 	// This is a user account id
 	@ManyToOne( optional = false, fetch = FetchType.EAGER )
-	@JoinColumn( name="ownerid", nullable = false, updatable = false, columnDefinition = "BINARY(16)" )
+	@JoinColumn( name = "ownerid", nullable = false, updatable = false, columnDefinition = "BINARY(16)" )
 	private UserEntity owner;
 
 	@ManyToMany( fetch = FetchType.EAGER )
@@ -42,7 +42,7 @@ public class GroupEntity {
 		entity.setType( group.type().name().toLowerCase() );
 		entity.setName( group.name() );
 		if( group.owner() != null ) entity.setOwner( UserEntity.from( group.owner() ) );
-		entity.setMembers( group.members().stream().map( UserEntity::from ).collect( Collectors.toSet()) );
+		entity.setMembers( group.members().stream().map( UserEntity::from ).collect( Collectors.toSet() ) );
 
 		return entity;
 	}
@@ -53,8 +53,8 @@ public class GroupEntity {
 		group.id( entity.getId() );
 		group.type( GroupType.valueOf( entity.getType().toUpperCase() ) );
 		group.name( entity.getName() );
-		group.owner( UserEntity.toUserAccount( entity.getOwner() ) );
-		group.members( entity.getMembers().stream().map( UserEntity::toUserAccount ).collect( Collectors.toSet()) );
+		group.owner( UserEntity.toUserShallow( entity.getOwner() ) );
+		group.members( entity.getMembers().stream().map( UserEntity::toUserShallow ).collect( Collectors.toSet() ) );
 
 		return group;
 	}

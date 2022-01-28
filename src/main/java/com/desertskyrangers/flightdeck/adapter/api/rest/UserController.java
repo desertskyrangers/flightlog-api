@@ -64,8 +64,8 @@ public class UserController extends BaseController {
 	ResponseEntity<ReactProfileResponse> profile() {
 		String username = ((org.springframework.security.core.userdetails.User)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
 
-		Optional<ReactUserAccount> optional = userService.findByPrincipal( username ).map( ReactUserAccount::from );
-		if( optional.isEmpty() ) return new ResponseEntity<>( new ReactProfileResponse().setAccount( new ReactUserAccount() ), HttpStatus.BAD_REQUEST );
+		Optional<ReactUser> optional = userService.findByPrincipal( username ).map( ReactUser::from );
+		if( optional.isEmpty() ) return new ResponseEntity<>( new ReactProfileResponse().setAccount( new ReactUser() ), HttpStatus.BAD_REQUEST );
 
 		return new ResponseEntity<>( new ReactProfileResponse().setAccount( optional.get() ), HttpStatus.OK );
 	}
@@ -77,24 +77,24 @@ public class UserController extends BaseController {
 
 	@GetMapping( value = ApiPath.USER + "/{id}" )
 	ResponseEntity<ReactProfileResponse> findById( @PathVariable( "id" ) UUID id ) {
-		Optional<ReactUserAccount> optional = userService.find( id ).map( ReactUserAccount::from );
-		if( optional.isEmpty() ) return new ResponseEntity<>( new ReactProfileResponse().setAccount( new ReactUserAccount() ), HttpStatus.BAD_REQUEST );
+		Optional<ReactUser> optional = userService.find( id ).map( ReactUser::from );
+		if( optional.isEmpty() ) return new ResponseEntity<>( new ReactProfileResponse().setAccount( new ReactUser() ), HttpStatus.BAD_REQUEST );
 
 		return new ResponseEntity<>( new ReactProfileResponse().setAccount( optional.get() ), HttpStatus.OK );
 	}
 
 	@PutMapping( value = ApiPath.USER + "/{id}" )
 	@ResponseStatus( HttpStatus.OK )
-	ResponseEntity<ReactProfileResponse> update( @PathVariable( "id" ) UUID id, @RequestBody ReactUserAccount account ) {
+	ResponseEntity<ReactProfileResponse> update( @PathVariable( "id" ) UUID id, @RequestBody ReactUser account ) {
 		Optional<User> optional = userService.find( id );
-		if( optional.isEmpty() ) return new ResponseEntity<>( new ReactProfileResponse().setAccount( new ReactUserAccount() ), HttpStatus.BAD_REQUEST );
+		if( optional.isEmpty() ) return new ResponseEntity<>( new ReactProfileResponse().setAccount( new ReactUser() ), HttpStatus.BAD_REQUEST );
 
 		User user = account.updateFrom( optional.get() );
 
 		// Update the user account
 		userService.upsert( user );
 
-		return new ResponseEntity<>( new ReactProfileResponse().setAccount( ReactUserAccount.from( user ) ), HttpStatus.OK );
+		return new ResponseEntity<>( new ReactProfileResponse().setAccount( ReactUser.from( user ) ), HttpStatus.OK );
 	}
 
 	@DeleteMapping( value = ApiPath.USER + "/{id}" )

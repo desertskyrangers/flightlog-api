@@ -117,13 +117,13 @@ public class StateRetrievingService implements StateRetrieving {
 
 	@Override
 	public List<User> findAllUserAccounts() {
-		return userRepo.findAll().stream().map( UserEntity::toUserAccount ).collect( Collectors.toList() );
+		return userRepo.findAll().stream().map( UserEntity::toUser ).collect( Collectors.toList() );
 	}
 
 	@Override
 	public Optional<User> findUserAccount( UUID id ) {
 		if( id == null ) return Optional.empty();
-		return userRepo.findById( id ).map( UserEntity::toUserAccount );
+		return userRepo.findById( id ).map( UserEntity::toUser );
 	}
 
 	@Override

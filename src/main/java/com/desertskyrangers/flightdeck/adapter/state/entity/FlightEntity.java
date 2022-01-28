@@ -75,9 +75,9 @@ public class FlightEntity {
 		Flight flight = new Flight();
 
 		flight.id( entity.getId() );
-		if( entity.getPilot() != null ) flight.pilot( UserEntity.toUserAccount( entity.getPilot() ) );
+		if( entity.getPilot() != null ) flight.pilot( UserEntity.toUser( entity.getPilot() ) );
 		flight.unlistedPilot( entity.getUnlistedPilot() );
-		if( entity.getObserver() != null ) flight.observer( UserEntity.toUserAccount( entity.getObserver() ) );
+		if( entity.getObserver() != null ) flight.observer( UserEntity.toUser( entity.getObserver() ) );
 		flight.unlistedObserver( entity.getUnlistedObserver() );
 		if( entity.getAircraft() != null ) flight.aircraft( AircraftEntity.toAircraft( entity.getAircraft() ) );
 		if( entity.getBatteries() != null ) flight.batteries( entity.getBatteries().stream().map( BatteryEntity::toBattery ).collect( Collectors.toSet() ) );

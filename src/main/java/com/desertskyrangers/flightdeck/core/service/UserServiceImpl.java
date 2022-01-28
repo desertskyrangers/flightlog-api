@@ -8,10 +8,8 @@ import com.desertskyrangers.flightdeck.port.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -97,6 +95,11 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public Optional<User> findVerificationUser( UUID verificationId ) {
 		return stateRetrieving.findVerification( verificationId ).flatMap( v -> stateRetrieving.findUserAccount( v.userId() ) );
+	}
+
+	@Override
+	public Set<User> findAllGroupPeers( User user ) {
+		return stateRetrieving.findUserAccount( user.id() ).stream().flatMap( u -> user.groups().stream() ).flatMap( g -> g.members().stream() ).collect( Collectors.toSet() );
 	}
 
 }

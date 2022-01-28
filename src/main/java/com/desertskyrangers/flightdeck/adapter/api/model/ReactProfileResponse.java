@@ -9,7 +9,7 @@ import java.util.List;
 @Accessors( chain = true )
 public class ReactProfileResponse {
 
-	public ReactUserAccount account;
+	public ReactUser account;
 
 	public List<String> messages;
 

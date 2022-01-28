@@ -63,13 +63,21 @@ public class UserEntity {
 	@ManyToMany( fetch = FetchType.EAGER )
 	@JoinTable( name = "orguser", joinColumns = @JoinColumn( name = "userid" ), inverseJoinColumns = @JoinColumn( name = "orgid" ) )
 	@EqualsAndHashCode.Exclude
-	private Set<GroupEntity> groups;
+	private Set<GroupEntity> groups = new HashSet<>();
 
 	public static UserEntity from( User user ) {
 		return fromUserAccount( user, true );
 	}
 
-	public static User toUserAccount( UserEntity entity ) {
+	public static User toUser( UserEntity entity ) {
+		return toUser( entity, false );
+	}
+
+	public static User toUserShallow( UserEntity entity ) {
+		return toUser( entity, true );
+	}
+
+	private static User toUser( UserEntity entity, boolean shallow ) {
 		User user = new User();
 
 		user.id( entity.getId() );
@@ -84,6 +92,7 @@ public class UserEntity {
 		user.smsVerified( entity.getSmsVerified() != null && entity.getSmsVerified() );
 		user.tokens( entity.getTokens().stream().map( c -> TokenEntity.toUserToken( c ).user( user ) ).collect( Collectors.toSet() ) );
 		user.roles( entity.getRoles() );
+		user.groups( shallow ? Set.of() : entity.getGroups().stream().map( GroupEntity::toGroup ).collect( Collectors.toSet() ) );
 
 		return user;
 	}
@@ -105,8 +114,9 @@ public class UserEntity {
 		entity.setSmsNumber( user.smsNumber() );
 		if( user.smsCarrier() != null ) entity.setSmsCarrier( user.smsCarrier().name().toLowerCase() );
 		entity.setSmsVerified( user.smsVerified() );
-		if( includeTokens ) entity.setTokens( user.tokens().stream().map( TokenEntity::from ).peek( c -> c.setUserAccount( entity ) ).collect( Collectors.toSet() ) );
+		if( includeTokens ) entity.setTokens( user.tokens().stream().map( TokenEntity::from ).peek( c -> c.setUser( entity ) ).collect( Collectors.toSet() ) );
 		entity.setRoles( user.roles() );
+		entity.setGroups( user.groups().stream().map( GroupEntity::from ).collect( Collectors.toSet() ) );
 
 		return entity;
 	}

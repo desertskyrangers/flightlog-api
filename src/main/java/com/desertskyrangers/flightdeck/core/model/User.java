@@ -38,6 +38,9 @@ public class User {
 	@EqualsAndHashCode.Exclude
 	private Set<String> roles = new CopyOnWriteArraySet<>();
 
+	@EqualsAndHashCode.Exclude
+	private Set<Group> groups = new CopyOnWriteArraySet<>();
+
 	public void roles( Set<String> roles ) {
 		this.roles = roles == null ? Set.of() : roles;
 	}

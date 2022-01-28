@@ -17,7 +17,7 @@ public class TokenEntity {
 
 	@ManyToOne( optional = false, fetch = FetchType.EAGER )
 	@JoinColumn( name = "userid", nullable = false, updatable = false, columnDefinition = "BINARY(16)" )
-	private UserEntity userAccount;
+	private UserEntity user;
 
 	@Column( unique = true )
 	private String principal;
@@ -27,7 +27,7 @@ public class TokenEntity {
 	public static TokenEntity from( UserToken token ) {
 		TokenEntity entity = new TokenEntity();
 		entity.setId( token.id() );
-		if( token.user() != null ) entity.setUserAccount( UserEntity.fromWithoutCredential( token.user() ) );
+		if( token.user() != null ) entity.setUser( UserEntity.fromWithoutCredential( token.user() ) );
 		entity.setPrincipal( token.principal() );
 		entity.setCredential( token.credential() );
 		return entity;
@@ -41,13 +41,13 @@ public class TokenEntity {
 		return toUserToken( entity, true );
 	}
 
-	private static UserToken toUserToken( TokenEntity entity, boolean includeAccount ) {
+	private static UserToken toUserToken( TokenEntity entity, boolean includeUser ) {
 		UserToken credential = new UserToken();
 
 		credential.id( entity.getId() );
 		credential.principal( entity.getPrincipal() );
 		credential.credential( entity.getCredential() );
-		if( includeAccount && entity.getUserAccount() != null ) credential.user( UserEntity.toUserAccount( entity.getUserAccount() ) );
+		if( includeUser && entity.getUser() != null ) credential.user( UserEntity.toUser( entity.getUser() ) );
 
 		return credential;
 	}

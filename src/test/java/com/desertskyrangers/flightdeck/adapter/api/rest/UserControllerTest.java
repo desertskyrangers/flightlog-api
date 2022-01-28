@@ -4,7 +4,7 @@ import com.desertskyrangers.flightdeck.adapter.api.ApiPath;
 import com.desertskyrangers.flightdeck.adapter.api.jwt.JwtToken;
 import com.desertskyrangers.flightdeck.adapter.api.jwt.JwtTokenProvider;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactProfileResponse;
-import com.desertskyrangers.flightdeck.adapter.api.model.ReactUserAccount;
+import com.desertskyrangers.flightdeck.adapter.api.model.ReactUser;
 import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
 import com.desertskyrangers.flightdeck.port.UserService;
@@ -79,7 +79,7 @@ public class UserControllerTest extends BaseControllerTest {
 		MvcResult result = this.mockMvc.perform( MockMvcRequestBuilders.get( ApiPath.PROFILE ).with( csrf() ).headers( headers ) ).andExpect( status().isOk() ).andReturn();
 
 		// then
-		String accountJson = Json.stringify( new ReactProfileResponse().setAccount( ReactUserAccount.from( getMockUser() ) ) );
+		String accountJson = Json.stringify( new ReactProfileResponse().setAccount( ReactUser.from( getMockUser() ) ) );
 		assertThat( result.getResponse().getContentAsString() ).isEqualTo( accountJson );
 	}
 
@@ -89,14 +89,14 @@ public class UserControllerTest extends BaseControllerTest {
 		MvcResult result = this.mockMvc.perform( get( ApiPath.USER + "/" + getMockUser().id() ).with( csrf() ).headers( headers ) ).andExpect( status().isOk() ).andReturn();
 
 		// then
-		String accountJson = Json.stringify( new ReactProfileResponse().setAccount( ReactUserAccount.from( getMockUser() ) ) );
+		String accountJson = Json.stringify( new ReactProfileResponse().setAccount( ReactUser.from( getMockUser() ) ) );
 		assertThat( result.getResponse().getContentAsString() ).isEqualTo( accountJson );
 	}
 
 	@Test
 	void testUpdateAccount() throws Exception {
 		// given
-		ReactUserAccount reactAccount = ReactUserAccount.from( getMockUser() );
+		ReactUser reactAccount = ReactUser.from( getMockUser() );
 		reactAccount.setFirstName( "Anton" );
 
 		// when
@@ -118,7 +118,7 @@ public class UserControllerTest extends BaseControllerTest {
 	@Test
 	void testUpdatePassword() throws Exception {
 		// given
-		ReactUserAccount reactAccount = ReactUserAccount.from( getMockUser() );
+		ReactUser reactAccount = ReactUser.from( getMockUser() );
 
 		// when
 		String content = Json.stringify( Map.of("id", reactAccount.getId(), "currentPassword", "password", "password", "newmockpassword"));
