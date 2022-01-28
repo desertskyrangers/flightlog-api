@@ -4,6 +4,7 @@ import com.desertskyrangers.flightdeck.core.model.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 public interface StateRetrieving {
@@ -29,6 +30,8 @@ public interface StateRetrieving {
 	List<Flight> findFlightsByUser( UUID id );
 
 	Optional<Group> findGroup( UUID id );
+
+	Set<Group> findGroupsByUser( UUID id );
 
 	Optional<UserToken> findUserToken( UUID id );
 

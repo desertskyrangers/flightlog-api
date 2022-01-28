@@ -54,4 +54,40 @@ public class StateRetrievingServiceTest {
 		assertThat( actual.members() ).containsAll( Set.of( UserEntity.toUserAccount( owner ) ) );
 	}
 
+	@Test
+	void testFindGroupsByUserWithNoGroups() {
+		// given
+		UserEntity owner = new UserEntity();
+		owner.setId( UUID.randomUUID() );
+		userRepo.save( owner );
+
+		// when
+		Set<Group> groups = retrieving.findGroupsByUser( owner.getId() );
+
+		// then
+		assertThat( groups ).isEmpty();
+	}
+
+	@Test
+	void testFindGroupsByUser() {
+		// given
+		UserEntity owner = new UserEntity();
+		owner.setId( UUID.randomUUID() );
+		userRepo.save( owner );
+
+		GroupEntity group = new GroupEntity();
+		group.setId( UUID.randomUUID() );
+		group.setType( GroupType.GROUP.name().toLowerCase() );
+		group.setName( "Test Group" );
+		group.setOwner( owner );
+		group.setMembers( Set.of( owner ) );
+		groupRepo.save( group );
+
+		// when
+		Set<Group> groups = retrieving.findGroupsByUser( owner.getId() );
+
+		// then
+		assertThat( groups ).containsAll( Set.of( GroupEntity.toGroup( group ) ) );
+	}
+
 }

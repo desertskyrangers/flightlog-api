@@ -60,6 +60,11 @@ public class UserEntity {
 	@EqualsAndHashCode.Exclude
 	private Set<String> roles = new HashSet<>();
 
+	@ManyToMany( fetch = FetchType.EAGER )
+	@JoinTable( name = "orguser", joinColumns = @JoinColumn( name = "userid" ), inverseJoinColumns = @JoinColumn( name = "orgid" ) )
+	@EqualsAndHashCode.Exclude
+	private Set<GroupEntity> groups;
+
 	public static UserEntity from( User user ) {
 		return fromUserAccount( user, true );
 	}
