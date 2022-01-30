@@ -147,15 +147,19 @@ public class AuthServiceImpl implements AuthService {
 		}
 		if( !messages.isEmpty() ) return messages;
 
-		// Create the tokens
-		String encodedPassword = passwordEncoder.encode( password );
-		tokens.add( new UserToken().principal( username ).credential( encodedPassword ) );
-		tokens.add( new UserToken().principal( email ).credential( encodedPassword ) );
-
 		// Create the account
 		User account = new User();
 		account.username( username );
 		account.email( email );
+		statePersisting.upsert( account );
+
+		// Create the tokens
+		// NOTE The user must be persisted before tokens can be persisted
+		String encodedPassword = passwordEncoder.encode( password );
+		tokens.add( new UserToken().principal( username ).credential( encodedPassword ) );
+		tokens.add( new UserToken().principal( email ).credential( encodedPassword ) );
+
+		// Add the tokens to the account
 		account.tokens( tokens );
 		statePersisting.upsert( account );
 

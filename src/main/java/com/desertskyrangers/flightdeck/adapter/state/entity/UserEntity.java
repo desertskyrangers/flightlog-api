@@ -65,22 +65,35 @@ public class UserEntity {
 	private Set<GroupEntity> groups = new HashSet<>();
 
 	public static UserEntity from( User user ) {
-		UserEntity entity = fromUserShallow( user, true );
+		UserEntity entity = fromUserShallow( user );
 
 		Map<UUID, UserEntity> users = new HashMap<>();
+		Map<UUID, TokenEntity> tokens = new HashMap<>();
 		Map<UUID, GroupEntity> groups = new HashMap<>();
-		entity.setGroups( user.groups().stream().map( g -> GroupEntity.fromGroupFromUser(g, groups, users) ).collect( Collectors.toSet() ) );
+		entity.setTokens( user.tokens().stream().map( t -> TokenEntity.fromTokenFromUser( t, tokens, users ) ).collect( Collectors.toSet() ) );
+		entity.setGroups( user.groups().stream().map( g -> GroupEntity.fromGroupFromUser( g, groups, users ) ).collect( Collectors.toSet() ) );
+
+		return entity;
+	}
+
+	static UserEntity fromUserFromToken( User user, Map<UUID, UserEntity> users, Map<UUID, TokenEntity> tokens ) {
+		UserEntity entity = users.get( user.id() );
+		if( entity != null ) return entity;
+
+		entity = fromUserShallow( user );
+		users.put( user.id(), entity );
+		entity.setTokens( user.tokens().stream().map( t -> TokenEntity.fromTokenFromUser( t, tokens, users ) ).collect( Collectors.toSet() ) );
 
 		return entity;
 	}
 
 	static UserEntity fromUserFromGroup( User user, Map<UUID, UserEntity> users, Map<UUID, GroupEntity> groups ) {
-		UserEntity entity = users.get(user.id() );
+		UserEntity entity = users.get( user.id() );
 		if( entity != null ) return entity;
 
-		entity = fromUserShallow( user, true );
+		entity = fromUserShallow( user );
 		users.put( user.id(), entity );
-		entity.setGroups( user.groups().stream().map( g -> GroupEntity.fromGroupFromUser(g, groups, users) ).collect( Collectors.toSet() ) );
+		entity.setGroups( user.groups().stream().map( g -> GroupEntity.fromGroupFromUser( g, groups, users ) ).collect( Collectors.toSet() ) );
 
 		return entity;
 	}
@@ -107,11 +120,7 @@ public class UserEntity {
 		return user;
 	}
 
-	static UserEntity fromWithoutCredential( User user ) {
-		return fromUserShallow( user, false );
-	}
-
-	private static UserEntity fromUserShallow( User user, boolean includeTokens ) {
+	private static UserEntity fromUserShallow( User user ) {
 		UserEntity entity = new UserEntity();
 
 		entity.setId( user.id() );
@@ -124,8 +133,6 @@ public class UserEntity {
 		entity.setSmsNumber( user.smsNumber() );
 		if( user.smsCarrier() != null ) entity.setSmsCarrier( user.smsCarrier().name().toLowerCase() );
 		entity.setSmsVerified( user.smsVerified() );
-		// FIXME Can I do the same with tokens that I did with groups???
-		if( includeTokens ) entity.setTokens( user.tokens().stream().map( TokenEntity::from ).peek( c -> c.setUser( entity ) ).collect( Collectors.toSet() ) );
 		entity.setRoles( user.roles() );
 
 		return entity;

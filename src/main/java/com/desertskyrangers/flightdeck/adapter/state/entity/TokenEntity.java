@@ -4,6 +4,8 @@ import com.desertskyrangers.flightdeck.core.model.UserToken;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Data
@@ -25,9 +27,28 @@ public class TokenEntity {
 	private String credential;
 
 	public static TokenEntity from( UserToken token ) {
+		TokenEntity entity = fromTokenShallow( token );
+
+		Map<UUID, UserEntity> users = new HashMap<>();
+		Map<UUID, TokenEntity> tokens = new HashMap<>();
+		entity.setUser( UserEntity.fromUserFromToken( token.user(), users, tokens ) );
+
+		return entity;
+	}
+
+	static TokenEntity fromTokenFromUser( UserToken token, Map<UUID, TokenEntity> tokens, Map<UUID, UserEntity> users ) {
+		TokenEntity entity = tokens.get( token.id() );
+		if( entity != null ) return entity;
+
+		entity = fromTokenShallow( token );
+		tokens.put( token.id(), entity );
+		entity.setUser( UserEntity.fromUserFromToken( token.user(), users, tokens ) );
+		return entity;
+	}
+
+	private static TokenEntity fromTokenShallow( UserToken token ) {
 		TokenEntity entity = new TokenEntity();
 		entity.setId( token.id() );
-		if( token.user() != null ) entity.setUser( UserEntity.fromWithoutCredential( token.user() ) );
 		entity.setPrincipal( token.principal() );
 		entity.setCredential( token.credential() );
 		return entity;
