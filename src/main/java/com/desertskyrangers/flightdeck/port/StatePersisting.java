@@ -22,6 +22,8 @@ public interface StatePersisting {
 
 	void remove( Group group );
 
+	void removeAllGroups();
+
 	void upsert( User account );
 
 	void remove( User account );

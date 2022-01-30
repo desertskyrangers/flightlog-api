@@ -81,6 +81,11 @@ public class StatePersistingService implements StatePersisting {
 	}
 
 	@Override
+	public void removeAllGroups() {
+		groupRepo.deleteAll();
+	}
+
+	@Override
 	public void upsert( UserToken token ) {
 		tokenRepo.save( TokenEntity.from( token ) );
 	}

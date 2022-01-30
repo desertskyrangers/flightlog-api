@@ -2,6 +2,7 @@ package com.desertskyrangers.flightdeck.core.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import java.util.Set;
@@ -32,6 +33,7 @@ public class User {
 
 	private boolean smsVerified;
 
+	@ToString.Exclude
 	@EqualsAndHashCode.Exclude
 	private Set<UserToken> tokens = new CopyOnWriteArraySet<>();
 

@@ -23,6 +23,8 @@ public interface ApiPath {
 
 	String FLIGHT = API + "/flight";
 
+	String GROUP = API + "/group";
+
 	String MONITOR = API + "/monitor";
 	String MONITOR_STATUS = MONITOR + "/status";
 

@@ -7,6 +7,7 @@ import com.desertskyrangers.flightdeck.port.StateRetrieving;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -21,6 +22,11 @@ public class GroupServiceImpl implements GroupService {
 	public GroupServiceImpl( StatePersisting statePersisting, StateRetrieving stateRetrieving ) {
 		this.statePersisting = statePersisting;
 		this.stateRetrieving = stateRetrieving;
+	}
+
+	@Override
+	public Optional<Group> find( UUID id ) {
+		return stateRetrieving.findGroup( id );
 	}
 
 	@Override

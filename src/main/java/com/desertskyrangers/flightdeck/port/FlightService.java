@@ -11,7 +11,7 @@ public interface FlightService {
 
 	Optional<Flight> find( UUID id );
 
-	List<Flight> findByPilot( UUID owner );
+	List<Flight> findByPilot( UUID pilot );
 
 	List<Flight> findFlightsByUser( UUID user );
 
