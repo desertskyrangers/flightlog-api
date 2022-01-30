@@ -39,7 +39,7 @@ public class GroupEntity {
 	private Set<UserEntity> members;
 
 	public static GroupEntity from( Group group ) {
-		GroupEntity entity = fromShallow( group );
+		GroupEntity entity = fromGroupShallow( group );
 
 		final Map<UUID, GroupEntity> groups = new HashMap<>();
 		final Map<UUID, UserEntity> users = new HashMap<>();
@@ -53,7 +53,7 @@ public class GroupEntity {
 		GroupEntity entity = groups.get(group.id() );
 		if( entity != null ) return entity;
 
-		entity = fromShallow(group);
+		entity = fromGroupShallow(group);
 		groups.put(group.id(), entity);
 		if( group.owner() != null ) entity.setOwner( UserEntity.fromUserFromGroup( group.owner(), users, groups ) );
 		entity.setMembers( group.members().stream().map( u -> UserEntity.fromUserFromGroup( u, users, groups ) ).collect( Collectors.toSet() ) );
@@ -61,7 +61,7 @@ public class GroupEntity {
 		return entity;
 	}
 
-	private static GroupEntity fromShallow( Group group ) {
+	private static GroupEntity fromGroupShallow( Group group ) {
 		GroupEntity entity = new GroupEntity();
 
 		entity.setId( group.id() );

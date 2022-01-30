@@ -124,6 +124,7 @@ public class UserEntity {
 		entity.setSmsNumber( user.smsNumber() );
 		if( user.smsCarrier() != null ) entity.setSmsCarrier( user.smsCarrier().name().toLowerCase() );
 		entity.setSmsVerified( user.smsVerified() );
+		// FIXME Can I do the same with tokens that I did with groups???
 		if( includeTokens ) entity.setTokens( user.tokens().stream().map( TokenEntity::from ).peek( c -> c.setUser( entity ) ).collect( Collectors.toSet() ) );
 		entity.setRoles( user.roles() );
 
