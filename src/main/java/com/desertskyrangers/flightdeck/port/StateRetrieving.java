@@ -39,7 +39,7 @@ public interface StateRetrieving {
 
 	List<User> findAllUserAccounts();
 
-	Optional<User> findUserAccount( UUID id );
+	Optional<User> findUser( UUID id );
 
 	List<Verification> findAllVerifications();
 

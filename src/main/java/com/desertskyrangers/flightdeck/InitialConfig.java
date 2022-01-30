@@ -35,7 +35,7 @@ public class InitialConfig {
 	@Bean
 	User unlistedUser() {
 		if( unlisted == null ) {
-			Optional<User> optional = stateRetrieving.findUserAccount( UNLISTED_USER_ID );
+			Optional<User> optional = stateRetrieving.findUser( UNLISTED_USER_ID );
 			if( optional.isPresent() ) {
 				unlisted = optional.get();
 			} else {
@@ -55,7 +55,7 @@ public class InitialConfig {
 		unlisted.id( UUID.fromString( "6e0c4460-357b-4a86-901d-e2ba16000c59" ) );
 		unlisted.lastName( "Unlisted" );
 		unlisted.preferredName( "Unlisted" );
-		Optional<User> optional = stateRetrieving.findUserAccount( unlisted.id() );
+		Optional<User> optional = stateRetrieving.findUser( unlisted.id() );
 		if( optional.isEmpty() ) statePersisting.upsert( unlisted );
 
 		if( app.isProduction() ) return;

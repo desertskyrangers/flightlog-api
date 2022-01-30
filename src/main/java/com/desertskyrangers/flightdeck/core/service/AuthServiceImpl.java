@@ -102,7 +102,7 @@ public class AuthServiceImpl implements AuthService {
 			if( isExpired ) messages.add( "Recovery code expired" );
 
 			if( messages.size() == 0 ) {
-				stateRetrieving.findUserAccount( storedVerification.userId() ).ifPresent( u -> userService.updatePassword( u, password ) );
+				stateRetrieving.findUser( storedVerification.userId() ).ifPresent( u -> userService.updatePassword( u, password ) );
 				statePersisting.remove( storedVerification );
 			}
 		} else {
@@ -183,7 +183,7 @@ public class AuthServiceImpl implements AuthService {
 
 		// Lookup the verification from the state store
 		stateRetrieving.findVerification( id ).ifPresent( v -> {
-			stateRetrieving.findUserAccount( v.userId() ).ifPresent( u -> {
+			stateRetrieving.findUser( v.userId() ).ifPresent( u -> {
 				UserToken credential = u.tokens().iterator().next();
 
 				log.warn( "verification code resent: " + v.code() );
@@ -214,7 +214,7 @@ public class AuthServiceImpl implements AuthService {
 			if( isExpired ) messages.add( "Verification code expired" );
 
 			if( messages.size() == 0 ) {
-				stateRetrieving.findUserAccount( storedVerification.userId() ).ifPresent( u -> {
+				stateRetrieving.findUser( storedVerification.userId() ).ifPresent( u -> {
 					switch( storedVerification.type() ) {
 						case Verification.EMAIL_VERIFY_TYPE: {
 							setEmailVerified( u, true );

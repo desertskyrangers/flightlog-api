@@ -40,8 +40,8 @@ public class FlightServiceImpl implements FlightService {
 
 	@Override
 	public void upsert( FlightUpsertRequest request ) {
-		User pilot = stateRetrieving.findUserAccount( request.pilot() ).orElse( null );
-		User observer = stateRetrieving.findUserAccount( request.observer() ).orElse( null );
+		User pilot = stateRetrieving.findUser( request.pilot() ).orElse( null );
+		User observer = stateRetrieving.findUser( request.observer() ).orElse( null );
 		Aircraft aircraft = stateRetrieving.findAircraft( request.aircraft() ).orElse( null );
 		Set<Battery> batteries = request.batteries().stream().map( id -> stateRetrieving.findBattery( id ).orElse( null ) ).filter( Objects::nonNull ).collect( Collectors.toSet() );
 

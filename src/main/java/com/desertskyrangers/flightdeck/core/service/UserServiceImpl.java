@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public Optional<User> find( UUID id ) {
-		return stateRetrieving.findUserAccount( id );
+		return stateRetrieving.findUser( id );
 	}
 
 	@Override
@@ -94,12 +94,12 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public Optional<User> findVerificationUser( UUID verificationId ) {
-		return stateRetrieving.findVerification( verificationId ).flatMap( v -> stateRetrieving.findUserAccount( v.userId() ) );
+		return stateRetrieving.findVerification( verificationId ).flatMap( v -> stateRetrieving.findUser( v.userId() ) );
 	}
 
 	@Override
 	public Set<User> findAllGroupPeers( User user ) {
-		return stateRetrieving.findUserAccount( user.id() ).stream().flatMap( u -> user.groups().stream() ).flatMap( g -> g.members().stream() ).collect( Collectors.toSet() );
+		return stateRetrieving.findUser( user.id() ).stream().flatMap( u -> u.groups().stream() ).flatMap( g -> g.members().stream() ).collect( Collectors.toSet() );
 	}
 
 }
