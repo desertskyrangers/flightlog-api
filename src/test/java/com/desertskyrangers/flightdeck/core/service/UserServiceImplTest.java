@@ -4,7 +4,6 @@ import com.desertskyrangers.flightdeck.core.model.Group;
 import com.desertskyrangers.flightdeck.core.model.GroupType;
 import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
-import com.desertskyrangers.flightdeck.port.StateRetrieving;
 import com.desertskyrangers.flightdeck.port.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +24,7 @@ public class UserServiceImplTest {
 	private UserService userService;
 
 	@Test
-	void testFindUsersInGroups() {
+	void testFindAllGroupPeers() {
 		// given
 		User owner = new User();
 		statePersisting.upsert( owner );
