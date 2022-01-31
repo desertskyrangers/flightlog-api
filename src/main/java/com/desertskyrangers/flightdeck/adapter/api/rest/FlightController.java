@@ -6,7 +6,6 @@ import com.desertskyrangers.flightdeck.adapter.api.model.ReactFlightResponse;
 import com.desertskyrangers.flightdeck.core.model.Flight;
 import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.port.FlightService;
-import com.desertskyrangers.flightdeck.port.UserService;
 import com.desertskyrangers.flightdeck.util.Text;
 import com.desertskyrangers.flightdeck.util.Uuid;
 import lombok.extern.slf4j.Slf4j;
@@ -72,7 +71,7 @@ public class FlightController extends BaseController {
 
 		try {
 			User user = findUser( authentication );
-			flightService.upsert( ReactFlight.toUpsertRequest( user, request ) );
+			flightService.upsert( ReactFlight.toUpsertRequest( request ).user( user ) );
 			return new ResponseEntity<>( new ReactFlightResponse().setFlight( request ), HttpStatus.OK );
 		} catch( Exception exception ) {
 			log.error( "Error updating flight", exception );

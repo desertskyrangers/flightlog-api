@@ -2,7 +2,7 @@ package com.desertskyrangers.flightdeck.adapter.api.rest;
 
 import com.desertskyrangers.flightdeck.adapter.api.ApiPath;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactAircraft;
-import com.desertskyrangers.flightdeck.core.model.*;
+import com.desertskyrangers.flightdeck.core.model.Aircraft;
 import com.desertskyrangers.flightdeck.port.AircraftService;
 import com.desertskyrangers.flightdeck.util.Json;
 import org.junit.jupiter.api.Test;
@@ -12,7 +12,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.Map;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -36,9 +35,9 @@ public class AircraftControllerTest extends BaseControllerTest {
 		MvcResult result = this.mockMvc.perform( get( ApiPath.AIRCRAFT + "/" + aircraft.id() ) ).andExpect( status().isOk() ).andReturn();
 
 		// then
-		Map<?,?> map = Json.asMap( result.getResponse().getContentAsString() );
-		Map<?,?> resultAircraft = (Map<?,?>)map.get("aircraft");
-		assertThat( resultAircraft.get("name")).isEqualTo( "Aftyn" );
+		Map<?, ?> map = Json.asMap( result.getResponse().getContentAsString() );
+		Map<?, ?> resultAircraft = (Map<?, ?>)map.get( "aircraft" );
+		assertThat( resultAircraft.get( "name" ) ).isEqualTo( "Aftyn" );
 	}
 
 	@Test
@@ -85,15 +84,19 @@ public class AircraftControllerTest extends BaseControllerTest {
 		aircraftService.upsert( aircraft );
 
 		// when
-		MvcResult result = this.mockMvc.perform( delete( ApiPath.AIRCRAFT ).content( "{\"id\":\"" + aircraft.id() + "\"}" ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
+		MvcResult result = this.mockMvc
+			.perform( delete( ApiPath.AIRCRAFT ).content( "{\"id\":\"" + aircraft.id() + "\"}" ).contentType( MediaType.APPLICATION_JSON ) )
+			.andExpect( status().isOk() )
+			.andReturn();
 
 		// then
-		Map<?,?> map = Json.asMap( result.getResponse().getContentAsString() );
-		Map<?,?> resultAircraft = (Map<?,?>)map.get("aircraft");
-		assertThat( resultAircraft.get("name")).isEqualTo( "Aftyn" );
+		Map<?, ?> map = Json.asMap( result.getResponse().getContentAsString() );
+		Map<?, ?> resultAircraft = (Map<?, ?>)map.get( "aircraft" );
+		assertThat( resultAircraft.get( "name" ) ).isEqualTo( "Aftyn" );
 	}
 
 	private ReactAircraft createTestReactAircraft() {
 		return ReactAircraft.from( createTestAircraft() );
 	}
+
 }
