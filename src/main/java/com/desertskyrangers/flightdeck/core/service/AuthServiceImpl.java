@@ -148,27 +148,27 @@ public class AuthServiceImpl implements AuthService {
 		if( !messages.isEmpty() ) return messages;
 
 		// Create the account
-		User account = new User();
-		account.username( username );
-		account.email( email );
-		statePersisting.upsert( account );
+		User user = new User();
+		user.username( username );
+		user.email( email );
+		statePersisting.upsert( user );
 
 		// Create the tokens
 		// NOTE The user must be persisted before tokens can be persisted
 		String encodedPassword = passwordEncoder.encode( password );
-		tokens.add( new UserToken().principal( username ).credential( encodedPassword ) );
-		tokens.add( new UserToken().principal( email ).credential( encodedPassword ) );
+		tokens.add( new UserToken().user( user ).principal( username ).credential( encodedPassword ) );
+		tokens.add( new UserToken().user( user ).principal( email ).credential( encodedPassword ) );
 
 		// Add the tokens to the account
-		account.tokens( tokens );
-		statePersisting.upsert( account );
+		user.tokens( tokens );
+		statePersisting.upsert( user );
 
 		// Generate the verification code
 		String code = Text.lpad( String.valueOf( new Random().nextInt( 1000000 ) ), 6, '0' );
 
 		// Store the verification record
 		Verification verification = new Verification().id( verifyId );
-		verification.userId( account.id() );
+		verification.userId( user.id() );
 		verification.code( code );
 		verification.type( Verification.EMAIL_VERIFY_TYPE );
 		statePersisting.upsert( verification );
@@ -176,7 +176,7 @@ public class AuthServiceImpl implements AuthService {
 		log.warn( "verification code: " + verification.code() );
 
 		// Send the message to verify the email address
-		sendEmailAddressVerificationMessage( account, username, verification );
+		sendEmailAddressVerificationMessage( user, username, verification );
 
 		return List.of();
 	}

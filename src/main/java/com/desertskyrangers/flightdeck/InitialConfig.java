@@ -62,20 +62,19 @@ public class InitialConfig {
 
 		String email = "tiat@noreply.com";
 
-		UserToken usernameToken = new UserToken();
-		usernameToken.principal( "tia" );
-		usernameToken.credential( new BCryptPasswordEncoder().encode( "tester" ) );
-		UserToken emailToken = new UserToken();
-		emailToken.principal( email );
-		emailToken.credential( new BCryptPasswordEncoder().encode( "tester" ) );
 		User user = new User();
-		user.tokens( Set.of( usernameToken, emailToken ) );
 		user.firstName( "Tia" );
 		user.lastName( "Test" );
 		user.preferredName( "Tia Test" );
 		user.email( email );
 		user.smsNumber( "800-555-8428" );
 		user.smsCarrier( SmsCarrier.SPRINT );
+		statePersisting.upsert( user );
+
+		String credential = new BCryptPasswordEncoder().encode( "tester" );
+		UserToken usernameToken = new UserToken().user( user ).principal( "tia" ).credential( credential );
+		UserToken emailToken = new UserToken().user( user ).principal( email ).credential( credential );
+		user.tokens( Set.of( usernameToken, emailToken ) );
 		statePersisting.upsert( user );
 
 		Aircraft aftyn = new Aircraft()
