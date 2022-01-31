@@ -156,7 +156,12 @@ public class InitialConfig {
 		statePersisting.upsert( f1 );
 		statePersisting.upsert( f2 );
 
-		stateRetrieving.findUserTokenByPrincipal( usernameToken.principal() ).ifPresent( t -> log.warn( "Testing data created" ) );
+		stateRetrieving.findUserTokenByPrincipal( usernameToken.principal() ).ifPresent( t -> log.warn( "Testing user created" ) );
+
+		Group group = new Group().name("Testers United").type(GroupType.GROUP).owner(user);
+		statePersisting.upsert( group );
+
+		stateRetrieving.findGroup( group.id() ).ifPresent( t -> log.warn( "Testing group created" ) );
 	}
 
 }

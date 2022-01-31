@@ -3,9 +3,12 @@ package com.desertskyrangers.flightdeck.adapter.state.repo;
 import com.desertskyrangers.flightdeck.adapter.state.entity.GroupEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface GroupRepo extends JpaRepository<GroupEntity, UUID> {
+
+	List<GroupEntity> findAllByOwner_Id( UUID id );
 
 	Integer countByOwner_Id( UUID id );
 

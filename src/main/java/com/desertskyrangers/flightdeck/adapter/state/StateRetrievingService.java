@@ -102,7 +102,7 @@ public class StateRetrievingService implements StateRetrieving {
 
 	@Override
 	public Set<Group> findGroupsByUser( UUID id ) {
-		return userRepo.findById( id ).map( UserEntity::getGroups ).stream().flatMap( Collection::stream ).map( GroupEntity::toGroup ).collect( Collectors.toSet());
+		return groupRepo.findAllByOwner_Id( id ).stream().map( GroupEntity::toGroup ).collect( Collectors.toSet());
 	}
 
 	@Override
