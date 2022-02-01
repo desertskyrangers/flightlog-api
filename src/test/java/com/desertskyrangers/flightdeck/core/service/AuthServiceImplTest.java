@@ -65,7 +65,7 @@ public class AuthServiceImplTest {
 		verification.type( stored.type() );
 		verification.userId( account.id() );
 
-		when( stateRetrieving.findUserAccount( account.id() ) ).thenReturn( Optional.of( account ) );
+		when( stateRetrieving.findUser( account.id() ) ).thenReturn( Optional.of( account ) );
 
 		// when
 		List<String> messages = service.requestUserVerify( verification );

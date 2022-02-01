@@ -5,6 +5,7 @@ import com.desertskyrangers.flightdeck.adapter.api.model.*;
 import com.desertskyrangers.flightdeck.core.model.Aircraft;
 import com.desertskyrangers.flightdeck.core.model.Battery;
 import com.desertskyrangers.flightdeck.core.model.User;
+import com.desertskyrangers.flightdeck.port.GroupService;
 import com.desertskyrangers.flightdeck.port.AircraftService;
 import com.desertskyrangers.flightdeck.port.BatteryService;
 import com.desertskyrangers.flightdeck.port.FlightService;
@@ -28,12 +29,15 @@ public class UserController extends BaseController {
 
 	private final FlightService flightService;
 
+	private final GroupService groupService;
+
 	private final UserService userService;
 
-	public UserController( AircraftService aircraftService, BatteryService batteryService, FlightService flightService, UserService userService ) {
+	public UserController( AircraftService aircraftService, BatteryService batteryService, FlightService flightService, GroupService groupService, UserService userService ) {
 		this.aircraftService = aircraftService;
 		this.batteryService = batteryService;
 		this.flightService = flightService;
+		this.groupService = groupService;
 		this.userService = userService;
 	}
 
@@ -60,8 +64,8 @@ public class UserController extends BaseController {
 	ResponseEntity<ReactProfileResponse> profile() {
 		String username = ((org.springframework.security.core.userdetails.User)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
 
-		Optional<ReactUserAccount> optional = userService.findByPrincipal( username ).map( ReactUserAccount::from );
-		if( optional.isEmpty() ) return new ResponseEntity<>( new ReactProfileResponse().setAccount( new ReactUserAccount() ), HttpStatus.BAD_REQUEST );
+		Optional<ReactUser> optional = userService.findByPrincipal( username ).map( ReactUser::from );
+		if( optional.isEmpty() ) return new ResponseEntity<>( new ReactProfileResponse().setAccount( new ReactUser() ), HttpStatus.BAD_REQUEST );
 
 		return new ResponseEntity<>( new ReactProfileResponse().setAccount( optional.get() ), HttpStatus.OK );
 	}
@@ -73,24 +77,24 @@ public class UserController extends BaseController {
 
 	@GetMapping( value = ApiPath.USER + "/{id}" )
 	ResponseEntity<ReactProfileResponse> findById( @PathVariable( "id" ) UUID id ) {
-		Optional<ReactUserAccount> optional = userService.find( id ).map( ReactUserAccount::from );
-		if( optional.isEmpty() ) return new ResponseEntity<>( new ReactProfileResponse().setAccount( new ReactUserAccount() ), HttpStatus.BAD_REQUEST );
+		Optional<ReactUser> optional = userService.find( id ).map( ReactUser::from );
+		if( optional.isEmpty() ) return new ResponseEntity<>( new ReactProfileResponse().setAccount( new ReactUser() ), HttpStatus.BAD_REQUEST );
 
 		return new ResponseEntity<>( new ReactProfileResponse().setAccount( optional.get() ), HttpStatus.OK );
 	}
 
 	@PutMapping( value = ApiPath.USER + "/{id}" )
 	@ResponseStatus( HttpStatus.OK )
-	ResponseEntity<ReactProfileResponse> update( @PathVariable( "id" ) UUID id, @RequestBody ReactUserAccount account ) {
+	ResponseEntity<ReactProfileResponse> update( @PathVariable( "id" ) UUID id, @RequestBody ReactUser account ) {
 		Optional<User> optional = userService.find( id );
-		if( optional.isEmpty() ) return new ResponseEntity<>( new ReactProfileResponse().setAccount( new ReactUserAccount() ), HttpStatus.BAD_REQUEST );
+		if( optional.isEmpty() ) return new ResponseEntity<>( new ReactProfileResponse().setAccount( new ReactUser() ), HttpStatus.BAD_REQUEST );
 
 		User user = account.updateFrom( optional.get() );
 
 		// Update the user account
 		userService.upsert( user );
 
-		return new ResponseEntity<>( new ReactProfileResponse().setAccount( ReactUserAccount.from( user ) ), HttpStatus.OK );
+		return new ResponseEntity<>( new ReactProfileResponse().setAccount( ReactUser.from( user ) ), HttpStatus.OK );
 	}
 
 	@DeleteMapping( value = ApiPath.USER + "/{id}" )
@@ -166,6 +170,22 @@ public class UserController extends BaseController {
 		}
 
 		return new ResponseEntity<>( new ReactFlightPageResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
+	}
+
+	@GetMapping( path = ApiPath.USER_GROUP + "/{page}" )
+	ResponseEntity<ReactGroupPageResponse> getOrgPage( Authentication authentication, @PathVariable int page ) {
+		List<String> messages = new ArrayList<>();
+
+		try {
+			User user = findUser( authentication );
+			List<ReactGroup> groupPage = groupService.findGroupsByUser( user.id() ).stream().map( ReactGroup::from ).toList();
+			return new ResponseEntity<>( new ReactGroupPageResponse().setGroups( groupPage ), HttpStatus.OK );
+		} catch( Exception exception ) {
+			log.error( "Error creating new battery", exception );
+			messages.add( exception.getMessage() );
+		}
+
+		return new ResponseEntity<>( new ReactGroupPageResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
 	}
 
 	@GetMapping( path = ApiPath.USER_AIRCRAFT_LOOKUP )

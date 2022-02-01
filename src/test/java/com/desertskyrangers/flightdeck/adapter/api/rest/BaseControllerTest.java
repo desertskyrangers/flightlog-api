@@ -38,6 +38,7 @@ public abstract class BaseControllerTest {
 	@BeforeEach
 	void setup() {
 		// Clean old flights
+		statePersisting.removeAllGroups();
 		statePersisting.removeAllFlights();
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -97,6 +98,31 @@ public abstract class BaseControllerTest {
 		battery.owner( getMockUser().id() );
 		battery.ownerType( OwnerType.USER );
 		return battery;
+	}
+
+	protected Flight createTestFlight() {
+		Aircraft aircraft = createTestAircraft();
+		statePersisting.upsert( aircraft );
+		Battery battery = createTestBattery();
+		statePersisting.upsert( battery );
+		Flight flight = new Flight();
+		flight.pilot( getMockUser() );
+		flight.observer( getUnlistedUser() );
+		flight.unlistedObserver( "Oscar Observer");
+		flight.aircraft( aircraft );
+		flight.batteries( Set.of( battery ) );
+		flight.timestamp( System.currentTimeMillis() );
+		flight.duration( 1000 );
+		flight.notes( "Just a test flight" );
+		return flight;
+	}
+
+	protected Group createTestGroup() {
+		Group group = new Group();
+		group.type( GroupType.GROUP );
+		group.name( "Test Group" );
+		group.owner( getMockUser() );
+		return group;
 	}
 
 }

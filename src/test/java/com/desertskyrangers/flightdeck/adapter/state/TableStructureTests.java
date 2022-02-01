@@ -27,6 +27,7 @@ public class TableStructureTests {
 		expected.add( "flight" );
 		expected.add( "flightbattery" );
 		expected.add( "org" );
+		expected.add( "orguser" );
 		expected.add( "user" );
 		expected.add( "usertoken" );
 		expected.add( "userrole" );
@@ -101,13 +102,23 @@ public class TableStructureTests {
 
 	@Test
 	void testOrgTable() throws Exception {
+		// The table is named 'org' because 'group' is a reserved word
 		Set<String> expected = new HashSet<>();
 		expected.add( "id" );
+		expected.add( "type" );
 		expected.add( "name" );
 		expected.add( "ownerid" );
-		//expected.add( "type" );
 
 		assertThat( getColumns( "org" ) ).containsAll( expected );
+	}
+
+	@Test
+	void testOrgUser() throws Exception {
+		Set<String> expected = new HashSet<>();
+		expected.add( "orgid" );
+		expected.add( "userid" );
+
+		assertThat( getColumns( "orguser" ) ).containsAll( expected );
 	}
 
 	@Test

@@ -3,7 +3,7 @@ package com.desertskyrangers.flightdeck.adapter.api;
 import com.desertskyrangers.flightdeck.adapter.api.jwt.JwtToken;
 import com.desertskyrangers.flightdeck.adapter.api.jwt.JwtTokenProvider;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactProfileResponse;
-import com.desertskyrangers.flightdeck.adapter.api.model.ReactUserAccount;
+import com.desertskyrangers.flightdeck.adapter.api.model.ReactUser;
 import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.util.Json;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,7 +55,7 @@ public class WebSecurityEnforcementTest {
 		ResponseEntity<String> response = restTemplate.exchange( url.toString(), HttpMethod.GET, entity, String.class );
 
 		// then
-		String accountJson = Json.stringify( new ReactProfileResponse().setAccount( new ReactUserAccount() ) );
+		String accountJson = Json.stringify( new ReactProfileResponse().setAccount( new ReactUser() ) );
 		assertThat( response.getStatusCode() ).isEqualTo( HttpStatus.BAD_REQUEST );
 		assertThat( response.getBody() ).isEqualTo( accountJson );
 	}

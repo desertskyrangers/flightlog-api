@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,7 +28,8 @@ import java.util.Set;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -134,9 +134,13 @@ public class AuthControllerTests extends BaseControllerTest {
 		String email = username + "@example.com";
 		String content = Json.stringify( Map.of( "username", username, "password", password, "email", email ) );
 
-		UserToken token = new UserToken().principal( username ).credential( passwordEncoder.encode( password ) );
-		User account = new User().email( email ).tokens( Set.of( token ) );
-		statePersisting.upsert( account );
+		User user = new User().email( email );
+		statePersisting.upsert( user );
+
+		// NOTE The user must be persisted before tokens can be persisted
+		UserToken token = new UserToken().user( user ).principal( username ).credential( passwordEncoder.encode( password ) );
+		user.tokens( Set.of( token ) );
+		statePersisting.upsert( user );
 
 		// when
 		this.mockMvc.perform( MockMvcRequestBuilders.post( ApiPath.AUTH_REGISTER ).with( csrf() ).content( content ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isAccepted() );

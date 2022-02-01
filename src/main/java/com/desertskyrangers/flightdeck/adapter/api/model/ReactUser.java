@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @Data
 @Accessors( chain = true )
-public class ReactUserAccount {
+public class ReactUser {
 
 	private String id;
 
@@ -50,22 +50,22 @@ public class ReactUserAccount {
 		return user;
 	}
 
-	public static ReactUserAccount from( User account ) {
-		ReactUserAccount reactAccount = new ReactUserAccount();
-		reactAccount.setId( account.id().toString() );
-		reactAccount.setUsername( account.username() );
-		reactAccount.setFirstName( account.firstName() );
-		reactAccount.setLastName( account.lastName() );
-		reactAccount.setPreferredName( account.preferredName() );
-		reactAccount.setEmail( account.email() );
-		reactAccount.setEmailVerified( account.emailVerified() );
-		reactAccount.setSmsNumber( account.smsNumber() );
-		reactAccount.setSmsCarrier( account.smsCarrier() == null ? "" : account.smsCarrier().name().toLowerCase() );
-		reactAccount.setSmsVerified( account.smsVerified() );
-		return reactAccount;
+	public static ReactUser from( User user ) {
+		ReactUser reactUser = new ReactUser();
+		reactUser.setId( user.id().toString() );
+		reactUser.setUsername( user.username() );
+		reactUser.setFirstName( user.firstName() );
+		reactUser.setLastName( user.lastName() );
+		reactUser.setPreferredName( user.preferredName() );
+		reactUser.setEmail( user.email() );
+		reactUser.setEmailVerified( user.emailVerified() );
+		reactUser.setSmsNumber( user.smsNumber() );
+		reactUser.setSmsCarrier( user.smsCarrier() == null ? "" : user.smsCarrier().name().toLowerCase() );
+		reactUser.setSmsVerified( user.smsVerified() );
+		return reactUser;
 	}
 
-	public static User to( ReactUserAccount user ) {
+	public static User to( ReactUser user ) {
 		return new User().id( UUID.fromString( user.id ) ).email( user.getEmail() );
 	}
 }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -21,6 +22,8 @@ public class StateRetrievingService implements StateRetrieving {
 
 	private final FlightRepo flightRepo;
 
+	private final GroupRepo groupRepo;
+
 	private final UserRepo userRepo;
 
 	private final TokenRepo tokenRepo;
@@ -28,11 +31,12 @@ public class StateRetrievingService implements StateRetrieving {
 	private final VerificationRepo verificationRepo;
 
 	public StateRetrievingService(
-		AircraftRepo aircraftRepo, BatteryRepo batteryRepo, FlightRepo flightRepo, UserRepo userRepo, TokenRepo tokenRepo, VerificationRepo verificationRepo
+		AircraftRepo aircraftRepo, BatteryRepo batteryRepo, FlightRepo flightRepo, GroupRepo groupRepo, UserRepo userRepo, TokenRepo tokenRepo, VerificationRepo verificationRepo
 	) {
 		this.aircraftRepo = aircraftRepo;
 		this.batteryRepo = batteryRepo;
 		this.flightRepo = flightRepo;
+		this.groupRepo = groupRepo;
 		this.userRepo = userRepo;
 		this.tokenRepo = tokenRepo;
 		this.verificationRepo = verificationRepo;
@@ -95,6 +99,22 @@ public class StateRetrievingService implements StateRetrieving {
 	}
 
 	@Override
+	public Set<Group> findAllAvailableGroups( User user ) {
+		return groupRepo.findAll().stream().map( GroupEntity::toGroup ).collect( Collectors.toSet() );
+		//return groupRepo.findAllByMembersNotIn( Set.of( UserEntity.from( user ) ) ).stream().map( GroupEntity::toGroup ).collect( Collectors.toSet() );
+	}
+
+	@Override
+	public Optional<Group> findGroup( UUID id ) {
+		return groupRepo.findById( id ).map( GroupEntity::toGroup );
+	}
+
+	@Override
+	public Set<Group> findGroupsByOwner( UUID id ) {
+		return groupRepo.findAllByOwner_Id( id ).stream().map( GroupEntity::toGroup ).collect( Collectors.toSet() );
+	}
+
+	@Override
 	public Optional<UserToken> findUserToken( UUID id ) {
 		return tokenRepo.findById( id ).map( TokenEntity::toUserToken );
 	}
@@ -106,13 +126,13 @@ public class StateRetrievingService implements StateRetrieving {
 
 	@Override
 	public List<User> findAllUserAccounts() {
-		return userRepo.findAll().stream().map( UserEntity::toUserAccount ).collect( Collectors.toList() );
+		return userRepo.findAll().stream().map( UserEntity::toUser ).collect( Collectors.toList() );
 	}
 
 	@Override
-	public Optional<User> findUserAccount( UUID id ) {
+	public Optional<User> findUser( UUID id ) {
 		if( id == null ) return Optional.empty();
-		return userRepo.findById( id ).map( UserEntity::toUserAccount );
+		return userRepo.findById( id ).map( UserEntity::toUser );
 	}
 
 	@Override

@@ -4,6 +4,7 @@ import com.desertskyrangers.flightdeck.core.model.User;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 public interface UserService {
@@ -25,5 +26,7 @@ public interface UserService {
 	void updatePassword( User user, String password );
 
 	Optional<User> findVerificationUser( UUID verificationId );
+
+	Set<User> findAllGroupPeers( User user );
 
 }

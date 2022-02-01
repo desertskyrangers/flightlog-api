@@ -23,6 +23,10 @@ public interface ApiPath {
 
 	String FLIGHT = API + "/flight";
 
+	String GROUP = API + "/group";
+	String GROUPS = API + "/groups";
+	String GROUPS_AVAILABLE = GROUPS + "/available";
+
 	String MONITOR = API + "/monitor";
 	String MONITOR_STATUS = MONITOR + "/status";
 
@@ -34,12 +38,14 @@ public interface ApiPath {
 	String BATTERY_CONNECTOR = LOOKUP + "/battery/connector";
 	String BATTERY_STATUS = LOOKUP + "/battery/status";
 	String BATTERY_TYPE = LOOKUP + "/battery/type";
+	String GROUP_TYPE = LOOKUP + "/group/type";
 	String SMS_CARRIERS = LOOKUP + "/sms/carriers";
 
 	String USER = API + "/user";
 	String USER_AIRCRAFT = USER + "/aircraft";
 	String USER_BATTERY = USER + "/battery";
 	String USER_FLIGHT = USER + "/flight";
+	String USER_GROUP = USER + "/group";
 
 	String USER_LOOKUP = USER + "/lookup";
 	String USER_AIRCRAFT_LOOKUP = USER_LOOKUP + "/aircraft";

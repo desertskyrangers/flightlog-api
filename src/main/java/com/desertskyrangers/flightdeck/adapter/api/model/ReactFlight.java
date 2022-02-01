@@ -76,10 +76,8 @@ public class ReactFlight {
 	//		return flight;
 	//	}
 
-	public static FlightUpsertRequest toUpsertRequest( User user, ReactFlight flight ) {
+	public static FlightUpsertRequest toUpsertRequest( ReactFlight flight ) {
 		FlightUpsertRequest request = new FlightUpsertRequest();
-
-		request.user( user );
 
 		request.id( UUID.fromString( flight.getId() ) );
 		request.pilot( UUID.fromString( flight.getPilot() ) );

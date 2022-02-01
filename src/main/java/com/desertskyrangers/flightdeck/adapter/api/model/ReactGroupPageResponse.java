@@ -7,10 +7,10 @@ import java.util.List;
 
 @Data
 @Accessors( chain = true )
-public class ReactProfileResponse {
+public class ReactGroupPageResponse {
 
-	public ReactUser account;
+	private List<ReactGroup> groups;
 
-	public List<String> messages;
+	private List<String> messages;
 
 }

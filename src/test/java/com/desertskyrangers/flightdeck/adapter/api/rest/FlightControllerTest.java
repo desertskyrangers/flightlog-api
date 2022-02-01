@@ -98,23 +98,6 @@ public class FlightControllerTest extends BaseControllerTest {
 		assertThat( resultFlight.get( "id" ) ).isEqualTo( flight.id().toString() );
 	}
 
-	private Flight createTestFlight() {
-		Aircraft aircraft = createTestAircraft();
-		statePersisting.upsert( aircraft );
-		Battery battery = createTestBattery();
-		statePersisting.upsert( battery );
-		Flight flight = new Flight();
-		flight.pilot( getMockUser() );
-		flight.observer( getUnlistedUser() );
-		flight.unlistedObserver( "Oscar Observer");
-		flight.aircraft( aircraft );
-		flight.batteries( Set.of( battery ) );
-		flight.timestamp( System.currentTimeMillis() );
-		flight.duration( 1000 );
-		flight.notes( "Just a test flight" );
-		return flight;
-	}
-
 	private ReactFlight createTestReactFlight() {
 		return ReactFlight.from( createTestFlight() );
 	}

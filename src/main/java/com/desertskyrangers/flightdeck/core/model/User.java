@@ -2,6 +2,7 @@ package com.desertskyrangers.flightdeck.core.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import java.util.Set;
@@ -32,11 +33,15 @@ public class User {
 
 	private boolean smsVerified;
 
+	@ToString.Exclude
 	@EqualsAndHashCode.Exclude
 	private Set<UserToken> tokens = new CopyOnWriteArraySet<>();
 
 	@EqualsAndHashCode.Exclude
 	private Set<String> roles = new CopyOnWriteArraySet<>();
+
+	@EqualsAndHashCode.Exclude
+	private Set<Group> groups = new CopyOnWriteArraySet<>();
 
 	public void roles( Set<String> roles ) {
 		this.roles = roles == null ? Set.of() : roles;

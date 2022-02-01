@@ -1,5 +1,6 @@
 package com.desertskyrangers.flightdeck.adapter.state.entity;
 
+import com.desertskyrangers.flightdeck.core.model.Group;
 import com.desertskyrangers.flightdeck.core.model.SmsCarrier;
 import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.util.Text;
@@ -9,9 +10,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Data
@@ -60,11 +59,86 @@ public class UserEntity {
 	@EqualsAndHashCode.Exclude
 	private Set<String> roles = new HashSet<>();
 
+	@ManyToMany( fetch = FetchType.EAGER )
+	@JoinTable( name = "orguser", joinColumns = @JoinColumn( name = "userid" ), inverseJoinColumns = @JoinColumn( name = "orgid" ) )
+	@EqualsAndHashCode.Exclude
+	private Set<GroupEntity> groups = new HashSet<>();
+
 	public static UserEntity from( User user ) {
-		return fromUserAccount( user, true );
+		UserEntity entity = fromUserShallow( user );
+
+		Map<UUID, UserEntity> users = new HashMap<>();
+		Map<UUID, TokenEntity> tokens = new HashMap<>();
+		Map<UUID, GroupEntity> groups = new HashMap<>();
+		entity.setTokens( user.tokens().stream().map( t -> TokenEntity.fromTokenFromUser( t, tokens, users ) ).collect( Collectors.toSet() ) );
+		entity.setGroups( user.groups().stream().map( g -> GroupEntity.fromGroupFromUser( g, groups, users ) ).collect( Collectors.toSet() ) );
+
+		return entity;
 	}
 
-	public static User toUserAccount( UserEntity entity ) {
+	static UserEntity fromUserFromToken( User user, Map<UUID, UserEntity> users, Map<UUID, TokenEntity> tokens ) {
+		UserEntity entity = users.get( user.id() );
+		if( entity != null ) return entity;
+
+		entity = fromUserShallow( user );
+		users.put( user.id(), entity );
+		entity.setTokens( user.tokens().stream().map( t -> TokenEntity.fromTokenFromUser( t, tokens, users ) ).collect( Collectors.toSet() ) );
+
+		return entity;
+	}
+
+	static UserEntity fromUserFromGroup( User user, Map<UUID, UserEntity> users, Map<UUID, GroupEntity> groups ) {
+		UserEntity entity = users.get( user.id() );
+		if( entity != null ) return entity;
+
+		entity = fromUserShallow( user );
+		users.put( user.id(), entity );
+		entity.setGroups( user.groups().stream().map( g -> GroupEntity.fromGroupFromUser( g, groups, users ) ).collect( Collectors.toSet() ) );
+
+		return entity;
+	}
+
+	public static User toUser( UserEntity entity ) {
+		User user = toUserShallow( entity );
+
+		final Map<UUID, User> users = new HashMap<>();
+		final Map<UUID, Group> groups = new HashMap<>();
+		users.put( entity.getId(), user );
+
+		user.groups( entity.getGroups().stream().map( e -> GroupEntity.toGroupFromUser( e, users, groups ) ).collect( Collectors.toSet() ) );
+
+		return user;
+	}
+
+	static User toUserFromGroup( UserEntity entity, Map<UUID, Group> groups, Map<UUID, User> users ) {
+		User user = users.get( entity.getId() );
+		if( user != null ) return user;
+
+		user = toUserShallow( entity );
+		users.put( entity.getId(), user );
+		user.groups( entity.getGroups().stream().map( e -> GroupEntity.toGroupFromUser( e, users, groups ) ).collect( Collectors.toSet() ) );
+		return user;
+	}
+
+	private static UserEntity fromUserShallow( User user ) {
+		UserEntity entity = new UserEntity();
+
+		entity.setId( user.id() );
+		entity.setUsername( user.username() );
+		entity.setFirstName( user.firstName() );
+		entity.setLastName( user.lastName() );
+		entity.setPreferredName( user.preferredName() );
+		entity.setEmail( user.email() );
+		entity.setEmailVerified( user.emailVerified() );
+		entity.setSmsNumber( user.smsNumber() );
+		if( user.smsCarrier() != null ) entity.setSmsCarrier( user.smsCarrier().name().toLowerCase() );
+		entity.setSmsVerified( user.smsVerified() );
+		entity.setRoles( user.roles() );
+
+		return entity;
+	}
+
+	private static User toUserShallow( UserEntity entity ) {
 		User user = new User();
 
 		user.id( entity.getId() );
@@ -81,29 +155,6 @@ public class UserEntity {
 		user.roles( entity.getRoles() );
 
 		return user;
-	}
-
-	static UserEntity fromWithoutCredential( User user ) {
-		return fromUserAccount( user, false );
-	}
-
-	private static UserEntity fromUserAccount( User user, boolean includeTokens ) {
-		UserEntity entity = new UserEntity();
-
-		entity.setId( user.id() );
-		entity.setUsername( user.username() );
-		entity.setFirstName( user.firstName() );
-		entity.setLastName( user.lastName() );
-		entity.setPreferredName( user.preferredName() );
-		entity.setEmail( user.email() );
-		entity.setEmailVerified( user.emailVerified() );
-		entity.setSmsNumber( user.smsNumber() );
-		if( user.smsCarrier() != null ) entity.setSmsCarrier( user.smsCarrier().name().toLowerCase() );
-		entity.setSmsVerified( user.smsVerified() );
-		if( includeTokens ) entity.setTokens( user.tokens().stream().map( TokenEntity::from ).peek( c -> c.setUserAccount( entity ) ).collect( Collectors.toSet() ) );
-		entity.setRoles( user.roles() );
-
-		return entity;
 	}
 
 }

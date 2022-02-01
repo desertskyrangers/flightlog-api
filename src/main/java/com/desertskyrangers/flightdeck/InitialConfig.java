@@ -35,7 +35,7 @@ public class InitialConfig {
 	@Bean
 	User unlistedUser() {
 		if( unlisted == null ) {
-			Optional<User> optional = stateRetrieving.findUserAccount( UNLISTED_USER_ID );
+			Optional<User> optional = stateRetrieving.findUser( UNLISTED_USER_ID );
 			if( optional.isPresent() ) {
 				unlisted = optional.get();
 			} else {
@@ -55,28 +55,19 @@ public class InitialConfig {
 		unlisted.id( UUID.fromString( "6e0c4460-357b-4a86-901d-e2ba16000c59" ) );
 		unlisted.lastName( "Unlisted" );
 		unlisted.preferredName( "Unlisted" );
-		Optional<User> optional = stateRetrieving.findUserAccount( unlisted.id() );
+		Optional<User> optional = stateRetrieving.findUser( unlisted.id() );
 		if( optional.isEmpty() ) statePersisting.upsert( unlisted );
 
 		if( app.isProduction() ) return;
 
-		String email = "tiat@noreply.com";
+		User tia = createTiaTest();
+		String credential = new BCryptPasswordEncoder().encode( "tester" );
+		UserToken usernameToken = new UserToken().user( tia ).principal( tia.username() ).credential( credential );
+		UserToken emailToken = new UserToken().user( tia ).principal( tia.email() ).credential( credential );
+		tia.tokens( Set.of( usernameToken, emailToken ) );
+		statePersisting.upsert( tia );
 
-		UserToken usernameToken = new UserToken();
-		usernameToken.principal( "tia" );
-		usernameToken.credential( new BCryptPasswordEncoder().encode( "tester" ) );
-		UserToken emailToken = new UserToken();
-		emailToken.principal( email );
-		emailToken.credential( new BCryptPasswordEncoder().encode( "tester" ) );
-		User user = new User();
-		user.tokens( Set.of( usernameToken, emailToken ) );
-		user.firstName( "Tia" );
-		user.lastName( "Test" );
-		user.preferredName( "Tia Test" );
-		user.email( email );
-		user.smsNumber( "800-555-8428" );
-		user.smsCarrier( SmsCarrier.SPRINT );
-		statePersisting.upsert( user );
+		User tom = createTomTest();
 
 		Aircraft aftyn = new Aircraft()
 			.name( "AFTYN" )
@@ -84,7 +75,7 @@ public class InitialConfig {
 			.make( "Hobby King" )
 			.model( "Bixler 2" )
 			.status( AircraftStatus.DESTROYED )
-			.owner( user.id() )
+			.owner( tia.id() )
 			.ownerType( OwnerType.USER );
 		Aircraft bianca = new Aircraft()
 			.name( "BIANCA" )
@@ -92,10 +83,10 @@ public class InitialConfig {
 			.make( "Hobby King" )
 			.model( "Bixler 2" )
 			.status( AircraftStatus.DESTROYED )
-			.owner( user.id() )
+			.owner( tia.id() )
 			.ownerType( OwnerType.USER );
-		Aircraft gemma = new Aircraft().name( "GEMMA" ).type( AircraftType.MULTIROTOR ).status( AircraftStatus.AIRWORTHY ).owner( user.id() ).ownerType( OwnerType.USER );
-		Aircraft helena = new Aircraft().name( "HOPE" ).type( AircraftType.HELICOPTER ).status( AircraftStatus.INOPERATIVE ).owner( user.id() ).ownerType( OwnerType.USER );
+		Aircraft gemma = new Aircraft().name( "GEMMA" ).type( AircraftType.MULTIROTOR ).status( AircraftStatus.AIRWORTHY ).owner( tia.id() ).ownerType( OwnerType.USER );
+		Aircraft helena = new Aircraft().name( "HOPE" ).type( AircraftType.HELICOPTER ).status( AircraftStatus.INOPERATIVE ).owner( tia.id() ).ownerType( OwnerType.USER );
 		statePersisting.upsert( aftyn );
 		statePersisting.upsert( bianca );
 		statePersisting.upsert( gemma );
@@ -111,7 +102,7 @@ public class InitialConfig {
 			.cells( 4 )
 			.cycles( 57 )
 			.capacity( 2650 )
-			.owner( user.id() )
+			.owner( tia.id() )
 			.ownerType( OwnerType.USER );
 		Battery c4s2650turnigy = new Battery()
 			.name( "C 4S 2650 Turnigy" )
@@ -123,7 +114,7 @@ public class InitialConfig {
 			.cells( 4 )
 			.cycles( 43 )
 			.capacity( 2650 )
-			.owner( user.id() )
+			.owner( tia.id() )
 			.ownerType( OwnerType.USER );
 		Battery d4s2650turnigy = new Battery()
 			.name( "D 4S 2650 Turnigy" )
@@ -135,29 +126,61 @@ public class InitialConfig {
 			.cells( 4 )
 			.cycles( 87 )
 			.capacity( 2650 )
-			.owner( user.id() )
+			.owner( tia.id() )
 			.ownerType( OwnerType.USER );
 		statePersisting.upsert( b4s2650turnigy );
 		statePersisting.upsert( c4s2650turnigy );
 		statePersisting.upsert( d4s2650turnigy );
 
 		Flight f1 = new Flight();
-		f1.pilot( user );
-		f1.observer( user );
+		f1.pilot( tia );
+		f1.observer( tia );
 		f1.aircraft( aftyn );
 		f1.batteries( Set.of( d4s2650turnigy ) );
 		f1.timestamp( 1642259543957L );
 		f1.duration( 240 );
 		Flight f2 = new Flight();
-		f2.pilot( user );
-		f2.observer( user );
+		f2.pilot( tia );
+		f2.observer( tia );
 		f2.aircraft( bianca );
 		f2.timestamp( 1642268904574L );
 		f2.duration( 54 );
 		statePersisting.upsert( f1 );
 		statePersisting.upsert( f2 );
 
-		stateRetrieving.findUserTokenByPrincipal( usernameToken.principal() ).ifPresent( t -> log.warn( "Testing data created" ) );
+		stateRetrieving.findUserTokenByPrincipal( usernameToken.principal() ).ifPresent( t -> log.warn( "Testing user created" ) );
+
+		Group testersUnlimited = new Group().name( "Testers Unlimited" ).type( GroupType.GROUP ).owner( tia );
+		statePersisting.upsert( testersUnlimited );
+
+		Group testersInfinite = new Group().name( "Testers Infinite" ).type( GroupType.GROUP ).owner( tom );
+		statePersisting.upsert( testersInfinite );
+	}
+
+	private User createTiaTest() {
+		User user = new User();
+		user.username( "tia" );
+		user.firstName( "Tia" );
+		user.lastName( "Test" );
+		user.preferredName( "Tia Test" );
+		user.email( "tiat@noreply.com" );
+		user.smsNumber( "800-555-8428" );
+		user.smsCarrier( SmsCarrier.SPRINT );
+		statePersisting.upsert( user );
+		return user;
+	}
+
+	private User createTomTest() {
+		User user = new User();
+		user.username( "tom" );
+		user.firstName( "Tom" );
+		user.lastName( "Test" );
+		user.preferredName( "Tommy Test" );
+		user.email( "tomt@noreply.com" );
+		user.smsNumber( "800-555-8668" );
+		user.smsCarrier( SmsCarrier.SPRINT );
+		statePersisting.upsert( user );
+		return user;
 	}
 
 }

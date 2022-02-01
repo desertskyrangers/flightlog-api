@@ -102,7 +102,7 @@ public class AuthServiceImpl implements AuthService {
 			if( isExpired ) messages.add( "Recovery code expired" );
 
 			if( messages.size() == 0 ) {
-				stateRetrieving.findUserAccount( storedVerification.userId() ).ifPresent( u -> userService.updatePassword( u, password ) );
+				stateRetrieving.findUser( storedVerification.userId() ).ifPresent( u -> userService.updatePassword( u, password ) );
 				statePersisting.remove( storedVerification );
 			}
 		} else {
@@ -147,24 +147,28 @@ public class AuthServiceImpl implements AuthService {
 		}
 		if( !messages.isEmpty() ) return messages;
 
-		// Create the tokens
-		String encodedPassword = passwordEncoder.encode( password );
-		tokens.add( new UserToken().principal( username ).credential( encodedPassword ) );
-		tokens.add( new UserToken().principal( email ).credential( encodedPassword ) );
-
 		// Create the account
-		User account = new User();
-		account.username( username );
-		account.email( email );
-		account.tokens( tokens );
-		statePersisting.upsert( account );
+		User user = new User();
+		user.username( username );
+		user.email( email );
+		statePersisting.upsert( user );
+
+		// Create the tokens
+		// NOTE The user must be persisted before tokens can be persisted
+		String encodedPassword = passwordEncoder.encode( password );
+		tokens.add( new UserToken().user( user ).principal( username ).credential( encodedPassword ) );
+		tokens.add( new UserToken().user( user ).principal( email ).credential( encodedPassword ) );
+
+		// Add the tokens to the account
+		user.tokens( tokens );
+		statePersisting.upsert( user );
 
 		// Generate the verification code
 		String code = Text.lpad( String.valueOf( new Random().nextInt( 1000000 ) ), 6, '0' );
 
 		// Store the verification record
 		Verification verification = new Verification().id( verifyId );
-		verification.userId( account.id() );
+		verification.userId( user.id() );
 		verification.code( code );
 		verification.type( Verification.EMAIL_VERIFY_TYPE );
 		statePersisting.upsert( verification );
@@ -172,7 +176,7 @@ public class AuthServiceImpl implements AuthService {
 		log.warn( "verification code: " + verification.code() );
 
 		// Send the message to verify the email address
-		sendEmailAddressVerificationMessage( account, username, verification );
+		sendEmailAddressVerificationMessage( user, username, verification );
 
 		return List.of();
 	}
@@ -183,7 +187,7 @@ public class AuthServiceImpl implements AuthService {
 
 		// Lookup the verification from the state store
 		stateRetrieving.findVerification( id ).ifPresent( v -> {
-			stateRetrieving.findUserAccount( v.userId() ).ifPresent( u -> {
+			stateRetrieving.findUser( v.userId() ).ifPresent( u -> {
 				UserToken credential = u.tokens().iterator().next();
 
 				log.warn( "verification code resent: " + v.code() );
@@ -214,7 +218,7 @@ public class AuthServiceImpl implements AuthService {
 			if( isExpired ) messages.add( "Verification code expired" );
 
 			if( messages.size() == 0 ) {
-				stateRetrieving.findUserAccount( storedVerification.userId() ).ifPresent( u -> {
+				stateRetrieving.findUser( storedVerification.userId() ).ifPresent( u -> {
 					switch( storedVerification.type() ) {
 						case Verification.EMAIL_VERIFY_TYPE: {
 							setEmailVerified( u, true );
