@@ -1,6 +1,7 @@
 package com.desertskyrangers.flightdeck.core.service;
 
 import com.desertskyrangers.flightdeck.core.model.Group;
+import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.port.GroupService;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
 import com.desertskyrangers.flightdeck.port.StateRetrieving;
@@ -25,6 +26,11 @@ public class GroupServiceImpl implements GroupService {
 	}
 
 	@Override
+	public Set<Group> findAllAvailable( User user ) {
+		return stateRetrieving.findAllAvailableGroups( user );
+	}
+
+	@Override
 	public Optional<Group> find( UUID id ) {
 		return stateRetrieving.findGroup( id );
 	}
@@ -41,7 +47,7 @@ public class GroupServiceImpl implements GroupService {
 
 	@Override
 	public Set<Group> findGroupsByUser( UUID id ) {
-		return stateRetrieving.findGroupsByUser( id );
+		return stateRetrieving.findGroupsByOwner( id );
 	}
 
 }

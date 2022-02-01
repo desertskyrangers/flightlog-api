@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Data
 @Accessors( fluent = true )
-public class Group {
+public class Group implements Comparable<Group> {
 
 	UUID id = UUID.randomUUID();
 
@@ -19,5 +19,10 @@ public class Group {
 	User owner;
 
 	Set<User> members = Set.of();
+
+	@Override
+	public int compareTo( Group that ) {
+		return this.name.compareTo( that.name );
+	}
 
 }

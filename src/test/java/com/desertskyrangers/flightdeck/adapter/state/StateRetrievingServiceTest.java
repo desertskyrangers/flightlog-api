@@ -6,7 +6,6 @@ import com.desertskyrangers.flightdeck.adapter.state.repo.GroupRepo;
 import com.desertskyrangers.flightdeck.adapter.state.repo.UserRepo;
 import com.desertskyrangers.flightdeck.core.model.Group;
 import com.desertskyrangers.flightdeck.core.model.GroupType;
-import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.port.StateRetrieving;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +62,7 @@ public class StateRetrievingServiceTest {
 		userRepo.save( owner );
 
 		// when
-		Set<Group> groups = retrieving.findGroupsByUser( owner.getId() );
+		Set<Group> groups = retrieving.findGroupsByOwner( owner.getId() );
 
 		// then
 		assertThat( groups ).isEmpty();
@@ -85,7 +84,7 @@ public class StateRetrievingServiceTest {
 		groupRepo.save( group );
 
 		// when
-		Set<Group> groups = retrieving.findGroupsByUser( owner.getId() );
+		Set<Group> groups = retrieving.findGroupsByOwner( owner.getId() );
 
 		// then
 		assertThat( groups ).containsAll( Set.of( GroupEntity.toGroup( group ) ) );

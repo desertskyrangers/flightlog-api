@@ -6,7 +6,10 @@ import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.StateRetrieving;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -96,13 +99,19 @@ public class StateRetrievingService implements StateRetrieving {
 	}
 
 	@Override
+	public Set<Group> findAllAvailableGroups( User user ) {
+		return groupRepo.findAll().stream().map( GroupEntity::toGroup ).collect( Collectors.toSet() );
+		//return groupRepo.findAllByMembersNotIn( Set.of( UserEntity.from( user ) ) ).stream().map( GroupEntity::toGroup ).collect( Collectors.toSet() );
+	}
+
+	@Override
 	public Optional<Group> findGroup( UUID id ) {
 		return groupRepo.findById( id ).map( GroupEntity::toGroup );
 	}
 
 	@Override
-	public Set<Group> findGroupsByUser( UUID id ) {
-		return groupRepo.findAllByOwner_Id( id ).stream().map( GroupEntity::toGroup ).collect( Collectors.toSet());
+	public Set<Group> findGroupsByOwner( UUID id ) {
+		return groupRepo.findAllByOwner_Id( id ).stream().map( GroupEntity::toGroup ).collect( Collectors.toSet() );
 	}
 
 	@Override

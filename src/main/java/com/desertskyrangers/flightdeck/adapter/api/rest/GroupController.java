@@ -3,6 +3,8 @@ package com.desertskyrangers.flightdeck.adapter.api.rest;
 import com.desertskyrangers.flightdeck.adapter.api.ApiPath;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactGroup;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactGroupResponse;
+import com.desertskyrangers.flightdeck.adapter.api.model.ReactOption;
+import com.desertskyrangers.flightdeck.core.model.Aircraft;
 import com.desertskyrangers.flightdeck.core.model.Group;
 import com.desertskyrangers.flightdeck.core.model.GroupType;
 import com.desertskyrangers.flightdeck.core.model.User;
@@ -25,6 +27,14 @@ public class GroupController extends BaseController {
 
 	public GroupController( GroupService groupService ) {
 		this.groupService = groupService;
+	}
+
+	@GetMapping( path = ApiPath.GROUPS_AVAILABLE )
+	ResponseEntity<List<ReactOption>> getAvailableGroups(Authentication authentication) {
+		User user = findUser( authentication );
+		List<Group> objects = new ArrayList<>( groupService.findAllAvailable( user ));
+		Collections.sort( objects );
+		return new ResponseEntity<>( objects.stream().map( c -> new ReactOption( c.id().toString(), c.name() ) ).toList(), HttpStatus.OK );
 	}
 
 	@GetMapping( path = ApiPath.GROUP + "/{id}" )

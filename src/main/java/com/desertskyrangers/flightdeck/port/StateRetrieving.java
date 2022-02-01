@@ -29,9 +29,11 @@ public interface StateRetrieving {
 
 	List<Flight> findFlightsByUser( UUID id );
 
+	Set<Group> findAllAvailableGroups( User user );
+
 	Optional<Group> findGroup( UUID id );
 
-	Set<Group> findGroupsByUser( UUID id );
+	Set<Group> findGroupsByOwner( UUID id );
 
 	Optional<UserToken> findUserToken( UUID id );
 
