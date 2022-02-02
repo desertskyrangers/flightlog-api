@@ -36,13 +36,14 @@ public class GroupServiceImpl implements GroupService {
 	}
 
 	@Override
-	public void upsert( Group group ) {
-		statePersisting.upsert( group );
+	public Group upsert( Group group ) {
+		return statePersisting.upsert( group );
 	}
 
 	@Override
-	public void remove( Group group ) {
+	public Group remove( Group group ) {
 		statePersisting.remove( group );
+		return group;
 	}
 
 	@Override

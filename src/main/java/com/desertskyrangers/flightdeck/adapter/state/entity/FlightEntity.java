@@ -3,6 +3,7 @@ package com.desertskyrangers.flightdeck.adapter.state.entity;
 import com.desertskyrangers.flightdeck.core.model.Flight;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -12,6 +13,7 @@ import java.util.stream.Collectors;
 @Data
 @Entity
 @Table( name = "flight" )
+@Accessors( chain = true )
 public class FlightEntity {
 
 	@Id

@@ -24,6 +24,8 @@ public class StateRetrievingService implements StateRetrieving {
 
 	private final GroupRepo groupRepo;
 
+	private final MemberRepo memberRepo;
+
 	private final UserRepo userRepo;
 
 	private final TokenRepo tokenRepo;
@@ -31,12 +33,13 @@ public class StateRetrievingService implements StateRetrieving {
 	private final VerificationRepo verificationRepo;
 
 	public StateRetrievingService(
-		AircraftRepo aircraftRepo, BatteryRepo batteryRepo, FlightRepo flightRepo, GroupRepo groupRepo, UserRepo userRepo, TokenRepo tokenRepo, VerificationRepo verificationRepo
+		AircraftRepo aircraftRepo, BatteryRepo batteryRepo, FlightRepo flightRepo, GroupRepo groupRepo, MemberRepo memberRepo, UserRepo userRepo, TokenRepo tokenRepo, VerificationRepo verificationRepo
 	) {
 		this.aircraftRepo = aircraftRepo;
 		this.batteryRepo = batteryRepo;
 		this.flightRepo = flightRepo;
 		this.groupRepo = groupRepo;
+		this.memberRepo = memberRepo;
 		this.userRepo = userRepo;
 		this.tokenRepo = tokenRepo;
 		this.verificationRepo = verificationRepo;
@@ -100,8 +103,13 @@ public class StateRetrievingService implements StateRetrieving {
 
 	@Override
 	public Set<Group> findAllAvailableGroups( User user ) {
+		Set<Group> groups = findAllGroups();
+		groups.removeAll( memberRepo.findAllByUser( UserEntity.from( user ) ).stream().map( MemberEntity::getGroup ).map( GroupEntity::toGroup ).collect( Collectors.toSet() ) );
+		return groups;
+	}
+
+	public Set<Group> findAllGroups() {
 		return groupRepo.findAll().stream().map( GroupEntity::toGroup ).collect( Collectors.toSet() );
-		//return groupRepo.findAllByMembersNotIn( Set.of( UserEntity.from( user ) ) ).stream().map( GroupEntity::toGroup ).collect( Collectors.toSet() );
 	}
 
 	@Override
@@ -111,7 +119,7 @@ public class StateRetrievingService implements StateRetrieving {
 
 	@Override
 	public Set<Group> findGroupsByOwner( UUID id ) {
-		return groupRepo.findAllByOwner_Id( id ).stream().map( GroupEntity::toGroup ).collect( Collectors.toSet() );
+		return memberRepo.findAllByUser_IdAndStatus( id, MemberStatus.OWNER.name().toLowerCase() ).stream().map( MemberEntity::getGroup ).map( GroupEntity::toGroup ).collect( Collectors.toSet() );
 	}
 
 	@Override

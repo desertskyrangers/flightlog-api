@@ -5,6 +5,7 @@ import com.desertskyrangers.flightdeck.core.model.OwnerType;
 import com.desertskyrangers.flightdeck.core.model.AircraftStatus;
 import com.desertskyrangers.flightdeck.core.model.AircraftType;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,6 +16,7 @@ import java.util.UUID;
 @Data
 @Entity
 @Table( name = "aircraft" )
+@Accessors( chain = true )
 public class AircraftEntity {
 
 	@Id

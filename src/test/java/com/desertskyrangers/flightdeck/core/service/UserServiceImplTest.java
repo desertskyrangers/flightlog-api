@@ -1,8 +1,7 @@
 package com.desertskyrangers.flightdeck.core.service;
 
-import com.desertskyrangers.flightdeck.core.model.Group;
-import com.desertskyrangers.flightdeck.core.model.GroupType;
-import com.desertskyrangers.flightdeck.core.model.User;
+import com.desertskyrangers.flightdeck.BaseTest;
+import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
 import com.desertskyrangers.flightdeck.port.UserService;
 import org.junit.jupiter.api.Test;
@@ -15,7 +14,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-public class UserServiceImplTest {
+public class UserServiceImplTest extends BaseTest {
 
 	@Autowired
 	private StatePersisting statePersisting;
@@ -26,16 +25,9 @@ public class UserServiceImplTest {
 	@Test
 	void testFindAllGroupPeers() {
 		// given
-		User owner = new User();
-		statePersisting.upsert( owner );
-
-		Group group = new Group();
-		group.id( UUID.randomUUID() );
-		group.type( GroupType.GROUP );
-		group.name( "Test Group" );
-		group.owner( owner );
-		group.members( Set.of( owner ) );
-		statePersisting.upsert( group );
+		User owner = statePersisting.upsert( createTestUser("john", "john@example.com") );
+		Group group = statePersisting.upsert(createTestGroup("Test Group", GroupType.GROUP) );
+		Member member = statePersisting.upsert(new Member().user(owner).group(group).status( MemberStatus.OWNER ) );
 
 		// when
 		Set<User> users = userService.findAllGroupPeers( owner );

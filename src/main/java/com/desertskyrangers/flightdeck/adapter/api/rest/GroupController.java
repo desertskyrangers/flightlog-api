@@ -4,11 +4,9 @@ import com.desertskyrangers.flightdeck.adapter.api.ApiPath;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactGroup;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactGroupResponse;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactOption;
-import com.desertskyrangers.flightdeck.core.model.Aircraft;
-import com.desertskyrangers.flightdeck.core.model.Group;
-import com.desertskyrangers.flightdeck.core.model.GroupType;
-import com.desertskyrangers.flightdeck.core.model.User;
+import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.GroupService;
+import com.desertskyrangers.flightdeck.port.MemberService;
 import com.desertskyrangers.flightdeck.util.Text;
 import com.desertskyrangers.flightdeck.util.Uuid;
 import lombok.extern.slf4j.Slf4j;
@@ -25,14 +23,17 @@ public class GroupController extends BaseController {
 
 	private final GroupService groupService;
 
-	public GroupController( GroupService groupService ) {
+	private final MemberService memberService;
+
+	public GroupController( GroupService groupService, MemberService memberService ) {
 		this.groupService = groupService;
+		this.memberService = memberService;
 	}
 
 	@GetMapping( path = ApiPath.GROUPS_AVAILABLE )
-	ResponseEntity<List<ReactOption>> getAvailableGroups(Authentication authentication) {
+	ResponseEntity<List<ReactOption>> getAvailableGroups( Authentication authentication ) {
 		User user = findUser( authentication );
-		List<Group> objects = new ArrayList<>( groupService.findAllAvailable( user ));
+		List<Group> objects = new ArrayList<>( groupService.findAllAvailable( user ) );
 		Collections.sort( objects );
 		return new ResponseEntity<>( objects.stream().map( c -> new ReactOption( c.id().toString(), c.name() ) ).toList(), HttpStatus.OK );
 	}
@@ -68,19 +69,18 @@ public class GroupController extends BaseController {
 		String id = request.getId();
 		String type = request.getType();
 		String name = request.getName();
-		String owner = request.getOwner();
 
 		List<String> messages = new ArrayList<>();
 		if( Text.isBlank( id ) ) messages.add( "ID required" );
 		if( Text.isNotBlank( id ) && Uuid.isNotValid( id ) ) messages.add( "Invalid group id" );
 		if( GroupType.isNotValid( type ) ) messages.add( "Type required" );
 		if( Text.isBlank( name ) ) messages.add( "Name required" );
-		if( Text.isNotBlank( owner ) && Uuid.isNotValid( owner ) ) messages.add( "Invalid owner id" );
 		if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactGroupResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
 
 		try {
 			User user = findUser( authentication );
-			groupService.upsert( ReactGroup.toGroup( request ).owner( user ) );
+			Group group = groupService.upsert( ReactGroup.toGroup( request ) );
+			memberService.upsert( new Member().user( user ).group( group ).status( MemberStatus.OWNER ) );
 			return new ResponseEntity<>( new ReactGroupResponse().setGroup( request ), HttpStatus.OK );
 		} catch( Exception exception ) {
 			log.error( "Error updating group", exception );

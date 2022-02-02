@@ -17,6 +17,8 @@ public class StatePersistingService implements StatePersisting {
 
 	private final GroupRepo groupRepo;
 
+	private final MemberRepo memberRepo;
+
 	private final TokenRepo tokenRepo;
 
 	private final UserRepo userRepo;
@@ -24,12 +26,13 @@ public class StatePersistingService implements StatePersisting {
 	private final VerificationRepo verificationRepo;
 
 	public StatePersistingService(
-		AircraftRepo aircraftRepo, BatteryRepo batteryRepo, FlightRepo flightRepo, GroupRepo groupRepo, TokenRepo tokenRepo, UserRepo userRepo, VerificationRepo verificationRepo
+		AircraftRepo aircraftRepo, BatteryRepo batteryRepo, FlightRepo flightRepo, GroupRepo groupRepo, MemberRepo memberRepo, TokenRepo tokenRepo, UserRepo userRepo, VerificationRepo verificationRepo
 	) {
 		this.aircraftRepo = aircraftRepo;
 		this.batteryRepo = batteryRepo;
 		this.flightRepo = flightRepo;
 		this.groupRepo = groupRepo;
+		this.memberRepo = memberRepo;
 		this.tokenRepo = tokenRepo;
 		this.userRepo = userRepo;
 		this.verificationRepo = verificationRepo;
@@ -71,8 +74,8 @@ public class StatePersistingService implements StatePersisting {
 	}
 
 	@Override
-	public void upsert( Group group ) {
-		groupRepo.save( GroupEntity.from( group ) );
+	public Group upsert( Group group ) {
+		return GroupEntity.toGroup( groupRepo.save( GroupEntity.from( group ) ) );
 	}
 
 	@Override
@@ -86,13 +89,28 @@ public class StatePersistingService implements StatePersisting {
 	}
 
 	@Override
+	public Member upsert( Member member ) {
+		return MemberEntity.toMember( memberRepo.save( MemberEntity.from( member ) ) );
+	}
+
+	@Override
+	public void remove( Member member ) {
+		memberRepo.deleteById( member.id() );
+	}
+
+	@Override
+	public void removeAllMembers() {
+		memberRepo.deleteAll();
+	}
+
+	@Override
 	public void upsert( UserToken token ) {
 		tokenRepo.save( TokenEntity.from( token ) );
 	}
 
 	@Override
-	public void upsert( User account ) {
-		userRepo.save( UserEntity.from( account ) );
+	public User upsert( User account ) {
+		return UserEntity.toUser( userRepo.save( UserEntity.from( account ) ) );
 	}
 
 	@Override

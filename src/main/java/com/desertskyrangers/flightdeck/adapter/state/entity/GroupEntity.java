@@ -5,17 +5,16 @@ import com.desertskyrangers.flightdeck.core.model.GroupType;
 import com.desertskyrangers.flightdeck.core.model.User;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Data
 @Entity
 @Table( name = "org" )
+@Accessors( chain = true )
 public class GroupEntity {
 
 	@Id
@@ -28,23 +27,21 @@ public class GroupEntity {
 	@Column( nullable = false )
 	String name;
 
-	// This is a user account id
-	@ManyToOne( optional = false, fetch = FetchType.EAGER )
-	@JoinColumn( name = "ownerid", nullable = false, updatable = false, columnDefinition = "BINARY(16)" )
-	private UserEntity owner;
-
 	@ManyToMany( fetch = FetchType.EAGER )
-	@JoinTable( name = "orguser", joinColumns = @JoinColumn( name = "orgid" ), inverseJoinColumns = @JoinColumn( name = "userid" ) )
+	@JoinTable( name = "member", joinColumns = @JoinColumn( name = "orgid" ), inverseJoinColumns = @JoinColumn( name = "userid" ) )
 	@EqualsAndHashCode.Exclude
-	private Set<UserEntity> members;
+	private Set<UserEntity> users = new HashSet<>();
+
+	@OneToMany( mappedBy = "group", fetch = FetchType.EAGER)
+	@EqualsAndHashCode.Exclude
+	private Set<MemberEntity> memberships = new HashSet<>();
 
 	public static GroupEntity from( Group group ) {
 		GroupEntity entity = fromGroupShallow( group );
 
 		final Map<UUID, GroupEntity> groups = new HashMap<>();
 		final Map<UUID, UserEntity> users = new HashMap<>();
-		if( group.owner() != null ) entity.setOwner( UserEntity.fromUserFromGroup( group.owner(), users, groups ) );
-		entity.setMembers( group.members().stream().map( u -> UserEntity.fromUserFromGroup( u, users, groups ) ).collect( Collectors.toSet() ) );
+		entity.setUsers( group.users().stream().map( u -> UserEntity.fromUserFromGroup( u, users, groups ) ).collect( Collectors.toSet() ) );
 
 		return entity;
 	}
@@ -55,8 +52,7 @@ public class GroupEntity {
 
 		entity = fromGroupShallow(group);
 		groups.put(group.id(), entity);
-		if( group.owner() != null ) entity.setOwner( UserEntity.fromUserFromGroup( group.owner(), users, groups ) );
-		entity.setMembers( group.members().stream().map( u -> UserEntity.fromUserFromGroup( u, users, groups ) ).collect( Collectors.toSet() ) );
+		entity.setUsers( group.users().stream().map( u -> UserEntity.fromUserFromGroup( u, users, groups ) ).collect( Collectors.toSet() ) );
 
 		return entity;
 	}
@@ -78,8 +74,7 @@ public class GroupEntity {
 		final Map<UUID, User> users = new HashMap<>();
 		groups.put( entity.getId(), group );
 
-		group.owner( UserEntity.toUserFromGroup( entity.getOwner(), groups, users ) );
-		group.members( entity.getMembers().stream().map( e -> UserEntity.toUserFromGroup( e, groups, users ) ).collect( Collectors.toSet() ) );
+		group.users( entity.getUsers().stream().map( e -> UserEntity.toUserFromGroup( e, groups, users ) ).collect( Collectors.toSet() ) );
 
 		return group;
 	}
@@ -90,8 +85,7 @@ public class GroupEntity {
 
 		group = toGroupShallow( entity );
 		groups.put( entity.getId(), group );
-		group.owner( UserEntity.toUserFromGroup( entity.getOwner(), groups, users ) );
-		group.members( entity.getMembers().stream().map( e -> UserEntity.toUserFromGroup( e, groups, users ) ).collect( Collectors.toSet() ) );
+		group.users( entity.getUsers().stream().map( e -> UserEntity.toUserFromGroup( e, groups, users ) ).collect( Collectors.toSet() ) );
 		return group;
 	}
 

@@ -2,6 +2,7 @@ package com.desertskyrangers.flightdeck.adapter.state.entity;
 
 import com.desertskyrangers.flightdeck.core.model.UserToken;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.util.HashMap;
@@ -11,6 +12,7 @@ import java.util.UUID;
 @Data
 @Entity
 @Table( name = "token" )
+@Accessors( chain = true )
 public class TokenEntity {
 
 	@Id

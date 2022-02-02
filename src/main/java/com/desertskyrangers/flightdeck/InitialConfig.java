@@ -148,13 +148,15 @@ public class InitialConfig {
 		statePersisting.upsert( f1 );
 		statePersisting.upsert( f2 );
 
-		stateRetrieving.findUserTokenByPrincipal( usernameToken.principal() ).ifPresent( t -> log.warn( "Testing user created" ) );
+		Group testersInfinite = new Group().name( "Testers Infinite" ).type( GroupType.GROUP );
+		statePersisting.upsert( testersInfinite );
 
-		Group testersUnlimited = new Group().name( "Testers Unlimited" ).type( GroupType.GROUP ).owner( tia );
+		Group testersUnlimited = new Group().name( "Testers Unlimited" ).type( GroupType.GROUP );
 		statePersisting.upsert( testersUnlimited );
 
-		Group testersInfinite = new Group().name( "Testers Infinite" ).type( GroupType.GROUP ).owner( tom );
-		statePersisting.upsert( testersInfinite );
+		statePersisting.upsert( new Member().user( tia ).group( testersInfinite ).status( MemberStatus.OWNER ) );
+
+		log.warn( "Testing data created" );
 	}
 
 	private User createTiaTest() {

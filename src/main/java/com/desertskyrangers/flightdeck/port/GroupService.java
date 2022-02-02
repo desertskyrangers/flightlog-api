@@ -13,9 +13,9 @@ public interface GroupService {
 
 	Optional<Group> find( UUID id );
 
-	void upsert( Group group );
+	Group upsert( Group group );
 
-	void remove( Group group );
+	Group remove( Group group );
 
 	Set<Group> findGroupsByUser( UUID id );
 

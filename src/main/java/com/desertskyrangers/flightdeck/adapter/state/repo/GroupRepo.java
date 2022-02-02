@@ -10,10 +10,15 @@ import java.util.UUID;
 
 public interface GroupRepo extends JpaRepository<GroupEntity, UUID> {
 
-	List<GroupEntity> findAllByOwner_Id( UUID id );
+	//List<GroupEntity> findAllByOwner_Id( UUID id );
 
-	Integer countByOwner_Id( UUID id );
+	//Integer countByOwner_Id( UUID id );
 
-	List<GroupEntity> findAllByMembersNotIn( Set<UserEntity> members );
+	//List<GroupEntity> findAllByMembersNotIn( Set<UserEntity> members );
+
+	// Works as expected
+	//List<GroupEntity> findAllByOwnerIsNot( UserEntity owner );
+
+	//List<GroupEntity> findAllByMembersNotContaining( Set<UserEntity> members );
 
 }

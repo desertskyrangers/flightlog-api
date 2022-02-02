@@ -8,12 +8,10 @@ import com.desertskyrangers.flightdeck.core.model.GroupType;
 import com.desertskyrangers.flightdeck.core.model.MemberStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
-public class GroupRepoTest extends BaseTest {
+public class UserRepoTest extends BaseTest {
 
 	@Autowired
 	private UserRepo userRepo;
@@ -27,39 +25,39 @@ public class GroupRepoTest extends BaseTest {
 	@Test
 	void testCreateAndRetrieve() {
 		// given
-		GroupEntity group = groupRepo.save( createTestGroupEntity( "Test Group", GroupType.CLUB ) );
+		UserEntity user = userRepo.save( createTestUserEntity( "Test User", "testuser@example.com" ) );
 
 		// when
-		GroupEntity actual = groupRepo.findById( group.getId() ).orElse( null );
+		UserEntity actual = userRepo.findById( user.getId() ).orElse( null );
 
 		// then
-		assertThat( actual ).isEqualTo( group );
+		assertThat( actual ).isEqualTo( user );
 	}
 
 	@Test
-	void testGroupUsers() {
+	void testUserGroups() {
 		// given
 		UserEntity user = userRepo.save( createTestUserEntity( "Test User", "testuser@example.com" ) );
 		GroupEntity group = groupRepo.save( createTestGroupEntity( "Test Group", GroupType.CLUB ) );
 		memberRepo.save( createTestMemberEntity( user, group, MemberStatus.ACCEPTED ) );
 
 		// when
-		GroupEntity actual = groupRepo.findById( group.getId() ).orElse( null );
+		UserEntity actual = userRepo.findById( user.getId() ).orElse( null );
 
 		// then
 		assertThat( actual ).isNotNull();
-		assertThat( actual.getUsers() ).containsExactlyInAnyOrder( user );
+		assertThat( actual.getGroups() ).containsExactlyInAnyOrder( group );
 	}
 
 	@Test
-	void testGroupMemberships() {
+	void testUserMembership() {
 		// given
 		UserEntity user = userRepo.save( createTestUserEntity( "Test User", "testuser@example.com" ) );
 		GroupEntity group = groupRepo.save( createTestGroupEntity( "Test Group", GroupType.CLUB ) );
 		MemberEntity member = memberRepo.save( createTestMemberEntity( user, group, MemberStatus.ACCEPTED ) );
 
 		// when
-		GroupEntity actual = groupRepo.findById( group.getId() ).orElse( null );
+		UserEntity actual = userRepo.findById( user.getId() ).orElse( null );
 
 		// then
 		assertThat( actual ).isNotNull();

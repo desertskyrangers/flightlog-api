@@ -6,6 +6,7 @@ import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.util.Text;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -60,9 +61,13 @@ public class UserEntity {
 	private Set<String> roles = new HashSet<>();
 
 	@ManyToMany( fetch = FetchType.EAGER )
-	@JoinTable( name = "orguser", joinColumns = @JoinColumn( name = "userid" ), inverseJoinColumns = @JoinColumn( name = "orgid" ) )
+	@JoinTable( name = "member", joinColumns = @JoinColumn( name = "userid" ), inverseJoinColumns = @JoinColumn( name = "orgid" ) )
 	@EqualsAndHashCode.Exclude
 	private Set<GroupEntity> groups = new HashSet<>();
+
+	@OneToMany( mappedBy = "user", fetch = FetchType.EAGER )
+	@EqualsAndHashCode.Exclude
+	private Set<MemberEntity> memberships = new HashSet<>();
 
 	public static UserEntity from( User user ) {
 		UserEntity entity = fromUserShallow( user );

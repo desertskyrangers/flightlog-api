@@ -99,7 +99,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public Set<User> findAllGroupPeers( User user ) {
-		return stateRetrieving.findUser( user.id() ).stream().flatMap( u -> u.groups().stream() ).flatMap( g -> g.members().stream() ).collect( Collectors.toSet() );
+		return stateRetrieving.findUser( user.id() ).stream().flatMap( u -> u.groups().stream() ).flatMap( g -> g.users().stream() ).collect( Collectors.toSet() );
 	}
 
 }

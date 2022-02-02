@@ -40,6 +40,7 @@ public class User {
 	@EqualsAndHashCode.Exclude
 	private Set<String> roles = new CopyOnWriteArraySet<>();
 
+	@ToString.Exclude
 	@EqualsAndHashCode.Exclude
 	private Set<Group> groups = new CopyOnWriteArraySet<>();
 

@@ -19,15 +19,12 @@ public class ReactGroup {
 
 	private String name;
 
-	private String owner;
-
 	public static ReactGroup from( Group flight ) {
 		ReactGroup reactFlight = new ReactGroup();
 
 		reactFlight.setId( flight.id().toString() );
 		reactFlight.setType( flight.type().name().toLowerCase() );
 		reactFlight.setName( flight.name() );
-		reactFlight.setOwner( flight.owner().id().toString() );
 
 		return reactFlight;
 	}
@@ -38,7 +35,6 @@ public class ReactGroup {
 		group.id( UUID.fromString( reactGroup.getId() ) );
 		group.type( GroupType.valueOf( reactGroup.getType().toUpperCase() ) );
 		group.name( reactGroup.getName() );
-		// Owner unable to be set here
 
 		return group;
 	}

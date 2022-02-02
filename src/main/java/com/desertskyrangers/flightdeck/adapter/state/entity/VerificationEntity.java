@@ -2,6 +2,7 @@ package com.desertskyrangers.flightdeck.adapter.state.entity;
 
 import com.desertskyrangers.flightdeck.core.model.Verification;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,6 +13,7 @@ import java.util.UUID;
 @Data
 @Entity
 @Table( name = "verification" )
+@Accessors( chain = true )
 public class VerificationEntity {
 
 	@Id

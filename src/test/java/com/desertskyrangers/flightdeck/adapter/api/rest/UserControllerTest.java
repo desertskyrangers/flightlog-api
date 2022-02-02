@@ -58,7 +58,7 @@ public class UserControllerTest extends BaseControllerTest {
 	private HttpHeaders headers;
 
 	@BeforeEach
-	void setup() {
+	protected void setup() {
 		super.setup();
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
