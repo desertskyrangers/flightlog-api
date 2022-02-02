@@ -1,6 +1,8 @@
 package com.desertskyrangers.flightdeck.core.service;
 
+import com.desertskyrangers.flightdeck.core.model.Group;
 import com.desertskyrangers.flightdeck.core.model.Member;
+import com.desertskyrangers.flightdeck.core.model.MemberStatus;
 import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.port.MembershipService;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
@@ -43,6 +45,14 @@ public class MembershipServiceImpl implements MembershipService {
 	@Override
 	public Set<Member> findMembershipsByUser( User user ) {
 		return stateRetrieving.findMemberships( user );
+	}
+
+	public void requestMembership( User user, Group group, MemberStatus status ) {
+		upsert( new Member().user( user ).group( group ).status( status ) );
+	}
+
+	public void cancelMembership( Member member ) {
+		remove( member );
 	}
 
 }

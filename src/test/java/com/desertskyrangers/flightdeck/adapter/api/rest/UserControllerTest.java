@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -31,8 +32,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WithMockUser
@@ -267,6 +267,95 @@ public class UserControllerTest extends BaseControllerTest {
 		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_PILOT_LOOKUP ) ).andExpect( status().isOk() ).andReturn();
 		List<Object> list = Json.asList( result.getResponse().getContentAsString() );
 		assertThat( list.size() ).isEqualTo( 2 );
+	}
+
+	@Test
+	void testPutMembership() throws Exception {
+		// given
+		User user = getMockUser();
+		Group group = statePersisting.upsert( new Group().name( "Group A" ).type( GroupType.CLUB ) );
+		Map<String, String> request = Map.of( "userid", user.id().toString(), "groupid", group.id().toString(), "status", "requested" );
+
+		// when
+		MvcResult result = this.mockMvc.perform( put( ApiPath.USER_MEMBERSHIP ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
+
+		// then
+		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
+		List<?> memberships = (List<?>)map.get( "memberships" );
+		List<?> messages = (List<?>)map.get( "messages" );
+
+		assertThat( memberships.size() ).isEqualTo( 1 );
+		assertThat( messages ).isNull();
+	}
+
+	@Test
+	void testPutMembershipWithBadRequest() throws Exception {
+		// given
+		User user = getMockUser();
+		Group group = statePersisting.upsert( new Group().name( "Group A" ).type( GroupType.CLUB ) );
+		Map<String, String> request = Map.of( "userid", user.id().toString(), "groupid", "invalid", "status", "requested" );
+
+		// when
+		MvcResult result = this.mockMvc
+			.perform( put( ApiPath.USER_MEMBERSHIP ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) )
+			.andExpect( status().isBadRequest() )
+			.andReturn();
+
+		// then
+		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
+		List<?> memberships = (List<?>)map.get( "memberships" );
+		List<?> messages = (List<?>)map.get( "messages" );
+
+		assertThat( memberships ).isNull();
+		assertThat( messages.size() ).isEqualTo( 1 );
+	}
+
+	@Test
+	void testDeleteMembership() throws Exception {
+		// given
+		User user = getMockUser();
+		Group group = statePersisting.upsert( new Group().name( "Group A" ).type( GroupType.CLUB ) );
+		Member member = statePersisting.upsert( new Member().user( user ).group( group ).status( MemberStatus.ACCEPTED ) );
+
+		Map<String, String> request = Map.of( "membershipid", member.id().toString() );
+
+		// when
+		MvcResult result = this.mockMvc
+			.perform( delete( ApiPath.USER_MEMBERSHIP ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) )
+			.andExpect( status().isOk() )
+			.andReturn();
+
+		// then
+		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
+		List<?> memberships = (List<?>)map.get( "memberships" );
+		List<?> messages = (List<?>)map.get( "messages" );
+
+		assertThat( memberships.size() ).isEqualTo( 0 );
+		assertThat( messages ).isNull();
+	}
+
+	@Test
+	void testDeleteMembershipWithBadRequest() throws Exception {
+		// given
+		User user = getMockUser();
+		Group group = statePersisting.upsert( new Group().name( "Group A" ).type( GroupType.CLUB ) );
+		statePersisting.upsert( new Member().user( user ).group( group ).status( MemberStatus.ACCEPTED ) );
+
+		Map<String, String> request = Map.of( "membershipid", "invalid" );
+
+		// when
+		MvcResult result = this.mockMvc
+			.perform( delete( ApiPath.USER_MEMBERSHIP ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) )
+			.andExpect( status().isBadRequest() )
+			.andReturn();
+
+		// then
+		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
+		List<?> memberships = (List<?>)map.get( "memberships" );
+		List<?> messages = (List<?>)map.get( "messages" );
+
+		assertThat( memberships ).isNull();
+		assertThat( messages.size() ).isEqualTo( 1 );
 	}
 
 }

@@ -16,7 +16,7 @@ public class MonitorController {
 	@Value("${spring.application.version:unknown}") String version;
 
 	@GetMapping( ApiPath.MONITOR_STATUS )
-	public Map<String, String> whenApiMonitorStatus_thenSuccessResponse() {
+	public Map<String, String> monitorStatus() {
 		Map<String, String> response = new HashMap<>();
 		response.put( "running", "true" );
 		response.put( "version", version );

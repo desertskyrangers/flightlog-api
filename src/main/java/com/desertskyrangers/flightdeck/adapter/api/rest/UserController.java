@@ -2,10 +2,9 @@ package com.desertskyrangers.flightdeck.adapter.api.rest;
 
 import com.desertskyrangers.flightdeck.adapter.api.ApiPath;
 import com.desertskyrangers.flightdeck.adapter.api.model.*;
-import com.desertskyrangers.flightdeck.core.model.Aircraft;
-import com.desertskyrangers.flightdeck.core.model.Battery;
-import com.desertskyrangers.flightdeck.core.model.User;
+import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.*;
+import com.desertskyrangers.flightdeck.util.Uuid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -238,13 +237,33 @@ public class UserController extends BaseController {
 	}
 
 	@PutMapping( path = ApiPath.USER_MEMBERSHIP )
-	ResponseEntity<ReactMembershipPageResponse> requestGroupMembership( Authentication authentication, @RequestBody Map<String,Object> request ) {
+	ResponseEntity<ReactMembershipPageResponse> requestGroupMembership( Authentication authentication, @RequestBody Map<String, String> request ) {
+		String userId = request.get( "userid" );
+		String groupId = request.get( "groupid" );
+		String statusKey = request.get( "status" );
+
 		List<String> messages = new ArrayList<>();
+		if( Uuid.isNotValid( userId ) ) messages.add( "Invalid user ID" );
+		if( Uuid.isNotValid( groupId ) ) messages.add( "Invalid group ID" );
+		if( MemberStatus.isNotValid( statusKey ) ) messages.add( "Invalid membership status" );
+		if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactMembershipPageResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
 
 		try {
-			User user = findUser( authentication );
+			User requester = findUser( authentication );
+			User user = userService.find( UUID.fromString( userId ) ).orElse( null );
+			Group group = groupService.find( UUID.fromString( groupId ) ).orElse( null );
+			MemberStatus status = MemberStatus.valueOf( statusKey.toUpperCase() );
+			if( user == null ) {
+				messages.add( "User not found" );
+				log.warn( "User not found id=" + userId );
+			}
+			if( group == null ) {
+				messages.add( "Group not found" );
+				log.warn( "Group not found id=" + groupId );
+			}
+			if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactMembershipPageResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
 
-			// NEXT Add the membership
+			memberService.requestMembership( user, group, status );
 
 			List<ReactMembership> membershipPage = memberService.findMembershipsByUser( user ).stream().map( ReactMembership::from ).toList();
 			return new ResponseEntity<>( new ReactMembershipPageResponse().setMemberships( membershipPage ), HttpStatus.OK );
@@ -256,5 +275,37 @@ public class UserController extends BaseController {
 		return new ResponseEntity<>( new ReactMembershipPageResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
 	}
 
-	// TODO cancel group membership
+	@DeleteMapping( path = ApiPath.USER_MEMBERSHIP )
+	ResponseEntity<ReactMembershipPageResponse> cancelGroupMembership( Authentication authentication, @RequestBody Map<String, String> request ) {
+		String userId = request.get( "membershipid" );
+
+		List<String> messages = new ArrayList<>();
+		if( Uuid.isNotValid( userId ) ) messages.add( "Invalid membership ID" );
+		if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactMembershipPageResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
+
+		try {
+			User requester = findUser( authentication );
+			Member member = memberService.find( UUID.fromString( userId ) ).orElse( null );
+			if( member == null ) {
+				messages.add( "Membership not found" );
+				log.warn( "Membership not found id=" + userId );
+			}
+			if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactMembershipPageResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
+
+			User user = member.user();
+			memberService.cancelMembership( member );
+
+			return new ResponseEntity<>( new ReactMembershipPageResponse().setMemberships( getMemberships( user ) ), HttpStatus.OK );
+		} catch( Exception exception ) {
+			log.error( "Error creating new battery", exception );
+			messages.add( exception.getMessage() );
+		}
+
+		return new ResponseEntity<>( new ReactMembershipPageResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
+	}
+
+	private List<ReactMembership> getMemberships( User user ) {
+		return memberService.findMembershipsByUser( user ).stream().map( ReactMembership::from ).toList();
+	}
+
 }
