@@ -32,12 +32,7 @@ public class UserController extends BaseController {
 	private final MembershipService memberService;
 
 	public UserController(
-		AircraftService aircraftService,
-		BatteryService batteryService,
-		FlightService flightService,
-		GroupService groupService,
-		MembershipService memberService,
-		UserService userService
+		AircraftService aircraftService, BatteryService batteryService, FlightService flightService, GroupService groupService, MembershipService memberService, UserService userService
 	) {
 		this.aircraftService = aircraftService;
 		this.batteryService = batteryService;
@@ -242,4 +237,24 @@ public class UserController extends BaseController {
 		return new ResponseEntity<>( objects.stream().map( c -> new ReactOption( c.id().toString(), c.preferredName() ) ).toList(), HttpStatus.OK );
 	}
 
+	@PutMapping( path = ApiPath.USER_MEMBERSHIP )
+	ResponseEntity<ReactMembershipPageResponse> requestGroupMembership( Authentication authentication, @RequestBody Map<String,Object> request ) {
+		List<String> messages = new ArrayList<>();
+
+		try {
+			User user = findUser( authentication );
+
+			// NEXT Add the membership
+
+			List<ReactMembership> membershipPage = memberService.findMembershipsByUser( user ).stream().map( ReactMembership::from ).toList();
+			return new ResponseEntity<>( new ReactMembershipPageResponse().setMemberships( membershipPage ), HttpStatus.OK );
+		} catch( Exception exception ) {
+			log.error( "Error creating new battery", exception );
+			messages.add( exception.getMessage() );
+		}
+
+		return new ResponseEntity<>( new ReactMembershipPageResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
+	}
+
+	// TODO cancel group membership
 }

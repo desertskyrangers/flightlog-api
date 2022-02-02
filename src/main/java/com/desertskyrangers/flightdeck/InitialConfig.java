@@ -154,7 +154,11 @@ public class InitialConfig {
 		Group testersUnlimited = new Group().name( "Testers Unlimited" ).type( GroupType.GROUP );
 		statePersisting.upsert( testersUnlimited );
 
+		Group testersAroundTheClock = new Group().name( "Testers Around the Clock" ).type( GroupType.GROUP );
+		statePersisting.upsert( testersAroundTheClock );
+
 		statePersisting.upsert( new Member().user( tia ).group( testersInfinite ).status( MemberStatus.OWNER ) );
+		statePersisting.upsert( new Member().user( tia ).group( testersAroundTheClock ).status( MemberStatus.ACCEPTED ) );
 
 		log.warn( "Testing data created" );
 	}
