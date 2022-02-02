@@ -26,7 +26,7 @@ public interface StatePersisting {
 
 	Member upsert( Member member );
 
-	void remove( Member member );
+	Member remove( Member member );
 
 	void removeAllMembers();
 

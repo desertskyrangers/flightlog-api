@@ -123,6 +123,15 @@ public class StateRetrievingService implements StateRetrieving {
 	}
 
 	@Override
+	public Optional<Member> findMembership( UUID id ) {
+		return memberRepo.findById( id ).map( MemberEntity::toMember );
+	}
+
+	public Set<Member> findMemberships( User user ) {
+		return memberRepo.findAllByUser( UserEntity.from( user ) ).stream().map( MemberEntity::toMember ).collect( Collectors.toSet());
+	}
+
+	@Override
 	public Optional<UserToken> findUserToken( UUID id ) {
 		return tokenRepo.findById( id ).map( TokenEntity::toUserToken );
 	}

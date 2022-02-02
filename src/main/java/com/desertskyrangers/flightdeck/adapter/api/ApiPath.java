@@ -46,6 +46,7 @@ public interface ApiPath {
 	String USER_BATTERY = USER + "/battery";
 	String USER_FLIGHT = USER + "/flight";
 	String USER_GROUP = USER + "/group";
+	String USER_MEMBERSHIP = USER + "/membership";
 
 	String USER_LOOKUP = USER + "/lookup";
 	String USER_AIRCRAFT_LOOKUP = USER_LOOKUP + "/aircraft";

@@ -6,7 +6,7 @@ import com.desertskyrangers.flightdeck.adapter.api.model.ReactGroupResponse;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactOption;
 import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.GroupService;
-import com.desertskyrangers.flightdeck.port.MemberService;
+import com.desertskyrangers.flightdeck.port.MembershipService;
 import com.desertskyrangers.flightdeck.util.Text;
 import com.desertskyrangers.flightdeck.util.Uuid;
 import lombok.extern.slf4j.Slf4j;
@@ -23,11 +23,11 @@ public class GroupController extends BaseController {
 
 	private final GroupService groupService;
 
-	private final MemberService memberService;
+	private final MembershipService membershipService;
 
-	public GroupController( GroupService groupService, MemberService memberService ) {
+	public GroupController( GroupService groupService, MembershipService membershipService ) {
 		this.groupService = groupService;
-		this.memberService = memberService;
+		this.membershipService = membershipService;
 	}
 
 	@GetMapping( path = ApiPath.GROUPS_AVAILABLE )
@@ -80,7 +80,7 @@ public class GroupController extends BaseController {
 		try {
 			User user = findUser( authentication );
 			Group group = groupService.upsert( ReactGroup.toGroup( request ) );
-			memberService.upsert( new Member().user( user ).group( group ).status( MemberStatus.OWNER ) );
+			membershipService.upsert( new Member().user( user ).group( group ).status( MemberStatus.OWNER ) );
 			return new ResponseEntity<>( new ReactGroupResponse().setGroup( request ), HttpStatus.OK );
 		} catch( Exception exception ) {
 			log.error( "Error updating group", exception );

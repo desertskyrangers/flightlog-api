@@ -1,5 +1,6 @@
 package com.desertskyrangers.flightdeck.port;
 
+import com.desertskyrangers.flightdeck.core.model.Member;
 import com.desertskyrangers.flightdeck.core.model.User;
 
 import java.util.List;
@@ -8,8 +9,6 @@ import java.util.Set;
 import java.util.UUID;
 
 public interface UserService {
-
-	// TODO Should these methods use the Result pattern?
 
 	List<User> find();
 

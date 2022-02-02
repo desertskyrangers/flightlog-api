@@ -5,11 +5,7 @@ import com.desertskyrangers.flightdeck.adapter.api.model.*;
 import com.desertskyrangers.flightdeck.core.model.Aircraft;
 import com.desertskyrangers.flightdeck.core.model.Battery;
 import com.desertskyrangers.flightdeck.core.model.User;
-import com.desertskyrangers.flightdeck.port.GroupService;
-import com.desertskyrangers.flightdeck.port.AircraftService;
-import com.desertskyrangers.flightdeck.port.BatteryService;
-import com.desertskyrangers.flightdeck.port.FlightService;
-import com.desertskyrangers.flightdeck.port.UserService;
+import com.desertskyrangers.flightdeck.port.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,11 +29,21 @@ public class UserController extends BaseController {
 
 	private final UserService userService;
 
-	public UserController( AircraftService aircraftService, BatteryService batteryService, FlightService flightService, GroupService groupService, UserService userService ) {
+	private final MembershipService memberService;
+
+	public UserController(
+		AircraftService aircraftService,
+		BatteryService batteryService,
+		FlightService flightService,
+		GroupService groupService,
+		MembershipService memberService,
+		UserService userService
+	) {
 		this.aircraftService = aircraftService;
 		this.batteryService = batteryService;
 		this.flightService = flightService;
 		this.groupService = groupService;
+		this.memberService = memberService;
 		this.userService = userService;
 	}
 
@@ -186,6 +192,22 @@ public class UserController extends BaseController {
 		}
 
 		return new ResponseEntity<>( new ReactGroupPageResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
+	}
+
+	@GetMapping( path = ApiPath.USER_MEMBERSHIP )
+	ResponseEntity<ReactMembershipPageResponse> getMembershipPage( Authentication authentication ) {
+		List<String> messages = new ArrayList<>();
+
+		try {
+			User user = findUser( authentication );
+			List<ReactMembership> membershipPage = memberService.findMembershipsByUser( user ).stream().map( ReactMembership::from ).toList();
+			return new ResponseEntity<>( new ReactMembershipPageResponse().setMemberships( membershipPage ), HttpStatus.OK );
+		} catch( Exception exception ) {
+			log.error( "Error creating new battery", exception );
+			messages.add( exception.getMessage() );
+		}
+
+		return new ResponseEntity<>( new ReactMembershipPageResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
 	}
 
 	@GetMapping( path = ApiPath.USER_AIRCRAFT_LOOKUP )

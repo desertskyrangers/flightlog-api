@@ -35,6 +35,10 @@ public interface StateRetrieving {
 
 	Set<Group> findGroupsByOwner( UUID id );
 
+	Optional<Member> findMembership( UUID id );
+
+	Set<Member> findMemberships( User user );
+
 	Optional<UserToken> findUserToken( UUID id );
 
 	Optional<UserToken> findUserTokenByPrincipal( String username );

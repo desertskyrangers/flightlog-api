@@ -1,5 +1,6 @@
 package com.desertskyrangers.flightdeck.core.service;
 
+import com.desertskyrangers.flightdeck.core.model.Member;
 import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.core.model.UserToken;
 import com.desertskyrangers.flightdeck.port.StatePersisting;

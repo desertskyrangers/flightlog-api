@@ -121,7 +121,7 @@ public class UserControllerTest extends BaseControllerTest {
 		ReactUser reactAccount = ReactUser.from( getMockUser() );
 
 		// when
-		String content = Json.stringify( Map.of("id", reactAccount.getId(), "currentPassword", "password", "password", "newmockpassword"));
+		String content = Json.stringify( Map.of( "id", reactAccount.getId(), "currentPassword", "password", "password", "newmockpassword" ) );
 		MvcResult result = this.mockMvc
 			.perform( put( ApiPath.USER + "/" + getMockUser().id() + "/password" ).content( content ).contentType( "application/json" ).with( csrf() ).headers( headers ) )
 			.andExpect( status().isOk() )
@@ -207,6 +207,29 @@ public class UserControllerTest extends BaseControllerTest {
 		Map<?, ?> flight1 = (Map<?, ?>)flightList.get( 1 );
 		assertThat( flight0.get( "aircraft" ) ).isEqualTo( aftyn.id().toString() );
 		assertThat( flight1.get( "aircraft" ) ).isEqualTo( aftyn.id().toString() );
+	}
+
+	@Test
+	void testGetUserMemberships() throws Exception {
+		User user = getMockUser();
+
+		Group groupA = statePersisting.upsert( new Group().name( "Group A" ).type( GroupType.CLUB ) );
+		Group groupB = statePersisting.upsert( new Group().name( "Group B" ).type( GroupType.GROUP ) );
+
+		// given
+		statePersisting.upsert( new Member().user( user ).group( groupA ).status( MemberStatus.OWNER ) );
+		statePersisting.upsert( new Member().user( user ).group( groupB ).status( MemberStatus.ACCEPTED ) );
+
+		// when
+		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_MEMBERSHIP ) ).andExpect( status().isOk() ).andReturn();
+
+		// then
+		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
+		List<?> memberships = (List<?>)map.get( "memberships" );
+		Map<?, ?> messagesMap = (Map<?, ?>)map.get( "messages" );
+
+		assertThat( memberships.size() ).isEqualTo( 2 );
+		assertThat( messagesMap ).isNull();
 	}
 
 	@Test

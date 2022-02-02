@@ -94,8 +94,9 @@ public class StatePersistingService implements StatePersisting {
 	}
 
 	@Override
-	public void remove( Member member ) {
+	public Member remove( Member member ) {
 		memberRepo.deleteById( member.id() );
+		return member;
 	}
 
 	@Override
