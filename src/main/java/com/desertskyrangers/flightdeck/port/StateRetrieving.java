@@ -39,6 +39,8 @@ public interface StateRetrieving {
 
 	Set<Member> findMemberships( User user );
 
+	Set<Member> findMemberships( Group group );
+
 	Optional<UserToken> findUserToken( UUID id );
 
 	Optional<UserToken> findUserTokenByPrincipal( String username );

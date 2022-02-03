@@ -47,6 +47,10 @@ public class MembershipServiceImpl implements MembershipService {
 		return stateRetrieving.findMemberships( user );
 	}
 
+	public Set<Member> findMembershipsByGroup( Group group ) {
+		return stateRetrieving.findMemberships( group );
+	}
+
 	public void requestMembership( User user, Group group, MemberStatus status ) {
 		upsert( new Member().user( user ).group( group ).status( status ) );
 	}

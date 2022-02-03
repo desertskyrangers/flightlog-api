@@ -19,6 +19,8 @@ public interface MembershipService {
 
 	Set<Member> findMembershipsByUser( User user );
 
+	Set<Member> findMembershipsByGroup( Group group );
+
 	void requestMembership( User user, Group group, MemberStatus status );
 
 	void cancelMembership( Member member );

@@ -127,8 +127,14 @@ public class StateRetrievingService implements StateRetrieving {
 		return memberRepo.findById( id ).map( MemberEntity::toMember );
 	}
 
+	@Override
 	public Set<Member> findMemberships( User user ) {
 		return memberRepo.findAllByUser( UserEntity.from( user ) ).stream().map( MemberEntity::toMember ).collect( Collectors.toSet());
+	}
+
+	@Override
+	public Set<Member> findMemberships( Group group ) {
+		return memberRepo.findAllByGroup( GroupEntity.from( group ) ).stream().map( MemberEntity::toMember ).collect( Collectors.toSet());
 	}
 
 	@Override

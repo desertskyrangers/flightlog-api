@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Data
 @Accessors( fluent = true )
-public class Member {
+public class Member implements Comparable<Member>{
 
 	@EqualsAndHashCode.Exclude
 	private UUID id = UUID.randomUUID();
@@ -19,5 +19,10 @@ public class Member {
 
 	@EqualsAndHashCode.Exclude
 	private MemberStatus status;
+
+	@Override
+	public int compareTo( Member that ) {
+		return this.status.compareTo( that.status );
+	}
 
 }

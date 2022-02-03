@@ -24,8 +24,8 @@ public interface ApiPath {
 	String FLIGHT = API + "/flight";
 
 	String GROUP = API + "/group";
-	String GROUPS = API + "/groups";
-	String GROUPS_AVAILABLE = GROUPS + "/available";
+	String GROUP_AVAILABLE = GROUP + "/available";
+	String GROUP_MEMBERSHIP = GROUP + "/membership";
 
 	String MONITOR = API + "/monitor";
 	String MONITOR_STATUS = MONITOR + "/status";

@@ -3,6 +3,7 @@ package com.desertskyrangers.flightdeck.adapter.api.rest;
 import com.desertskyrangers.flightdeck.adapter.api.ApiPath;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactGroup;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactGroupResponse;
+import com.desertskyrangers.flightdeck.adapter.api.model.ReactMembership;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactOption;
 import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.GroupService;
@@ -30,12 +31,26 @@ public class GroupController extends BaseController {
 		this.membershipService = membershipService;
 	}
 
-	@GetMapping( path = ApiPath.GROUPS_AVAILABLE )
+	@GetMapping( path = ApiPath.GROUP_AVAILABLE )
 	ResponseEntity<List<ReactOption>> getAvailableGroups( Authentication authentication ) {
 		User user = findUser( authentication );
 		List<Group> objects = new ArrayList<>( groupService.findAllAvailable( user ) );
 		Collections.sort( objects );
 		return new ResponseEntity<>( objects.stream().map( c -> new ReactOption( c.id().toString(), c.name() ) ).toList(), HttpStatus.OK );
+	}
+
+	@GetMapping( path = ApiPath.GROUP+ "/{id}/membership")
+	ResponseEntity<List<ReactMembership>> getGroupMembership( @PathVariable String id ) {
+		Optional<Group> optional = groupService.find( UUID.fromString( id ) );
+
+		if( optional.isPresent() ) {
+			Set<Member> memberships = membershipService.findMembershipsByGroup( optional.get() );
+			List<Member> objects = new ArrayList<>( memberships );
+			Collections.sort( objects );
+			return new ResponseEntity<>( objects.stream().map( ReactMembership::from ).toList(), HttpStatus.OK );
+		} else {
+			return new ResponseEntity<>( List.of(), HttpStatus.BAD_REQUEST );
+		}
 	}
 
 	@GetMapping( path = ApiPath.GROUP + "/{id}" )
