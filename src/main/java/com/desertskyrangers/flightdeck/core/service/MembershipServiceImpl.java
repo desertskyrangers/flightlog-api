@@ -48,7 +48,9 @@ public class MembershipServiceImpl implements MembershipService {
 	}
 
 	public Set<Member> findMembershipsByGroup( Group group ) {
-		return stateRetrieving.findMemberships( group );
+		Set<Member> members = stateRetrieving.findMemberships( group );
+		log.warn( "{} member count={}", group.name(), members.size() );
+		return members;
 	}
 
 	public void requestMembership( User user, Group group, MemberStatus status ) {
