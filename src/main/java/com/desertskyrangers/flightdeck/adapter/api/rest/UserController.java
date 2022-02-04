@@ -221,18 +221,19 @@ public class UserController extends BaseController {
 
 	@GetMapping( path = ApiPath.USER_OBSERVER_LOOKUP )
 	ResponseEntity<List<ReactOption>> getObserverLookup( Authentication authentication ) {
-		User user = findUser( authentication );
-		// TODO Add users from associated orgs
-		List<User> objects = List.of( user, unlistedUser() );
-		return new ResponseEntity<>( objects.stream().map( c -> new ReactOption( c.id().toString(), c.preferredName() ) ).toList(), HttpStatus.OK );
+		return getPilotLookup( authentication );
 	}
 
 	@GetMapping( path = ApiPath.USER_PILOT_LOOKUP )
 	ResponseEntity<List<ReactOption>> getPilotLookup( Authentication authentication ) {
 		User user = findUser( authentication );
-		// TODO Add users from associated orgs
-		List<User> objects = List.of( user, unlistedUser() );
-		return new ResponseEntity<>( objects.stream().map( c -> new ReactOption( c.id().toString(), c.preferredName() ) ).toList(), HttpStatus.OK );
+
+		List<User> users = new ArrayList<>( userService.findAllGroupPeers( user ) );
+		users.sort( null );
+		users.add( 0, user );
+		users.add( unlistedUser() );
+
+		return new ResponseEntity<>( users.stream().map( c -> new ReactOption( c.id().toString(), c.preferredName() ) ).toList(), HttpStatus.OK );
 	}
 
 	@PutMapping( path = ApiPath.USER_MEMBERSHIP )

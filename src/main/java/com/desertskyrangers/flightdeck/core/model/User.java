@@ -11,7 +11,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 @Data
 @Accessors( fluent = true )
-public class User {
+public class User implements Comparable<User> {
 
 	private UUID id = UUID.randomUUID();
 
@@ -46,6 +46,17 @@ public class User {
 
 	public void roles( Set<String> roles ) {
 		this.roles = roles == null ? Set.of() : roles;
+	}
+
+	public String getName() {
+		String name = preferredName();
+		if( name == null ) name = firstName() + " " + lastName();
+		return name.trim();
+	}
+
+	@Override
+	public int compareTo( User that ) {
+		return this.getName().compareTo( that.getName() );
 	}
 
 }
