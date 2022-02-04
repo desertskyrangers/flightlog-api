@@ -3,6 +3,7 @@ package com.desertskyrangers.flightdeck.adapter.api.rest;
 import com.desertskyrangers.flightdeck.adapter.api.ApiPath;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactMembership;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactMembershipResponse;
+import com.desertskyrangers.flightdeck.core.exception.UnauthorizedException;
 import com.desertskyrangers.flightdeck.core.model.Member;
 import com.desertskyrangers.flightdeck.core.model.MemberStatus;
 import com.desertskyrangers.flightdeck.core.model.User;
@@ -49,6 +50,8 @@ public class MembershipController extends BaseController {
 				memberService.upsert( requester, membership.status( MemberStatus.valueOf( status.toUpperCase() ) ) );
 				return new ResponseEntity<>( new ReactMembershipResponse().setMembership( ReactMembership.from( membership ) ), HttpStatus.OK );
 			}
+		} catch( UnauthorizedException exception ) {
+			return new ResponseEntity<>( new ReactMembershipResponse(), HttpStatus.UNAUTHORIZED );
 		} catch( Exception exception ) {
 			log.error( "Error updating flight", exception );
 			messages.add( exception.getMessage() );

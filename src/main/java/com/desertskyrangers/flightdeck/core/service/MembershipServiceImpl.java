@@ -1,5 +1,6 @@
 package com.desertskyrangers.flightdeck.core.service;
 
+import com.desertskyrangers.flightdeck.core.exception.UnauthorizedException;
 import com.desertskyrangers.flightdeck.core.model.Group;
 import com.desertskyrangers.flightdeck.core.model.Member;
 import com.desertskyrangers.flightdeck.core.model.MemberStatus;
@@ -37,7 +38,7 @@ public class MembershipServiceImpl implements MembershipService {
 		boolean isOwned = stateRetrieving.findGroupOwners( member.group() ).contains( requester );
 		boolean isRequested = member.status() == MemberStatus.REQUESTED;
 
-		if( !isOwned && !isRequested ) throw new SecurityException( "Permission denied!" );
+		if( !isOwned && !isRequested ) throw new UnauthorizedException( requester );
 
 		return statePersisting.upsert( member );
 	}
