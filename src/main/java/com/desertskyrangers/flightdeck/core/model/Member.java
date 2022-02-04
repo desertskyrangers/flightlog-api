@@ -10,7 +10,6 @@ import java.util.UUID;
 @Accessors( fluent = true )
 public class Member implements Comparable<Member>{
 
-	@EqualsAndHashCode.Exclude
 	private UUID id = UUID.randomUUID();
 
 	private Group group;

@@ -12,7 +12,6 @@ import java.util.UUID;
 @Accessors( fluent = true )
 public class Group implements Comparable<Group> {
 
-	@EqualsAndHashCode.Exclude
 	UUID id = UUID.randomUUID();
 
 	GroupType type;
