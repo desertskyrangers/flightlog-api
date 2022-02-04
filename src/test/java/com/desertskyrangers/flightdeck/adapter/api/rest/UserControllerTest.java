@@ -272,11 +272,12 @@ public class UserControllerTest extends BaseControllerTest {
 	@Test
 	void testPutMembership() throws Exception {
 		// given
-		User user = getMockUser();
+		User user = statePersisting.upsert( createTestUser() );
 		Group group = statePersisting.upsert( new Group().name( "Group A" ).type( GroupType.CLUB ) );
-		Map<String, String> request = Map.of( "userid", user.id().toString(), "groupid", group.id().toString(), "status", "requested" );
+		statePersisting.upsert( new Member().user( getMockUser() ).group( group ).status( MemberStatus.OWNER ) );
 
 		// when
+		Map<String, String> request = Map.of( "userid", user.id().toString(), "groupid", group.id().toString(), "status", "requested" );
 		MvcResult result = this.mockMvc.perform( put( ApiPath.USER_MEMBERSHIP ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
 
 		// then

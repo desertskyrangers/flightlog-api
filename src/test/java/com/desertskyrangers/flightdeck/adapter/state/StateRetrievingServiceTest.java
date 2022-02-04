@@ -57,12 +57,10 @@ public class StateRetrievingServiceTest extends BaseTest {
 	@Test
 	void testFindGroupsByUserWithNoGroups() {
 		// given
-		UserEntity owner = new UserEntity();
-		owner.setId( UUID.randomUUID() );
-		userRepo.save( owner );
+		User owner = statePersisting.upsert( createTestUser() );
 
 		// when
-		Set<Group> groups = stateRetrieving.findGroupsByOwner( owner.getId() );
+		Set<Group> groups = stateRetrieving.findGroupsByOwner( owner );
 
 		// then
 		assertThat( groups ).isEmpty();
@@ -76,7 +74,7 @@ public class StateRetrievingServiceTest extends BaseTest {
 		statePersisting.upsert( new Member().user( owner ).group( group ).status( MemberStatus.OWNER ) );
 
 		// when
-		Set<Group> groups = stateRetrieving.findGroupsByOwner( owner.id() );
+		Set<Group> groups = stateRetrieving.findGroupsByOwner( owner );
 
 		// then
 		assertThat( groups ).containsAll( Set.of( group ) );

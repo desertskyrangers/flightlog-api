@@ -13,10 +13,12 @@ public interface GroupService {
 
 	Optional<Group> find( UUID id );
 
+	Group create( User requester, User owner, Group group );
+
 	Group upsert( Group group );
 
 	Group remove( Group group );
 
-	Set<Group> findGroupsByUser( UUID id );
+	Set<Group> findGroupsByUser( User user);
 
 }

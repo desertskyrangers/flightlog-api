@@ -33,7 +33,9 @@ public interface StateRetrieving {
 
 	Optional<Group> findGroup( UUID id );
 
-	Set<Group> findGroupsByOwner( UUID id );
+	Set<Group> findGroupsByOwner( User user );
+
+	Set<User> findGroupOwners( Group group );
 
 	Optional<Member> findMembership( UUID id );
 

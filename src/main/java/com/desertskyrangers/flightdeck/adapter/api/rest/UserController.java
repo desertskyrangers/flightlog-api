@@ -178,7 +178,7 @@ public class UserController extends BaseController {
 
 		try {
 			User user = findUser( authentication );
-			List<ReactGroup> groupPage = groupService.findGroupsByUser( user.id() ).stream().map( ReactGroup::from ).toList();
+			List<ReactGroup> groupPage = groupService.findGroupsByUser( user ).stream().map( ReactGroup::from ).toList();
 			return new ResponseEntity<>( new ReactGroupPageResponse().setGroups( groupPage ), HttpStatus.OK );
 		} catch( Exception exception ) {
 			log.error( "Error creating new battery", exception );
@@ -262,7 +262,7 @@ public class UserController extends BaseController {
 			}
 			if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactMembershipPageResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
 
-			memberService.requestMembership( user, group, status );
+			memberService.requestMembership( requester, user, group, status );
 
 			return new ResponseEntity<>( new ReactMembershipPageResponse().setMemberships( getMemberships( user ) ), HttpStatus.OK );
 		} catch( Exception exception ) {
@@ -291,7 +291,7 @@ public class UserController extends BaseController {
 			if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactMembershipPageResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
 
 			User user = member.user();
-			memberService.cancelMembership( member );
+			memberService.cancelMembership( requester, member );
 
 			return new ResponseEntity<>( new ReactMembershipPageResponse().setMemberships( getMemberships( user ) ), HttpStatus.OK );
 		} catch( Exception exception ) {

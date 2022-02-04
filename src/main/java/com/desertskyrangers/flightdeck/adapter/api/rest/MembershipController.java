@@ -5,6 +5,7 @@ import com.desertskyrangers.flightdeck.adapter.api.model.ReactMembership;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactMembershipResponse;
 import com.desertskyrangers.flightdeck.core.model.Member;
 import com.desertskyrangers.flightdeck.core.model.MemberStatus;
+import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.port.MembershipService;
 import com.desertskyrangers.flightdeck.util.Text;
 import com.desertskyrangers.flightdeck.util.Uuid;
@@ -21,7 +22,7 @@ import java.util.*;
 
 @RestController
 @Slf4j
-public class MembershipController {
+public class MembershipController extends BaseController {
 
 	private final MembershipService memberService;
 
@@ -40,12 +41,12 @@ public class MembershipController {
 		if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactMembershipResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
 
 		try {
-			//User user = findUser( authentication );
+			User requester = findUser( authentication );
 			Optional<Member> optional = memberService.find( UUID.fromString( id ) );
 
 			if( optional.isPresent() ) {
 				Member membership = optional.get();
-				memberService.upsert( membership.status( MemberStatus.valueOf( status.toUpperCase() ) ) );
+				memberService.upsert( requester, membership.status( MemberStatus.valueOf( status.toUpperCase() ) ) );
 				return new ResponseEntity<>( new ReactMembershipResponse().setMembership( ReactMembership.from( membership ) ), HttpStatus.OK );
 			}
 		} catch( Exception exception ) {
@@ -65,12 +66,12 @@ public class MembershipController {
 		if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactMembershipResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
 
 		try {
-			//User user = findUser( authentication );
+			User requester = findUser( authentication );
 			Optional<Member> optional = memberService.find( UUID.fromString( id ) );
 
 			if( optional.isPresent() ) {
 				Member membership = optional.get();
-				memberService.remove( membership );
+				memberService.remove( requester, membership );
 				return new ResponseEntity<>( new ReactMembershipResponse().setMembership( ReactMembership.from( membership ) ), HttpStatus.OK );
 			}
 		} catch( Exception exception ) {

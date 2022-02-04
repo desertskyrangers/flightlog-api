@@ -13,16 +13,16 @@ public interface MembershipService {
 
 	Optional<Member> find( UUID id );
 
-	Member upsert( Member member );
+	Member upsert(User requester, Member member );
 
-	Member remove( Member member );
+	Member remove(User requester, Member member );
 
 	Set<Member> findMembershipsByUser( User user );
 
 	Set<Member> findMembershipsByGroup( Group group );
 
-	void requestMembership( User user, Group group, MemberStatus status );
+	void requestMembership( User requester,User user, Group group, MemberStatus status );
 
-	void cancelMembership( Member member );
+	void cancelMembership(User requester, Member member );
 
 }

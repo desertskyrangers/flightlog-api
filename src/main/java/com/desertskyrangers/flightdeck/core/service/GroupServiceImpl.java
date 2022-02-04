@@ -1,6 +1,8 @@
 package com.desertskyrangers.flightdeck.core.service;
 
 import com.desertskyrangers.flightdeck.core.model.Group;
+import com.desertskyrangers.flightdeck.core.model.Member;
+import com.desertskyrangers.flightdeck.core.model.MemberStatus;
 import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.port.GroupService;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
@@ -36,6 +38,13 @@ public class GroupServiceImpl implements GroupService {
 	}
 
 	@Override
+	public Group create( User requester, User owner, Group group ) {
+		Group result = upsert( group );
+		statePersisting.upsert( new Member().user( owner ).group( group ).status( MemberStatus.OWNER ) );
+		return result;
+	}
+
+	@Override
 	public Group upsert( Group group ) {
 		return statePersisting.upsert( group );
 	}
@@ -47,8 +56,8 @@ public class GroupServiceImpl implements GroupService {
 	}
 
 	@Override
-	public Set<Group> findGroupsByUser( UUID id ) {
-		return stateRetrieving.findGroupsByOwner( id );
+	public Set<Group> findGroupsByUser( User user ) {
+		return stateRetrieving.findGroupsByOwner( user );
 	}
 
 }

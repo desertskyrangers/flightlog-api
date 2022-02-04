@@ -33,12 +33,17 @@ public class MembershipServiceImpl implements MembershipService {
 	}
 
 	@Override
-	public Member upsert( Member member ) {
+	public Member upsert( User requester, Member member ) {
+		boolean isOwned = stateRetrieving.findGroupOwners( member.group() ).contains( requester );
+		boolean isRequested = member.status() == MemberStatus.REQUESTED;
+
+		if( !isOwned && !isRequested ) throw new SecurityException( "Permission denied!" );
+
 		return statePersisting.upsert( member );
 	}
 
 	@Override
-	public Member remove( Member member ) {
+	public Member remove( User requester, Member member ) {
 		return statePersisting.remove( member );
 	}
 
@@ -51,12 +56,12 @@ public class MembershipServiceImpl implements MembershipService {
 		return stateRetrieving.findMemberships( group );
 	}
 
-	public void requestMembership( User user, Group group, MemberStatus status ) {
-		upsert( new Member().user( user ).group( group ).status( status ) );
+	public void requestMembership( User requester, User user, Group group, MemberStatus status ) {
+		upsert( requester, new Member().user( user ).group( group ).status( status ) );
 	}
 
-	public void cancelMembership( Member member ) {
-		remove( member );
+	public void cancelMembership( User requester, Member member ) {
+		remove( requester, member );
 	}
 
 }

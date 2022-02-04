@@ -118,8 +118,13 @@ public class StateRetrievingService implements StateRetrieving {
 	}
 
 	@Override
-	public Set<Group> findGroupsByOwner( UUID id ) {
-		return memberRepo.findAllByUser_IdAndStatus( id, MemberStatus.OWNER.name().toLowerCase() ).stream().map( MemberEntity::getGroup ).map( GroupEntity::toGroup ).collect( Collectors.toSet() );
+	public Set<Group> findGroupsByOwner( User user ) {
+		return memberRepo.findAllByUser_IdAndStatus( user.id(), MemberStatus.OWNER.name().toLowerCase() ).stream().map( MemberEntity::getGroup ).map( GroupEntity::toGroup ).collect( Collectors.toSet() );
+	}
+
+	@Override
+	public Set<User> findGroupOwners( Group group ) {
+		return memberRepo.findAllByGroup_IdAndStatus( group.id(), MemberStatus.OWNER.name().toLowerCase() ).stream().map(MemberEntity::getUser).map(UserEntity::toUser).collect( Collectors.toSet());
 	}
 
 	@Override

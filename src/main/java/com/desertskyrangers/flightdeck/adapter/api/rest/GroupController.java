@@ -75,11 +75,11 @@ public class GroupController extends BaseController {
 	ResponseEntity<ReactGroupResponse> newGroup( Authentication authentication, @RequestBody ReactGroup request ) {
 		// Replace 'new' with random id
 		request.setId( UUID.randomUUID().toString() );
-		return updateGroup( authentication, request );
+		return updateGroup( authentication, request, true );
 	}
 
 	@PutMapping( path = ApiPath.GROUP )
-	ResponseEntity<ReactGroupResponse> updateGroup( Authentication authentication, @RequestBody ReactGroup request ) {
+	ResponseEntity<ReactGroupResponse> updateGroup( Authentication authentication, @RequestBody ReactGroup request, boolean isNew ) {
 		String id = request.getId();
 		String type = request.getType();
 		String name = request.getName();
@@ -92,9 +92,14 @@ public class GroupController extends BaseController {
 		if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactGroupResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
 
 		try {
-			User user = findUser( authentication );
-			Group group = groupService.upsert( ReactGroup.toGroup( request ) );
-			membershipService.upsert( new Member().user( user ).group( group ).status( MemberStatus.OWNER ) );
+			User requester = findUser( authentication );
+			log.warn( "Is new group=" + isNew );
+			Group group = ReactGroup.toGroup( request );
+			if( isNew ) {
+				groupService.create( requester, requester, group );
+			} else {
+				groupService.upsert( group );
+			}
 			return new ResponseEntity<>( new ReactGroupResponse().setGroup( request ), HttpStatus.OK );
 		} catch( Exception exception ) {
 			log.error( "Error updating group", exception );
