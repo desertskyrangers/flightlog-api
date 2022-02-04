@@ -155,6 +155,7 @@ public class InitialConfig {
 		statePersisting.upsert( new Member().user( tia ).group( testersAroundTheClock ).status( MemberStatus.ACCEPTED ) );
 
 		statePersisting.upsert( new Member().user( tom ).group( testersUnlimited ).status( MemberStatus.OWNER ) );
+		statePersisting.upsert( new Member().user( tom ).group( testersInfinite ).status( MemberStatus.REQUESTED ) );
 
 		log.warn( "Testing data created" );
 	}

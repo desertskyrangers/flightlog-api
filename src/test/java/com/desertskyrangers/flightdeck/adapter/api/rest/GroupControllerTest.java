@@ -49,9 +49,15 @@ public class GroupControllerTest extends BaseControllerTest {
 	void testGetGroupMembership() throws Exception {
 		// given
 		Group groupA = statePersisting.upsert( createTestGroup( "Group A", GroupType.CLUB ) );
-		User userA = statePersisting.upsert( createTestUser( "frank", "frank@example.com" ) );
-		statePersisting.upsert( new Member().user( getMockUser() ).group( groupA ).status( MemberStatus.ACCEPTED ) );
-		statePersisting.upsert( new Member().user( userA ).group( groupA ).status( MemberStatus.ACCEPTED ) );
+		User frank = statePersisting.upsert( createTestUser( "frank", "frank@example.com" ) );
+		User gemma = statePersisting.upsert( createTestUser( "gemma", "gemma@example.com" ) );
+		User helen = statePersisting.upsert( createTestUser( "helen", "helen@example.com" ) );
+		User india = statePersisting.upsert( createTestUser( "india", "india@example.com" ) );
+		statePersisting.upsert( new Member().user( getMockUser() ).group( groupA ).status( MemberStatus.OWNER ) );
+		statePersisting.upsert( new Member().user( frank ).group( groupA ).status( MemberStatus.REQUESTED ) );
+		statePersisting.upsert( new Member().user( gemma ).group( groupA ).status( MemberStatus.INVITED ) );
+		statePersisting.upsert( new Member().user( helen ).group( groupA ).status( MemberStatus.REVOKED ) );
+		statePersisting.upsert( new Member().user( india ).group( groupA ).status( MemberStatus.ACCEPTED ) );
 
 		// when
 		MvcResult result = this.mockMvc.perform( get( ApiPath.GROUP + "/" + groupA.id() + "/membership" ) ).andExpect( status().isOk() ).andReturn();
@@ -59,7 +65,7 @@ public class GroupControllerTest extends BaseControllerTest {
 		// then
 		List<?> list = Json.asList( result.getResponse().getContentAsString() );
 		assertThat( list ).isNotNull();
-		assertThat( list.size() ).isEqualTo( 2 );
+		assertThat( list.size() ).isEqualTo( 5 );
 	}
 
 	@Test

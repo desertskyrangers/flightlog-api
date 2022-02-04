@@ -11,6 +11,7 @@ security:
       token-validity-in-seconds: 86400 # Token is valid 24 hours
       token-validity-in-seconds-for-remember-me: 2592000 # Token is valid 30 days
 
+
 logging:
   file:
     name: flightdeck.log
@@ -32,6 +33,8 @@ spring:
   application:
     name: FlightDeck
     version: ${version}
+  main:
+    banner-mode: LOG
   datasource:
     driver-class-name: org.h2.Driver
     url: jdbc:h2:mem:testdb

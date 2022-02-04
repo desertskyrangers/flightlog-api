@@ -194,8 +194,7 @@ public class UserController extends BaseController {
 
 		try {
 			User user = findUser( authentication );
-			List<ReactMembership> membershipPage = memberService.findMembershipsByUser( user ).stream().map( ReactMembership::from ).toList();
-			return new ResponseEntity<>( new ReactMembershipPageResponse().setMemberships( membershipPage ), HttpStatus.OK );
+			return new ResponseEntity<>( new ReactMembershipPageResponse().setMemberships( getMemberships( user ) ), HttpStatus.OK );
 		} catch( Exception exception ) {
 			log.error( "Error creating new battery", exception );
 			messages.add( exception.getMessage() );
@@ -265,8 +264,7 @@ public class UserController extends BaseController {
 
 			memberService.requestMembership( user, group, status );
 
-			List<ReactMembership> membershipPage = memberService.findMembershipsByUser( user ).stream().map( ReactMembership::from ).toList();
-			return new ResponseEntity<>( new ReactMembershipPageResponse().setMemberships( membershipPage ), HttpStatus.OK );
+			return new ResponseEntity<>( new ReactMembershipPageResponse().setMemberships( getMemberships( user ) ), HttpStatus.OK );
 		} catch( Exception exception ) {
 			log.error( "Error creating new battery", exception );
 			messages.add( exception.getMessage() );
@@ -305,7 +303,10 @@ public class UserController extends BaseController {
 	}
 
 	private List<ReactMembership> getMemberships( User user ) {
-		return memberService.findMembershipsByUser( user ).stream().map( ReactMembership::from ).toList();
+		Set<Member> memberships = memberService.findMembershipsByUser( user );
+		List<Member> objects = new ArrayList<>( memberships );
+		Collections.sort( objects );
+		return objects.stream().map( ReactMembership::from ).toList();
 	}
 
 }
