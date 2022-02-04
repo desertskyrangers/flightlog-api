@@ -61,12 +61,6 @@ public class InitialConfig {
 		if( app.isProduction() ) return;
 
 		User tia = createTiaTest();
-		String credential = new BCryptPasswordEncoder().encode( "tester" );
-		UserToken usernameToken = new UserToken().user( tia ).principal( tia.username() ).credential( credential );
-		UserToken emailToken = new UserToken().user( tia ).principal( tia.email() ).credential( credential );
-		tia.tokens( Set.of( usernameToken, emailToken ) );
-		statePersisting.upsert( tia );
-
 		User tom = createTomTest();
 
 		Aircraft aftyn = new Aircraft()
@@ -160,6 +154,8 @@ public class InitialConfig {
 		statePersisting.upsert( new Member().user( tia ).group( testersInfinite ).status( MemberStatus.OWNER ) );
 		statePersisting.upsert( new Member().user( tia ).group( testersAroundTheClock ).status( MemberStatus.ACCEPTED ) );
 
+		statePersisting.upsert( new Member().user( tom ).group( testersUnlimited ).status( MemberStatus.OWNER ) );
+
 		log.warn( "Testing data created" );
 	}
 
@@ -173,6 +169,13 @@ public class InitialConfig {
 		user.smsNumber( "800-555-8428" );
 		user.smsCarrier( SmsCarrier.SPRINT );
 		statePersisting.upsert( user );
+
+		String credential = new BCryptPasswordEncoder().encode( "tester" );
+		UserToken usernameToken = new UserToken().user( user ).principal( user.username() ).credential( credential );
+		UserToken emailToken = new UserToken().user( user ).principal( user.email() ).credential( credential );
+		user.tokens( Set.of( usernameToken, emailToken ) );
+		statePersisting.upsert( user );
+
 		return user;
 	}
 
@@ -186,6 +189,13 @@ public class InitialConfig {
 		user.smsNumber( "800-555-8668" );
 		user.smsCarrier( SmsCarrier.SPRINT );
 		statePersisting.upsert( user );
+
+		String credential = new BCryptPasswordEncoder().encode( "tester" );
+		UserToken usernameToken = new UserToken().user( user ).principal( user.username() ).credential( credential );
+		UserToken emailToken = new UserToken().user( user ).principal( user.email() ).credential( credential );
+		user.tokens( Set.of( usernameToken, emailToken ) );
+		statePersisting.upsert( user );
+
 		return user;
 	}
 

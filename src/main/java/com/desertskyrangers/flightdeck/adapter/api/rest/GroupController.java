@@ -55,7 +55,6 @@ public class GroupController extends BaseController {
 
 	@GetMapping( path = ApiPath.GROUP + "/{id}" )
 	ResponseEntity<ReactGroupResponse> getGroup( @PathVariable UUID id ) {
-		log.info( "Get group" );
 		List<String> messages = new ArrayList<>();
 		try {
 			Optional<Group> optional = groupService.find( id );

@@ -27,6 +27,8 @@ public interface ApiPath {
 	String GROUP_AVAILABLE = GROUP + "/available";
 	String GROUP_MEMBERSHIP = GROUP + "/membership";
 
+	String MEMBERSHIP = API + "/membership";
+
 	String MONITOR = API + "/monitor";
 	String MONITOR_STATUS = MONITOR + "/status";
 

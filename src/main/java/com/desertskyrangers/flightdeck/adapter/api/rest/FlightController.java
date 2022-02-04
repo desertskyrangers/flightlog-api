@@ -28,7 +28,6 @@ public class FlightController extends BaseController {
 
 	@GetMapping( path = ApiPath.FLIGHT + "/{id}" )
 	ResponseEntity<ReactFlightResponse> getFlight( @PathVariable UUID id ) {
-		log.info( "Get flight" );
 		List<String> messages = new ArrayList<>();
 		try {
 			Optional<Flight> optional = flightService.find( id );
