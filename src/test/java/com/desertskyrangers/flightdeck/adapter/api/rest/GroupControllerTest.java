@@ -27,6 +27,44 @@ public class GroupControllerTest extends BaseControllerTest {
 	private MockMvc mockMvc;
 
 	@Test
+	void testInviteMemberByUsername() throws Exception {
+		// given
+		Group group = statePersisting.upsert( createTestGroup( "Group A", GroupType.CLUB ) );
+		User invitee = statePersisting.upsert( createTestUser( "marisa", "marisa@example.com" ) );
+		statePersisting.upsert( createTestToken( invitee, invitee.username(), "password" ) );
+		statePersisting.upsert( new Member().user( getMockUser() ).group( group ).status( MemberStatus.OWNER ) );
+
+		// then
+		Map<String, String> request = Map.of( "id", group.id().toString(), "invitee", invitee.username() );
+		MvcResult result = this.mockMvc.perform( post( ApiPath.GROUP_INVITE ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isAccepted() ).andReturn();
+
+		// then
+		Map<?, ?> map = Json.asMap( result.getResponse().getContentAsString() );
+		List<?> list = (List<?>)map.get("memberships");
+		assertThat( list ).isNotNull();
+		assertThat( list.size() ).isEqualTo( 2 );
+	}
+
+	@Test
+	void testInviteMemberByEmailAddress() throws Exception {
+		// given
+		Group group = statePersisting.upsert( createTestGroup( "Group A", GroupType.CLUB ) );
+		User invitee = statePersisting.upsert( createTestUser( "marisa", "marisa@example.com" ) );
+		statePersisting.upsert( createTestToken( invitee, invitee.email(), "password" ) );
+		statePersisting.upsert( new Member().user( getMockUser() ).group( group ).status( MemberStatus.OWNER ) );
+
+		// then
+		Map<String, String> request = Map.of( "id", group.id().toString(), "invitee", invitee.email() );
+		MvcResult result = this.mockMvc.perform( post( ApiPath.GROUP_INVITE ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isAccepted() ).andReturn();
+
+		// then
+		Map<?, ?> map = Json.asMap( result.getResponse().getContentAsString() );
+		List<?> list = (List<?>)map.get("memberships");
+		assertThat( list ).isNotNull();
+		assertThat( list.size() ).isEqualTo( 2 );
+	}
+
+	@Test
 	void testGetAvailableGroups() throws Exception {
 		// Test get available groups for the requesting user
 

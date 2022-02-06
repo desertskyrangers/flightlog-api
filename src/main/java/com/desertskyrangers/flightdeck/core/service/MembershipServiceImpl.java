@@ -57,12 +57,13 @@ public class MembershipServiceImpl implements MembershipService {
 		return stateRetrieving.findMemberships( group );
 	}
 
-	public void requestMembership( User requester, User user, Group group, MemberStatus status ) {
-		upsert( requester, new Member().user( user ).group( group ).status( status ) );
+	public Member requestMembership( User requester, User user, Group group, MemberStatus status ) {
+		return upsert( requester, new Member().user( user ).group( group ).status( status ) );
 	}
 
-	public void cancelMembership( User requester, Member member ) {
+	public Member cancelMembership( User requester, Member member ) {
 		remove( requester, member );
+		return member;
 	}
 
 }

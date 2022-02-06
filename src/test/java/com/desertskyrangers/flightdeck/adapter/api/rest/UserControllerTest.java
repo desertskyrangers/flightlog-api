@@ -234,11 +234,11 @@ public class UserControllerTest extends BaseControllerTest {
 
 	@Test
 	void testGetAircraftLookup() throws Exception {
-		statePersisting.upsert( createTestAircraft() );
-		statePersisting.upsert( createTestAircraft() );
-		statePersisting.upsert( createTestAircraft() );
-		statePersisting.upsert( createTestAircraft() );
-		statePersisting.upsert( createTestAircraft() );
+		statePersisting.upsert( createTestAircraft( getMockUser() ) );
+		statePersisting.upsert( createTestAircraft( getMockUser() ) );
+		statePersisting.upsert( createTestAircraft( getMockUser() ) );
+		statePersisting.upsert( createTestAircraft( getMockUser() ) );
+		statePersisting.upsert( createTestAircraft( getMockUser() ) );
 		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_AIRCRAFT_LOOKUP ) ).andExpect( status().isOk() ).andReturn();
 		List<Object> list = Json.asList( result.getResponse().getContentAsString() );
 		assertThat( list.size() ).isEqualTo( 5 );
@@ -246,9 +246,9 @@ public class UserControllerTest extends BaseControllerTest {
 
 	@Test
 	void testGetBatteryLookup() throws Exception {
-		statePersisting.upsert( createTestBattery() );
-		statePersisting.upsert( createTestBattery() );
-		statePersisting.upsert( createTestBattery() );
+		statePersisting.upsert( createTestBattery( getMockUser() ) );
+		statePersisting.upsert( createTestBattery( getMockUser() ) );
+		statePersisting.upsert( createTestBattery( getMockUser() ) );
 		// Plus the 'No battery specified' option
 		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_BATTERY_LOOKUP ) ).andExpect( status().isOk() ).andReturn();
 		List<Object> list = Json.asList( result.getResponse().getContentAsString() );

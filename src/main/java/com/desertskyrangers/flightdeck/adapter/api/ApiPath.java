@@ -25,6 +25,7 @@ public interface ApiPath {
 
 	String GROUP = API + "/group";
 	String GROUP_AVAILABLE = GROUP + "/available";
+	String GROUP_INVITE = GROUP + "/invite";
 	String GROUP_MEMBERSHIP = GROUP + "/membership";
 
 	String MEMBERSHIP = API + "/membership";

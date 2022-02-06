@@ -28,7 +28,7 @@ public class BatteryControllerTest extends BaseControllerTest {
 	@Test
 	void getBatteryWithSuccess() throws Exception {
 		// given
-		Battery battery = createTestBattery();
+		Battery battery = createTestBattery( getMockUser() );
 		batteryService.upsert( battery );
 
 		// when
@@ -80,7 +80,7 @@ public class BatteryControllerTest extends BaseControllerTest {
 	@Test
 	void deleteBatteryWithSuccess() throws Exception {
 		// given
-		Battery battery = createTestBattery();
+		Battery battery = createTestBattery( getMockUser() );
 		batteryService.upsert( battery );
 
 		// when
@@ -96,7 +96,7 @@ public class BatteryControllerTest extends BaseControllerTest {
 	}
 
 	private ReactBattery createTestReactBattery() {
-		return ReactBattery.from( createTestBattery() );
+		return ReactBattery.from( createTestBattery( getMockUser() ) );
 	}
 
 }

@@ -2,8 +2,6 @@ package com.desertskyrangers.flightdeck.adapter.api.rest;
 
 import com.desertskyrangers.flightdeck.adapter.api.ApiPath;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactFlight;
-import com.desertskyrangers.flightdeck.core.model.Aircraft;
-import com.desertskyrangers.flightdeck.core.model.Battery;
 import com.desertskyrangers.flightdeck.core.model.Flight;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
 import com.desertskyrangers.flightdeck.util.Json;
@@ -14,7 +12,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.Map;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -31,7 +28,7 @@ public class FlightControllerTest extends BaseControllerTest {
 	@Test
 	void getFlightWithSuccess() throws Exception {
 		// given
-		Flight flight = createTestFlight();
+		Flight flight = createTestFlight( getMockUser() );
 		statePersisting.upsert( flight );
 
 		// when
@@ -83,7 +80,7 @@ public class FlightControllerTest extends BaseControllerTest {
 	@Test
 	void deleteFlightWithSuccess() throws Exception {
 		// given
-		Flight flight = createTestFlight();
+		Flight flight = createTestFlight( getMockUser() );
 		statePersisting.upsert( flight );
 
 		// when
@@ -99,7 +96,7 @@ public class FlightControllerTest extends BaseControllerTest {
 	}
 
 	private ReactFlight createTestReactFlight() {
-		return ReactFlight.from( createTestFlight() );
+		return ReactFlight.from( createTestFlight( getMockUser() ) );
 	}
 
 }

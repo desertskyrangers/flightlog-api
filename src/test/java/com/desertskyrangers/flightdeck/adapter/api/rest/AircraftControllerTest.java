@@ -28,7 +28,7 @@ public class AircraftControllerTest extends BaseControllerTest {
 	@Test
 	void testGetAircraftWithSuccess() throws Exception {
 		// given
-		Aircraft aircraft = createTestAircraft();
+		Aircraft aircraft = createTestAircraft( getMockUser() );
 		aircraftService.upsert( aircraft );
 
 		// when
@@ -80,7 +80,7 @@ public class AircraftControllerTest extends BaseControllerTest {
 	@Test
 	void deleteAircraftWithSuccess() throws Exception {
 		// given
-		Aircraft aircraft = createTestAircraft();
+		Aircraft aircraft = createTestAircraft( getMockUser() );
 		aircraftService.upsert( aircraft );
 
 		// when
@@ -96,7 +96,7 @@ public class AircraftControllerTest extends BaseControllerTest {
 	}
 
 	private ReactAircraft createTestReactAircraft() {
-		return ReactAircraft.from( createTestAircraft() );
+		return ReactAircraft.from( createTestAircraft( getMockUser() ) );
 	}
 
 }

@@ -9,11 +9,8 @@ import com.desertskyrangers.flightdeck.port.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -32,8 +29,6 @@ public class BaseTest {
 	@Autowired
 	protected User unlistedUser;
 
-	protected User mockUser;
-
 	@BeforeEach
 	protected void setup() {
 		// Clean old members
@@ -42,32 +37,10 @@ public class BaseTest {
 		statePersisting.removeAllGroups();
 		// Clean old flights
 		statePersisting.removeAllFlights();
-
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if( authentication != null ) {
-			String username = authentication.getName();
-			String password = Objects.toString( authentication.getCredentials() );
-			String encodedPassword = passwordEncoder.encode( password );
-
-			// Delete the exising mock user account
-			userService.findByPrincipal( authentication.getName() ).ifPresent( u -> userService.remove( u ) );
-
-			// Create mock user account
-			mockUser = new User();
-			mockUser.lastName( username );
-			UserToken token = new UserToken().principal( username ).credential( encodedPassword );
-			mockUser.tokens( Set.of( token ) );
-			token.user( mockUser );
-			userService.upsert( mockUser );
-		}
 	}
 
 	protected User getUnlistedUser() {
 		return unlistedUser;
-	}
-
-	protected User getMockUser() {
-		return mockUser;
 	}
 
 	protected User createTestUser() {
@@ -85,7 +58,11 @@ public class BaseTest {
 		return UserEntity.from( createTestUser( username, email ) );
 	}
 
-	protected Aircraft createTestAircraft() {
+	protected UserToken createTestToken( User user, String principal, String password ) {
+		return new UserToken().user(user).principal( principal ).credential( passwordEncoder.encode( password ) );
+	}
+
+	protected Aircraft createTestAircraft( User owner ) {
 		Aircraft aircraft = new Aircraft();
 		aircraft.id( UUID.randomUUID() );
 		aircraft.name( "Aftyn" );
@@ -93,12 +70,12 @@ public class BaseTest {
 		aircraft.model( "Bixler 2" );
 		aircraft.type( AircraftType.FIXEDWING );
 		aircraft.status( AircraftStatus.DESTROYED );
-		aircraft.owner( getMockUser().id() );
+		aircraft.owner( owner.id() );
 		aircraft.ownerType( OwnerType.USER );
 		return aircraft;
 	}
 
-	protected Battery createTestBattery() {
+	protected Battery createTestBattery(User owner) {
 		Battery battery = new Battery();
 		battery.name( "C 4S 2650 Turnigy" );
 		battery.make( "Hobby King" );
@@ -112,18 +89,18 @@ public class BaseTest {
 		battery.capacity( 2650 );
 		battery.dischargeRating( 20 );
 
-		battery.owner( getMockUser().id() );
+		battery.owner( owner.id() );
 		battery.ownerType( OwnerType.USER );
 		return battery;
 	}
 
-	protected Flight createTestFlight() {
-		Aircraft aircraft = createTestAircraft();
+	protected Flight createTestFlight( User pilot) {
+		Aircraft aircraft = createTestAircraft(pilot);
 		statePersisting.upsert( aircraft );
-		Battery battery = createTestBattery();
+		Battery battery = createTestBattery(pilot);
 		statePersisting.upsert( battery );
 		Flight flight = new Flight();
-		flight.pilot( getMockUser() );
+		flight.pilot( pilot );
 		flight.observer( getUnlistedUser() );
 		flight.unlistedObserver( "Oscar Observer" );
 		flight.aircraft( aircraft );

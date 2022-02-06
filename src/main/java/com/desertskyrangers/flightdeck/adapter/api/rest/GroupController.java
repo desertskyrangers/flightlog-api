@@ -1,13 +1,11 @@
 package com.desertskyrangers.flightdeck.adapter.api.rest;
 
 import com.desertskyrangers.flightdeck.adapter.api.ApiPath;
-import com.desertskyrangers.flightdeck.adapter.api.model.ReactGroup;
-import com.desertskyrangers.flightdeck.adapter.api.model.ReactGroupResponse;
-import com.desertskyrangers.flightdeck.adapter.api.model.ReactMembership;
-import com.desertskyrangers.flightdeck.adapter.api.model.ReactOption;
+import com.desertskyrangers.flightdeck.adapter.api.model.*;
 import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.GroupService;
 import com.desertskyrangers.flightdeck.port.MembershipService;
+import com.desertskyrangers.flightdeck.port.UserService;
 import com.desertskyrangers.flightdeck.util.Text;
 import com.desertskyrangers.flightdeck.util.Uuid;
 import lombok.extern.slf4j.Slf4j;
@@ -26,9 +24,41 @@ public class GroupController extends BaseController {
 
 	private final MembershipService membershipService;
 
-	public GroupController( GroupService groupService, MembershipService membershipService ) {
+	private final UserService userService;
+
+	public GroupController( GroupService groupService, MembershipService membershipService, UserService userService ) {
 		this.groupService = groupService;
 		this.membershipService = membershipService;
+		this.userService = userService;
+	}
+
+	@PostMapping( path = ApiPath.GROUP_INVITE )
+	ResponseEntity<ReactMembershipPageResponse> inviteMember( Authentication authentication, @RequestBody Map<String, String> request ) {
+		String id = request.get( "id" );
+		String invitee = request.get( "invitee" );
+
+		List<String> messages = new ArrayList<>();
+		if( Text.isBlank( id ) ) messages.add( "ID required" );
+		if( Text.isNotBlank( id ) && Uuid.isNotValid( id ) ) messages.add( "Invalid group id" );
+		if( Text.isBlank( invitee ) ) messages.add( "Invitee required" );
+		Optional<Group> optionalGroup = groupService.find( UUID.fromString( id ) );
+		if( optionalGroup.isEmpty() ) messages.add( "Group not found" );
+		Optional<User> optionalInvitee = userService.findByPrincipal( invitee );
+		if( optionalInvitee.isEmpty() ) messages.add( "Invitee not found: " + invitee );
+		if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactMembershipPageResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
+
+		try {
+			User requester = findUser( authentication );
+			membershipService.requestMembership( requester, optionalInvitee.get(), optionalGroup.get(), MemberStatus.INVITED );
+
+			Set<Member> memberships = membershipService.findMembershipsByGroup( optionalGroup.get() );
+			List<Member> objects = new ArrayList<>( memberships );
+			Collections.sort( objects );
+			return new ResponseEntity<>( new ReactMembershipPageResponse().setMemberships( objects.stream().map( ReactMembership::from ).toList() ), HttpStatus.ACCEPTED );
+		} catch( Exception exception ) {
+			log.warn( "Error inviting group member", exception );
+			return new ResponseEntity<>( new ReactMembershipPageResponse().setMessages( List.of( "Error inviting group member" ) ), HttpStatus.BAD_REQUEST );
+		}
 	}
 
 	@GetMapping( path = ApiPath.GROUP_AVAILABLE )
@@ -39,7 +69,7 @@ public class GroupController extends BaseController {
 		return new ResponseEntity<>( objects.stream().map( c -> new ReactOption( c.id().toString(), c.name() ) ).toList(), HttpStatus.OK );
 	}
 
-	@GetMapping( path = ApiPath.GROUP+ "/{id}/membership")
+	@GetMapping( path = ApiPath.GROUP + "/{id}/membership" )
 	ResponseEntity<List<ReactMembership>> getGroupMembership( @PathVariable String id ) {
 		Optional<Group> optional = groupService.find( UUID.fromString( id ) );
 
