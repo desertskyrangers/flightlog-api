@@ -36,9 +36,10 @@ public class MembershipServiceImpl implements MembershipService {
 	@Override
 	public Member upsert( User requester, Member member ) {
 		boolean isOwned = stateRetrieving.findGroupOwners( member.group() ).contains( requester );
+		boolean isAccepted = member.status() == MemberStatus.ACCEPTED;
 		boolean isRequested = member.status() == MemberStatus.REQUESTED;
 
-		if( !isOwned && !isRequested ) throw new UnauthorizedException( requester );
+		if( !isOwned && !isAccepted && !isRequested ) throw new UnauthorizedException( requester );
 
 		return statePersisting.upsert( member );
 	}
