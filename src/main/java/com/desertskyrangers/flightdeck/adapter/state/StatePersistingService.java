@@ -59,8 +59,8 @@ public class StatePersistingService implements StatePersisting {
 	}
 
 	@Override
-	public void upsert( Flight flight ) {
-		flightRepo.save( FlightEntity.from( flight ) );
+	public Flight upsert( Flight flight ) {
+		return FlightEntity.toFlight( flightRepo.save( FlightEntity.from( flight ) ) );
 	}
 
 	@Override

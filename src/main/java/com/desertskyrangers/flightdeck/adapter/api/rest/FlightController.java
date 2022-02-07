@@ -27,12 +27,13 @@ public class FlightController extends BaseController {
 	}
 
 	@GetMapping( path = ApiPath.FLIGHT + "/{id}" )
-	ResponseEntity<ReactFlightResponse> getFlight( @PathVariable UUID id ) {
+	ResponseEntity<ReactFlightResponse> getFlight( Authentication authentication, @PathVariable UUID id ) {
 		List<String> messages = new ArrayList<>();
 		try {
+			User requester = findUser( authentication );
 			Optional<Flight> optional = flightService.find( id );
 			if( optional.isPresent() ) {
-				return new ResponseEntity<>( new ReactFlightResponse().setFlight( ReactFlight.from( optional.get() ) ), HttpStatus.OK );
+				return new ResponseEntity<>( new ReactFlightResponse().setFlight( ReactFlight.from( requester, optional.get() ) ), HttpStatus.OK );
 			} else {
 				messages.add( "Flight id not found: " + id );
 			}
@@ -81,16 +82,17 @@ public class FlightController extends BaseController {
 	}
 
 	@DeleteMapping( path = ApiPath.FLIGHT )
-	ResponseEntity<ReactFlightResponse> deleteFlight( @RequestBody Map<String, Object> flight ) {
+	ResponseEntity<ReactFlightResponse> deleteFlight(Authentication authentication, @RequestBody Map<String, Object> flight ) {
 		UUID id = UUID.fromString( String.valueOf( flight.get( "id" ) ) );
 		log.info( "Delete flight" );
 		List<String> messages = new ArrayList<>();
 		try {
+			User requester = findUser( authentication );
 			Optional<Flight> optional = flightService.find( id );
 			if( optional.isPresent() ) {
 				Flight deletedFlight = optional.get();
 				flightService.remove( deletedFlight );
-				return new ResponseEntity<>( new ReactFlightResponse().setFlight( ReactFlight.from( deletedFlight ) ), HttpStatus.OK );
+				return new ResponseEntity<>( new ReactFlightResponse().setFlight( ReactFlight.from( requester, deletedFlight ) ), HttpStatus.OK );
 			} else {
 				messages.add( "Flight id not found: " + id );
 			}

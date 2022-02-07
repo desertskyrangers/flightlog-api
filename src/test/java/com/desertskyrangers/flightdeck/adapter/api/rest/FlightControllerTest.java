@@ -3,6 +3,7 @@ package com.desertskyrangers.flightdeck.adapter.api.rest;
 import com.desertskyrangers.flightdeck.adapter.api.ApiPath;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactFlight;
 import com.desertskyrangers.flightdeck.core.model.Flight;
+import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
 import com.desertskyrangers.flightdeck.util.Json;
 import org.junit.jupiter.api.Test;
@@ -96,7 +97,11 @@ public class FlightControllerTest extends BaseControllerTest {
 	}
 
 	private ReactFlight createTestReactFlight() {
-		return ReactFlight.from( createTestFlight( getMockUser() ) );
+		return createTestReactFlight( getMockUser(), getMockUser() );
+	}
+
+	private ReactFlight createTestReactFlight( User requester, User pilot ) {
+		return ReactFlight.from( requester, createTestFlight( pilot ) );
 	}
 
 }

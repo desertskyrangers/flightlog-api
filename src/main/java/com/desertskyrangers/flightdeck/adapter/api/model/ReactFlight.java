@@ -1,14 +1,15 @@
 package com.desertskyrangers.flightdeck.adapter.api.model;
 
 import com.desertskyrangers.flightdeck.core.model.Flight;
-import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.core.model.FlightUpsertRequest;
+import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.util.Text;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Data
@@ -36,11 +37,13 @@ public class ReactFlight {
 
 	private String notes;
 
+	private String userFlightRole;
+
 	private String name;
 
 	private String type;
 
-	public static ReactFlight from( Flight flight ) {
+	public static ReactFlight from( User requester, Flight flight ) {
 		ReactFlight reactFlight = new ReactFlight();
 
 		reactFlight.setId( flight.id().toString() );
@@ -57,6 +60,13 @@ public class ReactFlight {
 		// Use aircraft info for the name and type...for now
 		if( flight.aircraft() != null ) reactFlight.setName( flight.aircraft().name() );
 		if( flight.aircraft() != null ) reactFlight.setType( flight.aircraft().type().name().toLowerCase() );
+
+		// User flight role
+		// TODO Should this move to the core?
+		String userFlightRole = "owner";
+		if( Objects.equals( requester, flight.observer() ) ) userFlightRole = "observer";
+		if( Objects.equals( requester, flight.pilot() ) ) userFlightRole = "pilot";
+		reactFlight.setUserFlightRole( userFlightRole );
 
 		return reactFlight;
 	}

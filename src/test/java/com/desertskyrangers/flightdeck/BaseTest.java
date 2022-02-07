@@ -94,7 +94,7 @@ public class BaseTest {
 		return battery;
 	}
 
-	protected Flight createTestFlight( User pilot) {
+	protected Flight createTestFlight( User pilot ) {
 		Aircraft aircraft = createTestAircraft(pilot);
 		statePersisting.upsert( aircraft );
 		Battery battery = createTestBattery(pilot);

@@ -62,6 +62,8 @@ public class InitialConfig {
 
 		User tia = createTiaTest();
 		User tom = createTomTest();
+		User tea = createTeaTest();
+		User tim = createTimTest();
 
 		Aircraft aftyn = new Aircraft()
 			.name( "AFTYN" )
@@ -126,21 +128,12 @@ public class InitialConfig {
 		statePersisting.upsert( c4s2650turnigy );
 		statePersisting.upsert( d4s2650turnigy );
 
-		Flight f1 = new Flight();
-		f1.pilot( tia );
-		f1.observer( tia );
-		f1.aircraft( aftyn );
-		f1.batteries( Set.of( d4s2650turnigy ) );
-		f1.timestamp( 1642259543957L );
-		f1.duration( 240 );
-		Flight f2 = new Flight();
-		f2.pilot( tia );
-		f2.observer( tia );
-		f2.aircraft( bianca );
-		f2.timestamp( 1642268904574L );
-		f2.duration( 54 );
-		statePersisting.upsert( f1 );
-		statePersisting.upsert( f2 );
+		long timestamp = 1642259543957L;
+		Flight f1 = statePersisting.upsert( new Flight().pilot( tia ).observer( tia ).aircraft( aftyn ).batteries( Set.of( d4s2650turnigy ) ).timestamp( timestamp += 600000 ).duration( 240 ) );
+		Flight f2 = statePersisting.upsert( new Flight().pilot( tia ).observer( tia ).aircraft( bianca ).timestamp( timestamp += 600000 ).duration( 54 ) );
+		Flight f3 = statePersisting.upsert( new Flight().pilot( tom ).observer( tia ).aircraft( bianca ).timestamp( timestamp += 600000 ).duration( 163 ) );
+		Flight f4 = statePersisting.upsert( new Flight().pilot( tea ).observer( tia ).aircraft( aftyn ).timestamp( timestamp += 600000 ).duration( 182 ) );
+		Flight f5 = statePersisting.upsert( new Flight().pilot( tim ).observer( tea ).aircraft( aftyn ).timestamp( timestamp += 600000 ).duration( 34 ) );
 
 		Group testersInfinite = new Group().name( "Testers Infinite" ).type( GroupType.GROUP );
 		statePersisting.upsert( testersInfinite );
@@ -155,7 +148,7 @@ public class InitialConfig {
 		statePersisting.upsert( new Member().user( tia ).group( testersAroundTheClock ).status( MemberStatus.ACCEPTED ) );
 
 		statePersisting.upsert( new Member().user( tom ).group( testersUnlimited ).status( MemberStatus.OWNER ) );
-		statePersisting.upsert( new Member().user( tom ).group( testersInfinite ).status( MemberStatus.REQUESTED ) );
+		statePersisting.upsert( new Member().user( tom ).group( testersInfinite ).status( MemberStatus.ACCEPTED ) );
 
 		log.warn( "Testing data created" );
 	}
@@ -188,6 +181,46 @@ public class InitialConfig {
 		user.preferredName( "Tommy Test" );
 		user.email( "tomt@noreply.com" );
 		user.smsNumber( "800-555-8668" );
+		user.smsCarrier( SmsCarrier.SPRINT );
+		statePersisting.upsert( user );
+
+		String credential = new BCryptPasswordEncoder().encode( "tester" );
+		UserToken usernameToken = new UserToken().user( user ).principal( user.username() ).credential( credential );
+		UserToken emailToken = new UserToken().user( user ).principal( user.email() ).credential( credential );
+		user.tokens( Set.of( usernameToken, emailToken ) );
+		statePersisting.upsert( user );
+
+		return user;
+	}
+
+	private User createTeaTest() {
+		User user = new User();
+		user.username( "tea" );
+		user.firstName( "Téa" );
+		user.lastName( "Test" );
+		user.preferredName( "Téa Test" );
+		user.email( "teat@noreply.com" );
+		user.smsNumber( "800-555-8328" );
+		user.smsCarrier( SmsCarrier.SPRINT );
+		statePersisting.upsert( user );
+
+		String credential = new BCryptPasswordEncoder().encode( "tester" );
+		UserToken usernameToken = new UserToken().user( user ).principal( user.username() ).credential( credential );
+		UserToken emailToken = new UserToken().user( user ).principal( user.email() ).credential( credential );
+		user.tokens( Set.of( usernameToken, emailToken ) );
+		statePersisting.upsert( user );
+
+		return user;
+	}
+
+	private User createTimTest() {
+		User user = new User();
+		user.username( "tim" );
+		user.firstName( "Tim" );
+		user.lastName( "Test" );
+		user.preferredName( "Timmy Test" );
+		user.email( "timt@noreply.com" );
+		user.smsNumber( "800-555-8468" );
 		user.smsCarrier( SmsCarrier.SPRINT );
 		statePersisting.upsert( user );
 

@@ -12,7 +12,7 @@ public interface StatePersisting {
 
 	void remove( Battery battery );
 
-	void upsert( Flight flight );
+	Flight upsert( Flight flight );
 
 	void remove( Flight flight );
 
