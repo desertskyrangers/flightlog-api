@@ -195,7 +195,7 @@ public class AuthController {
 
 	private String authenticate( String username, String password, boolean remember ) {
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken( username, password );
-		Authentication authentication = this.authenticationManager.authenticate( authenticationToken );
+		Authentication authentication = authenticationManager.authenticate( authenticationToken );
 		SecurityContextHolder.getContext().setAuthentication( authentication );
 
 		Optional<User> optionalAccount = userService.findByPrincipal( username );

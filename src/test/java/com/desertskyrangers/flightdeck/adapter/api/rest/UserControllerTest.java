@@ -139,7 +139,7 @@ public class UserControllerTest extends BaseControllerTest {
 		statePersisting.upsert( bianca );
 
 		// when
-		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_AIRCRAFT + "/0" ) ).andExpect( status().isOk() ).andReturn();
+		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_AIRCRAFT + "/0" ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
 
 		// then
 		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
@@ -164,7 +164,7 @@ public class UserControllerTest extends BaseControllerTest {
 		statePersisting.upsert( b );
 
 		// when
-		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_BATTERY + "/0" ) ).andExpect( status().isOk() ).andReturn();
+		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_BATTERY + "/0" ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
 
 		// then
 		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
@@ -193,7 +193,7 @@ public class UserControllerTest extends BaseControllerTest {
 		statePersisting.upsert( flightB );
 
 		// when
-		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_FLIGHT + "/0" ) ).andExpect( status().isOk() ).andReturn();
+		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_FLIGHT + "/0" ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
 
 		// then
 		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
@@ -221,7 +221,7 @@ public class UserControllerTest extends BaseControllerTest {
 		statePersisting.upsert( new Member().user( user ).group( groupB ).status( MemberStatus.ACCEPTED ) );
 
 		// when
-		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_MEMBERSHIP ) ).andExpect( status().isOk() ).andReturn();
+		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_MEMBERSHIP ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
 
 		// then
 		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
@@ -239,7 +239,7 @@ public class UserControllerTest extends BaseControllerTest {
 		statePersisting.upsert( createTestAircraft( getMockUser() ) );
 		statePersisting.upsert( createTestAircraft( getMockUser() ) );
 		statePersisting.upsert( createTestAircraft( getMockUser() ) );
-		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_AIRCRAFT_LOOKUP ) ).andExpect( status().isOk() ).andReturn();
+		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_AIRCRAFT_LOOKUP ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
 		List<Object> list = Json.asList( result.getResponse().getContentAsString() );
 		assertThat( list.size() ).isEqualTo( 5 );
 	}
@@ -250,21 +250,21 @@ public class UserControllerTest extends BaseControllerTest {
 		statePersisting.upsert( createTestBattery( getMockUser() ) );
 		statePersisting.upsert( createTestBattery( getMockUser() ) );
 		// Plus the 'No battery specified' option
-		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_BATTERY_LOOKUP ) ).andExpect( status().isOk() ).andReturn();
+		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_BATTERY_LOOKUP ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
 		List<Object> list = Json.asList( result.getResponse().getContentAsString() );
 		assertThat( list.size() ).isEqualTo( 4 );
 	}
 
 	@Test
 	void testGetObserverLookup() throws Exception {
-		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_OBSERVER_LOOKUP ) ).andExpect( status().isOk() ).andReturn();
+		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_OBSERVER_LOOKUP ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
 		List<Object> list = Json.asList( result.getResponse().getContentAsString() );
 		assertThat( list.size() ).isEqualTo( 2 );
 	}
 
 	@Test
 	void testGetPilotLookup() throws Exception {
-		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_PILOT_LOOKUP ) ).andExpect( status().isOk() ).andReturn();
+		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_PILOT_LOOKUP ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
 		List<Object> list = Json.asList( result.getResponse().getContentAsString() );
 		assertThat( list.size() ).isEqualTo( 2 );
 	}
@@ -278,7 +278,7 @@ public class UserControllerTest extends BaseControllerTest {
 
 		// when
 		Map<String, String> request = Map.of( "userid", user.id().toString(), "groupid", group.id().toString(), "status", "requested" );
-		MvcResult result = this.mockMvc.perform( put( ApiPath.USER_MEMBERSHIP ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
+		MvcResult result = this.mockMvc.perform( put( ApiPath.USER_MEMBERSHIP ).with( jwt() ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
 
 		// then
 		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
@@ -322,7 +322,7 @@ public class UserControllerTest extends BaseControllerTest {
 
 		// when
 		MvcResult result = this.mockMvc
-			.perform( delete( ApiPath.USER_MEMBERSHIP ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) )
+			.perform( delete( ApiPath.USER_MEMBERSHIP ).with( jwt() ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) )
 			.andExpect( status().isOk() )
 			.andReturn();
 
@@ -364,7 +364,7 @@ public class UserControllerTest extends BaseControllerTest {
 		// given
 
 		// when
-		MvcResult result = this.mockMvc.perform( get( ApiPath.DASHBOARD ) ).andExpect( status().isOk() ).andReturn();
+		MvcResult result = this.mockMvc.perform( get( ApiPath.DASHBOARD ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
 
 		// then
 		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );

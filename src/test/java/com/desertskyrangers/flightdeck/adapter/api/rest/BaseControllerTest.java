@@ -1,13 +1,17 @@
 package com.desertskyrangers.flightdeck.adapter.api.rest;
 
 import com.desertskyrangers.flightdeck.BaseTest;
+import com.desertskyrangers.flightdeck.adapter.api.jwt.JwtTokenProvider;
 import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.core.model.UserToken;
 import org.junit.jupiter.api.BeforeEach;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
 import java.util.Objects;
 import java.util.Set;
@@ -16,12 +20,20 @@ import java.util.Set;
 @AutoConfigureMockMvc
 public abstract class BaseControllerTest extends BaseTest {
 
+	private static final String HEADER_STRING = "Authorization";
+
+	private static final String TOKEN_PREFIX = "Bearer";
+
+	@Autowired
+	JwtTokenProvider jwtTokenProvider;
+
 	protected User mockUser;
+
+	protected String jwt;
 
 	@BeforeEach
 	protected void setup() {
 		super.setup();
-
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if( authentication != null ) {
@@ -42,12 +54,21 @@ public abstract class BaseControllerTest extends BaseTest {
 			usernameToken.user( mockUser );
 			emailToken.user( mockUser );
 			userService.upsert( mockUser );
+
+			jwt = jwtTokenProvider.createToken( mockUser, authentication, false );
 		}
 
 	}
 
 	protected User getMockUser() {
 		return mockUser;
+	}
+
+	protected RequestPostProcessor jwt() {
+		return request -> {
+			request.addHeader( HEADER_STRING, TOKEN_PREFIX + " " + jwt );
+			return request;
+		};
 	}
 
 }

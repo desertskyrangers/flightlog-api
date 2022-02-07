@@ -1,12 +1,8 @@
 package com.desertskyrangers.flightdeck.adapter.api.rest;
 
-import com.desertskyrangers.flightdeck.adapter.api.jwt.JwtToken;
 import com.desertskyrangers.flightdeck.adapter.api.jwt.JwtTokenProvider;
-import com.desertskyrangers.flightdeck.core.exception.UnauthorizedException;
 import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.port.UserService;
-import io.jsonwebtoken.Jwt;
-import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -39,9 +35,9 @@ public abstract class BaseController {
 	}
 
 	protected User getRequester( Authentication authentication ) {
-		// After going through the JwtFilter the JWT is in the authentication credentials.
+		// After going through the JwtFilter the JWT is in the authentication credentials
 		String requesterId = jwtTokenProvider.getUserId( String.valueOf( authentication.getCredentials() ) );
-		return userService.find( UUID.fromString( requesterId )).orElseThrow( () -> new SecurityException( "Request missing user id") );
+		return userService.find( UUID.fromString( requesterId ) ).orElseThrow( () -> new SecurityException( "Request missing user id" ) );
 	}
 
 	protected User unlistedUser() {

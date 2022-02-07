@@ -74,13 +74,12 @@ public class JwtTokenProvider {
 	}
 
 	public String getUserId( String token ) {
-		Claims claims = Jwts.parserBuilder().setSigningKey( key ).build().parseClaimsJws( token ).getBody();
-		return String.valueOf( claims.get( JwtToken.USER_ID_CLAIM_KEY ) );
+		return String.valueOf( parse( token).get( JwtToken.USER_ID_CLAIM_KEY ) );
 	}
 
 	public boolean validateToken( String token ) {
 		try {
-			Jwts.parserBuilder().setSigningKey( key ).build().parseClaimsJws( token );
+			Jwts.parserBuilder().setSigningKey( key ).build().parse( token );
 			return true;
 		} catch( io.jsonwebtoken.security.SecurityException | MalformedJwtException exception ) {
 			log.info( "Invalid JWT signature." );

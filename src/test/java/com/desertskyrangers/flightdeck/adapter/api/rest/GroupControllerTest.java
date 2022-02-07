@@ -36,7 +36,7 @@ public class GroupControllerTest extends BaseControllerTest {
 
 		// then
 		Map<String, String> request = Map.of( "id", group.id().toString(), "invitee", invitee.username() );
-		MvcResult result = this.mockMvc.perform( post( ApiPath.GROUP_INVITE ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isAccepted() ).andReturn();
+		MvcResult result = this.mockMvc.perform( post( ApiPath.GROUP_INVITE ).with( jwt() ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isAccepted() ).andReturn();
 
 		// then
 		Map<?, ?> map = Json.asMap( result.getResponse().getContentAsString() );
@@ -55,7 +55,7 @@ public class GroupControllerTest extends BaseControllerTest {
 
 		// then
 		Map<String, String> request = Map.of( "id", group.id().toString(), "invitee", invitee.email() );
-		MvcResult result = this.mockMvc.perform( post( ApiPath.GROUP_INVITE ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isAccepted() ).andReturn();
+		MvcResult result = this.mockMvc.perform( post( ApiPath.GROUP_INVITE ).with( jwt() ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isAccepted() ).andReturn();
 
 		// then
 		Map<?, ?> map = Json.asMap( result.getResponse().getContentAsString() );
@@ -75,7 +75,7 @@ public class GroupControllerTest extends BaseControllerTest {
 		statePersisting.upsert( new Member().user( getMockUser() ).group( groupB ).status( MemberStatus.ACCEPTED ) );
 
 		// when
-		MvcResult result = this.mockMvc.perform( get( ApiPath.GROUP_AVAILABLE ) ).andExpect( status().isOk() ).andReturn();
+		MvcResult result = this.mockMvc.perform( get( ApiPath.GROUP_AVAILABLE ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
 
 		// then
 		List<?> list = Json.asList( result.getResponse().getContentAsString() );
@@ -98,7 +98,7 @@ public class GroupControllerTest extends BaseControllerTest {
 		statePersisting.upsert( new Member().user( india ).group( groupA ).status( MemberStatus.ACCEPTED ) );
 
 		// when
-		MvcResult result = this.mockMvc.perform( get( ApiPath.GROUP + "/" + groupA.id() + "/membership" ) ).andExpect( status().isOk() ).andReturn();
+		MvcResult result = this.mockMvc.perform( get( ApiPath.GROUP + "/" + groupA.id() + "/membership" ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
 
 		// then
 		List<?> list = Json.asList( result.getResponse().getContentAsString() );
@@ -113,7 +113,7 @@ public class GroupControllerTest extends BaseControllerTest {
 		statePersisting.upsert( group );
 
 		// when
-		MvcResult result = this.mockMvc.perform( get( ApiPath.GROUP + "/" + group.id() ) ).andExpect( status().isOk() ).andReturn();
+		MvcResult result = this.mockMvc.perform( get( ApiPath.GROUP + "/" + group.id() ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
 
 		// then
 		Map<?, ?> map = Json.asMap( result.getResponse().getContentAsString() );
@@ -123,7 +123,7 @@ public class GroupControllerTest extends BaseControllerTest {
 
 	@Test
 	void getGroupWithBadRequest() throws Exception {
-		this.mockMvc.perform( get( ApiPath.GROUP + "/" + "bad-id" ) ).andExpect( status().isBadRequest() ).andReturn();
+		this.mockMvc.perform( get( ApiPath.GROUP + "/" + "bad-id" ).with( jwt() ) ).andExpect( status().isBadRequest() ).andReturn();
 	}
 
 	@Test
@@ -131,7 +131,7 @@ public class GroupControllerTest extends BaseControllerTest {
 		ReactGroup group = createTestReactGroup();
 		group.setId( "new" );
 
-		this.mockMvc.perform( post( ApiPath.GROUP ).content( Json.stringify( group ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
+		this.mockMvc.perform( post( ApiPath.GROUP ).with( jwt() ).content( Json.stringify( group ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
 	}
 
 	@Test
@@ -140,14 +140,14 @@ public class GroupControllerTest extends BaseControllerTest {
 		group.setId( "new" );
 		group.setType( "invalid" );
 
-		this.mockMvc.perform( post( ApiPath.GROUP ).content( Json.stringify( group ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isBadRequest() ).andReturn();
+		this.mockMvc.perform( post( ApiPath.GROUP ).with( jwt() ).content( Json.stringify( group ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isBadRequest() ).andReturn();
 	}
 
 	@Test
 	void testUpdateGroupWithSuccess() throws Exception {
 		ReactGroup group = createTestReactGroup();
 
-		this.mockMvc.perform( put( ApiPath.GROUP ).content( Json.stringify( group ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
+		this.mockMvc.perform( put( ApiPath.GROUP ).with( jwt() ).content( Json.stringify( group ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
 	}
 
 	@Test
@@ -155,7 +155,7 @@ public class GroupControllerTest extends BaseControllerTest {
 		ReactGroup group = createTestReactGroup();
 		group.setType( "invalid" );
 
-		this.mockMvc.perform( put( ApiPath.GROUP ).content( Json.stringify( group ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isBadRequest() ).andReturn();
+		this.mockMvc.perform( put( ApiPath.GROUP ).with( jwt() ).content( Json.stringify( group ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isBadRequest() ).andReturn();
 	}
 
 	@Test
@@ -165,7 +165,7 @@ public class GroupControllerTest extends BaseControllerTest {
 		statePersisting.upsert( group );
 
 		// when
-		MvcResult result = this.mockMvc.perform( delete( ApiPath.GROUP ).content( "{\"id\":\"" + group.id() + "\"}" ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
+		MvcResult result = this.mockMvc.perform( delete( ApiPath.GROUP ).with( jwt() ).content( "{\"id\":\"" + group.id() + "\"}" ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
 
 		// then
 		Map<?, ?> map = Json.asMap( result.getResponse().getContentAsString() );

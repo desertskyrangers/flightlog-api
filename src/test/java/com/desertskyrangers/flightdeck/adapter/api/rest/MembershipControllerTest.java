@@ -40,7 +40,7 @@ public class MembershipControllerTest extends BaseControllerTest {
 
 		// when
 		Map<String, String> request = Map.of( "id", membership.id().toString(), "status", MemberStatus.ACCEPTED.name().toLowerCase() );
-		this.mockMvc.perform( put( ApiPath.MEMBERSHIP ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
+		this.mockMvc.perform( put( ApiPath.MEMBERSHIP ).with( jwt() ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
 
 		// then
 		Optional<Member> optional = stateRetrieving.findMembership( membership.id() );
@@ -72,7 +72,7 @@ public class MembershipControllerTest extends BaseControllerTest {
 
 		// when
 		Map<String, String> request = Map.of( "id", membership.id().toString(), "status", MemberStatus.ACCEPTED.name().toLowerCase() );
-		this.mockMvc.perform( put( ApiPath.MEMBERSHIP ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isUnauthorized() ).andReturn();
+		this.mockMvc.perform( put( ApiPath.MEMBERSHIP ).with( jwt() ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isUnauthorized() ).andReturn();
 	}
 
 	@Test
@@ -85,7 +85,7 @@ public class MembershipControllerTest extends BaseControllerTest {
 
 		// when
 		Map<String, String> request = Map.of( "id", membership.id().toString(), "status", MemberStatus.ACCEPTED.name().toLowerCase() );
-		this.mockMvc.perform( put( ApiPath.MEMBERSHIP ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isUnauthorized() ).andReturn();
+		this.mockMvc.perform( put( ApiPath.MEMBERSHIP ).with( jwt() ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isUnauthorized() ).andReturn();
 	}
 
 	@Test
@@ -99,7 +99,7 @@ public class MembershipControllerTest extends BaseControllerTest {
 		Map<String, String> request = new HashMap<>();
 		request.put( "id", membership.id().toString() );
 		//request.put( "status", MemberStatus.ACCEPTED.name().toLowerCase() );
-		this.mockMvc.perform( delete( ApiPath.MEMBERSHIP ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
+		this.mockMvc.perform( delete( ApiPath.MEMBERSHIP ).with( jwt() ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
 
 		// then
 		Optional<Member> optional = stateRetrieving.findMembership( membership.id() );
@@ -116,7 +116,7 @@ public class MembershipControllerTest extends BaseControllerTest {
 		// when
 		Map<String, String> request = new HashMap<>();
 		request.put( "id", "invalid" );
-		this.mockMvc.perform( delete( ApiPath.MEMBERSHIP ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isBadRequest() ).andReturn();
+		this.mockMvc.perform( delete( ApiPath.MEMBERSHIP ).with( jwt() ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isBadRequest() ).andReturn();
 	}
 
 }

@@ -1,18 +1,29 @@
 package com.desertskyrangers.flightdeck.adapter.api.rest;
 
 import com.desertskyrangers.flightdeck.adapter.api.ApiPath;
+import com.desertskyrangers.flightdeck.adapter.api.jwt.JwtTokenProvider;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactFlight;
 import com.desertskyrangers.flightdeck.core.model.Flight;
 import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
 import com.desertskyrangers.flightdeck.util.Json;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.nio.charset.StandardCharsets;
+import java.security.Key;
+import java.util.Date;
 import java.util.Map;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -33,7 +44,7 @@ public class FlightControllerTest extends BaseControllerTest {
 		statePersisting.upsert( flight );
 
 		// when
-		MvcResult result = this.mockMvc.perform( get( ApiPath.FLIGHT + "/" + flight.id() ) ).andExpect( status().isOk() ).andReturn();
+		MvcResult result = this.mockMvc.perform( get( ApiPath.FLIGHT + "/" + flight.id() ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
 
 		// then
 		Map<?, ?> map = Json.asMap( result.getResponse().getContentAsString() );
@@ -51,7 +62,7 @@ public class FlightControllerTest extends BaseControllerTest {
 		ReactFlight flight = createTestReactFlight();
 		flight.setId( "new" );
 
-		this.mockMvc.perform( post( ApiPath.FLIGHT ).content( Json.stringify( flight ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
+		this.mockMvc.perform( post( ApiPath.FLIGHT ).with( jwt() ).content( Json.stringify( flight ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
 	}
 
 	@Test
@@ -60,14 +71,14 @@ public class FlightControllerTest extends BaseControllerTest {
 		flight.setId( "new" );
 		flight.setAircraft( "invalid" );
 
-		this.mockMvc.perform( post( ApiPath.FLIGHT ).content( Json.stringify( flight ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isBadRequest() ).andReturn();
+		this.mockMvc.perform( post( ApiPath.FLIGHT ).with( jwt() ).content( Json.stringify( flight ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isBadRequest() ).andReturn();
 	}
 
 	@Test
 	void testUpdateFlightWithSuccess() throws Exception {
 		ReactFlight flight = createTestReactFlight();
 
-		this.mockMvc.perform( put( ApiPath.FLIGHT ).content( Json.stringify( flight ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
+		this.mockMvc.perform( put( ApiPath.FLIGHT ).with( jwt() ).content( Json.stringify( flight ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
 	}
 
 	@Test
@@ -75,7 +86,7 @@ public class FlightControllerTest extends BaseControllerTest {
 		ReactFlight flight = createTestReactFlight();
 		flight.setAircraft( "invalid" );
 
-		this.mockMvc.perform( put( ApiPath.FLIGHT ).content( Json.stringify( flight ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isBadRequest() ).andReturn();
+		this.mockMvc.perform( put( ApiPath.FLIGHT ).with( jwt() ).content( Json.stringify( flight ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isBadRequest() ).andReturn();
 	}
 
 	@Test
@@ -86,7 +97,7 @@ public class FlightControllerTest extends BaseControllerTest {
 
 		// when
 		MvcResult result = this.mockMvc
-			.perform( delete( ApiPath.FLIGHT ).content( "{\"id\":\"" + flight.id() + "\"}" ).contentType( MediaType.APPLICATION_JSON ) )
+			.perform( delete( ApiPath.FLIGHT ).with( jwt() ).content( "{\"id\":\"" + flight.id() + "\"}" ).contentType( MediaType.APPLICATION_JSON ) )
 			.andExpect( status().isOk() )
 			.andReturn();
 
