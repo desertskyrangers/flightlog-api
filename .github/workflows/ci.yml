@@ -52,7 +52,7 @@ jobs:
 
       - name: Build Server
         run: |
-           ./gradlew clean bootJar
+           ./gradlew clean check bootJar
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v1
