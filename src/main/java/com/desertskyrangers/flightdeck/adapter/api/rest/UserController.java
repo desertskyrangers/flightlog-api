@@ -54,7 +54,7 @@ public class UserController extends BaseController {
 	ResponseEntity<ReactDashboardResponse> dashboard( Authentication authentication ) {
 		try {
 			return dashboardService
-				.findByUser( findUser( authentication ) )
+				.findByUser( getRequester( authentication ) )
 				.map( dashboard -> new ResponseEntity<>( new ReactDashboardResponse().setDashboard( ReactDashboard.from( dashboard ) ), HttpStatus.OK ) )
 				.orElseGet( () -> new ResponseEntity<>( new ReactDashboardResponse().setMessages( List.of( "Dashboard not found" ) ), HttpStatus.BAD_REQUEST ) );
 		} catch( Exception exception ) {
@@ -132,7 +132,7 @@ public class UserController extends BaseController {
 		List<String> messages = new ArrayList<>();
 
 		try {
-			User user = findUser( authentication );
+			User user = getRequester( authentication );
 			List<ReactAircraft> aircraftPage = aircraftService.findByOwner( user.id() ).stream().map( ReactAircraft::from ).toList();
 			return new ResponseEntity<>( new ReactAircraftPageResponse().setAircraft( aircraftPage ), HttpStatus.OK );
 		} catch( Exception exception ) {
@@ -148,7 +148,7 @@ public class UserController extends BaseController {
 		List<String> messages = new ArrayList<>();
 
 		try {
-			User user = findUser( authentication );
+			User user = getRequester( authentication );
 			List<ReactBattery> batteryPage = batteryService.findByOwner( user.id() ).stream().map( ReactBattery::from ).toList();
 			return new ResponseEntity<>( new ReactBatteryPageResponse().setBatteries( batteryPage ), HttpStatus.OK );
 		} catch( Exception exception ) {
@@ -164,7 +164,7 @@ public class UserController extends BaseController {
 		List<String> messages = new ArrayList<>();
 
 		try {
-			User requester = findUser( authentication );
+			User requester = getRequester( authentication );
 			List<ReactFlight> flightPage = flightService.findFlightsByUser( requester.id() ).stream().map( f -> ReactFlight.from( requester, f ) ).toList();
 			return new ResponseEntity<>( new ReactFlightPageResponse().setFlights( flightPage ), HttpStatus.OK );
 		} catch( Exception exception ) {
@@ -180,7 +180,7 @@ public class UserController extends BaseController {
 		List<String> messages = new ArrayList<>();
 
 		try {
-			User user = findUser( authentication );
+			User user = getRequester( authentication );
 			List<ReactGroup> groupPage = groupService.findGroupsByUser( user ).stream().map( ReactGroup::from ).toList();
 			return new ResponseEntity<>( new ReactGroupPageResponse().setGroups( groupPage ), HttpStatus.OK );
 		} catch( Exception exception ) {
@@ -196,7 +196,7 @@ public class UserController extends BaseController {
 		List<String> messages = new ArrayList<>();
 
 		try {
-			User user = findUser( authentication );
+			User user = getRequester( authentication );
 			return new ResponseEntity<>( new ReactMembershipPageResponse().setMemberships( getMemberships( user ) ), HttpStatus.OK );
 		} catch( Exception exception ) {
 			log.error( "Error creating new battery", exception );
@@ -208,14 +208,14 @@ public class UserController extends BaseController {
 
 	@GetMapping( path = ApiPath.USER_AIRCRAFT_LOOKUP )
 	ResponseEntity<List<ReactOption>> getAircraftLookup( Authentication authentication ) {
-		User user = findUser( authentication );
+		User user = getRequester( authentication );
 		List<Aircraft> objects = aircraftService.findByOwner( user.id() );
 		return new ResponseEntity<>( objects.stream().map( c -> new ReactOption( c.id().toString(), c.name() ) ).toList(), HttpStatus.OK );
 	}
 
 	@GetMapping( path = ApiPath.USER_BATTERY_LOOKUP )
 	ResponseEntity<List<ReactOption>> getBatteryLookup( Authentication authentication ) {
-		User user = findUser( authentication );
+		User user = getRequester( authentication );
 		List<Battery> objects = batteryService.findByOwner( user.id() );
 		List<ReactOption> options = new ArrayList<>( objects.stream().map( c -> new ReactOption( c.id().toString(), c.name() ) ).toList() );
 		options.add( new ReactOption( "", "No battery specified" ) );
@@ -229,7 +229,7 @@ public class UserController extends BaseController {
 
 	@GetMapping( path = ApiPath.USER_PILOT_LOOKUP )
 	ResponseEntity<List<ReactOption>> getPilotLookup( Authentication authentication ) {
-		User user = findUser( authentication );
+		User user = getRequester( authentication );
 
 		List<User> users = new ArrayList<>( userService.findAllGroupPeers( user ) );
 		users.sort( null );
@@ -252,7 +252,7 @@ public class UserController extends BaseController {
 		if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactMembershipPageResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
 
 		try {
-			User requester = findUser( authentication );
+			User requester = getRequester( authentication );
 			User user = userService.find( UUID.fromString( userId ) ).orElse( null );
 			Group group = groupService.find( UUID.fromString( groupId ) ).orElse( null );
 			MemberStatus status = MemberStatus.valueOf( statusKey.toUpperCase() );
@@ -286,7 +286,7 @@ public class UserController extends BaseController {
 		if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactMembershipPageResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
 
 		try {
-			User requester = findUser( authentication );
+			User requester = getRequester( authentication );
 			Member member = memberService.find( UUID.fromString( userId ) ).orElse( null );
 			if( member == null ) {
 				messages.add( "Membership not found" );

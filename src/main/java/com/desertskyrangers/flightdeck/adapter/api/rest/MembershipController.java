@@ -42,7 +42,7 @@ public class MembershipController extends BaseController {
 		if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactMembershipResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
 
 		try {
-			User requester = findUser( authentication );
+			User requester = getRequester( authentication );
 			Optional<Member> optional = memberService.find( UUID.fromString( id ) );
 
 			if( optional.isPresent() ) {
@@ -69,7 +69,7 @@ public class MembershipController extends BaseController {
 		if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactMembershipResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
 
 		try {
-			User requester = findUser( authentication );
+			User requester = getRequester( authentication );
 			Optional<Member> optional = memberService.find( UUID.fromString( id ) );
 
 			if( optional.isPresent() ) {

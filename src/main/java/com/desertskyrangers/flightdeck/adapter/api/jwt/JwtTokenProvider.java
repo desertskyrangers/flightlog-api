@@ -64,13 +64,18 @@ public class JwtTokenProvider {
 		Claims claims = Jwts.parserBuilder().setSigningKey( key ).build().parseClaimsJws( token ).getBody();
 
 		Collection<? extends GrantedAuthority> authorities = Arrays
-			.stream( claims.get( JwtToken.AUTHORITIES_CLAIM_KEY ).toString().split( "," ) )
+			.stream( String.valueOf( claims.get( JwtToken.AUTHORITIES_CLAIM_KEY ) ).split( "," ) )
 			.map( SimpleGrantedAuthority::new )
 			.collect( Collectors.toList() );
 
 		org.springframework.security.core.userdetails.User principal = new org.springframework.security.core.userdetails.User( claims.getSubject(), "", authorities );
 
 		return new UsernamePasswordAuthenticationToken( principal, token, authorities );
+	}
+
+	public String getUserId( String token ) {
+		Claims claims = Jwts.parserBuilder().setSigningKey( key ).build().parseClaimsJws( token ).getBody();
+		return String.valueOf( claims.get( JwtToken.USER_ID_CLAIM_KEY ) );
 	}
 
 	public boolean validateToken( String token ) {

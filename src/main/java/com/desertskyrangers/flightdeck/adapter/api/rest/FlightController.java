@@ -30,7 +30,7 @@ public class FlightController extends BaseController {
 	ResponseEntity<ReactFlightResponse> getFlight( Authentication authentication, @PathVariable UUID id ) {
 		List<String> messages = new ArrayList<>();
 		try {
-			User requester = findUser( authentication );
+			User requester = getRequester( authentication );
 			Optional<Flight> optional = flightService.find( id );
 			if( optional.isPresent() ) {
 				return new ResponseEntity<>( new ReactFlightResponse().setFlight( ReactFlight.from( requester, optional.get() ) ), HttpStatus.OK );
@@ -70,7 +70,7 @@ public class FlightController extends BaseController {
 		if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactFlightResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
 
 		try {
-			User user = findUser( authentication );
+			User user = getRequester( authentication );
 			flightService.upsert( ReactFlight.toUpsertRequest( request ).user( user ) );
 			return new ResponseEntity<>( new ReactFlightResponse().setFlight( request ), HttpStatus.OK );
 		} catch( Exception exception ) {
@@ -87,7 +87,7 @@ public class FlightController extends BaseController {
 		log.info( "Delete flight" );
 		List<String> messages = new ArrayList<>();
 		try {
-			User requester = findUser( authentication );
+			User requester = getRequester( authentication );
 			Optional<Flight> optional = flightService.find( id );
 			if( optional.isPresent() ) {
 				Flight deletedFlight = optional.get();

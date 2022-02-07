@@ -48,7 +48,7 @@ public class GroupController extends BaseController {
 		if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactMembershipPageResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
 
 		try {
-			User requester = findUser( authentication );
+			User requester = getRequester( authentication );
 			membershipService.requestMembership( requester, optionalInvitee.get(), optionalGroup.get(), MemberStatus.INVITED );
 
 			Set<Member> memberships = membershipService.findMembershipsByGroup( optionalGroup.get() );
@@ -63,7 +63,7 @@ public class GroupController extends BaseController {
 
 	@GetMapping( path = ApiPath.GROUP_AVAILABLE )
 	ResponseEntity<List<ReactOption>> getAvailableGroups( Authentication authentication ) {
-		User user = findUser( authentication );
+		User user = getRequester( authentication );
 		List<Group> objects = new ArrayList<>( groupService.findAllAvailable( user ) );
 		Collections.sort( objects );
 		return new ResponseEntity<>( objects.stream().map( c -> new ReactOption( c.id().toString(), c.name() ) ).toList(), HttpStatus.OK );
@@ -122,7 +122,7 @@ public class GroupController extends BaseController {
 		if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactGroupResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
 
 		try {
-			User requester = findUser( authentication );
+			User requester = getRequester( authentication );
 			log.warn( "Is new group=" + isNew );
 			Group group = ReactGroup.toGroup( request );
 			if( isNew ) {
