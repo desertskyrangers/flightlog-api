@@ -76,6 +76,19 @@ public class MembershipControllerTest extends BaseControllerTest {
 	}
 
 	@Test
+	void testUpdateMembership_UserCanApproveTheirOwnMembershipInvitation() throws Exception {
+		// given
+		User user = statePersisting.upsert( createTestUser() );
+		Group group = statePersisting.upsert( createTestGroup( "Group A", GroupType.CLUB ) );
+		statePersisting.upsert( new Member().user( user ).group( group ).status( MemberStatus.OWNER ) );
+		Member membership = statePersisting.upsert( new Member().user( getMockUser() ).group( group ).status( MemberStatus.INVITED ) );
+
+		// when
+		Map<String, String> request = Map.of( "id", membership.id().toString(), "status", MemberStatus.ACCEPTED.name().toLowerCase() );
+		this.mockMvc.perform( put( ApiPath.MEMBERSHIP ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isUnauthorized() ).andReturn();
+	}
+
+	@Test
 	void testCancelMembership() throws Exception {
 		// given
 		User user = getMockUser();

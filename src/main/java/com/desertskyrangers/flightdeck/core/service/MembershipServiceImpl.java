@@ -35,13 +35,14 @@ public class MembershipServiceImpl implements MembershipService {
 
 	@Override
 	public Member upsert( User requester, Member member ) {
+		Member current = stateRetrieving.findMembership( requester.id() ).orElse( null );
+
 		boolean isOwned = stateRetrieving.findGroupOwners( member.group() ).contains( requester );
-		boolean isAccepted = member.status() == MemberStatus.ACCEPTED;
-		boolean isRequested = member.status() == MemberStatus.REQUESTED;
+		boolean isAccepting = current != null && current.status() == MemberStatus.INVITED && member.status() == MemberStatus.ACCEPTED;
 
-		if( !isOwned && !isAccepted && !isRequested ) throw new UnauthorizedException( requester );
+		if( isOwned || isAccepting ) return statePersisting.upsert( member );
 
-		return statePersisting.upsert( member );
+		throw new UnauthorizedException( requester );
 	}
 
 	@Override
