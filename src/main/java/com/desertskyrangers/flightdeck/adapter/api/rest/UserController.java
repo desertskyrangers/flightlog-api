@@ -22,6 +22,8 @@ public class UserController extends BaseController {
 
 	private final BatteryService batteryService;
 
+	private final DashboardService dashboardService;
+
 	private final FlightService flightService;
 
 	private final GroupService groupService;
@@ -31,10 +33,17 @@ public class UserController extends BaseController {
 	private final MembershipService memberService;
 
 	public UserController(
-		AircraftService aircraftService, BatteryService batteryService, FlightService flightService, GroupService groupService, MembershipService memberService, UserService userService
+		AircraftService aircraftService,
+		BatteryService batteryService,
+		DashboardService dashboardService,
+		FlightService flightService,
+		GroupService groupService,
+		MembershipService memberService,
+		UserService userService
 	) {
 		this.aircraftService = aircraftService;
 		this.batteryService = batteryService;
+		this.dashboardService = dashboardService;
 		this.flightService = flightService;
 		this.groupService = groupService;
 		this.memberService = memberService;
@@ -44,16 +53,10 @@ public class UserController extends BaseController {
 	@GetMapping( path = ApiPath.DASHBOARD )
 	ResponseEntity<ReactDashboardResponse> dashboard( Authentication authentication ) {
 		try {
-			User user = findUser( authentication );
-
-			int flightCount = flightService.getPilotFlightCount( user.id() );
-			long flightTime = flightService.getPilotFlightTime( user.id() );
-
-			ReactDashboard dashboard = new ReactDashboard();
-			dashboard.setPilotFlightCount( flightCount );
-			dashboard.setPilotFlightTime( flightTime );
-
-			return new ResponseEntity<>( new ReactDashboardResponse().setDashboard( dashboard ), HttpStatus.OK );
+			return dashboardService
+				.findByUser( findUser( authentication ) )
+				.map( dashboard -> new ResponseEntity<>( new ReactDashboardResponse().setDashboard( ReactDashboard.from( dashboard ) ), HttpStatus.OK ) )
+				.orElseGet( () -> new ResponseEntity<>( new ReactDashboardResponse().setMessages( List.of( "Dashboard not found" ) ), HttpStatus.BAD_REQUEST ) );
 		} catch( Exception exception ) {
 			log.error( "Error generating dashboard", exception );
 			return new ResponseEntity<>( new ReactDashboardResponse().setMessages( List.of( "Error generating dashboard" ) ), HttpStatus.INTERNAL_SERVER_ERROR );

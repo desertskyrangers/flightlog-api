@@ -359,4 +359,28 @@ public class UserControllerTest extends BaseControllerTest {
 		assertThat( messages.size() ).isEqualTo( 1 );
 	}
 
+	@Test
+	void testDashboard() throws Exception{
+		// given
+
+		// when
+		MvcResult result = this.mockMvc.perform( get( ApiPath.DASHBOARD ) ).andExpect( status().isOk() ).andReturn();
+
+		// then
+		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
+		Map<?, ?> dashboardMap = (Map<?, ?>) map.get( "dashboard" );
+		assertThat( dashboardMap ).isNotNull();
+	}
+
+	@Test
+	void testDashboardWithBadRequest() throws Exception {
+		// when
+		MvcResult result = this.mockMvc.perform( get( ApiPath.DASHBOARD ) ).andExpect( status().isBadRequest() ).andReturn();
+
+		// then
+		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
+		List<?> messages = (List<?>) map.get( "messages" );
+		assertThat( messages ).isNotNull();
+	}
+
 }

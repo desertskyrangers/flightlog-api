@@ -1,5 +1,6 @@
 package com.desertskyrangers.flightdeck.adapter.api.model;
 
+import com.desertskyrangers.flightdeck.core.model.Dashboard;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -10,5 +11,9 @@ public class ReactDashboard {
 	private int pilotFlightCount;
 
 	private long pilotFlightTime;
+
+	public static ReactDashboard from( Dashboard dashboard) {
+		return new ReactDashboard().setPilotFlightCount( dashboard.flightCount() ).setPilotFlightTime( dashboard.flightTime() );
+	}
 
 }
