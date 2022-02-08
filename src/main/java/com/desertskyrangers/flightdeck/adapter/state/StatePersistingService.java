@@ -19,6 +19,8 @@ public class StatePersistingService implements StatePersisting {
 
 	private final MemberRepo memberRepo;
 
+	private final PreferencesRepo preferencesRepo;
+
 	private final TokenRepo tokenRepo;
 
 	private final UserRepo userRepo;
@@ -26,13 +28,22 @@ public class StatePersistingService implements StatePersisting {
 	private final VerificationRepo verificationRepo;
 
 	public StatePersistingService(
-		AircraftRepo aircraftRepo, BatteryRepo batteryRepo, FlightRepo flightRepo, GroupRepo groupRepo, MemberRepo memberRepo, TokenRepo tokenRepo, UserRepo userRepo, VerificationRepo verificationRepo
+		AircraftRepo aircraftRepo,
+		BatteryRepo batteryRepo,
+		FlightRepo flightRepo,
+		GroupRepo groupRepo,
+		MemberRepo memberRepo,
+		PreferencesRepo preferencesRepo,
+		TokenRepo tokenRepo,
+		UserRepo userRepo,
+		VerificationRepo verificationRepo
 	) {
 		this.aircraftRepo = aircraftRepo;
 		this.batteryRepo = batteryRepo;
 		this.flightRepo = flightRepo;
 		this.groupRepo = groupRepo;
 		this.memberRepo = memberRepo;
+		this.preferencesRepo = preferencesRepo;
 		this.tokenRepo = tokenRepo;
 		this.userRepo = userRepo;
 		this.verificationRepo = verificationRepo;
@@ -102,6 +113,17 @@ public class StatePersistingService implements StatePersisting {
 	@Override
 	public void removeAllMembers() {
 		memberRepo.deleteAll();
+	}
+
+	@Override
+	public Prefs upsert( Prefs preferences ) {
+		return PreferencesEntity.toPrefs( preferencesRepo.save( PreferencesEntity.from( preferences ) ) );
+	}
+
+	@Override
+	public Prefs remove( Prefs preferences ) {
+		preferencesRepo.deleteById( preferences.id() );
+		return preferences;
 	}
 
 	@Override

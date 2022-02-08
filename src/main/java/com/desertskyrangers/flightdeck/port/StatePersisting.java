@@ -30,6 +30,10 @@ public interface StatePersisting {
 
 	void removeAllMembers();
 
+	Prefs upsert( Prefs preferences );
+
+	Prefs remove( Prefs preferences );
+
 	User upsert( User account );
 
 	void remove( User account );

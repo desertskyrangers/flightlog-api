@@ -28,6 +28,7 @@ public class TableStructureTests {
 		expected.add( "flightbattery" );
 		expected.add( "member" );
 		expected.add( "org" );
+		expected.add( "preferences" );
 		expected.add( "user" );
 		expected.add( "usertoken" );
 		expected.add( "userrole" );
@@ -120,6 +121,15 @@ public class TableStructureTests {
 		expected.add( "name" );
 
 		assertThat( getColumns( "org" ) ).containsAll( expected );
+	}
+
+	@Test
+	void testPreferencesTable() throws Exception {
+		Set<String> expected = new HashSet<>();
+		expected.add( "id" );
+		expected.add( "json" );
+
+		assertThat( getColumns( "preferences" ) ).containsAll( expected );
 	}
 
 	@Test
