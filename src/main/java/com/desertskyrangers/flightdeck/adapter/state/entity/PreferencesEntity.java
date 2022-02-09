@@ -1,6 +1,6 @@
 package com.desertskyrangers.flightdeck.adapter.state.entity;
 
-import com.desertskyrangers.flightdeck.core.model.Prefs;
+import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.util.Json;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Map;
 import java.util.UUID;
 
 @Data
@@ -24,18 +25,15 @@ public class PreferencesEntity {
 	@Column( columnDefinition = "VARCHAR2" )
 	private String json;
 
-	public static PreferencesEntity from( Prefs preferences ) {
+	public static PreferencesEntity from( User user, Map<String,Object> preferences ) {
 		PreferencesEntity entity = new PreferencesEntity();
-		entity.setId( preferences.id() );
-		entity.setJson( Json.stringify( preferences.data() ) );
+		entity.setId( user.id() );
+		entity.setJson( Json.stringify( preferences ) );
 		return entity;
 	}
 
-	public static Prefs toPrefs( PreferencesEntity entity ) {
-		Prefs preferences = new Prefs();
-		preferences.id( entity.getId() );
-		preferences.data( Json.asMap( entity.getJson() ) );
-		return preferences;
+	public static Map<String,Object> toPreferences( PreferencesEntity entity ) {
+		return Json.asMap( entity.getJson() );
 	}
 
 }

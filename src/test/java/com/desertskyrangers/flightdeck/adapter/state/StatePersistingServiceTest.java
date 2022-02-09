@@ -7,10 +7,11 @@ import com.desertskyrangers.flightdeck.adapter.state.repo.GroupRepo;
 import com.desertskyrangers.flightdeck.adapter.state.repo.PreferencesRepo;
 import com.desertskyrangers.flightdeck.core.model.Group;
 import com.desertskyrangers.flightdeck.core.model.GroupType;
-import com.desertskyrangers.flightdeck.core.model.Prefs;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -53,28 +54,34 @@ public class StatePersistingServiceTest extends BaseTest {
 
 	@Test
 	void testUpsertPreferences() {
+		// given
+		var user = createTestUser();
+
 		// when
-		Prefs expected = statePersisting.upsert( new Prefs() );
+		Map<String, Object> expected = statePersisting.upsertPreferences( user, Map.of() );
 
 		// then
-		PreferencesEntity actual = preferencesRepo.findById( expected.id() ).orElse( null );
+		PreferencesEntity actual = preferencesRepo.findById( user.id() ).orElse( null );
 		assertThat( actual ).isNotNull();
-		assertThat( PreferencesEntity.toPrefs( actual ) ).isEqualTo( expected );
+		assertThat( PreferencesEntity.toPreferences( actual ) ).isEqualTo( expected );
 	}
 
 	@Test
 	void testRemovePreferences() {
+		// given
+		var user = createTestUser();
+
 		// when
-		Prefs expected = statePersisting.upsert( new Prefs() );
+		Map<String, Object> expected = statePersisting.upsertPreferences( user, Map.of() );
 
 		// then
-		PreferencesEntity actual = preferencesRepo.findById( expected.id() ).orElse( null );
+		PreferencesEntity actual = preferencesRepo.findById( user.id() ).orElse( null );
 		assertThat( actual ).isNotNull();
-		assertThat( PreferencesEntity.toPrefs( actual ) ).isEqualTo( expected );
+		assertThat( PreferencesEntity.toPreferences( actual ) ).isEqualTo( expected );
 
 		// when
-		statePersisting.remove( expected );
-		assertThat( preferencesRepo.findById( expected.id() ).orElse( null ) ).isNull();
+		statePersisting.removePreferences( user );
+		assertThat( preferencesRepo.findById( user.id() ).orElse( null ) ).isNull();
 	}
 
 }

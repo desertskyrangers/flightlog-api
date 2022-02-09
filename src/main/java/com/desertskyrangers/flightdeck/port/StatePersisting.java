@@ -2,6 +2,8 @@ package com.desertskyrangers.flightdeck.port;
 
 import com.desertskyrangers.flightdeck.core.model.*;
 
+import java.util.Map;
+
 public interface StatePersisting {
 
 	void upsert( Aircraft aircraft );
@@ -30,9 +32,9 @@ public interface StatePersisting {
 
 	void removeAllMembers();
 
-	Prefs upsert( Prefs preferences );
+	Map<String,Object> upsertPreferences( User user, Map<String,Object> preferences );
 
-	Prefs remove( Prefs preferences );
+	Map<String,Object> removePreferences( User user );
 
 	User upsert( User account );
 

@@ -2,10 +2,7 @@ package com.desertskyrangers.flightdeck.port;
 
 import com.desertskyrangers.flightdeck.core.model.*;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public interface StateRetrieving {
 
@@ -42,6 +39,8 @@ public interface StateRetrieving {
 	Set<Member> findMemberships( User user );
 
 	Set<Member> findMemberships( Group group );
+
+	Map<String, Object> findPreferences( User user );
 
 	Optional<UserToken> findUserToken( UUID id );
 

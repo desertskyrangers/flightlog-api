@@ -4,12 +4,10 @@ import com.desertskyrangers.flightdeck.adapter.state.entity.*;
 import com.desertskyrangers.flightdeck.adapter.state.repo.*;
 import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.StateRetrieving;
+import com.desertskyrangers.flightdeck.util.Json;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -26,6 +24,8 @@ public class StateRetrievingService implements StateRetrieving {
 
 	private final MemberRepo memberRepo;
 
+	private final PreferencesRepo preferencesRepo;
+
 	private final UserRepo userRepo;
 
 	private final TokenRepo tokenRepo;
@@ -33,13 +33,22 @@ public class StateRetrievingService implements StateRetrieving {
 	private final VerificationRepo verificationRepo;
 
 	public StateRetrievingService(
-		AircraftRepo aircraftRepo, BatteryRepo batteryRepo, FlightRepo flightRepo, GroupRepo groupRepo, MemberRepo memberRepo, UserRepo userRepo, TokenRepo tokenRepo, VerificationRepo verificationRepo
+		AircraftRepo aircraftRepo,
+		BatteryRepo batteryRepo,
+		FlightRepo flightRepo,
+		GroupRepo groupRepo,
+		MemberRepo memberRepo,
+		PreferencesRepo preferencesRepo,
+		UserRepo userRepo,
+		TokenRepo tokenRepo,
+		VerificationRepo verificationRepo
 	) {
 		this.aircraftRepo = aircraftRepo;
 		this.batteryRepo = batteryRepo;
 		this.flightRepo = flightRepo;
 		this.groupRepo = groupRepo;
 		this.memberRepo = memberRepo;
+		this.preferencesRepo = preferencesRepo;
 		this.userRepo = userRepo;
 		this.tokenRepo = tokenRepo;
 		this.verificationRepo = verificationRepo;
@@ -124,7 +133,7 @@ public class StateRetrievingService implements StateRetrieving {
 
 	@Override
 	public Set<User> findGroupOwners( Group group ) {
-		return memberRepo.findAllByGroup_IdAndStatus( group.id(), MemberStatus.OWNER.name().toLowerCase() ).stream().map(MemberEntity::getUser).map(UserEntity::toUser).collect( Collectors.toSet());
+		return memberRepo.findAllByGroup_IdAndStatus( group.id(), MemberStatus.OWNER.name().toLowerCase() ).stream().map( MemberEntity::getUser ).map( UserEntity::toUser ).collect( Collectors.toSet() );
 	}
 
 	@Override
@@ -145,6 +154,10 @@ public class StateRetrievingService implements StateRetrieving {
 	@Override
 	public Optional<UserToken> findUserToken( UUID id ) {
 		return tokenRepo.findById( id ).map( TokenEntity::toUserToken );
+	}
+
+	public Map<String, Object> findPreferences( User user ) {
+		return Json.asMap( preferencesRepo.findById( user.id() ).orElse( new PreferencesEntity().setJson( "" ) ).getJson() );
 	}
 
 	@Override

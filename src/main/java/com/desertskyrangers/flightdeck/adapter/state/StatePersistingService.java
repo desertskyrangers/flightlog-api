@@ -4,7 +4,11 @@ import com.desertskyrangers.flightdeck.adapter.state.entity.*;
 import com.desertskyrangers.flightdeck.adapter.state.repo.*;
 import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
+import com.desertskyrangers.flightdeck.port.StateRetrieving;
+import com.desertskyrangers.flightdeck.util.Json;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 @Service
 public class StatePersistingService implements StatePersisting {
@@ -116,13 +120,14 @@ public class StatePersistingService implements StatePersisting {
 	}
 
 	@Override
-	public Prefs upsert( Prefs preferences ) {
-		return PreferencesEntity.toPrefs( preferencesRepo.save( PreferencesEntity.from( preferences ) ) );
+	public Map<String,Object> upsertPreferences( User user, Map<String,Object> preferences ) {
+		return Json.asMap( preferencesRepo.save( PreferencesEntity.from( user, preferences ) ).getJson() );
 	}
 
 	@Override
-	public Prefs remove( Prefs preferences ) {
-		preferencesRepo.deleteById( preferences.id() );
+	public Map<String,Object> removePreferences( User user ) {
+		Map<String,Object> preferences = Json.asMap( preferencesRepo.findById( user.id() ).orElse( new PreferencesEntity().setJson( "" ) ).getJson() );
+		preferencesRepo.deleteById( user.id() );
 		return preferences;
 	}
 
