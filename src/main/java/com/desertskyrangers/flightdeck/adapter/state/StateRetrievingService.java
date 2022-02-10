@@ -157,7 +157,7 @@ public class StateRetrievingService implements StateRetrieving {
 	}
 
 	public Map<String, Object> findPreferences( User user ) {
-		return Json.asMap( preferencesRepo.findById( user.id() ).orElse( new PreferencesEntity().setJson( "" ) ).getJson() );
+		return Json.asMap( preferencesRepo.findById( user.id() ).orElse( new PreferencesEntity().setJson( "{}" ) ).getJson() );
 	}
 
 	@Override

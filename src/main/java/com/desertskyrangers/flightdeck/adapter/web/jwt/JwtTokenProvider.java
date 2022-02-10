@@ -113,7 +113,7 @@ public class JwtTokenProvider {
 		Date validity = new Date( timestamp + tokenValidityInMilliseconds );
 		if( remember ) validity = new Date( timestamp + tokenValidityInMillisecondsForRememberMe );
 
-		String token = Jwts
+		return Jwts
 			.builder()
 			.claim( JwtToken.USER_ID_CLAIM_KEY, userId )
 			.setSubject( subject )
@@ -121,10 +121,6 @@ public class JwtTokenProvider {
 			.setExpiration( validity )
 			.signWith( key, SignatureAlgorithm.HS512 )
 			.compact();
-
-		// TODO Potentially store the tokens?
-
-		return token;
 	}
 
 }

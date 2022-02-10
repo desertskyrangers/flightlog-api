@@ -8,6 +8,7 @@ import com.desertskyrangers.flightdeck.util.Uuid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -290,7 +291,7 @@ public class UserController extends BaseController {
 			Member member = memberService.find( UUID.fromString( userId ) ).orElse( null );
 			if( member == null ) {
 				messages.add( "Membership not found" );
-				log.warn( "Membership not found id=" + userId );
+				log.warn( "Membership not found id={}", userId );
 			}
 			if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactMembershipPageResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
 
@@ -304,6 +305,38 @@ public class UserController extends BaseController {
 		}
 
 		return new ResponseEntity<>( new ReactMembershipPageResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
+	}
+
+	@PreAuthorize( "hasRole('USER')" )
+	@GetMapping( path = ApiPath.USER_PREFERENCES )
+	ResponseEntity<ReactResponse<Map<String, Object>>> getPreferencesByRequester( Authentication authentication ) {
+		return getPreferences( getRequester( authentication ).id().toString() );
+	}
+
+	@PreAuthorize( "hasRole('ADMIN')" )
+	@GetMapping( path = ApiPath.USER_PREFERENCES + "/{id}" )
+	ResponseEntity<ReactResponse<Map<String, Object>>> getPreferences( @PathVariable String id ) {
+		List<String> messages = new ArrayList<>();
+
+		try {
+			if( Uuid.isNotValid( id ) ) messages.add( "Invalid user ID" );
+			if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactResponse<Map<String, Object>>().setMessages( messages ), HttpStatus.BAD_REQUEST );
+
+			// TODO Can the requester access the users preferences?
+
+			Optional<User> optional = userServices.find( UUID.fromString( id ) );
+			if( optional.isEmpty() ) {
+				messages.add( "User not found" );
+				log.warn( "User not found id={}", id );
+			}
+			if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactResponse<Map<String, Object>>().setMessages( messages ), HttpStatus.BAD_REQUEST );
+
+			return new ResponseEntity<>( new ReactResponse<Map<String, Object>>().setData( userServices.getPreferences( optional.get() ) ), HttpStatus.OK );
+		} catch( Exception exception ) {
+			log.error( "Error retrieving user preferences", exception );
+			messages.add( "Error retrieving user preferences" );
+			return new ResponseEntity<>( new ReactResponse<Map<String, Object>>().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
+		}
 	}
 
 	private List<ReactMembership> getMemberships( User user ) {

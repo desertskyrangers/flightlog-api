@@ -373,15 +373,16 @@ public class UserControllerTest extends BaseControllerTest {
 	}
 
 	@Test
-	void testDashboardWithBadRequest() throws Exception {
-		// TODO There is not a realistic way to cause a bad request on this one
-		//		// when
-		//		MvcResult result = this.mockMvc.perform( get( ApiPath.DASHBOARD ) ).andExpect( status().isBadRequest() ).andReturn();
-		//
-		//		// then
-		//		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
-		//		List<?> messages = (List<?>) map.get( "messages" );
-		//		assertThat( messages ).isNotNull();
+	void testGetPreferences() throws Exception {
+		// given
+
+		// when
+		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_PREFERENCES ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
+
+		// then
+		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
+		Map<?, ?> dashboardMap = (Map<?, ?>)map.get( "data" );
+		assertThat( dashboardMap ).isNotNull();
 	}
 
 }
