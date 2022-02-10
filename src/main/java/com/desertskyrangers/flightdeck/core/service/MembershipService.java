@@ -5,7 +5,7 @@ import com.desertskyrangers.flightdeck.core.model.Group;
 import com.desertskyrangers.flightdeck.core.model.Member;
 import com.desertskyrangers.flightdeck.core.model.MemberStatus;
 import com.desertskyrangers.flightdeck.core.model.User;
-import com.desertskyrangers.flightdeck.port.MembershipService;
+import com.desertskyrangers.flightdeck.port.MembershipServices;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
 import com.desertskyrangers.flightdeck.port.StateRetrieving;
 import lombok.extern.slf4j.Slf4j;
@@ -17,13 +17,13 @@ import java.util.UUID;
 
 @Service
 @Slf4j
-public class MembershipServiceImpl implements MembershipService {
+public class MembershipService implements MembershipServices {
 
 	private final StatePersisting statePersisting;
 
 	private final StateRetrieving stateRetrieving;
 
-	public MembershipServiceImpl( StatePersisting statePersisting, StateRetrieving stateRetrieving ) {
+	public MembershipService( StatePersisting statePersisting, StateRetrieving stateRetrieving ) {
 		this.statePersisting = statePersisting;
 		this.stateRetrieving = stateRetrieving;
 	}

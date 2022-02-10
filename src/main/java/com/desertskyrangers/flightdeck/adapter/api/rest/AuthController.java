@@ -5,10 +5,9 @@ import com.desertskyrangers.flightdeck.adapter.api.jwt.JwtToken;
 import com.desertskyrangers.flightdeck.adapter.api.jwt.JwtTokenProvider;
 import com.desertskyrangers.flightdeck.adapter.api.model.*;
 import com.desertskyrangers.flightdeck.core.model.User;
-import com.desertskyrangers.flightdeck.core.model.UserToken;
 import com.desertskyrangers.flightdeck.core.model.Verification;
-import com.desertskyrangers.flightdeck.port.AuthService;
-import com.desertskyrangers.flightdeck.port.UserService;
+import com.desertskyrangers.flightdeck.port.AuthServices;
+import com.desertskyrangers.flightdeck.port.UserServices;
 import com.desertskyrangers.flightdeck.util.PasswordChecker;
 import com.desertskyrangers.flightdeck.util.Text;
 import lombok.extern.slf4j.Slf4j;
@@ -30,9 +29,9 @@ import java.util.*;
 @Slf4j
 public class AuthController {
 
-	private final AuthService authService;
+	private final AuthServices authServices;
 
-	private final UserService userService;
+	private final UserServices userServices;
 
 	private final JwtTokenProvider tokenProvider;
 
@@ -40,9 +39,9 @@ public class AuthController {
 
 	private final PasswordEncoder passwordEncoder;
 
-	public AuthController( AuthService authService, UserService userService, JwtTokenProvider tokenProvider, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder ) {
-		this.authService = authService;
-		this.userService = userService;
+	public AuthController( AuthServices authServices, UserServices userServices, JwtTokenProvider tokenProvider, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder ) {
+		this.authServices = authServices;
+		this.userServices = userServices;
 		this.tokenProvider = tokenProvider;
 		this.authenticationManager = authenticationManager;
 		this.passwordEncoder = passwordEncoder;
@@ -56,7 +55,7 @@ public class AuthController {
 		if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactRecoverResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
 
 		try {
-			messages.addAll( authService.requestUserRecover( request.getUsername() ) );
+			messages.addAll( authServices.requestUserRecover( request.getUsername() ) );
 		} catch( Exception exception ) {
 			log.error( "Error during account sign up, username=" + request.getUsername(), exception );
 			return new ResponseEntity<>( new ReactRecoverResponse().setMessages( List.of( "There was an error recovering the account" ) ), HttpStatus.INTERNAL_SERVER_ERROR );
@@ -78,7 +77,7 @@ public class AuthController {
 
 		try {
 			Verification verification = new Verification().id( UUID.fromString( request.getId() ) );
-			messages.addAll( authService.requestUserReset( verification, request.getPassword() ) );
+			messages.addAll( authServices.requestUserReset( verification, request.getPassword() ) );
 			return new ResponseEntity<>( new ReactResetResponse().setMessages( messages ), HttpStatus.OK );
 		} catch( Exception exception ) {
 			log.error( "Error during account reset, id=" + request.getId(), exception );
@@ -101,7 +100,7 @@ public class AuthController {
 
 		try {
 			UUID verificationId = UUID.randomUUID();
-			messages.addAll( authService.requestUserRegister( request.getUsername(), request.getEmail(), request.getPassword(), verificationId ) );
+			messages.addAll( authServices.requestUserRegister( request.getUsername(), request.getEmail(), request.getPassword(), verificationId ) );
 
 			if( messages.isEmpty() ) {
 				// Generate the JWT token like login
@@ -125,7 +124,7 @@ public class AuthController {
 		if( Text.isBlank( id ) ) messages.add( "ID required" );
 
 		try {
-			messages.addAll( authService.requestUserVerifyResend( UUID.fromString( id ) ) );
+			messages.addAll( authServices.requestUserVerifyResend( UUID.fromString( id ) ) );
 		} catch( Exception exception ) {
 			log.error( "Verification resend error, id=" + id, exception );
 			return new ResponseEntity<>( Map.of( "messages", List.of( "Verification resend error" ) ), HttpStatus.INTERNAL_SERVER_ERROR );
@@ -146,7 +145,7 @@ public class AuthController {
 
 		try {
 			Verification verification = new Verification().id( UUID.fromString( id ) ).code( code );
-			messages.addAll( authService.requestUserVerify( verification ) );
+			messages.addAll( authServices.requestUserVerify( verification ) );
 			if( !messages.isEmpty() ) return new ResponseEntity<>( Map.of( "messages", messages ), HttpStatus.FORBIDDEN );
 		} catch( Exception exception ) {
 			log.error( "Verification error, id=" + id, exception );
@@ -198,7 +197,7 @@ public class AuthController {
 		Authentication authentication = authenticationManager.authenticate( authenticationToken );
 		SecurityContextHolder.getContext().setAuthentication( authentication );
 
-		Optional<User> optionalAccount = userService.findByPrincipal( username );
+		Optional<User> optionalAccount = userServices.findByPrincipal( username );
 		if( optionalAccount.isEmpty() ) return "Account not found: " + username;
 
 		// Create JWT token and return to requester

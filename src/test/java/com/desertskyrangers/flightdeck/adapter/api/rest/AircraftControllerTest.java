@@ -3,7 +3,7 @@ package com.desertskyrangers.flightdeck.adapter.api.rest;
 import com.desertskyrangers.flightdeck.adapter.api.ApiPath;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactAircraft;
 import com.desertskyrangers.flightdeck.core.model.Aircraft;
-import com.desertskyrangers.flightdeck.port.AircraftService;
+import com.desertskyrangers.flightdeck.port.AircraftServices;
 import com.desertskyrangers.flightdeck.util.Json;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class AircraftControllerTest extends BaseControllerTest {
 
 	@Autowired
-	private AircraftService aircraftService;
+	private AircraftServices aircraftServices;
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -29,7 +29,7 @@ public class AircraftControllerTest extends BaseControllerTest {
 	void testGetAircraftWithSuccess() throws Exception {
 		// given
 		Aircraft aircraft = createTestAircraft( getMockUser() );
-		aircraftService.upsert( aircraft );
+		aircraftServices.upsert( aircraft );
 
 		// when
 		MvcResult result = this.mockMvc.perform( get( ApiPath.AIRCRAFT + "/" + aircraft.id() ) ).andExpect( status().isOk() ).andReturn();
@@ -81,7 +81,7 @@ public class AircraftControllerTest extends BaseControllerTest {
 	void deleteAircraftWithSuccess() throws Exception {
 		// given
 		Aircraft aircraft = createTestAircraft( getMockUser() );
-		aircraftService.upsert( aircraft );
+		aircraftServices.upsert( aircraft );
 
 		// when
 		MvcResult result = this.mockMvc

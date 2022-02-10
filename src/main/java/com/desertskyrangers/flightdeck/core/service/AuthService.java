@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
-public class AuthServiceImpl implements AuthService {
+public class AuthService implements AuthServices {
 
 	private static final String RESET_ENDPOINT = ApiPath.HOST + "/reset";
 
@@ -45,14 +45,14 @@ public class AuthServiceImpl implements AuthService {
 
 	private final PasswordEncoder passwordEncoder;
 
-	private final UserService userService;
+	private final UserServices userServices;
 
-	public AuthServiceImpl( StatePersisting statePersisting, StateRetrieving stateRetrieving, HumanInterface humanInterface, PasswordEncoder passwordEncoder, UserService userService ) {
+	public AuthService( StatePersisting statePersisting, StateRetrieving stateRetrieving, HumanInterface humanInterface, PasswordEncoder passwordEncoder, UserServices userServices ) {
 		this.statePersisting = statePersisting;
 		this.stateRetrieving = stateRetrieving;
 		this.humanInterface = humanInterface;
 		this.passwordEncoder = passwordEncoder;
-		this.userService = userService;
+		this.userServices = userServices;
 	}
 
 	@Scheduled( fixedRate = 1, timeUnit = TimeUnit.MINUTES )
@@ -102,7 +102,7 @@ public class AuthServiceImpl implements AuthService {
 			if( isExpired ) messages.add( "Recovery code expired" );
 
 			if( messages.size() == 0 ) {
-				stateRetrieving.findUser( storedVerification.userId() ).ifPresent( u -> userService.updatePassword( u, password ) );
+				stateRetrieving.findUser( storedVerification.userId() ).ifPresent( u -> userServices.updatePassword( u, password ) );
 				statePersisting.remove( storedVerification );
 			}
 		} else {

@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-public class AuthServiceImplTest {
+public class AuthServiceTest {
 
 	@Mock
 	private StatePersisting statePersisting;
@@ -30,7 +30,7 @@ public class AuthServiceImplTest {
 	//	private HumanInterface humanInterface;
 
 	@InjectMocks
-	private AuthServiceImpl service;
+	private AuthService service;
 
 	private User account;
 

@@ -1,11 +1,10 @@
 package com.desertskyrangers.flightdeck.port;
 
-import com.desertskyrangers.flightdeck.core.model.Member;
 import com.desertskyrangers.flightdeck.core.model.User;
 
 import java.util.*;
 
-public interface UserService {
+public interface UserServices {
 
 	List<User> find();
 
@@ -25,8 +24,8 @@ public interface UserService {
 
 	Set<User> findAllGroupPeers( User user );
 
-	Map<String,Object> getPreferences( User user );
+	Map<String, Object> getPreferences( User user );
 
-	User setPreferences( User user, Map<String,Object> preferences );
+	User setPreferences( User user, Map<String, Object> preferences );
 
 }

@@ -7,7 +7,7 @@ import com.desertskyrangers.flightdeck.core.exception.UnauthorizedException;
 import com.desertskyrangers.flightdeck.core.model.Member;
 import com.desertskyrangers.flightdeck.core.model.MemberStatus;
 import com.desertskyrangers.flightdeck.core.model.User;
-import com.desertskyrangers.flightdeck.port.MembershipService;
+import com.desertskyrangers.flightdeck.port.MembershipServices;
 import com.desertskyrangers.flightdeck.util.Text;
 import com.desertskyrangers.flightdeck.util.Uuid;
 import lombok.extern.slf4j.Slf4j;
@@ -25,9 +25,9 @@ import java.util.*;
 @Slf4j
 public class MembershipController extends BaseController {
 
-	private final MembershipService memberService;
+	private final MembershipServices memberService;
 
-	public MembershipController( MembershipService memberService ) {
+	public MembershipController( MembershipServices memberService ) {
 		this.memberService = memberService;
 	}
 

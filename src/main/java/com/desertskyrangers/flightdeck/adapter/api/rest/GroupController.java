@@ -3,9 +3,9 @@ package com.desertskyrangers.flightdeck.adapter.api.rest;
 import com.desertskyrangers.flightdeck.adapter.api.ApiPath;
 import com.desertskyrangers.flightdeck.adapter.api.model.*;
 import com.desertskyrangers.flightdeck.core.model.*;
-import com.desertskyrangers.flightdeck.port.GroupService;
-import com.desertskyrangers.flightdeck.port.MembershipService;
-import com.desertskyrangers.flightdeck.port.UserService;
+import com.desertskyrangers.flightdeck.port.GroupServices;
+import com.desertskyrangers.flightdeck.port.MembershipServices;
+import com.desertskyrangers.flightdeck.port.UserServices;
 import com.desertskyrangers.flightdeck.util.Text;
 import com.desertskyrangers.flightdeck.util.Uuid;
 import lombok.extern.slf4j.Slf4j;
@@ -20,16 +20,16 @@ import java.util.*;
 @Slf4j
 public class GroupController extends BaseController {
 
-	private final GroupService groupService;
+	private final GroupServices groupServices;
 
-	private final MembershipService membershipService;
+	private final MembershipServices membershipServices;
 
-	private final UserService userService;
+	private final UserServices userServices;
 
-	public GroupController( GroupService groupService, MembershipService membershipService, UserService userService ) {
-		this.groupService = groupService;
-		this.membershipService = membershipService;
-		this.userService = userService;
+	public GroupController( GroupServices groupServices, MembershipServices membershipServices, UserServices userServices ) {
+		this.groupServices = groupServices;
+		this.membershipServices = membershipServices;
+		this.userServices = userServices;
 	}
 
 	@PostMapping( path = ApiPath.GROUP_INVITE )
@@ -41,17 +41,17 @@ public class GroupController extends BaseController {
 		if( Text.isBlank( id ) ) messages.add( "ID required" );
 		if( Text.isNotBlank( id ) && Uuid.isNotValid( id ) ) messages.add( "Invalid group id" );
 		if( Text.isBlank( invitee ) ) messages.add( "Invitee required" );
-		Optional<Group> optionalGroup = groupService.find( UUID.fromString( id ) );
+		Optional<Group> optionalGroup = groupServices.find( UUID.fromString( id ) );
 		if( optionalGroup.isEmpty() ) messages.add( "Group not found" );
-		Optional<User> optionalInvitee = userService.findByPrincipal( invitee );
+		Optional<User> optionalInvitee = userServices.findByPrincipal( invitee );
 		if( optionalInvitee.isEmpty() ) messages.add( "Invitee not found: " + invitee );
 		if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactMembershipPageResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
 
 		try {
 			User requester = getRequester( authentication );
-			membershipService.requestMembership( requester, optionalInvitee.get(), optionalGroup.get(), MemberStatus.INVITED );
+			membershipServices.requestMembership( requester, optionalInvitee.get(), optionalGroup.get(), MemberStatus.INVITED );
 
-			Set<Member> memberships = membershipService.findMembershipsByGroup( optionalGroup.get() );
+			Set<Member> memberships = membershipServices.findMembershipsByGroup( optionalGroup.get() );
 			List<Member> objects = new ArrayList<>( memberships );
 			Collections.sort( objects );
 			return new ResponseEntity<>( new ReactMembershipPageResponse().setMemberships( objects.stream().map( ReactMembership::from ).toList() ), HttpStatus.ACCEPTED );
@@ -64,17 +64,17 @@ public class GroupController extends BaseController {
 	@GetMapping( path = ApiPath.GROUP_AVAILABLE )
 	ResponseEntity<List<ReactOption>> getAvailableGroups( Authentication authentication ) {
 		User user = getRequester( authentication );
-		List<Group> objects = new ArrayList<>( groupService.findAllAvailable( user ) );
+		List<Group> objects = new ArrayList<>( groupServices.findAllAvailable( user ) );
 		Collections.sort( objects );
 		return new ResponseEntity<>( objects.stream().map( c -> new ReactOption( c.id().toString(), c.name() ) ).toList(), HttpStatus.OK );
 	}
 
 	@GetMapping( path = ApiPath.GROUP + "/{id}/membership" )
 	ResponseEntity<List<ReactMembership>> getGroupMembership( @PathVariable String id ) {
-		Optional<Group> optional = groupService.find( UUID.fromString( id ) );
+		Optional<Group> optional = groupServices.find( UUID.fromString( id ) );
 
 		if( optional.isPresent() ) {
-			Set<Member> memberships = membershipService.findMembershipsByGroup( optional.get() );
+			Set<Member> memberships = membershipServices.findMembershipsByGroup( optional.get() );
 			List<Member> objects = new ArrayList<>( memberships );
 			Collections.sort( objects );
 			return new ResponseEntity<>( objects.stream().map( ReactMembership::from ).toList(), HttpStatus.OK );
@@ -87,7 +87,7 @@ public class GroupController extends BaseController {
 	ResponseEntity<ReactGroupResponse> getGroup( @PathVariable UUID id ) {
 		List<String> messages = new ArrayList<>();
 		try {
-			Optional<Group> optional = groupService.find( id );
+			Optional<Group> optional = groupServices.find( id );
 			if( optional.isPresent() ) {
 				return new ResponseEntity<>( new ReactGroupResponse().setGroup( ReactGroup.from( optional.get() ) ), HttpStatus.OK );
 			} else {
@@ -126,9 +126,9 @@ public class GroupController extends BaseController {
 			log.warn( "Is new group=" + isNew );
 			Group group = ReactGroup.toGroup( request );
 			if( isNew ) {
-				groupService.create( requester, requester, group );
+				groupServices.create( requester, requester, group );
 			} else {
-				groupService.upsert( group );
+				groupServices.upsert( group );
 			}
 			return new ResponseEntity<>( new ReactGroupResponse().setGroup( request ), HttpStatus.OK );
 		} catch( Exception exception ) {
@@ -145,10 +145,10 @@ public class GroupController extends BaseController {
 		log.info( "Delete group" );
 		List<String> messages = new ArrayList<>();
 		try {
-			Optional<Group> optional = groupService.find( id );
+			Optional<Group> optional = groupServices.find( id );
 			if( optional.isPresent() ) {
 				Group deletedGroup = optional.get();
-				groupService.remove( deletedGroup );
+				groupServices.remove( deletedGroup );
 				return new ResponseEntity<>( new ReactGroupResponse().setGroup( ReactGroup.from( deletedGroup ) ), HttpStatus.OK );
 			} else {
 				messages.add( "Group id not found: " + id );

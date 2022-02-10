@@ -5,7 +5,7 @@ import com.desertskyrangers.flightdeck.core.model.Verification;
 import java.util.List;
 import java.util.UUID;
 
-public interface AuthService {
+public interface AuthServices {
 
 	List<String> requestUserRecover( String username );
 

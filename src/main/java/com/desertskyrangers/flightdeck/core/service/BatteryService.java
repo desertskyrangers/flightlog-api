@@ -1,7 +1,7 @@
 package com.desertskyrangers.flightdeck.core.service;
 
 import com.desertskyrangers.flightdeck.core.model.Battery;
-import com.desertskyrangers.flightdeck.port.BatteryService;
+import com.desertskyrangers.flightdeck.port.BatteryServices;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
 import com.desertskyrangers.flightdeck.port.StateRetrieving;
 import org.springframework.stereotype.Service;
@@ -11,13 +11,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class BatteryServiceImpl implements BatteryService {
+public class BatteryService implements BatteryServices {
 
 	private final StatePersisting statePersisting;
 
 	private final StateRetrieving stateRetrieving;
 
-	public BatteryServiceImpl( StatePersisting statePersisting, StateRetrieving stateRetrieving ) {
+	public BatteryService( StatePersisting statePersisting, StateRetrieving stateRetrieving ) {
 		this.statePersisting = statePersisting;
 		this.stateRetrieving = stateRetrieving;
 	}

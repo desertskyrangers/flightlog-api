@@ -7,7 +7,6 @@ import com.desertskyrangers.flightdeck.core.model.UserToken;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -42,7 +41,7 @@ public abstract class BaseControllerTest extends BaseTest {
 			String encodedPassword = passwordEncoder.encode( password );
 
 			// Delete the exising mock user account
-			userService.findByPrincipal( authentication.getName() ).ifPresent( u -> userService.remove( u ) );
+			userServices.findByPrincipal( authentication.getName() ).ifPresent( u -> userServices.remove( u ) );
 
 			// Create mock user account
 			mockUser = new User();
@@ -53,7 +52,7 @@ public abstract class BaseControllerTest extends BaseTest {
 			mockUser.tokens( Set.of( usernameToken, emailToken ) );
 			usernameToken.user( mockUser );
 			emailToken.user( mockUser );
-			userService.upsert( mockUser );
+			userServices.upsert( mockUser );
 
 			jwt = jwtTokenProvider.createToken( mockUser, authentication, false );
 		}

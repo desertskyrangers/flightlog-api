@@ -5,7 +5,7 @@ import com.desertskyrangers.flightdeck.adapter.api.model.ReactFlight;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactFlightResponse;
 import com.desertskyrangers.flightdeck.core.model.Flight;
 import com.desertskyrangers.flightdeck.core.model.User;
-import com.desertskyrangers.flightdeck.port.FlightService;
+import com.desertskyrangers.flightdeck.port.FlightServices;
 import com.desertskyrangers.flightdeck.util.Text;
 import com.desertskyrangers.flightdeck.util.Uuid;
 import lombok.extern.slf4j.Slf4j;
@@ -20,10 +20,10 @@ import java.util.*;
 @Slf4j
 public class FlightController extends BaseController {
 
-	private final FlightService flightService;
+	private final FlightServices flightServices;
 
-	public FlightController( FlightService flightService ) {
-		this.flightService = flightService;
+	public FlightController( FlightServices flightServices ) {
+		this.flightServices = flightServices;
 	}
 
 	@GetMapping( path = ApiPath.FLIGHT + "/{id}" )
@@ -31,7 +31,7 @@ public class FlightController extends BaseController {
 		List<String> messages = new ArrayList<>();
 		try {
 			User requester = getRequester( authentication );
-			Optional<Flight> optional = flightService.find( id );
+			Optional<Flight> optional = flightServices.find( id );
 			if( optional.isPresent() ) {
 				return new ResponseEntity<>( new ReactFlightResponse().setFlight( ReactFlight.from( requester, optional.get() ) ), HttpStatus.OK );
 			} else {
@@ -71,7 +71,7 @@ public class FlightController extends BaseController {
 
 		try {
 			User user = getRequester( authentication );
-			flightService.upsert( ReactFlight.toUpsertRequest( request ).user( user ) );
+			flightServices.upsert( ReactFlight.toUpsertRequest( request ).user( user ) );
 			return new ResponseEntity<>( new ReactFlightResponse().setFlight( request ), HttpStatus.OK );
 		} catch( Exception exception ) {
 			log.error( "Error updating flight", exception );
@@ -88,10 +88,10 @@ public class FlightController extends BaseController {
 		List<String> messages = new ArrayList<>();
 		try {
 			User requester = getRequester( authentication );
-			Optional<Flight> optional = flightService.find( id );
+			Optional<Flight> optional = flightServices.find( id );
 			if( optional.isPresent() ) {
 				Flight deletedFlight = optional.get();
-				flightService.remove( deletedFlight );
+				flightServices.remove( deletedFlight );
 				return new ResponseEntity<>( new ReactFlightResponse().setFlight( ReactFlight.from( requester, deletedFlight ) ), HttpStatus.OK );
 			} else {
 				messages.add( "Flight id not found: " + id );

@@ -1,10 +1,9 @@
 package com.desertskyrangers.flightdeck.core.service;
 
-import com.desertskyrangers.flightdeck.adapter.api.model.ReactDashboard;
 import com.desertskyrangers.flightdeck.core.model.Dashboard;
 import com.desertskyrangers.flightdeck.core.model.User;
-import com.desertskyrangers.flightdeck.port.DashboardService;
-import com.desertskyrangers.flightdeck.port.FlightService;
+import com.desertskyrangers.flightdeck.port.DashboardServices;
+import com.desertskyrangers.flightdeck.port.FlightServices;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -13,12 +12,12 @@ import java.util.UUID;
 
 @Service
 @Slf4j
-public class DashboardServiceImpl implements DashboardService {
+public class DashboardService implements DashboardServices {
 
-	private final FlightService flightService;
+	private final FlightServices flightServices;
 
-	public DashboardServiceImpl( FlightService flightService ) {
-		this.flightService = flightService;
+	public DashboardService( FlightServices flightServices ) {
+		this.flightServices = flightServices;
 	}
 
 	@Override
@@ -28,8 +27,8 @@ public class DashboardServiceImpl implements DashboardService {
 
 	@Override
 	public Optional<Dashboard> findByUser( User user ) {
-		int flightCount = flightService.getPilotFlightCount( user.id() );
-		long flightTime = flightService.getPilotFlightTime( user.id() );
+		int flightCount = flightServices.getPilotFlightCount( user.id() );
+		long flightTime = flightServices.getPilotFlightTime( user.id() );
 		return Optional.of( new Dashboard().flightCount( flightCount ).flightTime( flightTime ) );
 	}
 }

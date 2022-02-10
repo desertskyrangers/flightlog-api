@@ -2,7 +2,7 @@ package com.desertskyrangers.flightdeck.core.service;
 
 import com.desertskyrangers.flightdeck.BaseTest;
 import com.desertskyrangers.flightdeck.core.model.*;
-import com.desertskyrangers.flightdeck.port.MembershipService;
+import com.desertskyrangers.flightdeck.port.MembershipServices;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -10,10 +10,10 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MembershipServiceImplTest extends BaseTest {
+public class MembershipServiceTest extends BaseTest {
 
 	@Autowired
-	MembershipService membershipService;
+	MembershipServices membershipServices;
 
 	@Test
 	void testRequestMembership() {
@@ -25,10 +25,10 @@ public class MembershipServiceImplTest extends BaseTest {
 		statePersisting.upsert( createTestMember( owner, group, MemberStatus.OWNER ) );
 
 		// when
-		Member invitation = membershipService.requestMembership( owner, invitee, group, MemberStatus.INVITED );
+		Member invitation = membershipServices.requestMembership( owner, invitee, group, MemberStatus.INVITED );
 
 		// then
-		Set<Member> memberships = membershipService.findMembershipsByUser( invitee );
+		Set<Member> memberships = membershipServices.findMembershipsByUser( invitee );
 		assertThat( memberships ).containsExactlyInAnyOrder( invitation );
 	}
 

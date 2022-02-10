@@ -1,7 +1,7 @@
 package com.desertskyrangers.flightdeck.core.service;
 
 import com.desertskyrangers.flightdeck.core.model.*;
-import com.desertskyrangers.flightdeck.port.FlightService;
+import com.desertskyrangers.flightdeck.port.FlightServices;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
 import com.desertskyrangers.flightdeck.port.StateRetrieving;
 import lombok.extern.slf4j.Slf4j;
@@ -12,13 +12,13 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class FlightServiceImpl implements FlightService {
+public class FlightService implements FlightServices {
 
 	private final StatePersisting statePersisting;
 
 	private final StateRetrieving stateRetrieving;
 
-	public FlightServiceImpl( StatePersisting statePersisting, StateRetrieving stateRetrieving ) {
+	public FlightService( StatePersisting statePersisting, StateRetrieving stateRetrieving ) {
 		this.statePersisting = statePersisting;
 		this.stateRetrieving = stateRetrieving;
 	}

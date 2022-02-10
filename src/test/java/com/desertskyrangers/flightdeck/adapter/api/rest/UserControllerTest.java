@@ -7,7 +7,7 @@ import com.desertskyrangers.flightdeck.adapter.api.model.ReactProfileResponse;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactUser;
 import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
-import com.desertskyrangers.flightdeck.port.UserService;
+import com.desertskyrangers.flightdeck.port.UserServices;
 import com.desertskyrangers.flightdeck.util.Json;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,7 +45,7 @@ public class UserControllerTest extends BaseControllerTest {
 	private MockMvc mockMvc;
 
 	@Autowired
-	private UserService userService;
+	private UserServices userServices;
 
 	@Autowired
 	private StatePersisting statePersisting;
@@ -70,7 +70,7 @@ public class UserControllerTest extends BaseControllerTest {
 	@AfterEach
 	void teardown() {
 		statePersisting.removeAllFlights();
-		userService.remove( getMockUser() );
+		userServices.remove( getMockUser() );
 	}
 
 	@Test

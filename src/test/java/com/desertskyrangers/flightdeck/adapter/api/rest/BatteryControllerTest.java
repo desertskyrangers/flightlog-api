@@ -3,7 +3,7 @@ package com.desertskyrangers.flightdeck.adapter.api.rest;
 import com.desertskyrangers.flightdeck.adapter.api.ApiPath;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactBattery;
 import com.desertskyrangers.flightdeck.core.model.Battery;
-import com.desertskyrangers.flightdeck.port.BatteryService;
+import com.desertskyrangers.flightdeck.port.BatteryServices;
 import com.desertskyrangers.flightdeck.util.Json;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class BatteryControllerTest extends BaseControllerTest {
 
 	@Autowired
-	private BatteryService batteryService;
+	private BatteryServices batteryServices;
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -29,7 +29,7 @@ public class BatteryControllerTest extends BaseControllerTest {
 	void getBatteryWithSuccess() throws Exception {
 		// given
 		Battery battery = createTestBattery( getMockUser() );
-		batteryService.upsert( battery );
+		batteryServices.upsert( battery );
 
 		// when
 		MvcResult result = this.mockMvc.perform( get( ApiPath.BATTERY + "/" + battery.id() ) ).andExpect( status().isOk() ).andReturn();
@@ -81,7 +81,7 @@ public class BatteryControllerTest extends BaseControllerTest {
 	void deleteBatteryWithSuccess() throws Exception {
 		// given
 		Battery battery = createTestBattery( getMockUser() );
-		batteryService.upsert( battery );
+		batteryServices.upsert( battery );
 
 		// when
 		MvcResult result = this.mockMvc

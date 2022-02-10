@@ -18,42 +18,42 @@ import java.util.*;
 @Slf4j
 public class UserController extends BaseController {
 
-	private final AircraftService aircraftService;
+	private final AircraftServices aircraftServices;
 
-	private final BatteryService batteryService;
+	private final BatteryServices batteryServices;
 
-	private final DashboardService dashboardService;
+	private final DashboardServices dashboardServices;
 
-	private final FlightService flightService;
+	private final FlightServices flightServices;
 
-	private final GroupService groupService;
+	private final GroupServices groupServices;
 
-	private final UserService userService;
+	private final UserServices userServices;
 
-	private final MembershipService memberService;
+	private final MembershipServices memberService;
 
 	public UserController(
-		AircraftService aircraftService,
-		BatteryService batteryService,
-		DashboardService dashboardService,
-		FlightService flightService,
-		GroupService groupService,
-		MembershipService memberService,
-		UserService userService
+		AircraftServices aircraftServices,
+		BatteryServices batteryServices,
+		DashboardServices dashboardServices,
+		FlightServices flightServices,
+		GroupServices groupServices,
+		MembershipServices memberService,
+		UserServices userServices
 	) {
-		this.aircraftService = aircraftService;
-		this.batteryService = batteryService;
-		this.dashboardService = dashboardService;
-		this.flightService = flightService;
-		this.groupService = groupService;
+		this.aircraftServices = aircraftServices;
+		this.batteryServices = batteryServices;
+		this.dashboardServices = dashboardServices;
+		this.flightServices = flightServices;
+		this.groupServices = groupServices;
 		this.memberService = memberService;
-		this.userService = userService;
+		this.userServices = userServices;
 	}
 
 	@GetMapping( path = ApiPath.DASHBOARD )
 	ResponseEntity<ReactDashboardResponse> dashboard( Authentication authentication ) {
 		try {
-			return dashboardService
+			return dashboardServices
 				.findByUser( getRequester( authentication ) )
 				.map( dashboard -> new ResponseEntity<>( new ReactDashboardResponse().setDashboard( ReactDashboard.from( dashboard ) ), HttpStatus.OK ) )
 				.orElseGet( () -> new ResponseEntity<>( new ReactDashboardResponse().setMessages( List.of( "Dashboard not found" ) ), HttpStatus.BAD_REQUEST ) );
@@ -67,7 +67,7 @@ public class UserController extends BaseController {
 	ResponseEntity<ReactProfileResponse> profile() {
 		String username = ((org.springframework.security.core.userdetails.User)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
 
-		Optional<ReactUser> optional = userService.findByPrincipal( username ).map( ReactUser::from );
+		Optional<ReactUser> optional = userServices.findByPrincipal( username ).map( ReactUser::from );
 		if( optional.isEmpty() ) return new ResponseEntity<>( new ReactProfileResponse().setAccount( new ReactUser() ), HttpStatus.BAD_REQUEST );
 
 		return new ResponseEntity<>( new ReactProfileResponse().setAccount( optional.get() ), HttpStatus.OK );
@@ -80,7 +80,7 @@ public class UserController extends BaseController {
 
 	@GetMapping( value = ApiPath.USER + "/{id}" )
 	ResponseEntity<ReactProfileResponse> findById( @PathVariable( "id" ) UUID id ) {
-		Optional<ReactUser> optional = userService.find( id ).map( ReactUser::from );
+		Optional<ReactUser> optional = userServices.find( id ).map( ReactUser::from );
 		if( optional.isEmpty() ) return new ResponseEntity<>( new ReactProfileResponse().setAccount( new ReactUser() ), HttpStatus.BAD_REQUEST );
 
 		return new ResponseEntity<>( new ReactProfileResponse().setAccount( optional.get() ), HttpStatus.OK );
@@ -89,13 +89,13 @@ public class UserController extends BaseController {
 	@PutMapping( value = ApiPath.USER + "/{id}" )
 	@ResponseStatus( HttpStatus.OK )
 	ResponseEntity<ReactProfileResponse> update( @PathVariable( "id" ) UUID id, @RequestBody ReactUser account ) {
-		Optional<User> optional = userService.find( id );
+		Optional<User> optional = userServices.find( id );
 		if( optional.isEmpty() ) return new ResponseEntity<>( new ReactProfileResponse().setAccount( new ReactUser() ), HttpStatus.BAD_REQUEST );
 
 		User user = account.updateFrom( optional.get() );
 
 		// Update the user account
-		userService.upsert( user );
+		userServices.upsert( user );
 
 		return new ResponseEntity<>( new ReactProfileResponse().setAccount( ReactUser.from( user ) ), HttpStatus.OK );
 	}
@@ -103,7 +103,7 @@ public class UserController extends BaseController {
 	@DeleteMapping( value = ApiPath.USER + "/{id}" )
 	@ResponseStatus( HttpStatus.OK )
 	void delete( @PathVariable( "id" ) UUID id ) {
-		userService.find( id ).ifPresent( userService::remove );
+		userServices.find( id ).ifPresent( userServices::remove );
 	}
 
 	@PutMapping( value = ApiPath.USER + "/{id}/password" )
@@ -113,16 +113,16 @@ public class UserController extends BaseController {
 		if( !Objects.equals( id.toString(), request.getId() ) ) return new ResponseEntity<>( Map.of( "messages", List.of( "User id mismatch" ) ), HttpStatus.BAD_REQUEST );
 
 		// Check the user exists
-		Optional<User> optional = userService.find( id );
+		Optional<User> optional = userServices.find( id );
 		if( optional.isEmpty() ) return new ResponseEntity<>( Map.of( "messages", List.of( "User not found: " + id ) ), HttpStatus.BAD_REQUEST );
 
 		// Check that passwords match
-		if( !userService.isCurrentPassword( optional.get(), request.getCurrentPassword() ) ) {
+		if( !userServices.isCurrentPassword( optional.get(), request.getCurrentPassword() ) ) {
 			return new ResponseEntity<>( Map.of( "messages", List.of( "Current password mismatch" ) ), HttpStatus.BAD_REQUEST );
 		}
 
 		// Update the user account
-		userService.updatePassword( optional.get(), request.getPassword() );
+		userServices.updatePassword( optional.get(), request.getPassword() );
 
 		return new ResponseEntity<>( HttpStatus.OK );
 	}
@@ -133,7 +133,7 @@ public class UserController extends BaseController {
 
 		try {
 			User user = getRequester( authentication );
-			List<ReactAircraft> aircraftPage = aircraftService.findByOwner( user.id() ).stream().map( ReactAircraft::from ).toList();
+			List<ReactAircraft> aircraftPage = aircraftServices.findByOwner( user.id() ).stream().map( ReactAircraft::from ).toList();
 			return new ResponseEntity<>( new ReactAircraftPageResponse().setAircraft( aircraftPage ), HttpStatus.OK );
 		} catch( Exception exception ) {
 			log.error( "Error creating new aircraft", exception );
@@ -149,7 +149,7 @@ public class UserController extends BaseController {
 
 		try {
 			User user = getRequester( authentication );
-			List<ReactBattery> batteryPage = batteryService.findByOwner( user.id() ).stream().map( ReactBattery::from ).toList();
+			List<ReactBattery> batteryPage = batteryServices.findByOwner( user.id() ).stream().map( ReactBattery::from ).toList();
 			return new ResponseEntity<>( new ReactBatteryPageResponse().setBatteries( batteryPage ), HttpStatus.OK );
 		} catch( Exception exception ) {
 			log.error( "Error creating new battery", exception );
@@ -165,7 +165,7 @@ public class UserController extends BaseController {
 
 		try {
 			User requester = getRequester( authentication );
-			List<ReactFlight> flightPage = flightService.findFlightsByUser( requester.id() ).stream().map( f -> ReactFlight.from( requester, f ) ).toList();
+			List<ReactFlight> flightPage = flightServices.findFlightsByUser( requester.id() ).stream().map( f -> ReactFlight.from( requester, f ) ).toList();
 			return new ResponseEntity<>( new ReactFlightPageResponse().setFlights( flightPage ), HttpStatus.OK );
 		} catch( Exception exception ) {
 			log.error( "Error creating new battery", exception );
@@ -181,7 +181,7 @@ public class UserController extends BaseController {
 
 		try {
 			User user = getRequester( authentication );
-			List<ReactGroup> groupPage = groupService.findGroupsByUser( user ).stream().map( ReactGroup::from ).toList();
+			List<ReactGroup> groupPage = groupServices.findGroupsByUser( user ).stream().map( ReactGroup::from ).toList();
 			return new ResponseEntity<>( new ReactGroupPageResponse().setGroups( groupPage ), HttpStatus.OK );
 		} catch( Exception exception ) {
 			log.error( "Error creating new battery", exception );
@@ -209,14 +209,14 @@ public class UserController extends BaseController {
 	@GetMapping( path = ApiPath.USER_AIRCRAFT_LOOKUP )
 	ResponseEntity<List<ReactOption>> getAircraftLookup( Authentication authentication ) {
 		User user = getRequester( authentication );
-		List<Aircraft> objects = aircraftService.findByOwner( user.id() );
+		List<Aircraft> objects = aircraftServices.findByOwner( user.id() );
 		return new ResponseEntity<>( objects.stream().map( c -> new ReactOption( c.id().toString(), c.name() ) ).toList(), HttpStatus.OK );
 	}
 
 	@GetMapping( path = ApiPath.USER_BATTERY_LOOKUP )
 	ResponseEntity<List<ReactOption>> getBatteryLookup( Authentication authentication ) {
 		User user = getRequester( authentication );
-		List<Battery> objects = batteryService.findByOwner( user.id() );
+		List<Battery> objects = batteryServices.findByOwner( user.id() );
 		List<ReactOption> options = new ArrayList<>( objects.stream().map( c -> new ReactOption( c.id().toString(), c.name() ) ).toList() );
 		options.add( new ReactOption( "", "No battery specified" ) );
 		return new ResponseEntity<>( options, HttpStatus.OK );
@@ -231,7 +231,7 @@ public class UserController extends BaseController {
 	ResponseEntity<List<ReactOption>> getPilotLookup( Authentication authentication ) {
 		User user = getRequester( authentication );
 
-		List<User> users = new ArrayList<>( userService.findAllGroupPeers( user ) );
+		List<User> users = new ArrayList<>( userServices.findAllGroupPeers( user ) );
 		users.sort( null );
 		users.add( 0, user );
 		users.add( unlistedUser() );
@@ -253,8 +253,8 @@ public class UserController extends BaseController {
 
 		try {
 			User requester = getRequester( authentication );
-			User user = userService.find( UUID.fromString( userId ) ).orElse( null );
-			Group group = groupService.find( UUID.fromString( groupId ) ).orElse( null );
+			User user = userServices.find( UUID.fromString( userId ) ).orElse( null );
+			Group group = groupServices.find( UUID.fromString( groupId ) ).orElse( null );
 			MemberStatus status = MemberStatus.valueOf( statusKey.toUpperCase() );
 			if( user == null ) {
 				messages.add( "User not found" );

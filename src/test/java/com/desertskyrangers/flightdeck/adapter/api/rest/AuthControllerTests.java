@@ -5,7 +5,7 @@ import com.desertskyrangers.flightdeck.adapter.api.jwt.JwtTokenProvider;
 import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.core.model.UserToken;
 import com.desertskyrangers.flightdeck.core.model.Verification;
-import com.desertskyrangers.flightdeck.port.AuthService;
+import com.desertskyrangers.flightdeck.port.AuthServices;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
 import com.desertskyrangers.flightdeck.util.Json;
 import org.junit.jupiter.api.Test;
@@ -53,7 +53,7 @@ public class AuthControllerTests extends BaseControllerTest {
 	private JwtTokenProvider jwtTokenProvider;
 
 	@MockBean
-	private AuthService mockAuthService;
+	private AuthServices mockAuthServices;
 
 	@Test
 	public void whenApiAuthRecover_thenSuccessResponse() throws Exception {
@@ -150,7 +150,7 @@ public class AuthControllerTests extends BaseControllerTest {
 		ArgumentCaptor<String> emailCaptor = ArgumentCaptor.forClass( String.class );
 		ArgumentCaptor<String> passwordCaptor = ArgumentCaptor.forClass( String.class );
 		ArgumentCaptor<UUID> verificationCaptor = ArgumentCaptor.forClass( UUID.class );
-		verify( mockAuthService, times( 1 ) ).requestUserRegister( usernameCaptor.capture(), emailCaptor.capture(), passwordCaptor.capture(), verificationCaptor.capture() );
+		verify( mockAuthServices, times( 1 ) ).requestUserRegister( usernameCaptor.capture(), emailCaptor.capture(), passwordCaptor.capture(), verificationCaptor.capture() );
 
 		assertThat( usernameCaptor.getValue() ).isEqualTo( username );
 		assertThat( emailCaptor.getValue() ).isEqualTo( email );
@@ -181,7 +181,7 @@ public class AuthControllerTests extends BaseControllerTest {
 
 		// then
 		ArgumentCaptor<UUID> idCaptor = ArgumentCaptor.forClass( UUID.class );
-		verify( mockAuthService, times( 1 ) ).requestUserVerifyResend( idCaptor.capture() );
+		verify( mockAuthServices, times( 1 ) ).requestUserVerifyResend( idCaptor.capture() );
 
 		UUID capturedId = idCaptor.getValue();
 		assertThat( capturedId ).isEqualTo( id );
@@ -199,7 +199,7 @@ public class AuthControllerTests extends BaseControllerTest {
 
 		// then
 		ArgumentCaptor<Verification> argumentCaptor = ArgumentCaptor.forClass( Verification.class );
-		verify( mockAuthService, times( 1 ) ).requestUserVerify( argumentCaptor.capture() );
+		verify( mockAuthServices, times( 1 ) ).requestUserVerify( argumentCaptor.capture() );
 
 		Verification verification = argumentCaptor.getValue();
 		assertThat( verification.id() ).isEqualTo( id );

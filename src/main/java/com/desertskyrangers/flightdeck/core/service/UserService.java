@@ -4,7 +4,7 @@ import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.core.model.UserToken;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
 import com.desertskyrangers.flightdeck.port.StateRetrieving;
-import com.desertskyrangers.flightdeck.port.UserService;
+import com.desertskyrangers.flightdeck.port.UserServices;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +12,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserService implements UserServices {
 
 	private final StateRetrieving stateRetrieving;
 
@@ -20,7 +20,7 @@ public class UserServiceImpl implements UserService {
 
 	private final PasswordEncoder passwordEncoder;
 
-	public UserServiceImpl( StateRetrieving stateRetrieving, StatePersisting statePersisting, PasswordEncoder passwordEncoder ) {
+	public UserService( StateRetrieving stateRetrieving, StatePersisting statePersisting, PasswordEncoder passwordEncoder ) {
 		this.stateRetrieving = stateRetrieving;
 		this.statePersisting = statePersisting;
 		this.passwordEncoder = passwordEncoder;

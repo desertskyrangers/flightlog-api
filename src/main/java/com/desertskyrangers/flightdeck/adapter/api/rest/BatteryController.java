@@ -4,8 +4,8 @@ import com.desertskyrangers.flightdeck.adapter.api.ApiPath;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactBattery;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactBatteryResponse;
 import com.desertskyrangers.flightdeck.core.model.*;
-import com.desertskyrangers.flightdeck.port.BatteryService;
-import com.desertskyrangers.flightdeck.port.UserService;
+import com.desertskyrangers.flightdeck.port.BatteryServices;
+import com.desertskyrangers.flightdeck.port.UserServices;
 import com.desertskyrangers.flightdeck.util.Text;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -20,13 +20,13 @@ import java.util.*;
 @Slf4j
 public class BatteryController {
 
-	private final BatteryService batteryService;
+	private final BatteryServices batteryServices;
 
-	private final UserService userService;
+	private final UserServices userServices;
 
-	public BatteryController( BatteryService batteryService, UserService userService ) {
-		this.batteryService = batteryService;
-		this.userService = userService;
+	public BatteryController( BatteryServices batteryServices, UserServices userServices ) {
+		this.batteryServices = batteryServices;
+		this.userServices = userServices;
 	}
 
 	@GetMapping( path = ApiPath.BATTERY + "/{id}" )
@@ -34,7 +34,7 @@ public class BatteryController {
 		log.info( "Get battery" );
 		List<String> messages = new ArrayList<>();
 		try {
-			Optional<Battery> optional = batteryService.find( id );
+			Optional<Battery> optional = batteryServices.find( id );
 			if( optional.isPresent() ) {
 				return new ResponseEntity<>( new ReactBatteryResponse().setBattery( ReactBattery.from( optional.get() ) ), HttpStatus.OK );
 			} else {
@@ -64,14 +64,14 @@ public class BatteryController {
 
 		try {
 			String username = authentication.getName();
-			User user = userService.findByPrincipal( username ).orElseThrow( () -> new UsernameNotFoundException( username ) );
+			User user = userServices.findByPrincipal( username ).orElseThrow( () -> new UsernameNotFoundException( username ) );
 
 			request.setId( UUID.randomUUID().toString() );
 
 			// TODO Allow user to select a different owner
 			request.setOwner( user.id().toString() );
 			request.setOwnerType( OwnerType.USER.name().toLowerCase() );
-			batteryService.upsert( ReactBattery.toBattery( request ) );
+			batteryServices.upsert( ReactBattery.toBattery( request ) );
 			return new ResponseEntity<>( new ReactBatteryResponse().setBattery( request ), HttpStatus.OK );
 		} catch( Exception exception ) {
 			log.error( "Error creating new battery", exception );
@@ -101,12 +101,12 @@ public class BatteryController {
 		try {
 			// Default to user ownership for now
 			String username = authentication.getName();
-			User user = userService.findByPrincipal( username ).orElseThrow( () -> new UsernameNotFoundException( username ) );
+			User user = userServices.findByPrincipal( username ).orElseThrow( () -> new UsernameNotFoundException( username ) );
 
 			// TODO Allow user to select a different owner
 			request.setOwner( user.id().toString() );
 			request.setOwnerType( OwnerType.USER.name().toLowerCase() );
-			batteryService.upsert( ReactBattery.toBattery( request ) );
+			batteryServices.upsert( ReactBattery.toBattery( request ) );
 			return new ResponseEntity<>( new ReactBatteryResponse().setBattery( request ), HttpStatus.OK );
 		} catch( Exception exception ) {
 			log.error( "Error updating battery", exception );
@@ -122,10 +122,10 @@ public class BatteryController {
 		log.info( "Delete battery" );
 		List<String> messages = new ArrayList<>();
 		try {
-			Optional<Battery> optional = batteryService.find( id );
+			Optional<Battery> optional = batteryServices.find( id );
 			if( optional.isPresent() ) {
 				Battery deletedBattery = optional.get();
-				batteryService.remove( deletedBattery );
+				batteryServices.remove( deletedBattery );
 				return new ResponseEntity<>( new ReactBatteryResponse().setBattery( ReactBattery.from( deletedBattery ) ), HttpStatus.OK );
 			} else {
 				messages.add( "Battery id not found: " + id );

@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-public interface MembershipService {
+public interface MembershipServices {
 
 	Optional<Member> find( UUID id );
 

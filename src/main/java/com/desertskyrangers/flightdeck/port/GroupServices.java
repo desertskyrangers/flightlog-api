@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-public interface GroupService {
+public interface GroupServices {
 
 	Set<Group> findAllAvailable( User user );
 

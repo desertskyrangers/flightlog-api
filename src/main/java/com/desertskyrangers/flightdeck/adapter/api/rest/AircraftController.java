@@ -4,8 +4,8 @@ import com.desertskyrangers.flightdeck.adapter.api.ApiPath;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactAircraft;
 import com.desertskyrangers.flightdeck.adapter.api.model.ReactAircraftResponse;
 import com.desertskyrangers.flightdeck.core.model.*;
-import com.desertskyrangers.flightdeck.port.AircraftService;
-import com.desertskyrangers.flightdeck.port.UserService;
+import com.desertskyrangers.flightdeck.port.AircraftServices;
+import com.desertskyrangers.flightdeck.port.UserServices;
 import com.desertskyrangers.flightdeck.util.Text;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -20,13 +20,13 @@ import java.util.*;
 @Slf4j
 public class AircraftController {
 
-	private final AircraftService aircraftService;
+	private final AircraftServices aircraftServices;
 
-	private final UserService userService;
+	private final UserServices userServices;
 
-	public AircraftController( AircraftService aircraftService, UserService userService ) {
-		this.aircraftService = aircraftService;
-		this.userService = userService;
+	public AircraftController( AircraftServices aircraftServices, UserServices userServices ) {
+		this.aircraftServices = aircraftServices;
+		this.userServices = userServices;
 	}
 
 	@GetMapping( path = ApiPath.AIRCRAFT + "/{id}" )
@@ -34,7 +34,7 @@ public class AircraftController {
 		log.info( "Get aircraft" );
 		List<String> messages = new ArrayList<>();
 		try {
-			Optional<Aircraft> optional = aircraftService.find( id );
+			Optional<Aircraft> optional = aircraftServices.find( id );
 			if( optional.isPresent() ) {
 				return new ResponseEntity<>( new ReactAircraftResponse().setAircraft( ReactAircraft.from( optional.get() ) ), HttpStatus.OK );
 			} else {
@@ -64,14 +64,14 @@ public class AircraftController {
 
 		try {
 			String username = authentication.getName();
-			User user = userService.findByPrincipal( username ).orElseThrow( () -> new UsernameNotFoundException( username ) );
+			User user = userServices.findByPrincipal( username ).orElseThrow( () -> new UsernameNotFoundException( username ) );
 
 			request.setId( UUID.randomUUID().toString() );
 
 			// TODO Allow user to select a different owner
 			request.setOwner( user.id().toString() );
 			request.setOwnerType( OwnerType.USER.name().toLowerCase() );
-			aircraftService.upsert( ReactAircraft.toAircraft( request ) );
+			aircraftServices.upsert( ReactAircraft.toAircraft( request ) );
 			return new ResponseEntity<>( new ReactAircraftResponse().setAircraft( request ), HttpStatus.OK );
 		} catch( Exception exception ) {
 			log.error( "Error creating new aircraft", exception );
@@ -101,12 +101,12 @@ public class AircraftController {
 		try {
 			// Default to user ownership for now
 			String username = authentication.getName();
-			User user = userService.findByPrincipal( username ).orElseThrow( () -> new UsernameNotFoundException( username ) );
+			User user = userServices.findByPrincipal( username ).orElseThrow( () -> new UsernameNotFoundException( username ) );
 
 			// TODO Allow user to select a different owner
 			request.setOwner( user.id().toString() );
 			request.setOwnerType( OwnerType.USER.name().toLowerCase() );
-			aircraftService.upsert( ReactAircraft.toAircraft( request ) );
+			aircraftServices.upsert( ReactAircraft.toAircraft( request ) );
 			return new ResponseEntity<>( new ReactAircraftResponse().setAircraft( request ), HttpStatus.OK );
 		} catch( Exception exception ) {
 			log.error( "Error updating aircraft", exception );
@@ -122,10 +122,10 @@ public class AircraftController {
 		log.info( "Delete aircraft" );
 		List<String> messages = new ArrayList<>();
 		try {
-			Optional<Aircraft> optional = aircraftService.find( id );
+			Optional<Aircraft> optional = aircraftServices.find( id );
 			if( optional.isPresent() ) {
 				Aircraft deletedAircraft = optional.get();
-				aircraftService.remove( deletedAircraft );
+				aircraftServices.remove( deletedAircraft );
 				return new ResponseEntity<>( new ReactAircraftResponse().setAircraft( ReactAircraft.from( deletedAircraft ) ), HttpStatus.OK );
 			} else {
 				messages.add( "Aircraft id not found: " + id );
