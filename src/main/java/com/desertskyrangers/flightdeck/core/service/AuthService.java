@@ -1,6 +1,6 @@
 package com.desertskyrangers.flightdeck.core.service;
 
-import com.desertskyrangers.flightdeck.adapter.api.ApiPath;
+import com.desertskyrangers.flightdeck.adapter.web.ApiPath;
 import com.desertskyrangers.flightdeck.core.model.EmailMessage;
 import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.core.model.UserToken;

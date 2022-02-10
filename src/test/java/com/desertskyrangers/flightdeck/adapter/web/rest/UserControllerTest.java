@@ -1,0 +1,387 @@
+package com.desertskyrangers.flightdeck.adapter.web.rest;
+
+import com.desertskyrangers.flightdeck.adapter.web.ApiPath;
+import com.desertskyrangers.flightdeck.adapter.web.jwt.JwtToken;
+import com.desertskyrangers.flightdeck.adapter.web.jwt.JwtTokenProvider;
+import com.desertskyrangers.flightdeck.adapter.web.model.ReactProfileResponse;
+import com.desertskyrangers.flightdeck.adapter.web.model.ReactUser;
+import com.desertskyrangers.flightdeck.core.model.*;
+import com.desertskyrangers.flightdeck.port.StatePersisting;
+import com.desertskyrangers.flightdeck.port.UserServices;
+import com.desertskyrangers.flightdeck.util.Json;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@WithMockUser
+@SpringBootTest
+@AutoConfigureMockMvc
+@ExtendWith( MockitoExtension.class )
+public class UserControllerTest extends BaseControllerTest {
+
+	@Autowired
+	private MockMvc mockMvc;
+
+	@Autowired
+	private UserServices userServices;
+
+	@Autowired
+	private StatePersisting statePersisting;
+
+	@Autowired
+	private JwtTokenProvider tokenProvider;
+
+	//private User user;
+
+	private HttpHeaders headers;
+
+	@BeforeEach
+	protected void setup() {
+		super.setup();
+
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String jwtToken = tokenProvider.createToken( getMockUser(), authentication, false );
+		headers = new HttpHeaders();
+		headers.add( JwtToken.AUTHORIZATION_HEADER, JwtToken.AUTHORIZATION_TYPE + " " + jwtToken );
+	}
+
+	@AfterEach
+	void teardown() {
+		statePersisting.removeAllFlights();
+		userServices.remove( getMockUser() );
+	}
+
+	@Test
+	void testGetProfile() throws Exception {
+		// when
+		MvcResult result = this.mockMvc.perform( MockMvcRequestBuilders.get( ApiPath.PROFILE ).with( csrf() ).headers( headers ) ).andExpect( status().isOk() ).andReturn();
+
+		// then
+		String accountJson = Json.stringify( new ReactProfileResponse().setAccount( ReactUser.from( getMockUser() ) ) );
+		assertThat( result.getResponse().getContentAsString() ).isEqualTo( accountJson );
+	}
+
+	@Test
+	void testGetAccount() throws Exception {
+		// when
+		MvcResult result = this.mockMvc.perform( get( ApiPath.USER + "/" + getMockUser().id() ).with( csrf() ).headers( headers ) ).andExpect( status().isOk() ).andReturn();
+
+		// then
+		String accountJson = Json.stringify( new ReactProfileResponse().setAccount( ReactUser.from( getMockUser() ) ) );
+		assertThat( result.getResponse().getContentAsString() ).isEqualTo( accountJson );
+	}
+
+	@Test
+	void testUpdateAccount() throws Exception {
+		// given
+		ReactUser reactAccount = ReactUser.from( getMockUser() );
+		reactAccount.setFirstName( "Anton" );
+
+		// when
+		String content = Json.stringify( reactAccount );
+		MvcResult result = this.mockMvc
+			.perform( put( ApiPath.USER + "/" + getMockUser().id() ).content( content ).contentType( "application/json" ).with( csrf() ).headers( headers ) )
+			.andExpect( status().isOk() )
+			.andReturn();
+
+		// then
+		String accountJson = Json.stringify( new ReactProfileResponse().setAccount( reactAccount ) );
+		String resultContent = result.getResponse().getContentAsString();
+		assertThat( resultContent ).isEqualTo( accountJson );
+		Map<?, ?> map = Json.asMap( resultContent );
+		Map<?, ?> account = (Map<?, ?>)map.get( "account" );
+		assertThat( account.get( "firstName" ) ).isEqualTo( "Anton" );
+	}
+
+	@Test
+	void testUpdatePassword() throws Exception {
+		// given
+		ReactUser reactAccount = ReactUser.from( getMockUser() );
+
+		// when
+		String content = Json.stringify( Map.of( "id", reactAccount.getId(), "currentPassword", "password", "password", "newmockpassword" ) );
+		MvcResult result = this.mockMvc
+			.perform( put( ApiPath.USER + "/" + getMockUser().id() + "/password" ).content( content ).contentType( "application/json" ).with( csrf() ).headers( headers ) )
+			.andExpect( status().isOk() )
+			.andReturn();
+
+		// then
+	}
+
+	@Test
+	void testGetAircraftPage() throws Exception {
+		// given
+		Aircraft aftyn = new Aircraft().name( "AFTYN" ).type( AircraftType.FIXEDWING ).status( AircraftStatus.DESTROYED ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
+		Aircraft bianca = new Aircraft().name( "BIANCA" ).type( AircraftType.FIXEDWING ).status( AircraftStatus.DESTROYED ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
+		statePersisting.upsert( aftyn );
+		statePersisting.upsert( bianca );
+
+		// when
+		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_AIRCRAFT + "/0" ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
+
+		// then
+		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
+		List<?> aircraftList = (List<?>)map.get( "aircraft" );
+		Map<?, ?> messagesMap = (Map<?, ?>)map.get( "messages" );
+
+		assertThat( aircraftList.size() ).isEqualTo( 2 );
+		assertThat( messagesMap ).isNull();
+
+		Map<?, ?> aircraft0 = (Map<?, ?>)aircraftList.get( 0 );
+		Map<?, ?> aircraft1 = (Map<?, ?>)aircraftList.get( 1 );
+		assertThat( aircraft0.get( "name" ) ).isEqualTo( "AFTYN" );
+		assertThat( aircraft1.get( "name" ) ).isEqualTo( "BIANCA" );
+	}
+
+	@Test
+	void testGetBatteryPage() throws Exception {
+		// given
+		Battery a = new Battery().name( "A" ).status( BatteryStatus.NEW ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
+		Battery b = new Battery().name( "B" ).status( BatteryStatus.NEW ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
+		statePersisting.upsert( a );
+		statePersisting.upsert( b );
+
+		// when
+		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_BATTERY + "/0" ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
+
+		// then
+		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
+		List<?> batteryList = (List<?>)map.get( "batteries" );
+		Map<?, ?> messagesMap = (Map<?, ?>)map.get( "messages" );
+
+		assertThat( batteryList.size() ).isEqualTo( 2 );
+		assertThat( messagesMap ).isNull();
+
+		Map<?, ?> battery0 = (Map<?, ?>)batteryList.get( 0 );
+		Map<?, ?> battery1 = (Map<?, ?>)batteryList.get( 1 );
+		assertThat( battery0.get( "name" ) ).isEqualTo( "A" );
+		assertThat( battery1.get( "name" ) ).isEqualTo( "B" );
+	}
+
+	@Test
+	void testGetFlightPage() throws Exception {
+		// given
+		Aircraft aftyn = new Aircraft().name( "AFTYN" ).type( AircraftType.FIXEDWING ).status( AircraftStatus.DESTROYED ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
+		Battery batteryA = new Battery().name( "A" ).status( BatteryStatus.NEW ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
+		statePersisting.upsert( aftyn );
+		statePersisting.upsert( batteryA );
+		Flight flightA = new Flight().pilot( getMockUser() ).aircraft( aftyn ).batteries( Set.of( batteryA ) );
+		Flight flightB = new Flight().pilot( getMockUser() ).aircraft( aftyn ).batteries( Set.of( batteryA ) );
+		statePersisting.upsert( flightA );
+		statePersisting.upsert( flightB );
+
+		// when
+		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_FLIGHT + "/0" ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
+
+		// then
+		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
+		List<?> flightList = (List<?>)map.get( "flights" );
+		Map<?, ?> messagesMap = (Map<?, ?>)map.get( "messages" );
+
+		assertThat( flightList.size() ).isEqualTo( 2 );
+		assertThat( messagesMap ).isNull();
+
+		Map<?, ?> flight0 = (Map<?, ?>)flightList.get( 0 );
+		Map<?, ?> flight1 = (Map<?, ?>)flightList.get( 1 );
+		assertThat( flight0.get( "aircraft" ) ).isEqualTo( aftyn.id().toString() );
+		assertThat( flight1.get( "aircraft" ) ).isEqualTo( aftyn.id().toString() );
+	}
+
+	@Test
+	void testGetUserMemberships() throws Exception {
+		User user = getMockUser();
+
+		Group groupA = statePersisting.upsert( new Group().name( "Group A" ).type( GroupType.CLUB ) );
+		Group groupB = statePersisting.upsert( new Group().name( "Group B" ).type( GroupType.GROUP ) );
+
+		// given
+		statePersisting.upsert( new Member().user( user ).group( groupA ).status( MemberStatus.OWNER ) );
+		statePersisting.upsert( new Member().user( user ).group( groupB ).status( MemberStatus.ACCEPTED ) );
+
+		// when
+		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_MEMBERSHIP ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
+
+		// then
+		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
+		List<?> memberships = (List<?>)map.get( "memberships" );
+		Map<?, ?> messagesMap = (Map<?, ?>)map.get( "messages" );
+
+		assertThat( memberships.size() ).isEqualTo( 2 );
+		assertThat( messagesMap ).isNull();
+	}
+
+	@Test
+	void testGetAircraftLookup() throws Exception {
+		statePersisting.upsert( createTestAircraft( getMockUser() ) );
+		statePersisting.upsert( createTestAircraft( getMockUser() ) );
+		statePersisting.upsert( createTestAircraft( getMockUser() ) );
+		statePersisting.upsert( createTestAircraft( getMockUser() ) );
+		statePersisting.upsert( createTestAircraft( getMockUser() ) );
+		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_AIRCRAFT_LOOKUP ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
+		List<Object> list = Json.asList( result.getResponse().getContentAsString() );
+		assertThat( list.size() ).isEqualTo( 5 );
+	}
+
+	@Test
+	void testGetBatteryLookup() throws Exception {
+		statePersisting.upsert( createTestBattery( getMockUser() ) );
+		statePersisting.upsert( createTestBattery( getMockUser() ) );
+		statePersisting.upsert( createTestBattery( getMockUser() ) );
+		// Plus the 'No battery specified' option
+		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_BATTERY_LOOKUP ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
+		List<Object> list = Json.asList( result.getResponse().getContentAsString() );
+		assertThat( list.size() ).isEqualTo( 4 );
+	}
+
+	@Test
+	void testGetObserverLookup() throws Exception {
+		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_OBSERVER_LOOKUP ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
+		List<Object> list = Json.asList( result.getResponse().getContentAsString() );
+		assertThat( list.size() ).isEqualTo( 2 );
+	}
+
+	@Test
+	void testGetPilotLookup() throws Exception {
+		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_PILOT_LOOKUP ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
+		List<Object> list = Json.asList( result.getResponse().getContentAsString() );
+		assertThat( list.size() ).isEqualTo( 2 );
+	}
+
+	@Test
+	void testPutMembership() throws Exception {
+		// given
+		User user = statePersisting.upsert( createTestUser() );
+		Group group = statePersisting.upsert( new Group().name( "Group A" ).type( GroupType.CLUB ) );
+		statePersisting.upsert( new Member().user( getMockUser() ).group( group ).status( MemberStatus.OWNER ) );
+
+		// when
+		Map<String, String> request = Map.of( "userid", user.id().toString(), "groupid", group.id().toString(), "status", "requested" );
+		MvcResult result = this.mockMvc.perform( put( ApiPath.USER_MEMBERSHIP ).with( jwt() ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
+
+		// then
+		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
+		List<?> memberships = (List<?>)map.get( "memberships" );
+		List<?> messages = (List<?>)map.get( "messages" );
+
+		assertThat( memberships.size() ).isEqualTo( 1 );
+		assertThat( messages ).isNull();
+	}
+
+	@Test
+	void testPutMembershipWithBadRequest() throws Exception {
+		// given
+		User user = getMockUser();
+		Group group = statePersisting.upsert( new Group().name( "Group A" ).type( GroupType.CLUB ) );
+		Map<String, String> request = Map.of( "userid", user.id().toString(), "groupid", "invalid", "status", "requested" );
+
+		// when
+		MvcResult result = this.mockMvc
+			.perform( put( ApiPath.USER_MEMBERSHIP ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) )
+			.andExpect( status().isBadRequest() )
+			.andReturn();
+
+		// then
+		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
+		List<?> memberships = (List<?>)map.get( "memberships" );
+		List<?> messages = (List<?>)map.get( "messages" );
+
+		assertThat( memberships ).isNull();
+		assertThat( messages.size() ).isEqualTo( 1 );
+	}
+
+	@Test
+	void testDeleteMembership() throws Exception {
+		// given
+		User user = getMockUser();
+		Group group = statePersisting.upsert( new Group().name( "Group A" ).type( GroupType.CLUB ) );
+		Member member = statePersisting.upsert( new Member().user( user ).group( group ).status( MemberStatus.ACCEPTED ) );
+
+		Map<String, String> request = Map.of( "membershipid", member.id().toString() );
+
+		// when
+		MvcResult result = this.mockMvc
+			.perform( delete( ApiPath.USER_MEMBERSHIP ).with( jwt() ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) )
+			.andExpect( status().isOk() )
+			.andReturn();
+
+		// then
+		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
+		List<?> memberships = (List<?>)map.get( "memberships" );
+		List<?> messages = (List<?>)map.get( "messages" );
+
+		assertThat( memberships.size() ).isEqualTo( 0 );
+		assertThat( messages ).isNull();
+	}
+
+	@Test
+	void testDeleteMembershipWithBadRequest() throws Exception {
+		// given
+		User user = getMockUser();
+		Group group = statePersisting.upsert( new Group().name( "Group A" ).type( GroupType.CLUB ) );
+		statePersisting.upsert( new Member().user( user ).group( group ).status( MemberStatus.ACCEPTED ) );
+
+		Map<String, String> request = Map.of( "membershipid", "invalid" );
+
+		// when
+		MvcResult result = this.mockMvc
+			.perform( delete( ApiPath.USER_MEMBERSHIP ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) )
+			.andExpect( status().isBadRequest() )
+			.andReturn();
+
+		// then
+		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
+		List<?> memberships = (List<?>)map.get( "memberships" );
+		List<?> messages = (List<?>)map.get( "messages" );
+
+		assertThat( memberships ).isNull();
+		assertThat( messages.size() ).isEqualTo( 1 );
+	}
+
+	@Test
+	void testDashboard() throws Exception {
+		// given
+
+		// when
+		MvcResult result = this.mockMvc.perform( get( ApiPath.DASHBOARD ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
+
+		// then
+		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
+		Map<?, ?> dashboardMap = (Map<?, ?>)map.get( "dashboard" );
+		assertThat( dashboardMap ).isNotNull();
+	}
+
+	@Test
+	void testDashboardWithBadRequest() throws Exception {
+		// TODO There is not a realistic way to cause a bad request on this one
+		//		// when
+		//		MvcResult result = this.mockMvc.perform( get( ApiPath.DASHBOARD ) ).andExpect( status().isBadRequest() ).andReturn();
+		//
+		//		// then
+		//		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
+		//		List<?> messages = (List<?>) map.get( "messages" );
+		//		assertThat( messages ).isNotNull();
+	}
+
+}

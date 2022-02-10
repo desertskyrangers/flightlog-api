@@ -1,6 +1,6 @@
 package com.desertskyrangers.flightdeck.util;
 
-import com.desertskyrangers.flightdeck.adapter.api.model.ReactRegisterRequest;
+import com.desertskyrangers.flightdeck.adapter.web.model.ReactRegisterRequest;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
