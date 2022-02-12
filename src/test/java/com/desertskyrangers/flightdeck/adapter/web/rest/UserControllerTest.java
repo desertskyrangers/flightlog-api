@@ -381,8 +381,8 @@ public class UserControllerTest extends BaseControllerTest {
 
 		// then
 		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
-		Map<?, ?> dashboardMap = (Map<?, ?>)map.get( "data" );
-		assertThat( dashboardMap ).isNotNull();
+		Map<?, ?> data = (Map<?, ?>)map.get( "data" );
+		assertThat( data ).isNotNull();
 	}
 
 }

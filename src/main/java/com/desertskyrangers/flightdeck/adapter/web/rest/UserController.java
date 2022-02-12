@@ -322,7 +322,7 @@ public class UserController extends BaseController {
 			if( Uuid.isNotValid( id ) ) messages.add( "Invalid user ID" );
 			if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactResponse<Map<String, Object>>().setMessages( messages ), HttpStatus.BAD_REQUEST );
 
-			// TODO Can the requester access the users preferences?
+			// TODO Verify the requester access the users preferences
 
 			Optional<User> optional = userServices.find( UUID.fromString( id ) );
 			if( optional.isEmpty() ) {
