@@ -26,6 +26,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -278,7 +279,10 @@ public class UserControllerTest extends BaseControllerTest {
 
 		// when
 		Map<String, String> request = Map.of( "userid", user.id().toString(), "groupid", group.id().toString(), "status", "requested" );
-		MvcResult result = this.mockMvc.perform( put( ApiPath.USER_MEMBERSHIP ).with( jwt() ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
+		MvcResult result = this.mockMvc
+			.perform( put( ApiPath.USER_MEMBERSHIP ).with( jwt() ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) )
+			.andExpect( status().isOk() )
+			.andReturn();
 
 		// then
 		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
@@ -383,6 +387,26 @@ public class UserControllerTest extends BaseControllerTest {
 		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
 		Map<?, ?> data = (Map<?, ?>)map.get( "data" );
 		assertThat( data ).isNotNull();
+	}
+
+	@Test
+	void testSetPreferences() throws Exception {
+		// given
+		Map<String, Object> request = new HashMap<>();
+		request.put( "id", getMockUser().id().toString() );
+		request.put( "preferences", Map.of( "showAircraftStats", true ) );
+
+		// then
+		MvcResult result = this.mockMvc
+			.perform( put( ApiPath.USER_PREFERENCES ).with( jwt() ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) )
+			.andExpect( status().isOk() )
+			.andReturn();
+
+		// then
+		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
+		Map<?, ?> data = (Map<?, ?>)map.get( "data" );
+		assertThat( data ).isNotNull();
+		assertThat( data.size() ).isEqualTo( 1 );
 	}
 
 }

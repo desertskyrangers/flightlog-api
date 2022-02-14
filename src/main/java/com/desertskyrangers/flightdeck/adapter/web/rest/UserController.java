@@ -338,6 +338,38 @@ public class UserController extends BaseController {
 		}
 	}
 
+	//@PreAuthorize( "hasAuthority('USER')" )
+	@PutMapping( path = ApiPath.USER_PREFERENCES )
+	ResponseEntity<ReactResponse<Map<String, Object>>> setPreferences( @RequestBody Map<String, Object> request ) {
+		List<String> messages = new ArrayList<>();
+
+		try {
+			String id = String.valueOf( request.get( "id" ) );
+			Object preferencesObject = request.get( "preferences" );
+			if( Uuid.isNotValid( id ) ) messages.add( "Invalid user ID" );
+			if( !(preferencesObject instanceof Map) ) messages.add( "Invalid preferences map" );
+			if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactResponse<Map<String, Object>>().setMessages( messages ), HttpStatus.BAD_REQUEST );
+
+			Optional<User> optional = userServices.find( UUID.fromString( id ) );
+			if( optional.isEmpty() ) {
+				messages.add( "User not found" );
+				log.warn( "User not found id={}", id );
+			}
+			if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactResponse<Map<String, Object>>().setMessages( messages ), HttpStatus.BAD_REQUEST );
+
+			User user = optional.get();
+			//noinspection unchecked
+			Map<String,Object> preferences = (Map<String,Object>)preferencesObject;
+			userServices.setPreferences( user, preferences );
+
+			return new ResponseEntity<>( new ReactResponse<Map<String, Object>>().setData( preferences ), HttpStatus.OK );
+		} catch( Exception exception ) {
+			log.error( "Error storing user preferences", exception );
+			messages.add( "Error storing user preferences" );
+			return new ResponseEntity<>( new ReactResponse<Map<String, Object>>().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
+		}
+	}
+
 	private List<ReactMembership> getMemberships( User user ) {
 		Set<Member> memberships = memberService.findMembershipsByUser( user );
 		List<Member> objects = new ArrayList<>( memberships );
