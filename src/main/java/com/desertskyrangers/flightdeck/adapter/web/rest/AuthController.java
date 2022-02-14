@@ -167,7 +167,7 @@ public class AuthController {
 
 		// Authenticate
 		try {
-			log.info( "user login username=" + request.getUsername() );
+			log.trace( "login request=" + request.getUsername() );
 			return new ResponseEntity<>( new ReactLoginResponse().setJwt( new JwtToken( authenticate( request.getUsername(), request.getPassword(), request.isRemember() ) ) ), HttpStatus.OK );
 		} catch( UsernameNotFoundException exception ) {
 			log.warn( "Account not found: " + request.getUsername() );

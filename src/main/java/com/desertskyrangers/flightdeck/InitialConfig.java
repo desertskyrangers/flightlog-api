@@ -150,11 +150,12 @@ public class InitialConfig {
 		statePersisting.upsert( new Member().user( tom ).group( testersUnlimited ).status( MemberStatus.OWNER ) );
 		statePersisting.upsert( new Member().user( tom ).group( testersInfinite ).status( MemberStatus.ACCEPTED ) );
 
-		log.warn( "Testing data created" );
+		log.warn( "Test data created!" );
 	}
 
 	private User createTiaTest() {
 		User user = new User();
+		user.id(UUID.fromString( "394de1f6-5071-4b8e-a31e-795d2f22d513" ));
 		user.username( "tia" );
 		user.firstName( "Tia" );
 		user.lastName( "Test" );
@@ -175,6 +176,7 @@ public class InitialConfig {
 
 	private User createTomTest() {
 		User user = new User();
+		user.id(UUID.fromString( "3943734d-7ab9-4cad-9d6d-9ca50335ad1c" ));
 		user.username( "tom" );
 		user.firstName( "Tom" );
 		user.lastName( "Test" );
@@ -195,6 +197,7 @@ public class InitialConfig {
 
 	private User createTeaTest() {
 		User user = new User();
+		user.id(UUID.fromString( "c70be671-b8ff-4f6a-926f-37149840385e" ));
 		user.username( "tea" );
 		user.firstName( "Téa" );
 		user.lastName( "Test" );
@@ -215,6 +218,7 @@ public class InitialConfig {
 
 	private User createTimTest() {
 		User user = new User();
+		user.id(UUID.fromString( "159a5224-9517-4776-886a-bc9d5e032a2a" ));
 		user.username( "tim" );
 		user.firstName( "Tim" );
 		user.lastName( "Test" );

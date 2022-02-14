@@ -8,7 +8,6 @@ import com.desertskyrangers.flightdeck.util.Uuid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -307,13 +306,13 @@ public class UserController extends BaseController {
 		return new ResponseEntity<>( new ReactMembershipPageResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
 	}
 
-	@PreAuthorize( "hasRole('USER')" )
+	//@PreAuthorize( "hasAuthority('USER')" )
 	@GetMapping( path = ApiPath.USER_PREFERENCES )
 	ResponseEntity<ReactResponse<Map<String, Object>>> getPreferencesByRequester( Authentication authentication ) {
 		return getPreferences( getRequester( authentication ).id().toString() );
 	}
 
-	@PreAuthorize( "hasRole('ADMIN')" )
+	//@PreAuthorize( "hasAuthority('ADMIN')" )
 	@GetMapping( path = ApiPath.USER_PREFERENCES + "/{id}" )
 	ResponseEntity<ReactResponse<Map<String, Object>>> getPreferences( @PathVariable String id ) {
 		List<String> messages = new ArrayList<>();
