@@ -2,6 +2,7 @@ package com.desertskyrangers.flightdeck.port;
 
 import com.desertskyrangers.flightdeck.core.model.Flight;
 import com.desertskyrangers.flightdeck.core.model.FlightUpsertRequest;
+import com.desertskyrangers.flightdeck.core.model.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,9 +12,9 @@ public interface FlightServices {
 
 	Optional<Flight> find( UUID id );
 
-	List<Flight> findByPilot( UUID pilot );
+	List<Flight> findByPilot( User pilot );
 
-	List<Flight> findFlightsByUser( UUID user );
+	List<Flight> findFlightsByUser( User user );
 
 	void upsert( FlightUpsertRequest flight );
 

@@ -129,11 +129,11 @@ public class InitialConfig {
 		statePersisting.upsert( d4s2650turnigy );
 
 		long timestamp = 1642259543957L;
-		Flight f1 = statePersisting.upsert( new Flight().pilot( tia ).observer( tia ).aircraft( aftyn ).batteries( Set.of( d4s2650turnigy ) ).timestamp( timestamp += 600000 ).duration( 240 ) );
-		Flight f2 = statePersisting.upsert( new Flight().pilot( tia ).observer( tia ).aircraft( bianca ).timestamp( timestamp += 600000 ).duration( 54 ) );
-		Flight f3 = statePersisting.upsert( new Flight().pilot( tom ).observer( tia ).aircraft( bianca ).timestamp( timestamp += 600000 ).duration( 163 ) );
-		Flight f4 = statePersisting.upsert( new Flight().pilot( tea ).observer( tia ).aircraft( aftyn ).timestamp( timestamp += 600000 ).duration( 182 ) );
-		Flight f5 = statePersisting.upsert( new Flight().pilot( tim ).observer( tea ).aircraft( aftyn ).timestamp( timestamp += 600000 ).duration( 34 ) );
+		statePersisting.upsert( new Flight().pilot( tia ).observer( tia ).aircraft( aftyn ).batteries( Set.of( d4s2650turnigy ) ).timestamp( timestamp += 600000 ).duration( 240 ) );
+		statePersisting.upsert( new Flight().pilot( tia ).observer( tia ).aircraft( bianca ).timestamp( timestamp += 600000 ).duration( 54 ) );
+		statePersisting.upsert( new Flight().pilot( tom ).observer( tia ).aircraft( bianca ).timestamp( timestamp += 600000 ).duration( 163 ) );
+		statePersisting.upsert( new Flight().pilot( tea ).observer( tia ).aircraft( aftyn ).timestamp( timestamp += 600000 ).duration( 182 ) );
+		statePersisting.upsert( new Flight().pilot( tim ).observer( tea ).aircraft( aftyn ).timestamp( timestamp += 600000 ).duration( 34 ) );
 
 		Group testersInfinite = new Group().name( "Testers Infinite" ).type( GroupType.GROUP );
 		statePersisting.upsert( testersInfinite );

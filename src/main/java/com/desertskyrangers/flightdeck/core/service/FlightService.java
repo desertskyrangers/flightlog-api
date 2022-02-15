@@ -18,9 +18,12 @@ public class FlightService implements FlightServices {
 
 	private final StateRetrieving stateRetrieving;
 
-	public FlightService( StatePersisting statePersisting, StateRetrieving stateRetrieving ) {
+	private final UserService userService;
+
+	public FlightService( StatePersisting statePersisting, StateRetrieving stateRetrieving, UserService userService ) {
 		this.statePersisting = statePersisting;
 		this.stateRetrieving = stateRetrieving;
+		this.userService = userService;
 	}
 
 	@Override
@@ -29,13 +32,22 @@ public class FlightService implements FlightServices {
 	}
 
 	@Override
-	public List<Flight> findByPilot( UUID pilot ) {
-		return stateRetrieving.findFlightsByPilot( pilot );
+	public List<Flight> findByPilot( User pilot ) {
+		return stateRetrieving.findFlightsByPilot( pilot.id() );
 	}
 
 	@Override
-	public List<Flight> findFlightsByUser( UUID user ) {
-		return stateRetrieving.findFlightsByUser( user );
+	public List<Flight> findFlightsByUser( User user ) {
+		Set<Flight> flights = new HashSet<>(stateRetrieving.findFlightsByPilot( user.id() ));
+
+		Map<String, Object> preferences = userService.getPreferences( user );
+		if( String.valueOf( preferences.get( PreferenceKey.SHOW_OBSERVER_FLIGHTS ) ).equals( "true" ) ) flights.addAll( stateRetrieving.findFlightsByObserver( user.id() ) );
+		if( String.valueOf( preferences.get( PreferenceKey.SHOW_OWNER_FLIGHTS ) ).equals( "true" ) ) flights.addAll( stateRetrieving.findFlightsByOwner( user.id() ) );
+
+		List<Flight> orderedFlights = new ArrayList<>(flights);
+		orderedFlights.sort( new FlightTimestampComparator().reversed() );
+
+		return orderedFlights;
 	}
 
 	@Override

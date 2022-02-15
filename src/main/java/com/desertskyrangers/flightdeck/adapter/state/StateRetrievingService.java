@@ -90,6 +90,11 @@ public class StateRetrievingService implements StateRetrieving {
 	}
 
 	@Override
+	public List<Flight> findFlightsByOwner( UUID id ) {
+		return flightRepo.findFlightEntitiesByAircraft_OwnerOrderByTimestampDesc( id ).stream().map( FlightEntity::toFlight ).toList();
+	}
+
+	@Override
 	public List<Flight> findFlightsByAircraft( UUID id ) {
 		return flightRepo.findFlightEntitiesByAircraft_IdOrderByTimestampDesc( id ).stream().map( FlightEntity::toFlight ).toList();
 	}
