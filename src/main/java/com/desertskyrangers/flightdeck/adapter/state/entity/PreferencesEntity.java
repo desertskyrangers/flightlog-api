@@ -22,7 +22,7 @@ public class PreferencesEntity {
 	@Column( columnDefinition = "BINARY(16)" )
 	private UUID id;
 
-	@Column( columnDefinition = "VARCHAR2" )
+	@Column( columnDefinition = "TEXT" )
 	private String json;
 
 	public static PreferencesEntity from( User user, Map<String,Object> preferences ) {
