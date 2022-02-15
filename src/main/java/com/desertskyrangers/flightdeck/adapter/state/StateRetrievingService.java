@@ -165,6 +165,18 @@ public class StateRetrievingService implements StateRetrieving {
 		return Json.asMap( preferencesRepo.findById( user.id() ).orElse( new PreferencesEntity().setJson( "{}" ) ).getJson() );
 	}
 
+	public boolean isPreferenceSet(User user , String key ) {
+		return findPreferences(user).containsKey( key );
+	}
+
+	public boolean isPreferenceSetTo(User user , String key, String value ) {
+		return String.valueOf( findPreferences( user ).get( key ) ).equals( value );
+	}
+
+	public String getPreference(User user , String key ) {
+		return String.valueOf( findPreferences( user ).get( key ) );
+	}
+
 	@Override
 	public Optional<UserToken> findUserTokenByPrincipal( String username ) {
 		return tokenRepo.findByPrincipal( username ).map( TokenEntity::toUserTokenDeep );

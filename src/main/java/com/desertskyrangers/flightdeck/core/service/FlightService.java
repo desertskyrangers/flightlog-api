@@ -38,16 +38,25 @@ public class FlightService implements FlightServices {
 
 	@Override
 	public List<Flight> findFlightsByUser( User user ) {
-		Set<Flight> flights = new HashSet<>(stateRetrieving.findFlightsByPilot( user.id() ));
+		boolean showObserverFlights = stateRetrieving.isPreferenceSetTo( user, PreferenceKey.SHOW_OBSERVER_FLIGHTS, "true" );
+		boolean showOwnerFlights = stateRetrieving.isPreferenceSetTo( user, PreferenceKey.SHOW_OWNER_FLIGHTS, "true" );
 
-		Map<String, Object> preferences = userService.getPreferences( user );
-		if( String.valueOf( preferences.get( PreferenceKey.SHOW_OBSERVER_FLIGHTS ) ).equals( "true" ) ) flights.addAll( stateRetrieving.findFlightsByObserver( user.id() ) );
-		if( String.valueOf( preferences.get( PreferenceKey.SHOW_OWNER_FLIGHTS ) ).equals( "true" ) ) flights.addAll( stateRetrieving.findFlightsByOwner( user.id() ) );
+		Set<Flight> flights = new HashSet<>( stateRetrieving.findFlightsByPilot( user.id() ) );
+		if( showObserverFlights ) flights.addAll( stateRetrieving.findFlightsByObserver( user.id() ) );
+		if( showOwnerFlights ) flights.addAll( stateRetrieving.findFlightsByOwner( user.id() ) );
 
-		List<Flight> orderedFlights = new ArrayList<>(flights);
+		List<Flight> orderedFlights = new ArrayList<>( flights );
 		orderedFlights.sort( new FlightTimestampComparator().reversed() );
 
 		return orderedFlights;
+	}
+
+	private List<Flight> findFlightsByUserAndCount( User user, int count ) {
+		return List.of();
+	}
+
+	private List<Flight> findFlightsByUserAndTime( User user, long span ) {
+		return List.of();
 	}
 
 	@Override

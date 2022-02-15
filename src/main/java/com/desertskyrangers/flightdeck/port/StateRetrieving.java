@@ -60,4 +60,10 @@ public interface StateRetrieving {
 
 	long getPilotFlightTime( UUID id );
 
+	boolean isPreferenceSet( User user, String key );
+
+	boolean isPreferenceSetTo( User user, String key, String value );
+
+	String getPreference( User user, String key );
+
 }
