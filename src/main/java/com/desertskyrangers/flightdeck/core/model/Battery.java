@@ -9,6 +9,8 @@ import java.util.UUID;
 @Accessors( fluent = true )
 public class Battery {
 
+	public static final int MAX_CYCLES = 200;
+
 	private UUID id = UUID.randomUUID();
 
 	private String name;
@@ -36,5 +38,9 @@ public class Battery {
 	private UUID owner;
 
 	private OwnerType ownerType;
+
+	public int life() {
+		return (int)((100D * (Battery.MAX_CYCLES - cycles()) / Battery.MAX_CYCLES));
+	}
 
 }

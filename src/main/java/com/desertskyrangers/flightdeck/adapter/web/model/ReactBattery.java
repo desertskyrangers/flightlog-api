@@ -40,6 +40,8 @@ public class ReactBattery {
 
 	private String ownerType;
 
+	private int life;
+
 	public static ReactBattery from( Battery battery ) {
 		ReactBattery result = new ReactBattery();
 
@@ -59,6 +61,8 @@ public class ReactBattery {
 
 		result.setOwner( battery.owner().toString() );
 		result.setOwnerType( battery.ownerType().name().toLowerCase() );
+
+		result.setLife( battery.life() );
 
 		return result;
 	}
