@@ -2,18 +2,25 @@ package com.desertskyrangers.flightdeck.core.model;
 
 public enum BatteryStatus {
 
-	NEW( "New" ),
-	AVAILABLE( "Available" ),
-	DESTROYED( "Destroyed" );
+	NEW( "New", true ),
+	AVAILABLE( "Available", true ),
+	DESTROYED( "Destroyed", false );
 
 	private final String name;
 
-	BatteryStatus( String name ) {
+	private final boolean airworthy;
+
+	BatteryStatus( String name, boolean airworthy ) {
 		this.name = name;
+		this.airworthy = airworthy;
 	}
 
 	public String getName() {
 		return name;
+	}
+
+	public boolean isAirworthy() {
+		return airworthy;
 	}
 
 	public static boolean isValid( String string ) {

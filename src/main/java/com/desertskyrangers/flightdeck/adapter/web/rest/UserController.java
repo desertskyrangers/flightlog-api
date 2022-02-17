@@ -210,14 +210,14 @@ public class UserController extends BaseController {
 	ResponseEntity<List<ReactOption>> getAircraftLookup( Authentication authentication ) {
 		User user = getRequester( authentication );
 		List<Aircraft> objects = aircraftServices.findByOwner( user.id() );
-		return new ResponseEntity<>( objects.stream().map( c -> new ReactOption( c.id().toString(), c.name() ) ).toList(), HttpStatus.OK );
+		return new ResponseEntity<>( objects.stream().filter( a -> a.status().isAirworthy()).map( c -> new ReactOption( c.id().toString(), c.name() ) ).toList(), HttpStatus.OK );
 	}
 
 	@GetMapping( path = ApiPath.USER_BATTERY_LOOKUP )
 	ResponseEntity<List<ReactOption>> getBatteryLookup( Authentication authentication ) {
 		User user = getRequester( authentication );
 		List<Battery> objects = batteryServices.findByOwner( user.id() );
-		List<ReactOption> options = new ArrayList<>( objects.stream().map( c -> new ReactOption( c.id().toString(), c.name() ) ).toList() );
+		List<ReactOption> options = new ArrayList<>( objects.stream().filter( b -> b.status().isAirworthy()).map( c -> new ReactOption( c.id().toString(), c.name() ) ).toList() );
 		options.add( new ReactOption( "", "No battery specified" ) );
 		return new ResponseEntity<>( options, HttpStatus.OK );
 	}

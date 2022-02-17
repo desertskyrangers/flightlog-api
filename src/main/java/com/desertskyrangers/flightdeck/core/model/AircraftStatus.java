@@ -2,20 +2,27 @@ package com.desertskyrangers.flightdeck.core.model;
 
 public enum AircraftStatus {
 
-	PREFLIGHT( "Pre-flight" ),
-	AIRWORTHY( "Airworthy" ),
-	INOPERATIVE( "Inoperative" ),
-	DECOMMISSIONED( "Decommissioned" ),
-	DESTROYED( "Destroyed" );
+	PREFLIGHT( "Pre-flight", true ),
+	AIRWORTHY( "Airworthy", true ),
+	INOPERATIVE( "Inoperative", false ),
+	DECOMMISSIONED( "Decommissioned", false ),
+	DESTROYED( "Destroyed", false );
 
 	private final String name;
 
-	AircraftStatus( String name ) {
+	private final boolean airworthy;
+
+	AircraftStatus( String name, boolean airworthy ) {
 		this.name = name;
+		this.airworthy = airworthy;
 	}
 
 	public String getName() {
 		return name;
+	}
+
+	public boolean isAirworthy() {
+		return airworthy;
 	}
 
 	public static boolean isValid( String string ) {

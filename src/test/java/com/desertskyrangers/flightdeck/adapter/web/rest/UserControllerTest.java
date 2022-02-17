@@ -235,25 +235,25 @@ public class UserControllerTest extends BaseControllerTest {
 
 	@Test
 	void testGetAircraftLookup() throws Exception {
-		statePersisting.upsert( createTestAircraft( getMockUser() ) );
-		statePersisting.upsert( createTestAircraft( getMockUser() ) );
-		statePersisting.upsert( createTestAircraft( getMockUser() ) );
-		statePersisting.upsert( createTestAircraft( getMockUser() ) );
-		statePersisting.upsert( createTestAircraft( getMockUser() ) );
+		statePersisting.upsert( createTestAircraft( getMockUser() ).status(AircraftStatus.PREFLIGHT) );
+		statePersisting.upsert( createTestAircraft( getMockUser() ).status(AircraftStatus.AIRWORTHY) );
+		statePersisting.upsert( createTestAircraft( getMockUser() ).status(AircraftStatus.INOPERATIVE) );
+		statePersisting.upsert( createTestAircraft( getMockUser() ).status(AircraftStatus.DECOMMISSIONED) );
+		statePersisting.upsert( createTestAircraft( getMockUser() ).status(AircraftStatus.DESTROYED) );
 		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_AIRCRAFT_LOOKUP ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
 		List<Object> list = Json.asList( result.getResponse().getContentAsString() );
-		assertThat( list.size() ).isEqualTo( 5 );
+		assertThat( list.size() ).isEqualTo( 2 );
 	}
 
 	@Test
 	void testGetBatteryLookup() throws Exception {
-		statePersisting.upsert( createTestBattery( getMockUser() ) );
-		statePersisting.upsert( createTestBattery( getMockUser() ) );
-		statePersisting.upsert( createTestBattery( getMockUser() ) );
+		statePersisting.upsert( createTestBattery( getMockUser() ).status(BatteryStatus.NEW) );
+		statePersisting.upsert( createTestBattery( getMockUser() ).status(BatteryStatus.AVAILABLE) );
+		statePersisting.upsert( createTestBattery( getMockUser() ).status(BatteryStatus.DESTROYED) );
 		// Plus the 'No battery specified' option
 		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_BATTERY_LOOKUP ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
 		List<Object> list = Json.asList( result.getResponse().getContentAsString() );
-		assertThat( list.size() ).isEqualTo( 4 );
+		assertThat( list.size() ).isEqualTo( 3 );
 	}
 
 	@Test
