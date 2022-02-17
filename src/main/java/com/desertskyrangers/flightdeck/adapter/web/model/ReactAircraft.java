@@ -1,9 +1,9 @@
 package com.desertskyrangers.flightdeck.adapter.web.model;
 
 import com.desertskyrangers.flightdeck.core.model.Aircraft;
-import com.desertskyrangers.flightdeck.core.model.OwnerType;
 import com.desertskyrangers.flightdeck.core.model.AircraftStatus;
 import com.desertskyrangers.flightdeck.core.model.AircraftType;
+import com.desertskyrangers.flightdeck.core.model.OwnerType;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -31,6 +31,14 @@ public class ReactAircraft {
 
 	private String ownerType;
 
+	private double wingspan;
+
+	private double length;
+
+	private double wingarea;
+
+	private double weight;
+
 	public static ReactAircraft from( Aircraft aircraft ) {
 		ReactAircraft result = new ReactAircraft();
 
@@ -42,6 +50,11 @@ public class ReactAircraft {
 		result.setStatus( aircraft.status().name().toLowerCase() );
 		result.setOwner( aircraft.owner().toString() );
 		result.setOwnerType( aircraft.ownerType().name().toLowerCase() );
+
+		result.setWingspan( aircraft.wingspan() );
+		result.setLength( aircraft.length() );
+		result.setWingarea( aircraft.wingarea() );
+		result.setWeight( aircraft.weight() );
 
 		return result;
 	}
@@ -58,7 +71,13 @@ public class ReactAircraft {
 		if( reactAircraft.getOwner() != null ) aircraft.owner( UUID.fromString( reactAircraft.getOwner() ) );
 		if( reactAircraft.getOwnerType() != null ) aircraft.ownerType( OwnerType.valueOf( reactAircraft.getOwnerType().toUpperCase() ) );
 
+		aircraft.wingspan( reactAircraft.getWingspan() );
+		aircraft.length( reactAircraft.getLength() );
+		aircraft.wingarea( reactAircraft.getWingarea() );
+		aircraft.weight( reactAircraft.getWeight() );
+
 		return aircraft;
 	}
+
 }
 

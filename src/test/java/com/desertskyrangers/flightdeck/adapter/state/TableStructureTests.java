@@ -51,7 +51,12 @@ public class TableStructureTests {
 		expected.add( "owner" );
 		expected.add( "ownertype" );
 
-		assertThat( getColumns( "aircraft" ) ).containsAll( expected );
+		expected.add( "wingspan" );
+		expected.add( "length" );
+		expected.add( "wingarea" );
+		expected.add( "weight" );
+
+		assertThat( getColumns( "aircraft" ) ).containsExactlyInAnyOrderElementsOf( expected );
 	}
 
 	@Test
@@ -109,7 +114,7 @@ public class TableStructureTests {
 		expected.add( "userid" );
 		expected.add( "status" );
 
-		assertThat( getColumns( "member" ) ).containsAll( expected );
+		assertThat( getColumns( "member" ) ).containsExactlyInAnyOrderElementsOf( expected );
 	}
 
 	@Test
@@ -120,7 +125,7 @@ public class TableStructureTests {
 		expected.add( "type" );
 		expected.add( "name" );
 
-		assertThat( getColumns( "org" ) ).containsAll( expected );
+		assertThat( getColumns( "org" ) ).containsExactlyInAnyOrderElementsOf( expected );
 	}
 
 	@Test
@@ -129,7 +134,7 @@ public class TableStructureTests {
 		expected.add( "id" );
 		expected.add( "json" );
 
-		assertThat( getColumns( "preferences" ) ).containsAll( expected );
+		assertThat( getColumns( "preferences" ) ).containsExactlyInAnyOrderElementsOf( expected );
 	}
 
 	@Test
@@ -169,7 +174,7 @@ public class TableStructureTests {
 		expected.add( "code" );
 		expected.add( "type" );
 
-		assertThat( getColumns( "verification" ) ).containsAll( expected );
+		assertThat( getColumns( "verification" ) ).containsExactlyInAnyOrderElementsOf( expected );
 	}
 
 	private Set<String> getTables() throws SQLException {

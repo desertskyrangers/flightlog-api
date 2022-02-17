@@ -1,9 +1,9 @@
 package com.desertskyrangers.flightdeck.adapter.state.entity;
 
 import com.desertskyrangers.flightdeck.core.model.Aircraft;
-import com.desertskyrangers.flightdeck.core.model.OwnerType;
 import com.desertskyrangers.flightdeck.core.model.AircraftStatus;
 import com.desertskyrangers.flightdeck.core.model.AircraftType;
+import com.desertskyrangers.flightdeck.core.model.OwnerType;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -36,6 +36,14 @@ public class AircraftEntity {
 
 	private String connector;
 
+	private double wingspan;
+
+	private double length;
+
+	private double wingarea;
+
+	private double weight;
+
 	@Column( nullable = false, columnDefinition = "BINARY(16)" )
 	private UUID owner;
 
@@ -54,6 +62,11 @@ public class AircraftEntity {
 		entity.setOwner( aircraft.owner() );
 		if( aircraft.ownerType() != null ) entity.setOwnerType( aircraft.ownerType().name().toLowerCase() );
 
+		entity.setWingspan( aircraft.wingspan() );
+		entity.setLength( aircraft.length() );
+		entity.setWingarea( aircraft.wingarea() );
+		entity.setWeight( aircraft.weight() );
+
 		return entity;
 	}
 
@@ -68,6 +81,11 @@ public class AircraftEntity {
 		aircraft.status( AircraftStatus.valueOf( entity.getStatus().toUpperCase() ) );
 		aircraft.owner( entity.getOwner() );
 		if( entity.getOwnerType() != null ) aircraft.ownerType( OwnerType.valueOf( entity.getOwnerType().toUpperCase() ) );
+
+		aircraft.wingspan( entity.getWingspan() );
+		aircraft.length( entity.getLength() );
+		aircraft.wingarea( entity.getWingarea() );
+		aircraft.weight( entity.getWeight() );
 
 		return aircraft;
 	}

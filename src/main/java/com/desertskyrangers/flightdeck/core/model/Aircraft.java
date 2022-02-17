@@ -25,4 +25,12 @@ public class Aircraft {
 
 	private OwnerType ownerType;
 
+	private double wingspan;
+
+	private double length;
+
+	private double wingarea;
+
+	private double weight;
+
 }
