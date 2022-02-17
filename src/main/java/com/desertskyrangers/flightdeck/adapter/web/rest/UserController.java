@@ -8,6 +8,7 @@ import com.desertskyrangers.flightdeck.util.Uuid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -50,6 +51,7 @@ public class UserController extends BaseController {
 		this.userServices = userServices;
 	}
 
+	@PreAuthorize( "hasAuthority('USER')" )
 	@GetMapping( path = ApiPath.DASHBOARD )
 	ResponseEntity<ReactDashboardResponse> dashboard( Authentication authentication ) {
 		try {
@@ -63,6 +65,7 @@ public class UserController extends BaseController {
 		}
 	}
 
+	@PreAuthorize( "hasAuthority('USER')" )
 	@GetMapping( path = ApiPath.PROFILE )
 	ResponseEntity<ReactProfileResponse> profile() {
 		String username = ((org.springframework.security.core.userdetails.User)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
@@ -73,11 +76,8 @@ public class UserController extends BaseController {
 		return new ResponseEntity<>( new ReactProfileResponse().setAccount( optional.get() ), HttpStatus.OK );
 	}
 
-	//	@GetMapping
-	//	public List<ReactRegisterRequest> findAll() {
-	//		return service.find().stream().map( ReactRegisterRequest::from ).collect( Collectors.toList() );
-	//	}
-
+	// FIXME Normal users should not be able to update other users
+	@PreAuthorize( "hasAuthority('USER')" )
 	@GetMapping( value = ApiPath.USER + "/{id}" )
 	ResponseEntity<ReactProfileResponse> findById( @PathVariable( "id" ) UUID id ) {
 		Optional<ReactUser> optional = userServices.find( id ).map( ReactUser::from );
@@ -86,8 +86,9 @@ public class UserController extends BaseController {
 		return new ResponseEntity<>( new ReactProfileResponse().setAccount( optional.get() ), HttpStatus.OK );
 	}
 
+	// FIXME Normal users should not be able to update other users
+	@PreAuthorize( "hasAuthority('USER')" )
 	@PutMapping( value = ApiPath.USER + "/{id}" )
-	@ResponseStatus( HttpStatus.OK )
 	ResponseEntity<ReactProfileResponse> update( @PathVariable( "id" ) UUID id, @RequestBody ReactUser account ) {
 		Optional<User> optional = userServices.find( id );
 		if( optional.isEmpty() ) return new ResponseEntity<>( new ReactProfileResponse().setAccount( new ReactUser() ), HttpStatus.BAD_REQUEST );
@@ -100,12 +101,16 @@ public class UserController extends BaseController {
 		return new ResponseEntity<>( new ReactProfileResponse().setAccount( ReactUser.from( user ) ), HttpStatus.OK );
 	}
 
+	// FIXME Normal users should not be able to update other users
+	@PreAuthorize( "hasAuthority('USER')" )
 	@DeleteMapping( value = ApiPath.USER + "/{id}" )
 	@ResponseStatus( HttpStatus.OK )
 	void delete( @PathVariable( "id" ) UUID id ) {
 		userServices.find( id ).ifPresent( userServices::remove );
 	}
 
+	// FIXME Normal users should not be able to update other users
+	@PreAuthorize( "hasAuthority('USER')" )
 	@PutMapping( value = ApiPath.USER + "/{id}/password" )
 	@ResponseStatus( HttpStatus.OK )
 	ResponseEntity<Map<String, Object>> updatePassword( @PathVariable( "id" ) UUID id, @RequestBody ReactPasswordChangeRequest request ) {
@@ -127,6 +132,7 @@ public class UserController extends BaseController {
 		return new ResponseEntity<>( HttpStatus.OK );
 	}
 
+	@PreAuthorize( "hasAuthority('USER')" )
 	@GetMapping( path = ApiPath.USER_AIRCRAFT + "/{page}" )
 	ResponseEntity<ReactAircraftPageResponse> getAircraftPage( Authentication authentication, @PathVariable int page ) {
 		List<String> messages = new ArrayList<>();
@@ -143,6 +149,7 @@ public class UserController extends BaseController {
 		return new ResponseEntity<>( new ReactAircraftPageResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
 	}
 
+	@PreAuthorize( "hasAuthority('USER')" )
 	@GetMapping( path = ApiPath.USER_BATTERY + "/{page}" )
 	ResponseEntity<ReactBatteryPageResponse> getBatteryPage( Authentication authentication, @PathVariable int page ) {
 		List<String> messages = new ArrayList<>();
@@ -159,6 +166,7 @@ public class UserController extends BaseController {
 		return new ResponseEntity<>( new ReactBatteryPageResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
 	}
 
+	@PreAuthorize( "hasAuthority('USER')" )
 	@GetMapping( path = ApiPath.USER_FLIGHT + "/{page}" )
 	ResponseEntity<ReactFlightPageResponse> getFlightPage( Authentication authentication, @PathVariable int page ) {
 		List<String> messages = new ArrayList<>();
@@ -175,6 +183,7 @@ public class UserController extends BaseController {
 		return new ResponseEntity<>( new ReactFlightPageResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
 	}
 
+	@PreAuthorize( "hasAuthority('USER')" )
 	@GetMapping( path = ApiPath.USER_GROUP + "/{page}" )
 	ResponseEntity<ReactGroupPageResponse> getOrgPage( Authentication authentication, @PathVariable int page ) {
 		List<String> messages = new ArrayList<>();
@@ -191,6 +200,7 @@ public class UserController extends BaseController {
 		return new ResponseEntity<>( new ReactGroupPageResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
 	}
 
+	@PreAuthorize( "hasAuthority('USER')" )
 	@GetMapping( path = ApiPath.USER_MEMBERSHIP )
 	ResponseEntity<ReactMembershipPageResponse> getMembershipPage( Authentication authentication ) {
 		List<String> messages = new ArrayList<>();
@@ -206,6 +216,7 @@ public class UserController extends BaseController {
 		return new ResponseEntity<>( new ReactMembershipPageResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
 	}
 
+	@PreAuthorize( "hasAuthority('USER')" )
 	@GetMapping( path = ApiPath.USER_AIRCRAFT_LOOKUP )
 	ResponseEntity<List<ReactOption>> getAircraftLookup( Authentication authentication ) {
 		User user = getRequester( authentication );
@@ -213,6 +224,7 @@ public class UserController extends BaseController {
 		return new ResponseEntity<>( objects.stream().filter( a -> a.status().isAirworthy()).map( c -> new ReactOption( c.id().toString(), c.name() ) ).toList(), HttpStatus.OK );
 	}
 
+	@PreAuthorize( "hasAuthority('USER')" )
 	@GetMapping( path = ApiPath.USER_BATTERY_LOOKUP )
 	ResponseEntity<List<ReactOption>> getBatteryLookup( Authentication authentication ) {
 		User user = getRequester( authentication );
@@ -222,11 +234,13 @@ public class UserController extends BaseController {
 		return new ResponseEntity<>( options, HttpStatus.OK );
 	}
 
+	@PreAuthorize( "hasAuthority('USER')" )
 	@GetMapping( path = ApiPath.USER_OBSERVER_LOOKUP )
 	ResponseEntity<List<ReactOption>> getObserverLookup( Authentication authentication ) {
 		return getPilotLookup( authentication );
 	}
 
+	@PreAuthorize( "hasAuthority('USER')" )
 	@GetMapping( path = ApiPath.USER_PILOT_LOOKUP )
 	ResponseEntity<List<ReactOption>> getPilotLookup( Authentication authentication ) {
 		User user = getRequester( authentication );
@@ -239,6 +253,7 @@ public class UserController extends BaseController {
 		return new ResponseEntity<>( users.stream().map( c -> new ReactOption( c.id().toString(), c.preferredName() ) ).toList(), HttpStatus.OK );
 	}
 
+	@PreAuthorize( "hasAuthority('USER')" )
 	@PutMapping( path = ApiPath.USER_MEMBERSHIP )
 	ResponseEntity<ReactMembershipPageResponse> requestGroupMembership( Authentication authentication, @RequestBody Map<String, String> request ) {
 		String userId = request.get( "userid" );
@@ -277,6 +292,7 @@ public class UserController extends BaseController {
 		return new ResponseEntity<>( new ReactMembershipPageResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
 	}
 
+	@PreAuthorize( "hasAuthority('USER')" )
 	@DeleteMapping( path = ApiPath.USER_MEMBERSHIP )
 	ResponseEntity<ReactMembershipPageResponse> cancelGroupMembership( Authentication authentication, @RequestBody Map<String, String> request ) {
 		String userId = request.get( "membershipid" );
@@ -306,13 +322,13 @@ public class UserController extends BaseController {
 		return new ResponseEntity<>( new ReactMembershipPageResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
 	}
 
-	//@PreAuthorize( "hasAuthority('USER')" )
+	@PreAuthorize( "hasAuthority('USER')" )
 	@GetMapping( path = ApiPath.USER_PREFERENCES )
 	ResponseEntity<ReactResponse<Map<String, Object>>> getPreferencesByRequester( Authentication authentication ) {
 		return getPreferences( getRequester( authentication ).id().toString() );
 	}
 
-	//@PreAuthorize( "hasAuthority('ADMIN')" )
+	@PreAuthorize( "hasAuthority('ADMIN')" )
 	@GetMapping( path = ApiPath.USER_PREFERENCES + "/{id}" )
 	ResponseEntity<ReactResponse<Map<String, Object>>> getPreferences( @PathVariable String id ) {
 		List<String> messages = new ArrayList<>();
@@ -338,7 +354,7 @@ public class UserController extends BaseController {
 		}
 	}
 
-	//@PreAuthorize( "hasAuthority('USER')" )
+	@PreAuthorize( "hasAuthority('USER')" )
 	@PutMapping( path = ApiPath.USER_PREFERENCES )
 	ResponseEntity<ReactResponse<Map<String, Object>>> setPreferences( @RequestBody Map<String, Object> request ) {
 		List<String> messages = new ArrayList<>();

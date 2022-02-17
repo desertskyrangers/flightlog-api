@@ -36,7 +36,6 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WithMockUser
 @SpringBootTest
 @AutoConfigureMockMvc
 @ExtendWith( MockitoExtension.class )
@@ -77,7 +76,7 @@ public class UserControllerTest extends BaseControllerTest {
 	@Test
 	void testGetProfile() throws Exception {
 		// when
-		MvcResult result = this.mockMvc.perform( MockMvcRequestBuilders.get( ApiPath.PROFILE ).with( csrf() ).headers( headers ) ).andExpect( status().isOk() ).andReturn();
+		MvcResult result = this.mockMvc.perform( MockMvcRequestBuilders.get( ApiPath.PROFILE ).with( jwt() ).headers( headers ) ).andExpect( status().isOk() ).andReturn();
 
 		// then
 		String accountJson = Json.stringify( new ReactProfileResponse().setAccount( ReactUser.from( getMockUser() ) ) );
@@ -87,7 +86,7 @@ public class UserControllerTest extends BaseControllerTest {
 	@Test
 	void testGetAccount() throws Exception {
 		// when
-		MvcResult result = this.mockMvc.perform( get( ApiPath.USER + "/" + getMockUser().id() ).with( csrf() ).headers( headers ) ).andExpect( status().isOk() ).andReturn();
+		MvcResult result = this.mockMvc.perform( get( ApiPath.USER + "/" + getMockUser().id() ).with( jwt() ).headers( headers ) ).andExpect( status().isOk() ).andReturn();
 
 		// then
 		String accountJson = Json.stringify( new ReactProfileResponse().setAccount( ReactUser.from( getMockUser() ) ) );
@@ -103,7 +102,7 @@ public class UserControllerTest extends BaseControllerTest {
 		// when
 		String content = Json.stringify( reactAccount );
 		MvcResult result = this.mockMvc
-			.perform( put( ApiPath.USER + "/" + getMockUser().id() ).content( content ).contentType( "application/json" ).with( csrf() ).headers( headers ) )
+			.perform( put( ApiPath.USER + "/" + getMockUser().id() ).content( content ).contentType( "application/json" ).with( jwt() ).headers( headers ) )
 			.andExpect( status().isOk() )
 			.andReturn();
 
@@ -124,7 +123,7 @@ public class UserControllerTest extends BaseControllerTest {
 		// when
 		String content = Json.stringify( Map.of( "id", reactAccount.getId(), "currentPassword", "password", "password", "newmockpassword" ) );
 		MvcResult result = this.mockMvc
-			.perform( put( ApiPath.USER + "/" + getMockUser().id() + "/password" ).content( content ).contentType( "application/json" ).with( csrf() ).headers( headers ) )
+			.perform( put( ApiPath.USER + "/" + getMockUser().id() + "/password" ).content( content ).contentType( "application/json" ).with( jwt() ).headers( headers ) )
 			.andExpect( status().isOk() )
 			.andReturn();
 
@@ -382,6 +381,30 @@ public class UserControllerTest extends BaseControllerTest {
 
 		// when
 		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_PREFERENCES ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
+
+		// then
+		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
+		Map<?, ?> data = (Map<?, ?>)map.get( "data" );
+		assertThat( data ).isNotNull();
+	}
+
+	@Test
+	void testGetPreferencesWithNonAdminUser() throws Exception {
+		// given
+		User paula = statePersisting.upsert( createTestUser("paula", "paula@example.com") );
+
+		// when
+		this.mockMvc.perform( get( ApiPath.USER_PREFERENCES + "/" + paula.id() ).with( jwt() ) ).andExpect( status().isForbidden() ).andReturn();
+	}
+
+	@Test
+	@WithMockUser( authorities="ADMIN")
+	void testGetPreferencesWithAdminUser() throws Exception {
+		// given
+		User quinn = statePersisting.upsert( createTestUser("quinn", "quinn@example.com") );
+
+		// when
+		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_PREFERENCES + "/" + quinn.id() ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
 
 		// then
 		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );

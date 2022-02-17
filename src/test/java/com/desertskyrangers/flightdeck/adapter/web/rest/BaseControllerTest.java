@@ -15,8 +15,8 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import java.util.Objects;
 import java.util.Set;
 
-@WithMockUser
 @AutoConfigureMockMvc
+@WithMockUser( authorities = "USER" )
 public abstract class BaseControllerTest extends BaseTest {
 
 	private static final String HEADER_STRING = "Authorization";
@@ -71,3 +71,4 @@ public abstract class BaseControllerTest extends BaseTest {
 	}
 
 }
+
