@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,6 +20,8 @@ public class FlightService implements FlightServices {
 	private final StateRetrieving stateRetrieving;
 
 	private final UserService userService;
+
+	private static final Map<String,Integer> times = Map.of( "month", 30, "week", 7, "day", 1);
 
 	public FlightService( StatePersisting statePersisting, StateRetrieving stateRetrieving, UserService userService ) {
 		this.statePersisting = statePersisting;
@@ -40,23 +43,29 @@ public class FlightService implements FlightServices {
 	public List<Flight> findFlightsByUser( User user ) {
 		boolean showObserverFlights = stateRetrieving.isPreferenceSetTo( user, PreferenceKey.SHOW_OBSERVER_FLIGHTS, "true" );
 		boolean showOwnerFlights = stateRetrieving.isPreferenceSetTo( user, PreferenceKey.SHOW_OWNER_FLIGHTS, "true" );
+		String view = stateRetrieving.getPreference( user, PreferenceKey.FLIGHT_LIST_VIEW, "10" );
 
-		Set<Flight> flights = new HashSet<>( stateRetrieving.findFlightsByPilot( user.id() ) );
-		if( showObserverFlights ) flights.addAll( stateRetrieving.findFlightsByObserver( user.id() ) );
-		if( showOwnerFlights ) flights.addAll( stateRetrieving.findFlightsByOwner( user.id() ) );
+		int count;
+		try {
+			count = Integer.parseInt( view );
+		} catch( NumberFormatException exception ) {
+			count = -1;
+		}
+
+		Set<Flight> flights = new HashSet<>();
+		if( count < 0 ) {
+			int days = times.get(view);
+			long after = System.currentTimeMillis() - TimeUnit.DAYS.toMillis( days );
+			flights.addAll( getFlightsByTime( user, showObserverFlights, showOwnerFlights, after ) );
+		} else {
+			flights.addAll( getFlightsByCount( user, showObserverFlights, showOwnerFlights, count ) );
+		}
 
 		List<Flight> orderedFlights = new ArrayList<>( flights );
+		if( count >= 0 ) orderedFlights = orderedFlights.subList( 0, Math.min( count, orderedFlights.size() ) );
 		orderedFlights.sort( new FlightTimestampComparator().reversed() );
 
 		return orderedFlights;
-	}
-
-	private List<Flight> findFlightsByUserAndCount( User user, int count ) {
-		return List.of();
-	}
-
-	private List<Flight> findFlightsByUserAndTime( User user, long span ) {
-		return List.of();
 	}
 
 	@Override
@@ -95,6 +104,20 @@ public class FlightService implements FlightServices {
 	@Override
 	public long getPilotFlightTime( UUID user ) {
 		return stateRetrieving.getPilotFlightTime( user );
+	}
+
+	private Set<Flight> getFlightsByTime( User user, boolean observer, boolean owner, long time ) {
+		Set<Flight> flights = new HashSet<>( stateRetrieving.findFlightsByPilotAndTimestampAfter( user.id(), time ) );
+		if( observer ) flights.addAll( stateRetrieving.findFlightsByObserverAndTimestampAfter( user.id(), time ) );
+		if( owner ) flights.addAll( stateRetrieving.findFlightsByOwnerAndTimestampAfter( user.id(), time ) );
+		return flights;
+	}
+
+	private Set<Flight> getFlightsByCount( User user, boolean observer, boolean owner, int count ) {
+		Set<Flight> flights = new HashSet<>( stateRetrieving.findFlightsByPilotAndCount( user.id(), count ) );
+		if( observer ) flights.addAll( stateRetrieving.findFlightsByObserverAndCount( user.id(), count ) );
+		if( owner ) flights.addAll( stateRetrieving.findFlightsByOwnerAndCount( user.id(), count ) );
+		return flights;
 	}
 
 }

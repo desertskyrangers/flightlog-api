@@ -5,6 +5,9 @@ import com.desertskyrangers.flightdeck.adapter.state.repo.*;
 import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.StateRetrieving;
 import com.desertskyrangers.flightdeck.util.Json;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -12,6 +15,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
+@Slf4j
 public class StateRetrievingService implements StateRetrieving {
 
 	private final AircraftRepo aircraftRepo;
@@ -84,15 +88,49 @@ public class StateRetrievingService implements StateRetrieving {
 		return flightRepo.findFlightEntitiesByPilot_IdOrderByTimestampDesc( id ).stream().map( FlightEntity::toFlight ).toList();
 	}
 
-	@Override
-	public List<Flight> findFlightsByObserver( UUID id ) {
-		return flightRepo.findFlightEntitiesByObserver_IdOrderByTimestampDesc( id ).stream().map( FlightEntity::toFlight ).toList();
+	// Pilot
+
+	public List<Flight> findFlightsByPilotAndTimestampAfter( UUID id, long timestamp ) {
+		return convert( flightRepo.findFlightEntitiesByPilotIdAndTimestampAfterOrderByTimestampDesc( id, timestamp ) );
 	}
 
-	@Override
-	public List<Flight> findFlightsByOwner( UUID id ) {
-		return flightRepo.findFlightEntitiesByAircraft_OwnerOrderByTimestampDesc( id ).stream().map( FlightEntity::toFlight ).toList();
+	public List<Flight> findFlightsByPilotAndCount( UUID id, int count ) {
+		return convert( new ArrayList<>( flightRepo.findAllByPilotId( id, PageRequest.of( 0, count, Sort.Direction.DESC, "timestamp" ) ) ) );
 	}
+
+	// Observer
+
+	public List<Flight> findFlightsByObserverAndTimestampAfter( UUID id, long timestamp ) {
+		return convert( flightRepo.findFlightEntitiesByObserverIdAndTimestampAfterOrderByTimestampDesc( id, timestamp ) );
+	}
+
+	public List<Flight> findFlightsByObserverAndCount( UUID id, int count ) {
+		return convert( new ArrayList<>( flightRepo.findAllByObserverId( id, PageRequest.of( 0, count, Sort.Direction.DESC, "timestamp" ) ) ) );
+	}
+
+	// Owner
+
+	public List<Flight> findFlightsByOwnerAndTimestampAfter( UUID id, long timestamp ) {
+		return convert( flightRepo.findFlightEntitiesByAircraft_OwnerAndTimestampAfterOrderByTimestampDesc( id, timestamp ) );
+	}
+
+	public List<Flight> findFlightsByOwnerAndCount( UUID id, int count ) {
+		return convert( new ArrayList<>( flightRepo.findAllByAircraft_Owner( id, PageRequest.of( 0, count, Sort.Direction.DESC, "timestamp" ) ) ) );
+	}
+
+	private List<Flight> convert( List<FlightEntity> entities ) {
+		return entities.stream().map( FlightEntity::toFlight ).toList();
+	}
+
+	//	@Override
+	//	public List<Flight> findFlightsByObserver( UUID id ) {
+	//		return flightRepo.findFlightEntitiesByObserver_IdOrderByTimestampDesc( id ).stream().map( FlightEntity::toFlight ).toList();
+	//	}
+	//
+	//	@Override
+	//	public List<Flight> findFlightsByOwner( UUID id ) {
+	//		return flightRepo.findFlightEntitiesByAircraft_OwnerOrderByTimestampDesc( id ).stream().map( FlightEntity::toFlight ).toList();
+	//	}
 
 	@Override
 	public List<Flight> findFlightsByAircraft( UUID id ) {
@@ -165,16 +203,22 @@ public class StateRetrievingService implements StateRetrieving {
 		return Json.asMap( preferencesRepo.findById( user.id() ).orElse( new PreferencesEntity().setJson( "{}" ) ).getJson() );
 	}
 
-	public boolean isPreferenceSet(User user , String key ) {
-		return findPreferences(user).containsKey( key );
+	public boolean isPreferenceSet( User user, String key ) {
+		return findPreferences( user ).containsKey( key );
 	}
 
-	public boolean isPreferenceSetTo(User user , String key, String value ) {
+	public boolean isPreferenceSetTo( User user, String key, String value ) {
 		return String.valueOf( findPreferences( user ).get( key ) ).equals( value );
 	}
 
-	public String getPreference(User user , String key ) {
-		return String.valueOf( findPreferences( user ).get( key ) );
+	public String getPreference( User user, String key ) {
+		return getPreference( user, key, null );
+	}
+
+	public String getPreference( User user, String key, String defaultValue ) {
+		Object result = findPreferences( user ).get( key );
+		if( result == null ) result = defaultValue;
+		return result == null ? null : String.valueOf( result );
 	}
 
 	@Override

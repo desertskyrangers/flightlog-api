@@ -18,9 +18,17 @@ public interface StateRetrieving {
 
 	List<Flight> findFlightsByPilot( UUID id );
 
-	List<Flight> findFlightsByObserver( UUID id );
+	List<Flight> findFlightsByPilotAndTimestampAfter( UUID id, long timestamp );
 
-	List<Flight> findFlightsByOwner( UUID id );
+	List<Flight> findFlightsByObserverAndTimestampAfter( UUID id, long timestamp );
+
+	List<Flight> findFlightsByOwnerAndTimestampAfter( UUID id, long timestamp );
+
+	List<Flight> findFlightsByPilotAndCount( UUID id, int count );
+
+	List<Flight> findFlightsByObserverAndCount( UUID id, int count );
+
+	List<Flight> findFlightsByOwnerAndCount( UUID id, int count );
 
 	List<Flight> findFlightsByAircraft( UUID id );
 
@@ -65,5 +73,7 @@ public interface StateRetrieving {
 	boolean isPreferenceSetTo( User user, String key, String value );
 
 	String getPreference( User user, String key );
+
+	String getPreference( User user, String key, String defaultValue );
 
 }
