@@ -7,7 +7,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface DashboardServices {
-    Optional<Dashboard> find(UUID uuid);
 
-    Optional<Dashboard> findByUser(User user);
+	Optional<Dashboard> find( UUID uuid );
+
+	Optional<Dashboard> findByUser( User user );
+
+	Dashboard upsert( User user, Dashboard dashboard );
+
 }

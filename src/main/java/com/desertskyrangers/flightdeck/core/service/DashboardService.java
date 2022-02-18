@@ -31,4 +31,11 @@ public class DashboardService implements DashboardServices {
 		long flightTime = flightServices.getPilotFlightTime( user.id() );
 		return Optional.of( new Dashboard().flightCount( flightCount ).flightTime( flightTime ) );
 	}
+
+	@Override
+	public Dashboard upsert( User user, Dashboard dashboard ) {
+		//statePersisting.upsert( user, dashboard );
+		return dashboard;
+	}
+
 }

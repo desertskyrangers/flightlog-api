@@ -76,4 +76,6 @@ public interface StateRetrieving {
 
 	String getPreference( User user, String key, String defaultValue );
 
+	Dashboard findDashboard( User user);
+
 }
