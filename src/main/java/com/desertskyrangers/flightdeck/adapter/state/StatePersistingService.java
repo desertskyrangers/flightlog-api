@@ -17,6 +17,8 @@ public class StatePersistingService implements StatePersisting {
 
 	private final BatteryRepo batteryRepo;
 
+	private final DashboardRepo dashboardRepo;
+
 	private final FlightRepo flightRepo;
 
 	private final GroupRepo groupRepo;
@@ -34,6 +36,7 @@ public class StatePersistingService implements StatePersisting {
 	public StatePersistingService(
 		AircraftRepo aircraftRepo,
 		BatteryRepo batteryRepo,
+		DashboardRepo dashboardRepo,
 		FlightRepo flightRepo,
 		GroupRepo groupRepo,
 		MemberRepo memberRepo,
@@ -44,6 +47,7 @@ public class StatePersistingService implements StatePersisting {
 	) {
 		this.aircraftRepo = aircraftRepo;
 		this.batteryRepo = batteryRepo;
+		this.dashboardRepo = dashboardRepo;
 		this.flightRepo = flightRepo;
 		this.groupRepo = groupRepo;
 		this.memberRepo = memberRepo;
@@ -120,13 +124,13 @@ public class StatePersistingService implements StatePersisting {
 	}
 
 	@Override
-	public Map<String,Object> upsertPreferences( User user, Map<String,Object> preferences ) {
+	public Map<String, Object> upsertPreferences( User user, Map<String, Object> preferences ) {
 		return Json.asMap( preferencesRepo.save( PreferencesEntity.from( user, preferences ) ).getJson() );
 	}
 
 	@Override
-	public Map<String,Object> removePreferences( User user ) {
-		Map<String,Object> preferences = Json.asMap( preferencesRepo.findById( user.id() ).orElse( new PreferencesEntity().setJson( "" ) ).getJson() );
+	public Map<String, Object> removePreferences( User user ) {
+		Map<String, Object> preferences = Json.asMap( preferencesRepo.findById( user.id() ).orElse( new PreferencesEntity().setJson( "" ) ).getJson() );
 		preferencesRepo.deleteById( user.id() );
 		return preferences;
 	}
@@ -156,6 +160,20 @@ public class StatePersistingService implements StatePersisting {
 	public Verification remove( Verification verification ) {
 		verificationRepo.deleteById( verification.id() );
 		return verification;
+	}
+
+	@Override
+	public Dashboard upsertDashboard( User user, Dashboard dashboard ) {
+		dashboardRepo.save( DashboardEntity.from( user, dashboard ) );
+		return dashboard;
+	}
+
+	@Override
+	public Dashboard removeDashboard( User user ) {
+		DashboardEntity entity =  dashboardRepo.getById( user.id() );
+		Dashboard dashboard = DashboardEntity.toDashboard( entity );
+		dashboardRepo.deleteById( user.id() );
+		return dashboard;
 	}
 
 }

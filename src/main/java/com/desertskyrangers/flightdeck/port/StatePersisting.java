@@ -46,4 +46,8 @@ public interface StatePersisting {
 
 	Verification remove( Verification verification );
 
+	Dashboard upsertDashboard(User user, Dashboard dashboard);
+
+	Dashboard removeDashboard(User user);
+
 }

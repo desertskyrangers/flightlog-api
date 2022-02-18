@@ -259,4 +259,8 @@ public class StateRetrievingService implements StateRetrieving {
 		return time == null ? 0 : flightRepo.getFlightTimeByPilot_Id( id );
 	}
 
+	@Override
+	public Dashboard findDashboard( User user ) {
+		return null;
+	}
 }
