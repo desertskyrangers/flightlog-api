@@ -85,15 +85,28 @@ public class StateRetrievingServiceTest extends BaseTest {
 		// given
 		User jason = statePersisting.upsert( createTestUser( "jason", "jason@example.com" ) );
 		Group jasons = statePersisting.upsert( createTestGroup( "Jason's Group", GroupType.GROUP ) );
-		statePersisting.upsert( new Member().user( jason ).group( jasons ).status( MemberStatus.OWNER ));
+		statePersisting.upsert( new Member().user( jason ).group( jasons ).status( MemberStatus.OWNER ) );
 		User becky = statePersisting.upsert( createTestUser( "becky", "becky@example.com" ) );
 		Group beckys = statePersisting.upsert( createTestGroup( "Becky's Group", GroupType.GROUP ) );
-		statePersisting.upsert( new Member().user( becky ).group( beckys ).status( MemberStatus.OWNER ));
+		statePersisting.upsert( new Member().user( becky ).group( beckys ).status( MemberStatus.OWNER ) );
 
 		Set<Group> groups = stateRetrieving.findAllAvailableGroups( jason );
 
 		// then
 		assertThat( groups ).containsOnly( beckys );
+	}
+
+	@Test
+	void testFindDashboard() {
+		// given
+		User peter = statePersisting.upsert( createTestUser( "peter", "peter@example.com" ) );
+		Dashboard expected = statePersisting.upsertDashboard( peter, new Dashboard().flightCount( 5 ).flightTime( 2248 ) );
+
+		// when
+		Dashboard actual = stateRetrieving.findDashboard( peter );
+
+		// then
+		assertThat( actual).isEqualTo( expected );
 	}
 
 }

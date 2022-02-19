@@ -4,7 +4,6 @@ import com.desertskyrangers.flightdeck.adapter.state.entity.*;
 import com.desertskyrangers.flightdeck.adapter.state.repo.*;
 import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
-import com.desertskyrangers.flightdeck.port.StateRetrieving;
 import com.desertskyrangers.flightdeck.util.Json;
 import org.springframework.stereotype.Service;
 
@@ -130,7 +129,7 @@ public class StatePersistingService implements StatePersisting {
 
 	@Override
 	public Map<String, Object> removePreferences( User user ) {
-		Map<String, Object> preferences = Json.asMap( preferencesRepo.findById( user.id() ).orElse( new PreferencesEntity().setJson( "" ) ).getJson() );
+		Map<String, Object> preferences = Json.asMap( preferencesRepo.findById( user.id() ).orElse( new PreferencesProjection().setJson( "" ) ).getJson() );
 		preferencesRepo.deleteById( user.id() );
 		return preferences;
 	}
@@ -170,8 +169,8 @@ public class StatePersistingService implements StatePersisting {
 
 	@Override
 	public Dashboard removeDashboard( User user ) {
-		DashboardEntity entity =  dashboardRepo.getById( user.id() );
-		Dashboard dashboard = DashboardEntity.toDashboard( entity );
+		DashboardProjection projection =  dashboardRepo.getById( user.id() );
+		Dashboard dashboard = DashboardEntity.toDashboard( projection );
 		dashboardRepo.deleteById( user.id() );
 		return dashboard;
 	}

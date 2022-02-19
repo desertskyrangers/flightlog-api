@@ -3,6 +3,7 @@ package com.desertskyrangers.flightdeck.adapter.state;
 import com.desertskyrangers.flightdeck.BaseTest;
 import com.desertskyrangers.flightdeck.adapter.state.entity.GroupEntity;
 import com.desertskyrangers.flightdeck.adapter.state.entity.PreferencesEntity;
+import com.desertskyrangers.flightdeck.adapter.state.entity.PreferencesProjection;
 import com.desertskyrangers.flightdeck.adapter.state.repo.GroupRepo;
 import com.desertskyrangers.flightdeck.adapter.state.repo.PreferencesRepo;
 import com.desertskyrangers.flightdeck.core.model.Group;
@@ -61,7 +62,7 @@ public class StatePersistingServiceTest extends BaseTest {
 		Map<String, Object> expected = statePersisting.upsertPreferences( user, Map.of() );
 
 		// then
-		PreferencesEntity actual = preferencesRepo.findById( user.id() ).orElse( null );
+		PreferencesProjection actual = preferencesRepo.findById( user.id() ).orElse( null );
 		assertThat( actual ).isNotNull();
 		assertThat( PreferencesEntity.toPreferences( actual ) ).isEqualTo( expected );
 	}
@@ -75,7 +76,7 @@ public class StatePersistingServiceTest extends BaseTest {
 		Map<String, Object> expected = statePersisting.upsertPreferences( user, Map.of() );
 
 		// then
-		PreferencesEntity actual = preferencesRepo.findById( user.id() ).orElse( null );
+		PreferencesProjection actual = preferencesRepo.findById( user.id() ).orElse( null );
 		assertThat( actual ).isNotNull();
 		assertThat( PreferencesEntity.toPreferences( actual ) ).isEqualTo( expected );
 

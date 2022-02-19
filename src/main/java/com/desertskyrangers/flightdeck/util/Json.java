@@ -21,6 +21,14 @@ public class Json {
 		}
 	}
 
+	public static <T> T objectify( String json, Class<T> type ) {
+		try {
+			return new ObjectMapper().readValue( json, type );
+		} catch( JsonProcessingException exception ) {
+			throw new ResponseStatusException( HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage(), exception );
+		}
+	}
+
 	@Deprecated
 	public static Map<String, Object> asMap( Object object ) {
 		return asMap( stringify( object ) );

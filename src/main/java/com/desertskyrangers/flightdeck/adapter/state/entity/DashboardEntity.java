@@ -6,39 +6,29 @@ import com.desertskyrangers.flightdeck.util.Json;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import java.util.Map;
-import java.util.UUID;
-
 @Data
-@Entity
-@Table( name = "dashboard" )
 @Accessors( chain = true )
 public class DashboardEntity {
 
-	@Id
-	@Column( columnDefinition = "BINARY(16)" )
-	private UUID id;
+	private int flightCount;
 
-	@Column( columnDefinition = "TEXT" )
-	private String json;
+	private long flightTime;
 
-	public static DashboardEntity from( User user, Dashboard dashboard ) {
+	public static DashboardProjection from( User user, Dashboard dashboard ) {
 		DashboardEntity dashboardEntity = new DashboardEntity();
-		dashboardEntity.setId( user.id() );
-		dashboardEntity.setJson( Json.stringify( dashboard ) );
-		return dashboardEntity;
+		dashboardEntity.setFlightCount( dashboard.flightCount() );
+		dashboardEntity.setFlightTime( dashboard.flightTime() );
+		return new DashboardProjection().setId( user.id() ).setJson( Json.stringify( dashboardEntity ) );
 	}
 
-	public static Dashboard toDashboard( DashboardEntity dashboardEntity ) {
-		Map<String, Object> dashboardMap = Json.asMap( dashboardEntity.getJson() );
+	public static Dashboard toDashboard( DashboardProjection projection ) {
+		DashboardEntity entity = Json.objectify( projection.getJson(), DashboardEntity.class );
+
 		Dashboard dashboard = new Dashboard();
-		dashboard.id( dashboardEntity.getId() );
-		dashboard.flightTime( (long)dashboardMap.get( "flightTime" ) );
-		dashboard.flightCount( (int)dashboardMap.get( "flightCount" ) );
+		dashboard.flightCount( entity.getFlightCount() );
+		dashboard.flightTime( entity.getFlightTime() );
+
 		return dashboard;
 	}
+
 }

@@ -22,6 +22,8 @@ public class StateRetrievingService implements StateRetrieving {
 
 	private final BatteryRepo batteryRepo;
 
+	private final DashboardRepo dashboardRepo;
+
 	private final FlightRepo flightRepo;
 
 	private final GroupRepo groupRepo;
@@ -39,6 +41,7 @@ public class StateRetrievingService implements StateRetrieving {
 	public StateRetrievingService(
 		AircraftRepo aircraftRepo,
 		BatteryRepo batteryRepo,
+		DashboardRepo dashboardRepo,
 		FlightRepo flightRepo,
 		GroupRepo groupRepo,
 		MemberRepo memberRepo,
@@ -49,6 +52,7 @@ public class StateRetrievingService implements StateRetrieving {
 	) {
 		this.aircraftRepo = aircraftRepo;
 		this.batteryRepo = batteryRepo;
+		this.dashboardRepo = dashboardRepo;
 		this.flightRepo = flightRepo;
 		this.groupRepo = groupRepo;
 		this.memberRepo = memberRepo;
@@ -200,7 +204,7 @@ public class StateRetrievingService implements StateRetrieving {
 	}
 
 	public Map<String, Object> findPreferences( User user ) {
-		return Json.asMap( preferencesRepo.findById( user.id() ).orElse( new PreferencesEntity().setJson( "{}" ) ).getJson() );
+		return Json.asMap( preferencesRepo.findById( user.id() ).orElse( new PreferencesProjection().setJson( "{}" ) ).getJson() );
 	}
 
 	public boolean isPreferenceSet( User user, String key ) {
@@ -261,6 +265,8 @@ public class StateRetrievingService implements StateRetrieving {
 
 	@Override
 	public Dashboard findDashboard( User user ) {
-		return null;
+		DashboardProjection entity = dashboardRepo.findById( user.id() ).orElse( null );
+		return entity != null ? DashboardEntity.toDashboard( entity ) : null;
 	}
+
 }
