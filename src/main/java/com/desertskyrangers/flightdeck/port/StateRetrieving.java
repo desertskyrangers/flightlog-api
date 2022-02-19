@@ -68,6 +68,10 @@ public interface StateRetrieving {
 
 	long getPilotFlightTime( UUID id );
 
+	int getObserverFlightCount( UUID id );
+
+	long getObserverFlightTime( UUID id );
+
 	boolean isPreferenceSet( User user, String key );
 
 	boolean isPreferenceSetTo( User user, String key, String value );
@@ -76,6 +80,6 @@ public interface StateRetrieving {
 
 	String getPreference( User user, String key, String defaultValue );
 
-	Dashboard findDashboard( User user);
+	Optional<Dashboard> findDashboard( User user);
 
 }

@@ -103,7 +103,7 @@ public class StateRetrievingServiceTest extends BaseTest {
 		Dashboard expected = statePersisting.upsertDashboard( peter, new Dashboard().flightCount( 5 ).flightTime( 2248 ) );
 
 		// when
-		Dashboard actual = stateRetrieving.findDashboard( peter );
+		Dashboard actual = stateRetrieving.findDashboard( peter ).orElse( null );
 
 		// then
 		assertThat( actual).isEqualTo( expected );

@@ -129,7 +129,7 @@ public class StatePersistingService implements StatePersisting {
 
 	@Override
 	public Map<String, Object> removePreferences( User user ) {
-		Map<String, Object> preferences = Json.asMap( preferencesRepo.findById( user.id() ).orElse( new PreferencesProjection().setJson( "" ) ).getJson() );
+		Map<String, Object> preferences = Json.asMap( preferencesRepo.findById( user.id() ).orElse( new PreferencesProjection().setJson( "{}" ) ).getJson() );
 		preferencesRepo.deleteById( user.id() );
 		return preferences;
 	}

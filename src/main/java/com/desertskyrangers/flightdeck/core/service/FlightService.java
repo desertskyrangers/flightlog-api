@@ -106,6 +106,16 @@ public class FlightService implements FlightServices {
 		return stateRetrieving.getPilotFlightTime( user );
 	}
 
+	@Override
+	public int getObserverFlightCount( UUID user ) {
+		return stateRetrieving.getObserverFlightCount( user );
+	}
+
+	@Override
+	public long getObserverFlightTime( UUID user ) {
+		return stateRetrieving.getObserverFlightTime( user );
+	}
+
 	private Set<Flight> getFlightsByTime( User user, boolean observer, boolean owner, long time ) {
 		Set<Flight> flights = new HashSet<>( stateRetrieving.findFlightsByPilotAndTimestampAfter( user.id(), time ) );
 		if( observer ) flights.addAll( stateRetrieving.findFlightsByObserverAndTimestampAfter( user.id(), time ) );

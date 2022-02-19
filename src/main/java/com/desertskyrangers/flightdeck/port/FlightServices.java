@@ -24,4 +24,8 @@ public interface FlightServices {
 
 	long getPilotFlightTime( UUID user );
 
+	int getObserverFlightCount( UUID user );
+
+	long getObserverFlightTime( UUID user );
+
 }

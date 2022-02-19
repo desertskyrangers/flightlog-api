@@ -264,9 +264,21 @@ public class StateRetrievingService implements StateRetrieving {
 	}
 
 	@Override
-	public Dashboard findDashboard( User user ) {
+	public int getObserverFlightCount( UUID id ) {
+		Integer count = flightRepo.countByObserver_Id( id );
+		return count == null ? 0 : count;
+	}
+
+	@Override
+	public long getObserverFlightTime( UUID id ) {
+		Long time = flightRepo.getFlightTimeByObserver_Id( id );
+		return time == null ? 0 : flightRepo.getFlightTimeByObserver_Id( id );
+	}
+
+	@Override
+	public Optional<Dashboard> findDashboard( User user ) {
 		DashboardProjection entity = dashboardRepo.findById( user.id() ).orElse( null );
-		return entity != null ? DashboardEntity.toDashboard( entity ) : null;
+		return entity == null ? Optional.empty() : Optional.of( DashboardEntity.toDashboard( entity ) );
 	}
 
 }

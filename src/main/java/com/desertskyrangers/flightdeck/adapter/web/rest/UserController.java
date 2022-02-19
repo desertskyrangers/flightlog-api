@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+import java.util.prefs.Preferences;
 
 @RestController
 @Slf4j
@@ -55,9 +56,11 @@ public class UserController extends BaseController {
 	@GetMapping( path = ApiPath.DASHBOARD )
 	ResponseEntity<ReactDashboardResponse> dashboard( Authentication authentication ) {
 		try {
+			User requester = getRequester( authentication );
+			Map<String,Object> preferences = userServices.getPreferences( requester );
 			return dashboardServices
-				.findByUser( getRequester( authentication ) )
-				.map( dashboard -> new ResponseEntity<>( new ReactDashboardResponse().setDashboard( ReactDashboard.from( dashboard ) ), HttpStatus.OK ) )
+				.findByUser( requester )
+				.map( dashboard -> new ResponseEntity<>( new ReactDashboardResponse().setDashboard( ReactDashboard.from( dashboard, preferences ) ), HttpStatus.OK ) )
 				.orElseGet( () -> new ResponseEntity<>( new ReactDashboardResponse().setMessages( List.of( "Dashboard not found" ) ), HttpStatus.BAD_REQUEST ) );
 		} catch( Exception exception ) {
 			log.error( "Error generating dashboard", exception );

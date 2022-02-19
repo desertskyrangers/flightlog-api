@@ -14,10 +14,16 @@ public class DashboardEntity {
 
 	private long flightTime;
 
+	private int observerCount;
+
+	private long observerTime;
+
 	public static DashboardProjection from( User user, Dashboard dashboard ) {
 		DashboardEntity dashboardEntity = new DashboardEntity();
 		dashboardEntity.setFlightCount( dashboard.flightCount() );
 		dashboardEntity.setFlightTime( dashboard.flightTime() );
+		dashboardEntity.setObserverCount( dashboard.observerCount() );
+		dashboardEntity.setObserverTime( dashboard.observerTime() );
 		return new DashboardProjection().setId( user.id() ).setJson( Json.stringify( dashboardEntity ) );
 	}
 
@@ -27,6 +33,8 @@ public class DashboardEntity {
 		Dashboard dashboard = new Dashboard();
 		dashboard.flightCount( entity.getFlightCount() );
 		dashboard.flightTime( entity.getFlightTime() );
+		dashboard.observerCount( entity.getObserverCount() );
+		dashboard.observerTime( entity.getObserverTime() );
 
 		return dashboard;
 	}

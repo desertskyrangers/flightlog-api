@@ -4,16 +4,34 @@ import com.desertskyrangers.flightdeck.core.model.Dashboard;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.util.Map;
+import java.util.Objects;
+
 @Data
 @Accessors( chain = true )
 public class ReactDashboard {
 
-	private int pilotFlightCount;
+	private Integer pilotFlightCount;
 
-	private long pilotFlightTime;
+	private Long pilotFlightTime;
 
-	public static ReactDashboard from( Dashboard dashboard) {
-		return new ReactDashboard().setPilotFlightCount( dashboard.flightCount() ).setPilotFlightTime( dashboard.flightTime() );
+	private Integer observerFlightCount;
+
+	private Long observerFlightTime;
+
+	public static ReactDashboard from( Dashboard dashboard, Map<String, Object> preferences ) {
+		boolean showObserverStats = Objects.equals( String.valueOf( preferences.get( "showObserverStats" ) ), "true" );
+		ReactDashboard reactDashboard = new ReactDashboard();
+
+		reactDashboard.setPilotFlightCount( dashboard.flightCount() );
+		reactDashboard.setPilotFlightTime( dashboard.flightTime() );
+
+		if( showObserverStats ) {
+			reactDashboard.setObserverFlightCount( dashboard.observerCount() );
+			reactDashboard.setObserverFlightTime( dashboard.observerTime() );
+		}
+
+		return reactDashboard;
 	}
 
 }
