@@ -5,6 +5,7 @@ import com.desertskyrangers.flightdeck.adapter.state.entity.MemberEntity;
 import com.desertskyrangers.flightdeck.adapter.state.entity.UserEntity;
 import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
+import com.desertskyrangers.flightdeck.port.StateRetrieving;
 import com.desertskyrangers.flightdeck.port.UserServices;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,9 @@ public class BaseTest {
 
 	@Autowired
 	protected StatePersisting statePersisting;
+
+	@Autowired
+	protected StateRetrieving stateRetrieving;
 
 	@Autowired
 	protected PasswordEncoder passwordEncoder;

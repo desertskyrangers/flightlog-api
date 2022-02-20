@@ -3,6 +3,8 @@ package com.desertskyrangers.flightdeck.core.model;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.util.List;
+
 @Data
 @Accessors( fluent = true )
 public class Dashboard {
@@ -14,5 +16,7 @@ public class Dashboard {
 	private int observerCount;
 
 	private long observerTime;
+
+	private List<AircraftStats> aircraftStats = List.of();
 
 }

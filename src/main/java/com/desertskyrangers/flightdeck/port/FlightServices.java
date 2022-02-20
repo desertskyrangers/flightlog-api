@@ -1,5 +1,6 @@
 package com.desertskyrangers.flightdeck.port;
 
+import com.desertskyrangers.flightdeck.core.model.Aircraft;
 import com.desertskyrangers.flightdeck.core.model.Flight;
 import com.desertskyrangers.flightdeck.core.model.FlightUpsertRequest;
 import com.desertskyrangers.flightdeck.core.model.User;
@@ -27,5 +28,9 @@ public interface FlightServices {
 	int getObserverFlightCount( UUID user );
 
 	long getObserverFlightTime( UUID user );
+
+	int getAircraftFlightCount( Aircraft aircraft );
+
+	int getAircraftFlightTime( Aircraft aircraft );
 
 }

@@ -1,6 +1,7 @@
 package com.desertskyrangers.flightdeck.core.service;
 
 import com.desertskyrangers.flightdeck.core.model.Aircraft;
+import com.desertskyrangers.flightdeck.core.model.AircraftStatus;
 import com.desertskyrangers.flightdeck.port.AircraftServices;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
 import com.desertskyrangers.flightdeck.port.StateRetrieving;
@@ -28,6 +29,10 @@ public class AircraftService implements AircraftServices {
 
 	public List<Aircraft> findByOwner( UUID owner ) {
 		return stateRetrieving.findAircraftByOwner( owner );
+	}
+
+	public List<Aircraft> findByOwnerAndStatus( UUID owner, AircraftStatus status ) {
+		return stateRetrieving.findAircraftByOwnerAndStatus( owner, status );
 	}
 
 	public void upsert( Aircraft aircraft ) {

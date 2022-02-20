@@ -73,6 +73,11 @@ public class StateRetrievingService implements StateRetrieving {
 	}
 
 	@Override
+	public List<Aircraft> findAircraftByOwnerAndStatus( UUID id, AircraftStatus status ) {
+		return aircraftRepo.findAircraftByOwnerAndStatusOrderByName( id, status.name().toLowerCase() ).stream().map( AircraftEntity::toAircraft ).collect( Collectors.toList() );
+	}
+
+	@Override
 	public Optional<Battery> findBattery( UUID id ) {
 		return batteryRepo.findById( id ).map( BatteryEntity::toBattery );
 	}

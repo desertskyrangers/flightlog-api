@@ -6,13 +6,14 @@ import com.desertskyrangers.flightdeck.adapter.state.entity.PreferencesEntity;
 import com.desertskyrangers.flightdeck.adapter.state.entity.PreferencesProjection;
 import com.desertskyrangers.flightdeck.adapter.state.repo.GroupRepo;
 import com.desertskyrangers.flightdeck.adapter.state.repo.PreferencesRepo;
-import com.desertskyrangers.flightdeck.core.model.Group;
-import com.desertskyrangers.flightdeck.core.model.GroupType;
+import com.desertskyrangers.flightdeck.core.model.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -83,6 +84,20 @@ public class StatePersistingServiceTest extends BaseTest {
 		// when
 		statePersisting.removePreferences( user );
 		assertThat( preferencesRepo.findById( user.id() ).orElse( null ) ).isNull();
+	}
+
+	@Test
+	void testUpsertAndFindDashboard() {
+		// given
+		User peter = statePersisting.upsert( createTestUser( "peter", "peter@example.com" ) );
+		AircraftStats stats = new AircraftStats().id( UUID.randomUUID() ).name( "AFTYN" ).type( AircraftType.FIXEDWING ).flightCount( 4 ).flightTime( 1832000 );
+		Dashboard expected = statePersisting.upsertDashboard( peter, new Dashboard().flightCount( 5 ).flightTime( 2248 ).aircraftStats( List.of( stats ) ) );
+
+		// when
+		Dashboard actual = stateRetrieving.findDashboard( peter ).orElse( null );
+
+		// then
+		assertThat( actual ).isEqualTo( expected );
 	}
 
 }

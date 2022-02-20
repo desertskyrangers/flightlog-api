@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -94,19 +95,6 @@ public class StateRetrievingServiceTest extends BaseTest {
 
 		// then
 		assertThat( groups ).containsOnly( beckys );
-	}
-
-	@Test
-	void testFindDashboard() {
-		// given
-		User peter = statePersisting.upsert( createTestUser( "peter", "peter@example.com" ) );
-		Dashboard expected = statePersisting.upsertDashboard( peter, new Dashboard().flightCount( 5 ).flightTime( 2248 ) );
-
-		// when
-		Dashboard actual = stateRetrieving.findDashboard( peter ).orElse( null );
-
-		// then
-		assertThat( actual).isEqualTo( expected );
 	}
 
 }

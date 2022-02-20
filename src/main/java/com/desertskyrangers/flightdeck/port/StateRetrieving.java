@@ -10,6 +10,8 @@ public interface StateRetrieving {
 
 	List<Aircraft> findAircraftByOwner( UUID id );
 
+	List<Aircraft> findAircraftByOwnerAndStatus( UUID id, AircraftStatus status );
+
 	Optional<Battery> findBattery( UUID id );
 
 	List<Battery> findBatteriesByOwner( UUID id );

@@ -116,6 +116,18 @@ public class FlightService implements FlightServices {
 		return stateRetrieving.getObserverFlightTime( user );
 	}
 
+	@Override
+	public int getAircraftFlightCount( Aircraft aircraft ) {
+		// NEXT Implement FlightService.getAircraftFlightCount
+		return 0;
+	}
+
+	@Override
+	public int getAircraftFlightTime( Aircraft aircraft ) {
+		// NEXT Implement FlightService.getAircraftFlightTime
+		return 0;
+	}
+
 	private Set<Flight> getFlightsByTime( User user, boolean observer, boolean owner, long time ) {
 		Set<Flight> flights = new HashSet<>( stateRetrieving.findFlightsByPilotAndTimestampAfter( user.id(), time ) );
 		if( observer ) flights.addAll( stateRetrieving.findFlightsByObserverAndTimestampAfter( user.id(), time ) );
