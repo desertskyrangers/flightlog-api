@@ -128,7 +128,7 @@ public class InitialConfig {
 		statePersisting.upsert( c4s2650turnigy );
 		statePersisting.upsert( d4s2650turnigy );
 
-		long timestamp = 1642259543957L;
+		long timestamp = System.currentTimeMillis() - 3600000;
 		statePersisting.upsert( new Flight().pilot( tia ).observer( tia ).aircraft( aftyn ).batteries( Set.of( d4s2650turnigy ) ).timestamp( timestamp += 600000 ).duration( 240 ) );
 		statePersisting.upsert( new Flight().pilot( tia ).observer( tia ).aircraft( bianca ).timestamp( timestamp += 600000 ).duration( 54 ) );
 		statePersisting.upsert( new Flight().pilot( tom ).observer( tia ).aircraft( bianca ).timestamp( timestamp += 600000 ).duration( 163 ) );

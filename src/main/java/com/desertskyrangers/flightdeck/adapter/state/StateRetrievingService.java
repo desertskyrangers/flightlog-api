@@ -265,7 +265,7 @@ public class StateRetrievingService implements StateRetrieving {
 
 	@Override
 	public int getObserverFlightCount( UUID id ) {
-		Integer count = flightRepo.countByObserver_Id( id );
+		Integer count = flightRepo.getFlightCountByObserver( id );
 		return count == null ? 0 : count;
 	}
 

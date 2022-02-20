@@ -20,13 +20,13 @@ public class ReactDashboard {
 	private Long observerFlightTime;
 
 	public static ReactDashboard from( Dashboard dashboard, Map<String, Object> preferences ) {
-		boolean showObserverStats = Objects.equals( String.valueOf( preferences.get( "showObserverStats" ) ), "true" );
+		boolean showObserverFlights = Objects.equals( String.valueOf( preferences.get( "showObserverFlights" ) ), "true" );
 		ReactDashboard reactDashboard = new ReactDashboard();
 
 		reactDashboard.setPilotFlightCount( dashboard.flightCount() );
 		reactDashboard.setPilotFlightTime( dashboard.flightTime() );
 
-		if( showObserverStats ) {
+		if( showObserverFlights ) {
 			reactDashboard.setObserverFlightCount( dashboard.observerCount() );
 			reactDashboard.setObserverFlightTime( dashboard.observerTime() );
 		}
