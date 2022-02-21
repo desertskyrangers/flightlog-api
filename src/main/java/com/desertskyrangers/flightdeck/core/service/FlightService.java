@@ -118,14 +118,12 @@ public class FlightService implements FlightServices {
 
 	@Override
 	public int getAircraftFlightCount( Aircraft aircraft ) {
-		// NEXT Implement FlightService.getAircraftFlightCount
-		return 0;
+		return stateRetrieving.getAircraftFlightCount( aircraft );
 	}
 
 	@Override
-	public int getAircraftFlightTime( Aircraft aircraft ) {
-		// NEXT Implement FlightService.getAircraftFlightTime
-		return 0;
+	public long getAircraftFlightTime( Aircraft aircraft ) {
+		return stateRetrieving.getAircraftFlightTime( aircraft );
 	}
 
 	private Set<Flight> getFlightsByTime( User user, boolean observer, boolean owner, long time ) {

@@ -65,7 +65,7 @@ public class DashboardService implements DashboardServices {
 		dashboard.flightTime( flightServices.getPilotFlightTime( user.id() ) );
 		dashboard.observerCount( flightServices.getObserverFlightCount( user.id() ) );
 		dashboard.observerTime( flightServices.getObserverFlightTime( user.id() ) );
-		dashboard.aircraftStats( aircraftStats );
+		if( aircraftStats.size() > 0 ) dashboard.aircraftStats( aircraftStats );
 
 		upsert( user, dashboard );
 		return dashboard;

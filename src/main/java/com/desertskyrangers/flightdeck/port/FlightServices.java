@@ -31,6 +31,6 @@ public interface FlightServices {
 
 	int getAircraftFlightCount( Aircraft aircraft );
 
-	int getAircraftFlightTime( Aircraft aircraft );
+	long getAircraftFlightTime( Aircraft aircraft );
 
 }

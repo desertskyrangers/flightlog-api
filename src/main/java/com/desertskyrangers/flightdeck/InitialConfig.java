@@ -8,9 +8,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.prefs.Preferences;
 
 @Configuration
 @Slf4j
@@ -70,7 +69,7 @@ public class InitialConfig {
 			.type( AircraftType.FIXEDWING )
 			.make( "Hobby King" )
 			.model( "Bixler 2" )
-			.status( AircraftStatus.DESTROYED )
+			.status( AircraftStatus.AIRWORTHY )
 			.owner( tia.id() )
 			.ownerType( OwnerType.USER );
 		Aircraft bianca = new Aircraft()
@@ -170,6 +169,10 @@ public class InitialConfig {
 		UserToken emailToken = new UserToken().user( user ).principal( user.email() ).credential( credential );
 		user.tokens( Set.of( usernameToken, emailToken ) );
 		statePersisting.upsert( user );
+
+		Map<String,Object> preferences = new HashMap<>();
+		preferences.put( PreferenceKey.SHOW_AIRCRAFT_STATS, true );
+		statePersisting.upsertPreferences( user, preferences );
 
 		return user;
 	}

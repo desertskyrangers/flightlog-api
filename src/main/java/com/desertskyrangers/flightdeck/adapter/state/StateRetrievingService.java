@@ -265,7 +265,7 @@ public class StateRetrievingService implements StateRetrieving {
 	@Override
 	public long getPilotFlightTime( UUID id ) {
 		Long time = flightRepo.getFlightTimeByPilot_Id( id );
-		return time == null ? 0 : flightRepo.getFlightTimeByPilot_Id( id );
+		return time == null ? 0 : time;
 	}
 
 	@Override
@@ -277,7 +277,19 @@ public class StateRetrievingService implements StateRetrieving {
 	@Override
 	public long getObserverFlightTime( UUID id ) {
 		Long time = flightRepo.getFlightTimeByObserver_Id( id );
-		return time == null ? 0 : flightRepo.getFlightTimeByObserver_Id( id );
+		return time == null ? 0 : time;
+	}
+
+	@Override
+	public int getAircraftFlightCount( Aircraft aircraft ) {
+		Integer count = flightRepo.countByAircraft_Id( aircraft.id() );
+		return count == null ? 0 : count;
+	}
+
+	@Override
+	public long getAircraftFlightTime( Aircraft aircraft ) {
+		Long time = flightRepo.getFlightTimeByAircraft_Id( aircraft.id() );
+		return time == null ? 0 : time;
 	}
 
 	@Override

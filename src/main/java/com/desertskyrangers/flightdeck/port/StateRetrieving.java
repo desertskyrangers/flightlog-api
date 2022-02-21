@@ -74,6 +74,10 @@ public interface StateRetrieving {
 
 	long getObserverFlightTime( UUID id );
 
+	int getAircraftFlightCount( Aircraft aircraft );
+
+	long getAircraftFlightTime( Aircraft aircraft );
+
 	boolean isPreferenceSet( User user, String key );
 
 	boolean isPreferenceSetTo( User user, String key, String value );
