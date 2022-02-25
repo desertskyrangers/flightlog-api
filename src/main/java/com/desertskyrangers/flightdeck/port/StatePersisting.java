@@ -6,11 +6,11 @@ import java.util.Map;
 
 public interface StatePersisting {
 
-	void upsert( Aircraft aircraft );
+	Aircraft upsert( Aircraft aircraft );
 
 	void remove( Aircraft aircraft );
 
-	void upsert( Battery battery );
+	Battery upsert( Battery battery );
 
 	void remove( Battery battery );
 

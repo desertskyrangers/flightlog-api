@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.*;
-import java.util.prefs.Preferences;
 
 @Configuration
 @Slf4j
@@ -64,28 +63,10 @@ public class InitialConfig {
 		User tea = createTeaTest();
 		User tim = createTimTest();
 
-		Aircraft aftyn = new Aircraft()
-			.name( "AFTYN" )
-			.type( AircraftType.FIXEDWING )
-			.make( "Hobby King" )
-			.model( "Bixler 2" )
-			.status( AircraftStatus.AIRWORTHY )
-			.owner( tia.id() )
-			.ownerType( OwnerType.USER );
-		Aircraft bianca = new Aircraft()
-			.name( "BIANCA" )
-			.type( AircraftType.FIXEDWING )
-			.make( "Hobby King" )
-			.model( "Bixler 2" )
-			.status( AircraftStatus.DESTROYED )
-			.owner( tia.id() )
-			.ownerType( OwnerType.USER );
-		Aircraft gemma = new Aircraft().name( "GEMMA" ).type( AircraftType.MULTIROTOR ).status( AircraftStatus.AIRWORTHY ).owner( tia.id() ).ownerType( OwnerType.USER );
-		Aircraft helena = new Aircraft().name( "HOPE" ).type( AircraftType.HELICOPTER ).status( AircraftStatus.INOPERATIVE ).owner( tia.id() ).ownerType( OwnerType.USER );
-		statePersisting.upsert( aftyn );
-		statePersisting.upsert( bianca );
-		statePersisting.upsert( gemma );
-		statePersisting.upsert( helena );
+		Aircraft aftyn = statePersisting.upsert(createAftyn().owner( tia.id() ).ownerType( OwnerType.USER ));
+		Aircraft bianca = statePersisting.upsert(createBianca().owner( tia.id() ).ownerType( OwnerType.USER ));
+		Aircraft gemma = statePersisting.upsert(createGemma().owner( tia.id() ).ownerType( OwnerType.USER ));
+		Aircraft helena = statePersisting.upsert(createHelena().owner( tia.id() ).ownerType( OwnerType.USER ));
 
 		Battery b4s2650turnigy = new Battery()
 			.name( "B 4S 2650 Turnigy" )
@@ -154,7 +135,7 @@ public class InitialConfig {
 
 	private User createTiaTest() {
 		User user = new User();
-		user.id(UUID.fromString( "394de1f6-5071-4b8e-a31e-795d2f22d513" ));
+		user.id( UUID.fromString( "394de1f6-5071-4b8e-a31e-795d2f22d513" ) );
 		user.username( "tia" );
 		user.firstName( "Tia" );
 		user.lastName( "Test" );
@@ -170,7 +151,7 @@ public class InitialConfig {
 		user.tokens( Set.of( usernameToken, emailToken ) );
 		statePersisting.upsert( user );
 
-		Map<String,Object> preferences = new HashMap<>();
+		Map<String, Object> preferences = new HashMap<>();
 		preferences.put( PreferenceKey.SHOW_AIRCRAFT_STATS, true );
 		statePersisting.upsertPreferences( user, preferences );
 
@@ -179,7 +160,7 @@ public class InitialConfig {
 
 	private User createTomTest() {
 		User user = new User();
-		user.id(UUID.fromString( "3943734d-7ab9-4cad-9d6d-9ca50335ad1c" ));
+		user.id( UUID.fromString( "3943734d-7ab9-4cad-9d6d-9ca50335ad1c" ) );
 		user.username( "tom" );
 		user.firstName( "Tom" );
 		user.lastName( "Test" );
@@ -200,7 +181,7 @@ public class InitialConfig {
 
 	private User createTeaTest() {
 		User user = new User();
-		user.id(UUID.fromString( "c70be671-b8ff-4f6a-926f-37149840385e" ));
+		user.id( UUID.fromString( "c70be671-b8ff-4f6a-926f-37149840385e" ) );
 		user.username( "tea" );
 		user.firstName( "Téa" );
 		user.lastName( "Test" );
@@ -221,7 +202,7 @@ public class InitialConfig {
 
 	private User createTimTest() {
 		User user = new User();
-		user.id(UUID.fromString( "159a5224-9517-4776-886a-bc9d5e032a2a" ));
+		user.id( UUID.fromString( "159a5224-9517-4776-886a-bc9d5e032a2a" ) );
 		user.username( "tim" );
 		user.firstName( "Tim" );
 		user.lastName( "Test" );
@@ -238,6 +219,40 @@ public class InitialConfig {
 		statePersisting.upsert( user );
 
 		return user;
+	}
+
+	private Aircraft createAftyn() {
+		return new Aircraft()
+			.name( "AFTYN" )
+			.type( AircraftType.FIXEDWING )
+			.make( "Hobby King" )
+			.model( "Bixler 2" )
+			.status( AircraftStatus.AIRWORTHY )
+			.wingspan( 1500 )
+			.length( 963 )
+			.wingarea( 2500 )
+			.weight( 960 );
+	}
+
+	private Aircraft createBianca() {
+		return new Aircraft()
+			.name( "BIANCA" )
+			.type( AircraftType.FIXEDWING )
+			.make( "Hobby King" )
+			.model( "Bixler 2" )
+			.status( AircraftStatus.DESTROYED )
+			.wingspan( 1500 )
+			.length( 963 )
+			.wingarea( 2500 )
+			.weight( 960 );
+	}
+
+	private Aircraft createGemma() {
+		return new Aircraft().name( "GEMMA" ).type( AircraftType.MULTIROTOR ).status( AircraftStatus.AIRWORTHY );
+	}
+
+	private Aircraft createHelena() {
+		return new Aircraft().name( "HOPE" ).type( AircraftType.HELICOPTER ).status( AircraftStatus.INOPERATIVE );
 	}
 
 }

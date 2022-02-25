@@ -57,8 +57,8 @@ public class StatePersistingService implements StatePersisting {
 	}
 
 	@Override
-	public void upsert( Aircraft aircraft ) {
-		aircraftRepo.save( AircraftEntity.from( aircraft ) );
+	public Aircraft upsert( Aircraft aircraft ) {
+		return AircraftEntity.toAircraft( aircraftRepo.save( AircraftEntity.from( aircraft ) ) );
 	}
 
 	@Override
@@ -67,8 +67,8 @@ public class StatePersistingService implements StatePersisting {
 	}
 
 	@Override
-	public void upsert( Battery battery ) {
-		batteryRepo.save( BatteryEntity.from( battery ) );
+	public Battery upsert( Battery battery ) {
+		return BatteryEntity.toBattery( batteryRepo.save( BatteryEntity.from( battery ) ) );
 	}
 
 	@Override
