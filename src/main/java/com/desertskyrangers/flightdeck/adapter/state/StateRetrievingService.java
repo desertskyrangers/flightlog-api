@@ -281,6 +281,11 @@ public class StateRetrievingService implements StateRetrieving {
 	}
 
 	@Override
+	public Optional<Flight> getLastAircraftFlight( Aircraft aircraft ) {
+		return flightRepo.findFirstByAircraftOrderByTimestampDesc( AircraftEntity.from( aircraft ) ).map( FlightEntity::toFlight );
+	}
+
+	@Override
 	public int getAircraftFlightCount( Aircraft aircraft ) {
 		Integer count = flightRepo.countByAircraft_Id( aircraft.id() );
 		return count == null ? 0 : count;

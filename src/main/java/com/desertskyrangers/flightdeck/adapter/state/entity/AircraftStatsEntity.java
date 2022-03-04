@@ -17,6 +17,8 @@ public class AircraftStatsEntity {
 
 	private String type;
 
+	private long lastFlightTimestamp;
+
 	private int flightCount;
 
 	private long flightTime;
@@ -27,6 +29,7 @@ public class AircraftStatsEntity {
 		entity.setId( stats.id() );
 		entity.setName( stats.name() );
 		entity.setType( stats.type().name().toLowerCase() );
+		entity.setLastFlightTimestamp( stats.lastFlightTimestamp() );
 		entity.setFlightCount( stats.flightCount() );
 		entity.setFlightTime( stats.flightTime() );
 
@@ -39,6 +42,7 @@ public class AircraftStatsEntity {
 		stats.id( entity.getId() );
 		stats.name( entity.getName() );
 		stats.type( AircraftType.valueOf( entity.getType().toUpperCase() ) );
+		stats.lastFlightTimestamp( entity.getLastFlightTimestamp() );
 		stats.flightCount( entity.getFlightCount() );
 		stats.flightTime( entity.getFlightTime() );
 

@@ -2,12 +2,12 @@ package com.desertskyrangers.flightdeck.adapter.state.repo;
 
 import com.desertskyrangers.flightdeck.adapter.state.entity.AircraftEntity;
 import com.desertskyrangers.flightdeck.adapter.state.entity.FlightEntity;
-import com.desertskyrangers.flightdeck.core.model.Aircraft;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface FlightRepo extends JpaRepository<FlightEntity, UUID> {
@@ -46,6 +46,8 @@ public interface FlightRepo extends JpaRepository<FlightEntity, UUID> {
 
 	@Query( "select sum(f.duration) from FlightEntity f where f.observer.id = ?1 and f.pilot.id <> ?1" )
 	Long getFlightTimeByObserver_Id( UUID id );
+
+	Optional<FlightEntity> findFirstByAircraftOrderByTimestampDesc( AircraftEntity aircraft );
 
 	Integer countByAircraft_Id( UUID id );
 

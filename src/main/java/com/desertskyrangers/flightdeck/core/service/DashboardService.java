@@ -1,13 +1,11 @@
 package com.desertskyrangers.flightdeck.core.service;
 
-import com.desertskyrangers.flightdeck.core.model.AircraftStats;
-import com.desertskyrangers.flightdeck.core.model.AircraftStatus;
-import com.desertskyrangers.flightdeck.core.model.Dashboard;
-import com.desertskyrangers.flightdeck.core.model.User;
+import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -50,11 +48,13 @@ public class DashboardService implements DashboardServices {
 	}
 
 	public Dashboard update( User user ) {
+		long now = new Date().getTime();
 		List<AircraftStats> aircraftStats = aircraftServices.findByOwnerAndStatus( user.id(), AircraftStatus.AIRWORTHY ).stream().map( a -> {
 			AircraftStats stats = new AircraftStats();
 			stats.id( a.id() );
 			stats.name( a.name() );
 			stats.type( a.type() );
+			stats.lastFlightTimestamp( flightServices.getLastAircraftFlight( a ).map( Flight::timestamp ).orElse( -1L ) );
 			stats.flightCount( flightServices.getAircraftFlightCount( a ) );
 			stats.flightTime( flightServices.getAircraftFlightTime( a ) );
 			return stats;

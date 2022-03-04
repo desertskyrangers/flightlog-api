@@ -15,6 +15,8 @@ public class AircraftStats {
 
 	private AircraftType type;
 
+	private long lastFlightTimestamp;
+
 	private int flightCount;
 
 	private long flightTime;

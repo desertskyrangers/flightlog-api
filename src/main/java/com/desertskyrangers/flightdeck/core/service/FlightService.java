@@ -21,7 +21,7 @@ public class FlightService implements FlightServices {
 
 	private final UserService userService;
 
-	private static final Map<String,Integer> times = Map.of( "month", 30, "week", 7, "day", 1);
+	private static final Map<String, Integer> times = Map.of( "month", 30, "week", 7, "day", 1 );
 
 	public FlightService( StatePersisting statePersisting, StateRetrieving stateRetrieving, UserService userService ) {
 		this.statePersisting = statePersisting;
@@ -54,7 +54,7 @@ public class FlightService implements FlightServices {
 
 		Set<Flight> flights = new HashSet<>();
 		if( count < 0 ) {
-			int days = times.get(view);
+			int days = times.get( view );
 			long after = System.currentTimeMillis() - TimeUnit.DAYS.toMillis( days );
 			flights.addAll( getFlightsByTime( user, showObserverFlights, showOwnerFlights, after ) );
 		} else {
@@ -114,6 +114,11 @@ public class FlightService implements FlightServices {
 	@Override
 	public long getObserverFlightTime( UUID user ) {
 		return stateRetrieving.getObserverFlightTime( user );
+	}
+
+	@Override
+	public Optional<Flight> getLastAircraftFlight( Aircraft aircraft ) {
+		return stateRetrieving.getLastAircraftFlight( aircraft );
 	}
 
 	@Override

@@ -16,6 +16,8 @@ public class ReactAircraftStats {
 
 	private String type;
 
+	private Long lastFlightTimestamp;
+
 	private Integer flightCount;
 
 	private Long flightTime;
@@ -26,6 +28,7 @@ public class ReactAircraftStats {
 		reactStats.setId( stats.id().toString() );
 		reactStats.setName( stats.name() );
 		reactStats.setType( stats.type().name().toLowerCase() );
+		reactStats.setLastFlightTimestamp( stats.lastFlightTimestamp() );
 		reactStats.setFlightCount( stats.flightCount() );
 		reactStats.setFlightTime( stats.flightTime() );
 

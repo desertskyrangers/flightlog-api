@@ -74,6 +74,8 @@ public interface StateRetrieving {
 
 	long getObserverFlightTime( UUID id );
 
+	Optional<Flight> getLastAircraftFlight( Aircraft aircraft );
+
 	int getAircraftFlightCount( Aircraft aircraft );
 
 	long getAircraftFlightTime( Aircraft aircraft );
@@ -86,6 +88,6 @@ public interface StateRetrieving {
 
 	String getPreference( User user, String key, String defaultValue );
 
-	Optional<Dashboard> findDashboard( User user);
+	Optional<Dashboard> findDashboard( User user );
 
 }

@@ -29,6 +29,8 @@ public interface FlightServices {
 
 	long getObserverFlightTime( UUID user );
 
+	Optional<Flight> getLastAircraftFlight( Aircraft aircraft );
+
 	int getAircraftFlightCount( Aircraft aircraft );
 
 	long getAircraftFlightTime( Aircraft aircraft );
