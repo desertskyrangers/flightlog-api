@@ -8,7 +8,7 @@ security:
       # As this is the DEVELOPMENT configuration, a separate secret should be used in production, and stored securely:
       # - In a separate `application.yml` file, in the same folder as your executable WAR file
       secret: N1RnU21NM1hrbnBIN1ZMelQ5ZGJCWEp0VndIQVBoZGVtSHZiUEM1MnBXSzMzR3RuY1VOOTN0emJQWlFZRnR4cQo=
-      token-validity-in-seconds: 86400 # Token is valid 24 hours
+      token-validity-in-seconds: 14400 # Token is valid 4 hours
       token-validity-in-seconds-for-remember-me: 2592000 # Token is valid 30 days
 
 
