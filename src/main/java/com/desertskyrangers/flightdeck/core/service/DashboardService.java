@@ -48,7 +48,6 @@ public class DashboardService implements DashboardServices {
 	}
 
 	public Dashboard update( User user ) {
-		long now = new Date().getTime();
 		List<AircraftStats> aircraftStats = aircraftServices.findByOwnerAndStatus( user.id(), AircraftStatus.AIRWORTHY ).stream().map( a -> {
 			AircraftStats stats = new AircraftStats();
 			stats.id( a.id() );
@@ -65,6 +64,7 @@ public class DashboardService implements DashboardServices {
 		dashboard.flightTime( flightServices.getPilotFlightTime( user.id() ) );
 		dashboard.observerCount( flightServices.getObserverFlightCount( user.id() ) );
 		dashboard.observerTime( flightServices.getObserverFlightTime( user.id() ) );
+		dashboard.lastPilotFlightTimestamp( flightServices.getLastPilotFlight( user ).map( Flight::timestamp ).orElse( -1L ) );
 		if( aircraftStats.size() > 0 ) dashboard.aircraftStats( aircraftStats );
 
 		upsert( user, dashboard );

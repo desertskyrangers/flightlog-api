@@ -20,6 +20,8 @@ public class DashboardEntity {
 
 	private long observerTime;
 
+	private long lastPilotFlightTimestamp;
+
 	private List<AircraftStatsEntity> aircraftStats;
 
 	public static DashboardProjection from( User user, Dashboard dashboard ) {
@@ -29,6 +31,7 @@ public class DashboardEntity {
 		dashboardEntity.setObserverCount( dashboard.observerCount() );
 		dashboardEntity.setObserverTime( dashboard.observerTime() );
 		dashboardEntity.setAircraftStats( dashboard.aircraftStats().stream().map( AircraftStatsEntity::from ).toList() );
+		dashboardEntity.setLastPilotFlightTimestamp( dashboard.lastPilotFlightTimestamp() );
 		return new DashboardProjection().setId( user.id() ).setJson( Json.stringify( dashboardEntity ) );
 	}
 
@@ -40,6 +43,7 @@ public class DashboardEntity {
 		dashboard.flightTime( entity.getFlightTime() );
 		dashboard.observerCount( entity.getObserverCount() );
 		dashboard.observerTime( entity.getObserverTime() );
+		dashboard.lastPilotFlightTimestamp( entity.getLastPilotFlightTimestamp() );
 		dashboard.aircraftStats( entity.getAircraftStats().stream().map( AircraftStatsEntity::toAircraftStats ).toList() );
 
 		return dashboard;

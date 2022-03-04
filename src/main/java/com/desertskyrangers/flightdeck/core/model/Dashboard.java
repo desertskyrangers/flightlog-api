@@ -17,6 +17,8 @@ public class Dashboard {
 
 	private long observerTime;
 
+	private long lastPilotFlightTimestamp = -1;
+
 	private List<AircraftStats> aircraftStats = List.of();
 
 }

@@ -76,6 +76,8 @@ public interface StateRetrieving {
 
 	Optional<Flight> getLastAircraftFlight( Aircraft aircraft );
 
+	Optional<Flight> getLastPilotFlight( User pilot );
+
 	int getAircraftFlightCount( Aircraft aircraft );
 
 	long getAircraftFlightTime( Aircraft aircraft );

@@ -22,6 +22,8 @@ public class ReactDashboard {
 
 	private Long observerFlightTime;
 
+	private Long lastPilotFlightTimestamp;
+
 	private List<ReactAircraftStats> aircraftStats;
 
 	public static ReactDashboard from( Dashboard dashboard, Map<String, Object> preferences ) {
@@ -36,6 +38,8 @@ public class ReactDashboard {
 			reactDashboard.setObserverFlightCount( dashboard.observerCount() );
 			reactDashboard.setObserverFlightTime( dashboard.observerTime() );
 		}
+
+		reactDashboard.setLastPilotFlightTimestamp( dashboard.lastPilotFlightTimestamp() );
 
 		if( showAircraftStats ) {
 			reactDashboard.setAircraftStats( dashboard.aircraftStats().stream().map( ReactAircraftStats::from ).toList() );

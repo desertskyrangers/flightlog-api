@@ -122,6 +122,11 @@ public class FlightService implements FlightServices {
 	}
 
 	@Override
+	public Optional<Flight> getLastPilotFlight( User pilot ) {
+		return stateRetrieving.getLastPilotFlight( pilot );
+	}
+
+	@Override
 	public int getAircraftFlightCount( Aircraft aircraft ) {
 		return stateRetrieving.getAircraftFlightCount( aircraft );
 	}
