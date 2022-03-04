@@ -29,7 +29,7 @@ public class Battery {
 
 	private int cells;
 
-	private int cycles;
+	private int initialCycles;
 
 	private int capacity;
 
@@ -40,7 +40,7 @@ public class Battery {
 	private OwnerType ownerType;
 
 	public int life() {
-		return (int)((100D * (Battery.MAX_CYCLES - cycles()) / Battery.MAX_CYCLES));
+		return (int)((100D * (Battery.MAX_CYCLES - initialCycles()) / Battery.MAX_CYCLES));
 	}
 
 }

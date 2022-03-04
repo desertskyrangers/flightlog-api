@@ -2,6 +2,7 @@ package com.desertskyrangers.flightdeck.core.service;
 
 import com.desertskyrangers.flightdeck.core.model.Battery;
 import com.desertskyrangers.flightdeck.port.BatteryServices;
+import com.desertskyrangers.flightdeck.port.FlightServices;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
 import com.desertskyrangers.flightdeck.port.StateRetrieving;
 import org.springframework.stereotype.Service;
@@ -17,9 +18,14 @@ public class BatteryService implements BatteryServices {
 
 	private final StateRetrieving stateRetrieving;
 
-	public BatteryService( StatePersisting statePersisting, StateRetrieving stateRetrieving ) {
+	private final FlightServices flightServices;
+
+	public BatteryService( StatePersisting statePersisting, StateRetrieving stateRetrieving, FlightServices flightServices ) {
 		this.statePersisting = statePersisting;
 		this.stateRetrieving = stateRetrieving;
+		this.flightServices = flightServices;
+
+		this.flightServices.setBatteryServices( this );
 	}
 
 	@Override
@@ -33,12 +39,18 @@ public class BatteryService implements BatteryServices {
 	}
 
 	@Override
-	public void upsert( Battery battery ) {
-		statePersisting.upsert( battery );
+	public Battery upsert( Battery battery ) {
+		return statePersisting.upsert( battery );
 	}
 
 	@Override
 	public void remove( Battery battery ) {
 		statePersisting.remove( battery );
+	}
+
+	@Override
+	public Battery updateCycleCount( Battery battery ) {
+		int initialCycleCount = 0;
+		return upsert( battery.initialCycles(initialCycleCount + flightServices.getBatteryFlightCount( battery ) ) );
 	}
 }

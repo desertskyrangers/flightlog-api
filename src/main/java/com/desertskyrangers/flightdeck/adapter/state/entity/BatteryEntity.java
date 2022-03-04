@@ -37,7 +37,8 @@ public class BatteryEntity {
 
 	private int cells;
 
-	private int cycles;
+	@Column( name = "initialcycles" )
+	private int initialCycles;
 
 	private int capacity;
 
@@ -62,7 +63,7 @@ public class BatteryEntity {
 		entity.setUnlistedConnector( battery.unlistedConnector() );
 		if( battery.type() != null ) entity.setType( battery.type().name().toLowerCase() );
 		entity.setCells( battery.cells() );
-		entity.setCycles( battery.cycles() );
+		entity.setInitialCycles( battery.initialCycles() );
 		entity.setCapacity( battery.capacity() );
 		entity.setDischargeRating( battery.dischargeRating() );
 		entity.setOwner( battery.owner() );
@@ -83,7 +84,7 @@ public class BatteryEntity {
 		battery.unlistedConnector( entity.getUnlistedConnector() );
 		if( entity.getType() != null ) battery.type( BatteryType.valueOf( entity.getType().toUpperCase() ) );
 		battery.cells( entity.getCells() );
-		battery.cycles( entity.getCycles() );
+		battery.initialCycles( entity.getInitialCycles() );
 		battery.capacity( entity.getCapacity() );
 		battery.dischargeRating( entity.getDischargeRating() );
 		battery.owner( entity.getOwner() );

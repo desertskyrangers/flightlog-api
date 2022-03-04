@@ -12,8 +12,9 @@ public interface BatteryServices {
 
 	List<Battery> findByOwner( UUID owner );
 
-	void upsert( Battery battery );
+	Battery upsert( Battery battery );
 
 	void remove( Battery battery );
 
+	Battery updateCycleCount( Battery battery );
 }

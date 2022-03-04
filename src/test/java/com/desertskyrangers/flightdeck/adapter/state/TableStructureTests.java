@@ -75,7 +75,7 @@ public class TableStructureTests {
 
 		expected.add( "type" );
 		expected.add( "cells" );
-		expected.add( "cycles" );
+		expected.add( "initialcycles" );
 		expected.add( "capacity" );
 		expected.add( "dischargerating" );
 

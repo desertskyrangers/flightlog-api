@@ -303,6 +303,18 @@ public class StateRetrievingService implements StateRetrieving {
 	}
 
 	@Override
+	public int getBatteryFlightCount( Battery battery ) {
+		Integer count = flightRepo.countByBattery( BatteryEntity.from( battery ) );
+		return count == null ? 0 : count;
+	}
+
+	@Override
+	public long getBatteryFlightTime( Battery battery ) {
+		Long time = flightRepo.getFlightTimeByBattery( BatteryEntity.from( battery ) );
+		return time == null ? 0 : time;
+	}
+
+	@Override
 	public Optional<Dashboard> findDashboard( User user ) {
 		DashboardProjection entity = dashboardRepo.findById( user.id() ).orElse( null );
 		return entity == null ? Optional.empty() : Optional.of( DashboardEntity.toDashboard( entity ) );

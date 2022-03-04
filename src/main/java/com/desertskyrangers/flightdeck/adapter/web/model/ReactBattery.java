@@ -55,7 +55,7 @@ public class ReactBattery {
 
 		if( battery.type() != null ) result.setType( battery.type().name().toLowerCase() );
 		result.setCells( battery.cells() );
-		result.setCycles( battery.cycles() );
+		result.setCycles( battery.initialCycles() );
 		result.setCapacity( battery.capacity() );
 		result.setDischargeRating( battery.dischargeRating() );
 
@@ -80,7 +80,7 @@ public class ReactBattery {
 
 		if( reactBattery.getType() != null ) battery.type( BatteryType.valueOf( reactBattery.getType().toUpperCase() ) );
 		battery.cells( reactBattery.getCells() );
-		battery.cycles( reactBattery.getCycles() );
+		battery.initialCycles( reactBattery.getCycles() );
 		battery.capacity( reactBattery.getCapacity() );
 		battery.dischargeRating( reactBattery.getDischargeRating() );
 

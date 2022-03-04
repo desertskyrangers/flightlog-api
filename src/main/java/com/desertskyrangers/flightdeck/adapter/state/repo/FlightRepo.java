@@ -1,8 +1,10 @@
 package com.desertskyrangers.flightdeck.adapter.state.repo;
 
 import com.desertskyrangers.flightdeck.adapter.state.entity.AircraftEntity;
+import com.desertskyrangers.flightdeck.adapter.state.entity.BatteryEntity;
 import com.desertskyrangers.flightdeck.adapter.state.entity.FlightEntity;
 import com.desertskyrangers.flightdeck.adapter.state.entity.UserEntity;
+import com.desertskyrangers.flightdeck.core.model.Battery;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -56,5 +58,11 @@ public interface FlightRepo extends JpaRepository<FlightEntity, UUID> {
 
 	@Query( "select sum(f.duration) from FlightEntity f where f.aircraft.id = ?1" )
 	Long getFlightTimeByAircraft_Id( UUID id );
+
+	@Query( "select count(f) from FlightEntity f where ?1 member of f.batteries" )
+	Integer countByBattery( BatteryEntity battery );
+
+	@Query( "select sum(f.duration) from FlightEntity f where ?1 member of f.batteries" )
+	Long getFlightTimeByBattery( BatteryEntity battery);
 
 }

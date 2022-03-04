@@ -1,10 +1,7 @@
 package com.desertskyrangers.flightdeck.core.service;
 
 import com.desertskyrangers.flightdeck.core.model.*;
-import com.desertskyrangers.flightdeck.port.DashboardServices;
-import com.desertskyrangers.flightdeck.port.FlightServices;
-import com.desertskyrangers.flightdeck.port.StatePersisting;
-import com.desertskyrangers.flightdeck.port.StateRetrieving;
+import com.desertskyrangers.flightdeck.port.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +17,8 @@ public class FlightService implements FlightServices {
 
 	private final StateRetrieving stateRetrieving;
 
+	private BatteryServices batteryServices;
+
 	private DashboardServices dashboardServices;
 
 	private static final Map<String, Integer> times = Map.of( "month", 30, "week", 7, "day", 1 );
@@ -27,6 +26,10 @@ public class FlightService implements FlightServices {
 	public FlightService( StatePersisting statePersisting, StateRetrieving stateRetrieving ) {
 		this.statePersisting = statePersisting;
 		this.stateRetrieving = stateRetrieving;
+	}
+
+	public void setBatteryServices( BatteryServices batteryServices ) {
+		this.batteryServices = batteryServices;
 	}
 
 	public void setDashboardServices( DashboardServices dashboardServices ) {
@@ -93,6 +96,9 @@ public class FlightService implements FlightServices {
 		flight.notes( request.notes() );
 		statePersisting.upsert( flight );
 
+		// Update batteries
+		batteries.forEach( b -> batteryServices.updateCycleCount( b ) );
+
 		// Update dashboards
 		dashboardServices.update( flight.pilot() );
 		if( !Objects.equals( flight.pilot(), flight.observer() ) ) dashboardServices.update( flight.observer() );
@@ -144,6 +150,16 @@ public class FlightService implements FlightServices {
 	@Override
 	public long getAircraftFlightTime( Aircraft aircraft ) {
 		return stateRetrieving.getAircraftFlightTime( aircraft );
+	}
+
+	@Override
+	public int getBatteryFlightCount( Battery aircraft ) {
+		return stateRetrieving.getBatteryFlightCount( aircraft );
+	}
+
+	@Override
+	public long getBatteryFlightTime( Battery aircraft ) {
+		return stateRetrieving.getBatteryFlightTime( aircraft );
 	}
 
 	private Set<Flight> getFlightsByTime( User user, boolean observer, boolean owner, long time ) {

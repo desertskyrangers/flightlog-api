@@ -80,7 +80,7 @@ public class InitialConfig {
 			.connector( BatteryConnector.XT60 )
 			.type( BatteryType.LIPO )
 			.cells( 4 )
-			.cycles( 57 )
+			.initialCycles( 57 )
 			.capacity( 2650 )
 			.owner( tia.id() )
 			.ownerType( OwnerType.USER );
@@ -92,7 +92,7 @@ public class InitialConfig {
 			.connector( BatteryConnector.XT60 )
 			.type( BatteryType.LIPO )
 			.cells( 4 )
-			.cycles( 43 )
+			.initialCycles( 43 )
 			.capacity( 2650 )
 			.owner( tia.id() )
 			.ownerType( OwnerType.USER );
@@ -104,7 +104,7 @@ public class InitialConfig {
 			.connector( BatteryConnector.XT60 )
 			.type( BatteryType.LIPO )
 			.cells( 4 )
-			.cycles( 87 )
+			.initialCycles( 87 )
 			.capacity( 2650 )
 			.owner( tia.id() )
 			.ownerType( OwnerType.USER );

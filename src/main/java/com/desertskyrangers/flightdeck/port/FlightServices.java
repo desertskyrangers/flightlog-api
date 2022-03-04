@@ -1,9 +1,6 @@
 package com.desertskyrangers.flightdeck.port;
 
-import com.desertskyrangers.flightdeck.core.model.Aircraft;
-import com.desertskyrangers.flightdeck.core.model.Flight;
-import com.desertskyrangers.flightdeck.core.model.FlightUpsertRequest;
-import com.desertskyrangers.flightdeck.core.model.User;
+import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.core.service.DashboardService;
 
 import java.util.List;
@@ -11,6 +8,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface FlightServices {
+
+	void setBatteryServices( BatteryServices batteryServices );
 
 	void setDashboardServices( DashboardServices dashboardServices );
 
@@ -39,5 +38,9 @@ public interface FlightServices {
 	int getAircraftFlightCount( Aircraft aircraft );
 
 	long getAircraftFlightTime( Aircraft aircraft );
+
+	int getBatteryFlightCount( Battery battery );
+
+	long getBatteryFlightTime( Battery battery );
 
 }
