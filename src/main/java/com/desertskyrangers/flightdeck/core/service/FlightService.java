@@ -1,6 +1,7 @@
 package com.desertskyrangers.flightdeck.core.service;
 
 import com.desertskyrangers.flightdeck.core.model.*;
+import com.desertskyrangers.flightdeck.port.DashboardServices;
 import com.desertskyrangers.flightdeck.port.FlightServices;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
 import com.desertskyrangers.flightdeck.port.StateRetrieving;
@@ -19,14 +20,17 @@ public class FlightService implements FlightServices {
 
 	private final StateRetrieving stateRetrieving;
 
-	private final UserService userService;
+	private DashboardServices dashboardServices;
 
 	private static final Map<String, Integer> times = Map.of( "month", 30, "week", 7, "day", 1 );
 
-	public FlightService( StatePersisting statePersisting, StateRetrieving stateRetrieving, UserService userService ) {
+	public FlightService( StatePersisting statePersisting, StateRetrieving stateRetrieving ) {
 		this.statePersisting = statePersisting;
 		this.stateRetrieving = stateRetrieving;
-		this.userService = userService;
+	}
+
+	public void setDashboardServices( DashboardServices dashboardServices ) {
+		this.dashboardServices = dashboardServices;
 	}
 
 	@Override
@@ -87,8 +91,14 @@ public class FlightService implements FlightServices {
 		flight.timestamp( request.timestamp() );
 		flight.duration( request.duration() );
 		flight.notes( request.notes() );
-
 		statePersisting.upsert( flight );
+
+		// Update dashboards
+		dashboardServices.update( flight.pilot() );
+		if( !Objects.equals( flight.pilot(), flight.observer() ) ) dashboardServices.update( flight.observer() );
+		if( flight.aircraft().ownerType() == OwnerType.USER && !Objects.equals( flight.pilot().id(), flight.aircraft().owner() ) ) {
+			stateRetrieving.findUser( flight.aircraft().owner() ).ifPresent( dashboardServices::update );
+		}
 	}
 
 	@Override

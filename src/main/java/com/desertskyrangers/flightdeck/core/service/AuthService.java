@@ -1,10 +1,7 @@
 package com.desertskyrangers.flightdeck.core.service;
 
 import com.desertskyrangers.flightdeck.adapter.web.ApiPath;
-import com.desertskyrangers.flightdeck.core.model.EmailMessage;
-import com.desertskyrangers.flightdeck.core.model.User;
-import com.desertskyrangers.flightdeck.core.model.UserToken;
-import com.desertskyrangers.flightdeck.core.model.Verification;
+import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.*;
 import com.desertskyrangers.flightdeck.util.Email;
 import com.desertskyrangers.flightdeck.util.Text;
@@ -45,13 +42,16 @@ public class AuthService implements AuthServices {
 
 	private final PasswordEncoder passwordEncoder;
 
+	private final DashboardServices dashboardServices;
+
 	private final UserServices userServices;
 
-	public AuthService( StatePersisting statePersisting, StateRetrieving stateRetrieving, HumanInterface humanInterface, PasswordEncoder passwordEncoder, UserServices userServices ) {
+	public AuthService( StatePersisting statePersisting, StateRetrieving stateRetrieving, HumanInterface humanInterface, PasswordEncoder passwordEncoder, DashboardServices dashboardServices, UserServices userServices ) {
 		this.statePersisting = statePersisting;
 		this.stateRetrieving = stateRetrieving;
 		this.humanInterface = humanInterface;
 		this.passwordEncoder = passwordEncoder;
+		this.dashboardServices = dashboardServices;
 		this.userServices = userServices;
 	}
 
@@ -60,7 +60,6 @@ public class AuthService implements AuthServices {
 		for( Verification verification : stateRetrieving.findAllVerifications() ) {
 			if( verification.isExpired() ) {
 				statePersisting.remove( verification );
-				//stateRetrieving.findUserAccount( verification.userId() ).ifPresent( statePersisting::remove );
 				log.info( "Verification expired: " + verification.id() );
 			}
 		}
@@ -152,6 +151,7 @@ public class AuthService implements AuthServices {
 		user.username( username );
 		user.email( email );
 		statePersisting.upsert( user );
+		dashboardServices.update( user );
 
 		// Create the tokens
 		// NOTE The user must be persisted before tokens can be persisted

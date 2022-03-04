@@ -5,7 +5,6 @@ import com.desertskyrangers.flightdeck.port.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -27,6 +26,8 @@ public class DashboardService implements DashboardServices {
 		this.flightServices = flightServices;
 		this.stateRetrieving = stateRetrieving;
 		this.statePersisting = statePersisting;
+
+		this.flightServices.setDashboardServices( this );
 	}
 
 	@Override
@@ -36,9 +37,6 @@ public class DashboardService implements DashboardServices {
 
 	@Override
 	public Optional<Dashboard> findByUser( User user ) {
-		// Temporarily update the dashboard any time it is requested
-		update( user );
-
 		return stateRetrieving.findDashboard( user );
 	}
 
@@ -47,6 +45,7 @@ public class DashboardService implements DashboardServices {
 		return statePersisting.upsertDashboard( user, dashboard );
 	}
 
+	@Override
 	public Dashboard update( User user ) {
 		List<AircraftStats> aircraftStats = aircraftServices.findByOwnerAndStatus( user.id(), AircraftStatus.AIRWORTHY ).stream().map( a -> {
 			AircraftStats stats = new AircraftStats();

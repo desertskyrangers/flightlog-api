@@ -1,6 +1,7 @@
 package com.desertskyrangers.flightdeck;
 
 import com.desertskyrangers.flightdeck.core.model.*;
+import com.desertskyrangers.flightdeck.port.DashboardServices;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
 import com.desertskyrangers.flightdeck.port.StateRetrieving;
 import lombok.extern.slf4j.Slf4j;
@@ -22,12 +23,15 @@ public class InitialConfig {
 
 	private final StateRetrieving stateRetrieving;
 
+	private final DashboardServices dashboardServices;
+
 	private User unlisted;
 
-	public InitialConfig( FlightDeckApp app, StatePersisting statePersisting, StateRetrieving stateRetrieving ) {
+	public InitialConfig( FlightDeckApp app, StatePersisting statePersisting, StateRetrieving stateRetrieving, DashboardServices dashboardServices ) {
 		this.app = app;
 		this.statePersisting = statePersisting;
 		this.stateRetrieving = stateRetrieving;
+		this.dashboardServices = dashboardServices;
 	}
 
 	@Bean
@@ -129,6 +133,11 @@ public class InitialConfig {
 
 		statePersisting.upsert( new Member().user( tom ).group( testersUnlimited ).status( MemberStatus.OWNER ) );
 		statePersisting.upsert( new Member().user( tom ).group( testersInfinite ).status( MemberStatus.ACCEPTED ) );
+
+		dashboardServices.update( tia );
+		dashboardServices.update( tom );
+		dashboardServices.update( tea );
+		dashboardServices.update( tim );
 
 		log.warn( "Test data created!" );
 	}

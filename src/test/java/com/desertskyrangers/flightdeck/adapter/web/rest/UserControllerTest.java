@@ -6,6 +6,7 @@ import com.desertskyrangers.flightdeck.adapter.web.jwt.JwtTokenProvider;
 import com.desertskyrangers.flightdeck.adapter.web.model.ReactProfileResponse;
 import com.desertskyrangers.flightdeck.adapter.web.model.ReactUser;
 import com.desertskyrangers.flightdeck.core.model.*;
+import com.desertskyrangers.flightdeck.port.DashboardServices;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
 import com.desertskyrangers.flightdeck.port.UserServices;
 import com.desertskyrangers.flightdeck.util.Json;
@@ -51,9 +52,10 @@ public class UserControllerTest extends BaseControllerTest {
 	private StatePersisting statePersisting;
 
 	@Autowired
-	private JwtTokenProvider tokenProvider;
+	private DashboardServices dashboardServices;
 
-	//private User user;
+	@Autowired
+	private JwtTokenProvider tokenProvider;
 
 	private HttpHeaders headers;
 
@@ -365,6 +367,7 @@ public class UserControllerTest extends BaseControllerTest {
 	@Test
 	void testDashboard() throws Exception {
 		// given
+		dashboardServices.update( getMockUser() );
 
 		// when
 		MvcResult result = this.mockMvc.perform( get( ApiPath.DASHBOARD ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();

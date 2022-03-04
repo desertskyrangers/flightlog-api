@@ -14,4 +14,6 @@ public interface DashboardServices {
 
 	Dashboard upsert( User user, Dashboard dashboard );
 
+	Dashboard update( User user );
+
 }
