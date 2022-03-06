@@ -19,7 +19,9 @@ public interface FlightServices {
 
 	List<Flight> findFlightsByUser( User user );
 
-	void upsert( FlightUpsertRequest flight );
+	Flight upsert( FlightUpsertRequest flight );
+
+	Flight upsert( Flight flight );
 
 	void remove( Flight flight );
 

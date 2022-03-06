@@ -89,7 +89,8 @@ public class BaseTest {
 
 		battery.type( BatteryType.LIPO );
 		battery.cells( 4 );
-		battery.initialCycles( 57 );
+		battery.initialCycles( 23 );
+		battery.cycles( 57 );
 		battery.capacity( 2650 );
 		battery.dischargeRating( 20 );
 

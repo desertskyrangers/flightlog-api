@@ -40,7 +40,11 @@ public class BatteryService implements BatteryServices {
 
 	@Override
 	public Battery upsert( Battery battery ) {
-		return statePersisting.upsert( battery );
+		// This logic handles the calculation of initial cycles so that the user
+		// does not need to be aware of it. This allows the user to set the cycles
+		// without worrying about the flights the battery was used on.
+		int flightCycles = flightServices.getBatteryFlightCount( battery );
+		return statePersisting.upsert( battery.initialCycles( battery.cycles() - flightCycles ) );
 	}
 
 	@Override
@@ -50,7 +54,9 @@ public class BatteryService implements BatteryServices {
 
 	@Override
 	public Battery updateCycleCount( Battery battery ) {
-		int initialCycleCount = 0;
-		return upsert( battery.initialCycles(initialCycleCount + flightServices.getBatteryFlightCount( battery ) ) );
+		Optional<Battery> optional = stateRetrieving.findBattery( battery.id() );
+		int initialCycles = optional.map( Battery::initialCycles ).orElse( 0 );
+		return upsert( battery.cycles( initialCycles + flightServices.getBatteryFlightCount( battery ) ) );
 	}
+
 }

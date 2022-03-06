@@ -76,7 +76,7 @@ public class FlightService implements FlightServices {
 	}
 
 	@Override
-	public void upsert( FlightUpsertRequest request ) {
+	public Flight upsert( FlightUpsertRequest request ) {
 		User pilot = stateRetrieving.findUser( request.pilot() ).orElse( null );
 		User observer = stateRetrieving.findUser( request.observer() ).orElse( null );
 		Aircraft aircraft = stateRetrieving.findAircraft( request.aircraft() ).orElse( null );
@@ -94,10 +94,16 @@ public class FlightService implements FlightServices {
 		flight.timestamp( request.timestamp() );
 		flight.duration( request.duration() );
 		flight.notes( request.notes() );
+
+		return upsert( flight );
+	}
+
+	@Override
+	public Flight upsert( Flight flight ) {
 		statePersisting.upsert( flight );
 
 		// Update batteries
-		batteries.forEach( b -> batteryServices.updateCycleCount( b ) );
+		flight.batteries().forEach( b -> batteryServices.updateCycleCount( b ) );
 
 		// Update dashboards
 		dashboardServices.update( flight.pilot() );
@@ -105,6 +111,8 @@ public class FlightService implements FlightServices {
 		if( flight.aircraft().ownerType() == OwnerType.USER && !Objects.equals( flight.pilot().id(), flight.aircraft().owner() ) ) {
 			stateRetrieving.findUser( flight.aircraft().owner() ).ifPresent( dashboardServices::update );
 		}
+
+		return flight;
 	}
 
 	@Override

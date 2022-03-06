@@ -40,6 +40,8 @@ public class BatteryEntity {
 	@Column( name = "initialcycles" )
 	private int initialCycles;
 
+	private int cycles;
+
 	private int capacity;
 
 	@Column( name = "dischargerating" )
@@ -64,6 +66,7 @@ public class BatteryEntity {
 		if( battery.type() != null ) entity.setType( battery.type().name().toLowerCase() );
 		entity.setCells( battery.cells() );
 		entity.setInitialCycles( battery.initialCycles() );
+		entity.setCycles( battery.cycles() );
 		entity.setCapacity( battery.capacity() );
 		entity.setDischargeRating( battery.dischargeRating() );
 		entity.setOwner( battery.owner() );
@@ -85,6 +88,7 @@ public class BatteryEntity {
 		if( entity.getType() != null ) battery.type( BatteryType.valueOf( entity.getType().toUpperCase() ) );
 		battery.cells( entity.getCells() );
 		battery.initialCycles( entity.getInitialCycles() );
+		battery.cycles( entity.getCycles() );
 		battery.capacity( entity.getCapacity() );
 		battery.dischargeRating( entity.getDischargeRating() );
 		battery.owner( entity.getOwner() );

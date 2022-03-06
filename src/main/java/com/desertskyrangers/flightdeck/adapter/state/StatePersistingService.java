@@ -169,7 +169,7 @@ public class StatePersistingService implements StatePersisting {
 
 	@Override
 	public Dashboard removeDashboard( User user ) {
-		DashboardProjection projection =  dashboardRepo.getById( user.id() );
+		DashboardProjection projection = dashboardRepo.getById( user.id() );
 		Dashboard dashboard = DashboardEntity.toDashboard( projection );
 		dashboardRepo.deleteById( user.id() );
 		return dashboard;
