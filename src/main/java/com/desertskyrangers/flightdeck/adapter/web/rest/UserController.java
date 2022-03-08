@@ -77,9 +77,8 @@ public class UserController extends BaseController {
 		List<String> messages = new ArrayList<>();
 
 		try {
-			if( Uuid.isNotValid( id ) ) messages.add( "Invalid dashboard id" );
-			if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactPublicDashboard().setMessages( messages ), HttpStatus.BAD_REQUEST );
-			Optional<User> optional = userServices.find( UUID.fromString( id ) );
+			Optional<User> optional = userServices.findByPrincipal( id );
+			if( optional.isEmpty() ) optional = userServices.find( UUID.fromString( id ) );
 			if( optional.isEmpty() ) messages.add( "Dashboard not found" );
 			if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactPublicDashboard().setMessages( messages ), HttpStatus.BAD_REQUEST );
 

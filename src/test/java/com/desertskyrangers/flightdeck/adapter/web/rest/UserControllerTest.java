@@ -28,10 +28,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -382,7 +379,7 @@ public class UserControllerTest extends BaseControllerTest {
 	}
 
 	@Test
-	void testPublicDashboard() throws Exception {
+	void testPublicDashboardWithId() throws Exception {
 		// given
 		publicDashboardServices.update( getMockUser() );
 
@@ -398,12 +395,28 @@ public class UserControllerTest extends BaseControllerTest {
 	}
 
 	@Test
+	void testPublicDashboardWithUsername() throws Exception {
+		// given
+		publicDashboardServices.update( getMockUser() );
+
+		// when
+		// NOTE - Do not send the JWT with this request. I should be anonymous.
+		MvcResult result = this.mockMvc.perform( get( ApiPath.PUBLIC_DASHBOARD + "/" + getMockUser().username() ) ).andExpect( status().isOk() ).andReturn();
+
+		// then
+		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
+		String displayName = (String)map.get( "displayName" );
+		assertThat( displayName ).isNotNull();
+		assertThat( displayName ).isEqualTo( "Mock U" );
+	}
+
+	@Test
 	void testPublicDashboardWithMissingDashboard() throws Exception {
 		// given
 
 		// when
 		// NOTE - Do not send the JWT with this request. I should be anonymous.
-		MvcResult result = this.mockMvc.perform( get( ApiPath.PUBLIC_DASHBOARD + "/" + getMockUser().id() ) ).andExpect( status().isBadRequest() ).andReturn();
+		MvcResult result = this.mockMvc.perform( get( ApiPath.PUBLIC_DASHBOARD + "/" + UUID.randomUUID() ) ).andExpect( status().isBadRequest() ).andReturn();
 
 		// then
 		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
