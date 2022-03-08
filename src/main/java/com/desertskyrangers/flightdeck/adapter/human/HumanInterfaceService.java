@@ -19,8 +19,11 @@ import java.io.UnsupportedEncodingException;
 public class HumanInterfaceService implements HumanInterface {
 
 	private static final String FROM_ADDRESS = "flightdeck@desertskyrangers.org";
+
 	private static final String FROM_NAME = "FlightDeck";
+
 	private static final String REPLY_TO_ADDRESS = "noreply@desertskyrangers.org";
+
 	private static final String REPLY_TO_NAME = "Desert Sky Rangers";
 
 	private final FlightDeckApp app;
@@ -50,6 +53,12 @@ public class HumanInterfaceService implements HumanInterface {
 			emailSender.send( mimeMessage );
 		} else {
 			log.debug( message.message() );
+			// Simulate a delay
+			try {
+				Thread.sleep( 3000 );
+			} catch( InterruptedException exception ) {
+				// Intentionally ignore exception
+			}
 		}
 	}
 

@@ -1,11 +1,16 @@
 package com.desertskyrangers.flightdeck.port;
 
 import com.desertskyrangers.flightdeck.core.model.Verification;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public interface AuthServices {
+
+	@Scheduled( fixedRate = 1, timeUnit = TimeUnit.MINUTES )
+	void cleanupExpiredVerificationsAndAccounts();
 
 	List<String> requestUserRecover( String username );
 

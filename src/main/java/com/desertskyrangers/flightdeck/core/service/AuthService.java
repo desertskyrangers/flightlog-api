@@ -1,22 +1,22 @@
 package com.desertskyrangers.flightdeck.core.service;
 
 import com.desertskyrangers.flightdeck.adapter.web.ApiPath;
-import com.desertskyrangers.flightdeck.core.model.*;
+import com.desertskyrangers.flightdeck.core.model.EmailMessage;
+import com.desertskyrangers.flightdeck.core.model.User;
+import com.desertskyrangers.flightdeck.core.model.UserToken;
+import com.desertskyrangers.flightdeck.core.model.Verification;
 import com.desertskyrangers.flightdeck.port.*;
 import com.desertskyrangers.flightdeck.util.Email;
 import com.desertskyrangers.flightdeck.util.Text;
 import com.mitchellbosecke.pebble.PebbleEngine;
 import com.mitchellbosecke.pebble.template.PebbleTemplate;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
@@ -46,7 +46,9 @@ public class AuthService implements AuthServices {
 
 	private final UserServices userServices;
 
-	public AuthService( StatePersisting statePersisting, StateRetrieving stateRetrieving, HumanInterface humanInterface, PasswordEncoder passwordEncoder, DashboardServices dashboardServices, UserServices userServices ) {
+	public AuthService(
+		StatePersisting statePersisting, StateRetrieving stateRetrieving, HumanInterface humanInterface, PasswordEncoder passwordEncoder, DashboardServices dashboardServices, UserServices userServices
+	) {
 		this.statePersisting = statePersisting;
 		this.stateRetrieving = stateRetrieving;
 		this.humanInterface = humanInterface;
@@ -55,8 +57,7 @@ public class AuthService implements AuthServices {
 		this.userServices = userServices;
 	}
 
-	@Scheduled( fixedRate = 1, timeUnit = TimeUnit.MINUTES )
-	void cleanupExpiredVerificationsAndAccounts() {
+	public void cleanupExpiredVerificationsAndAccounts() {
 		for( Verification verification : stateRetrieving.findAllVerifications() ) {
 			if( verification.isExpired() ) {
 				statePersisting.remove( verification );
@@ -186,17 +187,15 @@ public class AuthService implements AuthServices {
 		List<String> messages = new ArrayList<>();
 
 		// Lookup the verification from the state store
-		stateRetrieving.findVerification( id ).ifPresent( v -> {
-			stateRetrieving.findUser( v.userId() ).ifPresent( u -> {
-				UserToken credential = u.tokens().iterator().next();
+		stateRetrieving.findVerification( id ).ifPresent( v -> stateRetrieving.findUser( v.userId() ).ifPresent( u -> {
+			UserToken credential = u.tokens().iterator().next();
 
-				log.warn( "verification code resent: " + v.code() );
+			log.warn( "verification code resent: " + v.code() );
 
-				// Send the message to verify the email address
-				sendEmailAddressVerificationMessage( u, credential.principal(), v );
-				messages.add( "Verification email resent" );
-			} );
-		} );
+			// Send the message to verify the email address
+			sendEmailAddressVerificationMessage( u, credential.principal(), v );
+			messages.add( "Verification email resent" );
+		} ) );
 
 		return messages;
 	}
@@ -220,14 +219,8 @@ public class AuthService implements AuthServices {
 			if( messages.size() == 0 ) {
 				stateRetrieving.findUser( storedVerification.userId() ).ifPresent( u -> {
 					switch( storedVerification.type() ) {
-						case Verification.EMAIL_VERIFY_TYPE: {
-							setEmailVerified( u, true );
-							break;
-						}
-						case Verification.SMS_VERIFY_TYPE: {
-							setSmsVerified( u, true );
-							break;
-						}
+						case Verification.EMAIL_VERIFY_TYPE -> setEmailVerified( u, true );
+						case Verification.SMS_VERIFY_TYPE -> setSmsVerified( u, true );
 					}
 				} );
 				statePersisting.remove( storedVerification );
@@ -251,7 +244,6 @@ public class AuthService implements AuthServices {
 		log.info( "SMS verified=" + verified + " number=" + account.smsNumber() );
 	}
 
-	@Async
 	void sendAccountRecoveryMessage( User account, String id ) {
 		String subject = RECOVERY_EMAIL_SUBJECT;
 		String link = generateRecoveryLink( id );
@@ -263,6 +255,7 @@ public class AuthService implements AuthServices {
 		email.subject( subject );
 		email.message( message );
 		email.isHtml( true );
+
 		humanInterface.email( email );
 	}
 
@@ -272,7 +265,6 @@ public class AuthService implements AuthServices {
 		return RESET_ENDPOINT + "?id=" + id;
 	}
 
-	@Async
 	void sendEmailAddressVerificationMessage( User account, String name, Verification verification ) {
 		String subject = VERIFY_EMAIL_SUBJECT;
 		String message = generateEmailAddressVerificationMessage( subject, verification.id(), verification.code() );
@@ -283,6 +275,7 @@ public class AuthService implements AuthServices {
 		email.subject( subject );
 		email.message( message );
 		email.isHtml( true );
+
 		humanInterface.email( email );
 	}
 
