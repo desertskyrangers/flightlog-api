@@ -27,8 +27,8 @@ public class ReactDashboard {
 	private List<ReactAircraftStats> aircraftStats;
 
 	public static ReactDashboard from( Dashboard dashboard, Map<String, Object> preferences ) {
-		boolean showObserverStats = Objects.equals( String.valueOf( preferences.get( "showObserverStats" ) ), "false" );
-		boolean showAircraftStats = Objects.equals( String.valueOf( preferences.get( "showAircraftStats" ) ), "false" );
+		boolean showObserverStats = Objects.equals( String.valueOf( preferences.get( "showObserverStats" ) ), "true" );
+		boolean showAircraftStats = Objects.equals( String.valueOf( preferences.get( "showAircraftStats" ) ), "true" );
 
 		ReactDashboard reactDashboard = new ReactDashboard();
 		reactDashboard.setPilotFlightCount( dashboard.flightCount() );

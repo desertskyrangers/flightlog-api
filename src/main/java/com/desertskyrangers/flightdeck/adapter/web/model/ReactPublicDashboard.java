@@ -29,8 +29,8 @@ public class ReactPublicDashboard {
 	private List<String> messages;
 
 	public static ReactPublicDashboard from( PublicDashboard dashboard, Map<String, Object> preferences ) {
-		boolean showObserverStats = Objects.equals( String.valueOf( preferences.get( "showPublicObserverStats" ) ), "false" );
-		boolean showAircraftStats = Objects.equals( String.valueOf( preferences.get( "showPublicAircraftStats" ) ), "false" );
+		boolean showObserverStats = Objects.equals( String.valueOf( preferences.get( "showPublicObserverStats" ) ), "true" );
+		boolean showAircraftStats = Objects.equals( String.valueOf( preferences.get( "showPublicAircraftStats" ) ), "true" );
 
 		ReactPublicDashboard reactDashboard = new ReactPublicDashboard();
 
