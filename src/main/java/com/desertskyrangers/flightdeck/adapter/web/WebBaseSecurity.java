@@ -64,6 +64,7 @@ public class WebBaseSecurity extends WebSecurityConfigurerAdapter {
 				.antMatchers( HttpMethod.POST, ApiPath.AUTH_VERIFY ).permitAll()
 				.mvcMatchers( HttpMethod.POST, ApiPath.AUTH_LOGIN ).permitAll()
 				.mvcMatchers( HttpMethod.POST, ApiPath.AUTH_LOGOUT ).permitAll()
+				.mvcMatchers( HttpMethod.GET, ApiPath.DASHBOARD + "/**" ).permitAll()
 				.mvcMatchers( HttpMethod.GET, ApiPath.MONITOR_STATUS ).permitAll()
 				.anyRequest().authenticated()
 			.and()
