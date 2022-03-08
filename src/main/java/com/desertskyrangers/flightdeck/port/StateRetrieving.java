@@ -96,4 +96,6 @@ public interface StateRetrieving {
 
 	Optional<Dashboard> findDashboard( User user );
 
+	Optional<PublicDashboard> findPublicDashboard( User user );
+
 }

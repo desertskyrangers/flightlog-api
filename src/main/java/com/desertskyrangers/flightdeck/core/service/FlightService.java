@@ -21,6 +21,8 @@ public class FlightService implements FlightServices {
 
 	private DashboardServices dashboardServices;
 
+	private PublicDashboardServices publicDashboardServices;
+
 	private static final Map<String, Integer> times = Map.of( "month", 30, "week", 7, "day", 1 );
 
 	public FlightService( StatePersisting statePersisting, StateRetrieving stateRetrieving ) {
@@ -34,6 +36,10 @@ public class FlightService implements FlightServices {
 
 	public void setDashboardServices( DashboardServices dashboardServices ) {
 		this.dashboardServices = dashboardServices;
+	}
+
+	public void setPublicDashboardServices( PublicDashboardServices publicDashboardServices ) {
+		this.publicDashboardServices = publicDashboardServices;
 	}
 
 	@Override
@@ -105,11 +111,18 @@ public class FlightService implements FlightServices {
 		// Update batteries
 		flight.batteries().forEach( b -> batteryServices.updateCycleCount( b ) );
 
-		// Update dashboards
+		// Update private dashboard
 		dashboardServices.update( flight.pilot() );
 		if( !Objects.equals( flight.pilot(), flight.observer() ) ) dashboardServices.update( flight.observer() );
 		if( flight.aircraft().ownerType() == OwnerType.USER && !Objects.equals( flight.pilot().id(), flight.aircraft().owner() ) ) {
 			stateRetrieving.findUser( flight.aircraft().owner() ).ifPresent( dashboardServices::update );
+		}
+
+		// Update public dashboards
+		publicDashboardServices.update( flight.pilot() );
+		if( !Objects.equals( flight.pilot(), flight.observer() ) ) publicDashboardServices.update( flight.observer() );
+		if( flight.aircraft().ownerType() == OwnerType.USER && !Objects.equals( flight.pilot().id(), flight.aircraft().owner() ) ) {
+			stateRetrieving.findUser( flight.aircraft().owner() ).ifPresent( publicDashboardServices::update );
 		}
 
 		return flight;

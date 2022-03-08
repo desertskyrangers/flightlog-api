@@ -47,6 +47,8 @@ public abstract class BaseControllerTest extends BaseTest {
 			mockUser = new User();
 			mockUser.username( username );
 			mockUser.email( username + "@example.com" );
+			mockUser.firstName( "Mock" );
+			mockUser.lastName( "User" );
 			UserToken usernameToken = new UserToken().principal( mockUser.username() ).credential( encodedPassword );
 			UserToken emailToken = new UserToken().principal( mockUser.email() ).credential( encodedPassword );
 			mockUser.tokens( Set.of( usernameToken, emailToken ) );

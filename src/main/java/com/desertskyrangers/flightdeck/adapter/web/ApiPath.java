@@ -20,6 +20,7 @@ public interface ApiPath {
 	String AUTH_VERIFY = AUTH + "/verify";
 
 	String DASHBOARD = API + "/dashboard";
+	String PUBLIC_DASHBOARD = API + "/dashboard";
 
 	String FLIGHT = API + "/flight";
 

@@ -30,6 +30,7 @@ public class TableStructureTests {
 		expected.add( "member" );
 		expected.add( "org" );
 		expected.add( "preferences" );
+		expected.add( "publicdashboard" );
 		expected.add( "user" );
 		expected.add( "usertoken" );
 		expected.add( "userrole" );
@@ -146,6 +147,15 @@ public class TableStructureTests {
 		expected.add( "json" );
 
 		assertThat( getColumns( "preferences" ) ).containsExactlyInAnyOrderElementsOf( expected );
+	}
+
+	@Test
+	void testPublicDashboardTable() throws Exception {
+		Set<String> expected = new HashSet<>();
+		expected.add( "id" );
+		expected.add( "json" );
+
+		assertThat( getColumns( "publicdashboard" ) ).containsExactlyInAnyOrderElementsOf( expected );
 	}
 
 	@Test

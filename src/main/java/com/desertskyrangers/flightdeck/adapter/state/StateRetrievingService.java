@@ -32,6 +32,8 @@ public class StateRetrievingService implements StateRetrieving {
 
 	private final PreferencesRepo preferencesRepo;
 
+	private final PublicDashboardRepo publicDashboardRepo;
+
 	private final UserRepo userRepo;
 
 	private final TokenRepo tokenRepo;
@@ -46,6 +48,7 @@ public class StateRetrievingService implements StateRetrieving {
 		GroupRepo groupRepo,
 		MemberRepo memberRepo,
 		PreferencesRepo preferencesRepo,
+		PublicDashboardRepo publicDashboardRepo,
 		UserRepo userRepo,
 		TokenRepo tokenRepo,
 		VerificationRepo verificationRepo
@@ -57,6 +60,7 @@ public class StateRetrievingService implements StateRetrieving {
 		this.groupRepo = groupRepo;
 		this.memberRepo = memberRepo;
 		this.preferencesRepo = preferencesRepo;
+		this.publicDashboardRepo = publicDashboardRepo;
 		this.userRepo = userRepo;
 		this.tokenRepo = tokenRepo;
 		this.verificationRepo = verificationRepo;
@@ -318,6 +322,12 @@ public class StateRetrievingService implements StateRetrieving {
 	public Optional<Dashboard> findDashboard( User user ) {
 		DashboardProjection entity = dashboardRepo.findById( user.id() ).orElse( null );
 		return entity == null ? Optional.empty() : Optional.of( DashboardEntity.toDashboard( entity ) );
+	}
+
+	@Override
+	public Optional<PublicDashboard> findPublicDashboard( User user ) {
+		PublicDashboardProjection entity = publicDashboardRepo.findById( user.id() ).orElse( null );
+		return entity == null ? Optional.empty() : Optional.of( PublicDashboardEntity.toDashboard( entity ) );
 	}
 
 }

@@ -32,9 +32,9 @@ public interface StatePersisting {
 
 	void removeAllMembers();
 
-	Map<String,Object> upsertPreferences( User user, Map<String,Object> preferences );
+	Map<String, Object> upsertPreferences( User user, Map<String, Object> preferences );
 
-	Map<String,Object> removePreferences( User user );
+	Map<String, Object> removePreferences( User user );
 
 	User upsert( User account );
 
@@ -46,8 +46,12 @@ public interface StatePersisting {
 
 	Verification remove( Verification verification );
 
-	Dashboard upsertDashboard(User user, Dashboard dashboard);
+	Dashboard upsertDashboard( User user, Dashboard dashboard );
 
-	Dashboard removeDashboard(User user);
+	Dashboard removeDashboard( User user );
+
+	PublicDashboard upsertPublicDashboard( User user, PublicDashboard dashboard );
+
+	PublicDashboard removePublicDashboard( User user );
 
 }

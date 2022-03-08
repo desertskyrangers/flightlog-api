@@ -1,7 +1,6 @@
 package com.desertskyrangers.flightdeck.core.service;
 
-import com.desertskyrangers.flightdeck.core.model.Aircraft;
-import com.desertskyrangers.flightdeck.core.model.AircraftStatus;
+import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.AircraftServices;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
 import com.desertskyrangers.flightdeck.port.StateRetrieving;

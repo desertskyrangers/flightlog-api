@@ -7,6 +7,7 @@ import com.desertskyrangers.flightdeck.adapter.web.model.ReactProfileResponse;
 import com.desertskyrangers.flightdeck.adapter.web.model.ReactUser;
 import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.DashboardServices;
+import com.desertskyrangers.flightdeck.port.PublicDashboardServices;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
 import com.desertskyrangers.flightdeck.port.UserServices;
 import com.desertskyrangers.flightdeck.util.Json;
@@ -33,7 +34,6 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -53,6 +53,9 @@ public class UserControllerTest extends BaseControllerTest {
 
 	@Autowired
 	private DashboardServices dashboardServices;
+
+	@Autowired
+	private PublicDashboardServices publicDashboardServices;
 
 	@Autowired
 	private JwtTokenProvider tokenProvider;
@@ -236,11 +239,11 @@ public class UserControllerTest extends BaseControllerTest {
 
 	@Test
 	void testGetAircraftLookup() throws Exception {
-		statePersisting.upsert( createTestAircraft( getMockUser() ).status(AircraftStatus.PREFLIGHT) );
-		statePersisting.upsert( createTestAircraft( getMockUser() ).status(AircraftStatus.AIRWORTHY) );
-		statePersisting.upsert( createTestAircraft( getMockUser() ).status(AircraftStatus.INOPERATIVE) );
-		statePersisting.upsert( createTestAircraft( getMockUser() ).status(AircraftStatus.DECOMMISSIONED) );
-		statePersisting.upsert( createTestAircraft( getMockUser() ).status(AircraftStatus.DESTROYED) );
+		statePersisting.upsert( createTestAircraft( getMockUser() ).status( AircraftStatus.PREFLIGHT ) );
+		statePersisting.upsert( createTestAircraft( getMockUser() ).status( AircraftStatus.AIRWORTHY ) );
+		statePersisting.upsert( createTestAircraft( getMockUser() ).status( AircraftStatus.INOPERATIVE ) );
+		statePersisting.upsert( createTestAircraft( getMockUser() ).status( AircraftStatus.DECOMMISSIONED ) );
+		statePersisting.upsert( createTestAircraft( getMockUser() ).status( AircraftStatus.DESTROYED ) );
 		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_AIRCRAFT_LOOKUP ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
 		List<Object> list = Json.asList( result.getResponse().getContentAsString() );
 		assertThat( list.size() ).isEqualTo( 2 );
@@ -248,9 +251,9 @@ public class UserControllerTest extends BaseControllerTest {
 
 	@Test
 	void testGetBatteryLookup() throws Exception {
-		statePersisting.upsert( createTestBattery( getMockUser() ).status(BatteryStatus.NEW) );
-		statePersisting.upsert( createTestBattery( getMockUser() ).status(BatteryStatus.AVAILABLE) );
-		statePersisting.upsert( createTestBattery( getMockUser() ).status(BatteryStatus.DESTROYED) );
+		statePersisting.upsert( createTestBattery( getMockUser() ).status( BatteryStatus.NEW ) );
+		statePersisting.upsert( createTestBattery( getMockUser() ).status( BatteryStatus.AVAILABLE ) );
+		statePersisting.upsert( createTestBattery( getMockUser() ).status( BatteryStatus.DESTROYED ) );
 		// Plus the 'No battery specified' option
 		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_BATTERY_LOOKUP ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
 		List<Object> list = Json.asList( result.getResponse().getContentAsString() );
@@ -379,6 +382,38 @@ public class UserControllerTest extends BaseControllerTest {
 	}
 
 	@Test
+	void testPublicDashboard() throws Exception {
+		// given
+		publicDashboardServices.update( getMockUser() );
+
+		// when
+		// NOTE - Do not send the JWT with this request. I should be anonymous.
+		MvcResult result = this.mockMvc.perform( get( ApiPath.PUBLIC_DASHBOARD + "/" + getMockUser().id() ) ).andExpect( status().isOk() ).andReturn();
+
+		// then
+		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
+		String displayName = (String)map.get( "displayName" );
+		assertThat( displayName ).isNotNull();
+		assertThat( displayName ).isEqualTo( "Mock U" );
+	}
+
+	@Test
+	void testPublicDashboardWithMissingDashboard() throws Exception {
+		// given
+
+		// when
+		// NOTE - Do not send the JWT with this request. I should be anonymous.
+		MvcResult result = this.mockMvc.perform( get( ApiPath.PUBLIC_DASHBOARD + "/" + getMockUser().id() ) ).andExpect( status().isBadRequest() ).andReturn();
+
+		// then
+		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
+		List<?> messages = (List<?>)map.get( "messages" );
+		assertThat( messages ).isNotNull();
+		assertThat( messages.size() ).isEqualTo( 1 );
+		assertThat( messages.get( 0 ) ).isEqualTo( "Dashboard not found" );
+	}
+
+	@Test
 	void testGetPreferences() throws Exception {
 		// given
 
@@ -394,17 +429,17 @@ public class UserControllerTest extends BaseControllerTest {
 	@Test
 	void testGetPreferencesWithNonAdminUser() throws Exception {
 		// given
-		User paula = statePersisting.upsert( createTestUser("paula", "paula@example.com") );
+		User paula = statePersisting.upsert( createTestUser( "paula", "paula@example.com" ) );
 
 		// when
 		this.mockMvc.perform( get( ApiPath.USER_PREFERENCES + "/" + paula.id() ).with( jwt() ) ).andExpect( status().isForbidden() ).andReturn();
 	}
 
 	@Test
-	@WithMockUser( authorities="ADMIN")
+	@WithMockUser( authorities = "ADMIN" )
 	void testGetPreferencesWithAdminUser() throws Exception {
 		// given
-		User quinn = statePersisting.upsert( createTestUser("quinn", "quinn@example.com") );
+		User quinn = statePersisting.upsert( createTestUser( "quinn", "quinn@example.com" ) );
 
 		// when
 		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_PREFERENCES + "/" + quinn.id() ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();

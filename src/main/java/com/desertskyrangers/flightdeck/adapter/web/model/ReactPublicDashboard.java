@@ -1,7 +1,6 @@
 package com.desertskyrangers.flightdeck.adapter.web.model;
 
-import com.desertskyrangers.flightdeck.core.model.Dashboard;
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.desertskyrangers.flightdeck.core.model.PublicDashboard;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -11,12 +10,13 @@ import java.util.Objects;
 
 @Data
 @Accessors( chain = true )
-@JsonInclude( JsonInclude.Include.NON_NULL )
-public class ReactDashboard {
+public class ReactPublicDashboard {
 
-	private Integer pilotFlightCount;
+	private String displayName;
 
-	private Long pilotFlightTime;
+	private int pilotFlightCount;
+
+	private long pilotFlightTime;
 
 	private Integer observerFlightCount;
 
@@ -26,11 +26,15 @@ public class ReactDashboard {
 
 	private List<ReactAircraftStats> aircraftStats;
 
-	public static ReactDashboard from( Dashboard dashboard, Map<String, Object> preferences ) {
-		boolean showObserverStats = Objects.equals( String.valueOf( preferences.get( "showObserverStats" ) ), "false" );
-		boolean showAircraftStats = Objects.equals( String.valueOf( preferences.get( "showAircraftStats" ) ), "false" );
+	private List<String> messages;
 
-		ReactDashboard reactDashboard = new ReactDashboard();
+	public static ReactPublicDashboard from( PublicDashboard dashboard, Map<String, Object> preferences ) {
+		boolean showObserverStats = Objects.equals( String.valueOf( preferences.get( "showPublicObserverStats" ) ), "false" );
+		boolean showAircraftStats = Objects.equals( String.valueOf( preferences.get( "showPublicAircraftStats" ) ), "false" );
+
+		ReactPublicDashboard reactDashboard = new ReactPublicDashboard();
+
+		reactDashboard.setDisplayName( dashboard.displayName() );
 		reactDashboard.setPilotFlightCount( dashboard.flightCount() );
 		reactDashboard.setPilotFlightTime( dashboard.flightTime() );
 

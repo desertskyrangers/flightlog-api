@@ -13,6 +13,8 @@ public interface FlightServices {
 
 	void setDashboardServices( DashboardServices dashboardServices );
 
+	void setPublicDashboardServices( PublicDashboardServices publicDashboardServices );
+
 	Optional<Flight> find( UUID id );
 
 	List<Flight> findByPilot( User pilot );

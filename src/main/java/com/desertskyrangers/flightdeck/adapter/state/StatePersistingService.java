@@ -26,6 +26,8 @@ public class StatePersistingService implements StatePersisting {
 
 	private final PreferencesRepo preferencesRepo;
 
+	private final PublicDashboardRepo publicDashboardRepo;
+
 	private final TokenRepo tokenRepo;
 
 	private final UserRepo userRepo;
@@ -40,6 +42,7 @@ public class StatePersistingService implements StatePersisting {
 		GroupRepo groupRepo,
 		MemberRepo memberRepo,
 		PreferencesRepo preferencesRepo,
+		PublicDashboardRepo publicDashboardRepo,
 		TokenRepo tokenRepo,
 		UserRepo userRepo,
 		VerificationRepo verificationRepo
@@ -51,6 +54,7 @@ public class StatePersistingService implements StatePersisting {
 		this.groupRepo = groupRepo;
 		this.memberRepo = memberRepo;
 		this.preferencesRepo = preferencesRepo;
+		this.publicDashboardRepo = publicDashboardRepo;
 		this.tokenRepo = tokenRepo;
 		this.userRepo = userRepo;
 		this.verificationRepo = verificationRepo;
@@ -172,6 +176,20 @@ public class StatePersistingService implements StatePersisting {
 		DashboardProjection projection = dashboardRepo.getById( user.id() );
 		Dashboard dashboard = DashboardEntity.toDashboard( projection );
 		dashboardRepo.deleteById( user.id() );
+		return dashboard;
+	}
+
+	@Override
+	public PublicDashboard upsertPublicDashboard( User user, PublicDashboard dashboard ) {
+		publicDashboardRepo.save( PublicDashboardEntity.from( user, dashboard ) );
+		return dashboard;
+	}
+
+	@Override
+	public PublicDashboard removePublicDashboard( User user ) {
+		PublicDashboardProjection projection = publicDashboardRepo.getById( user.id() );
+		PublicDashboard dashboard = PublicDashboardEntity.toDashboard( projection );
+		publicDashboardRepo.deleteById( user.id() );
 		return dashboard;
 	}
 

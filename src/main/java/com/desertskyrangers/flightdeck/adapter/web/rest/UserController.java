@@ -14,7 +14,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
-import java.util.prefs.Preferences;
 
 @RestController
 @Slf4j
@@ -30,6 +29,8 @@ public class UserController extends BaseController {
 
 	private final GroupServices groupServices;
 
+	private final PublicDashboardServices publicDashboardServices;
+
 	private final UserServices userServices;
 
 	private final MembershipServices memberService;
@@ -41,6 +42,7 @@ public class UserController extends BaseController {
 		FlightServices flightServices,
 		GroupServices groupServices,
 		MembershipServices memberService,
+		PublicDashboardServices publicDashboardServices,
 		UserServices userServices
 	) {
 		this.aircraftServices = aircraftServices;
@@ -49,6 +51,7 @@ public class UserController extends BaseController {
 		this.flightServices = flightServices;
 		this.groupServices = groupServices;
 		this.memberService = memberService;
+		this.publicDashboardServices = publicDashboardServices;
 		this.userServices = userServices;
 	}
 
@@ -57,7 +60,8 @@ public class UserController extends BaseController {
 	ResponseEntity<ReactDashboardResponse> dashboard( Authentication authentication ) {
 		try {
 			User requester = getRequester( authentication );
-			Map<String,Object> preferences = userServices.getPreferences( requester );
+			Map<String, Object> preferences = userServices.getPreferences( requester );
+
 			return dashboardServices
 				.findByUser( requester )
 				.map( dashboard -> new ResponseEntity<>( new ReactDashboardResponse().setDashboard( ReactDashboard.from( dashboard, preferences ) ), HttpStatus.OK ) )
@@ -65,6 +69,30 @@ public class UserController extends BaseController {
 		} catch( Exception exception ) {
 			log.error( "Error generating dashboard", exception );
 			return new ResponseEntity<>( new ReactDashboardResponse().setMessages( List.of( "Error generating dashboard" ) ), HttpStatus.INTERNAL_SERVER_ERROR );
+		}
+	}
+
+	@GetMapping( path = ApiPath.PUBLIC_DASHBOARD + "/{id}" )
+	ResponseEntity<ReactPublicDashboard> publicDashboard( @PathVariable String id ) {
+		List<String> messages = new ArrayList<>();
+
+		try {
+			if( Uuid.isNotValid( id ) ) messages.add( "Invalid dashboard id" );
+			if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactPublicDashboard().setMessages( messages ), HttpStatus.BAD_REQUEST );
+			Optional<User> optional = userServices.find( UUID.fromString( id ) );
+			if( optional.isEmpty() ) messages.add( "Dashboard not found" );
+			if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactPublicDashboard().setMessages( messages ), HttpStatus.BAD_REQUEST );
+
+			User owner = optional.get();
+			Map<String, Object> preferences = userServices.getPreferences( owner );
+
+			return publicDashboardServices
+				.findByUser( owner )
+				.map( dashboard -> new ResponseEntity<>( ReactPublicDashboard.from( dashboard, preferences ), HttpStatus.OK ) )
+				.orElseGet( () -> new ResponseEntity<>( new ReactPublicDashboard().setMessages( List.of( "Dashboard not found" ) ), HttpStatus.BAD_REQUEST ) );
+		} catch( Exception exception ) {
+			log.error( "Error generating dashboard", exception );
+			return new ResponseEntity<>( new ReactPublicDashboard().setMessages( List.of( "Error generating dashboard" ) ), HttpStatus.INTERNAL_SERVER_ERROR );
 		}
 	}
 
@@ -224,7 +252,7 @@ public class UserController extends BaseController {
 	ResponseEntity<List<ReactOption>> getAircraftLookup( Authentication authentication ) {
 		User user = getRequester( authentication );
 		List<Aircraft> objects = aircraftServices.findByOwner( user.id() );
-		return new ResponseEntity<>( objects.stream().filter( a -> a.status().isAirworthy()).map( c -> new ReactOption( c.id().toString(), c.name() ) ).toList(), HttpStatus.OK );
+		return new ResponseEntity<>( objects.stream().filter( a -> a.status().isAirworthy() ).map( c -> new ReactOption( c.id().toString(), c.name() ) ).toList(), HttpStatus.OK );
 	}
 
 	@PreAuthorize( "hasAuthority('USER')" )
@@ -232,7 +260,7 @@ public class UserController extends BaseController {
 	ResponseEntity<List<ReactOption>> getBatteryLookup( Authentication authentication ) {
 		User user = getRequester( authentication );
 		List<Battery> objects = batteryServices.findByOwner( user.id() );
-		List<ReactOption> options = new ArrayList<>( objects.stream().filter( b -> b.status().isAirworthy()).map( c -> new ReactOption( c.id().toString(), c.name() ) ).toList() );
+		List<ReactOption> options = new ArrayList<>( objects.stream().filter( b -> b.status().isAirworthy() ).map( c -> new ReactOption( c.id().toString(), c.name() ) ).toList() );
 		options.add( new ReactOption( "", "No battery specified" ) );
 		return new ResponseEntity<>( options, HttpStatus.OK );
 	}
@@ -378,7 +406,7 @@ public class UserController extends BaseController {
 
 			User user = optional.get();
 			//noinspection unchecked
-			Map<String,Object> preferences = (Map<String,Object>)preferencesObject;
+			Map<String, Object> preferences = (Map<String, Object>)preferencesObject;
 			userServices.setPreferences( user, preferences );
 
 			return new ResponseEntity<>( new ReactResponse<Map<String, Object>>().setData( preferences ), HttpStatus.OK );
