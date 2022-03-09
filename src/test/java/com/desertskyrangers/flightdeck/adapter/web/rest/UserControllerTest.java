@@ -382,6 +382,7 @@ public class UserControllerTest extends BaseControllerTest {
 	void testPublicDashboardWithId() throws Exception {
 		// given
 		publicDashboardServices.update( getMockUser() );
+		userServices.setPreferences( getMockUser(), Map.of( PreferenceKey.ENABLE_PUBLIC_DASHBOARD, "true" ) );
 
 		// when
 		// NOTE - Do not send the JWT with this request. I should be anonymous.
@@ -398,6 +399,7 @@ public class UserControllerTest extends BaseControllerTest {
 	void testPublicDashboardWithUsername() throws Exception {
 		// given
 		publicDashboardServices.update( getMockUser() );
+		userServices.setPreferences( getMockUser(), Map.of( PreferenceKey.ENABLE_PUBLIC_DASHBOARD, "true" ) );
 
 		// when
 		// NOTE - Do not send the JWT with this request. I should be anonymous.
