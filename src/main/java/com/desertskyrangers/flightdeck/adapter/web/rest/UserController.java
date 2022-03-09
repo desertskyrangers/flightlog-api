@@ -77,7 +77,7 @@ public class UserController extends BaseController {
 				.orElseGet( () -> new ResponseEntity<>( new ReactPublicDashboard().setMessages( List.of( "Dashboard not found" ) ), HttpStatus.BAD_REQUEST ) );
 		} catch( Exception exception ) {
 			log.error( "Error generating dashboard", exception );
-			return new ResponseEntity<>( new ReactPublicDashboard().setMessages( List.of( "Error generating dashboard" ) ), HttpStatus.INTERNAL_SERVER_ERROR );
+			return new ResponseEntity<>( new ReactPublicDashboard().setMessages( List.of( "Dashboard not found" ) ), HttpStatus.INTERNAL_SERVER_ERROR );
 		}
 	}
 
