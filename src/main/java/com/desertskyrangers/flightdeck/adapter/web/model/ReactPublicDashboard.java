@@ -1,5 +1,6 @@
 package com.desertskyrangers.flightdeck.adapter.web.model;
 
+import com.desertskyrangers.flightdeck.core.model.PreferenceKey;
 import com.desertskyrangers.flightdeck.core.model.PublicDashboard;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -29,8 +30,8 @@ public class ReactPublicDashboard {
 	private List<String> messages;
 
 	public static ReactPublicDashboard from( PublicDashboard dashboard, Map<String, Object> preferences ) {
-		boolean showObserverStats = Objects.equals( String.valueOf( preferences.get( "showPublicObserverStats" ) ), "true" );
-		boolean showAircraftStats = Objects.equals( String.valueOf( preferences.get( "showPublicAircraftStats" ) ), "true" );
+		boolean showObserverStats = Objects.equals( String.valueOf( preferences.get( PreferenceKey.SHOW_PUBLIC_OBSERVER_STATS ) ), "true" );
+		boolean showAircraftStats = Objects.equals( String.valueOf( preferences.get( PreferenceKey.SHOW_PUBLIC_AIRCRAFT_STATS ) ), "true" );
 
 		ReactPublicDashboard reactDashboard = new ReactPublicDashboard();
 

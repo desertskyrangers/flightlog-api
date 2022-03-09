@@ -1,6 +1,7 @@
 package com.desertskyrangers.flightdeck.adapter.web.model;
 
 import com.desertskyrangers.flightdeck.core.model.Dashboard;
+import com.desertskyrangers.flightdeck.core.model.PreferenceKey;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -27,8 +28,8 @@ public class ReactDashboard {
 	private List<ReactAircraftStats> aircraftStats;
 
 	public static ReactDashboard from( Dashboard dashboard, Map<String, Object> preferences ) {
-		boolean showObserverStats = Objects.equals( String.valueOf( preferences.get( "showObserverStats" ) ), "true" );
-		boolean showAircraftStats = Objects.equals( String.valueOf( preferences.get( "showAircraftStats" ) ), "true" );
+		boolean showObserverStats = Objects.equals( String.valueOf( preferences.get( PreferenceKey.SHOW_OBSERVER_STATS ) ), "true" );
+		boolean showAircraftStats = Objects.equals( String.valueOf( preferences.get( PreferenceKey.SHOW_AIRCRAFT_STATS ) ), "true" );
 
 		ReactDashboard reactDashboard = new ReactDashboard();
 		reactDashboard.setPilotFlightCount( dashboard.flightCount() );

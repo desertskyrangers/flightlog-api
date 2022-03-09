@@ -55,6 +55,32 @@ public class UserController extends BaseController {
 		this.userServices = userServices;
 	}
 
+	@GetMapping( path = ApiPath.PUBLIC_DASHBOARD + "/{id}" )
+	ResponseEntity<ReactPublicDashboard> publicDashboard( @PathVariable String id ) {
+		List<String> messages = new ArrayList<>();
+
+		try {
+			Optional<User> optional = userServices.findByPrincipal( id );
+			if( optional.isEmpty() ) optional = userServices.find( UUID.fromString( id ) );
+			if( optional.isEmpty() ) messages.add( "Dashboard not found" );
+			if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactPublicDashboard().setMessages( messages ), HttpStatus.BAD_REQUEST );
+
+			User owner = optional.get();
+			Map<String, Object> preferences = userServices.getPreferences( owner );
+
+			boolean showPublicDashboard = Objects.equals( String.valueOf( preferences.get( PreferenceKey.ENABLE_PUBLIC_DASHBOARD ) ), "true" );
+			if( !showPublicDashboard ) return new ResponseEntity<>( new ReactPublicDashboard().setMessages( List.of( "Dashboard not found" ) ), HttpStatus.BAD_REQUEST );
+
+			return publicDashboardServices
+				.findByUser( owner )
+				.map( dashboard -> new ResponseEntity<>( ReactPublicDashboard.from( dashboard, preferences ), HttpStatus.OK ) )
+				.orElseGet( () -> new ResponseEntity<>( new ReactPublicDashboard().setMessages( List.of( "Dashboard not found" ) ), HttpStatus.BAD_REQUEST ) );
+		} catch( Exception exception ) {
+			log.error( "Error generating dashboard", exception );
+			return new ResponseEntity<>( new ReactPublicDashboard().setMessages( List.of( "Error generating dashboard" ) ), HttpStatus.INTERNAL_SERVER_ERROR );
+		}
+	}
+
 	@PreAuthorize( "hasAuthority('USER')" )
 	@GetMapping( path = ApiPath.DASHBOARD )
 	ResponseEntity<ReactDashboardResponse> dashboard( Authentication authentication ) {
@@ -69,29 +95,6 @@ public class UserController extends BaseController {
 		} catch( Exception exception ) {
 			log.error( "Error generating dashboard", exception );
 			return new ResponseEntity<>( new ReactDashboardResponse().setMessages( List.of( "Error generating dashboard" ) ), HttpStatus.INTERNAL_SERVER_ERROR );
-		}
-	}
-
-	@GetMapping( path = ApiPath.PUBLIC_DASHBOARD + "/{id}" )
-	ResponseEntity<ReactPublicDashboard> publicDashboard( @PathVariable String id ) {
-		List<String> messages = new ArrayList<>();
-
-		try {
-			Optional<User> optional = userServices.findByPrincipal( id );
-			if( optional.isEmpty() ) optional = userServices.find( UUID.fromString( id ) );
-			if( optional.isEmpty() ) messages.add( "Dashboard not found" );
-			if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactPublicDashboard().setMessages( messages ), HttpStatus.BAD_REQUEST );
-
-			User owner = optional.get();
-			Map<String, Object> preferences = userServices.getPreferences( owner );
-
-			return publicDashboardServices
-				.findByUser( owner )
-				.map( dashboard -> new ResponseEntity<>( ReactPublicDashboard.from( dashboard, preferences ), HttpStatus.OK ) )
-				.orElseGet( () -> new ResponseEntity<>( new ReactPublicDashboard().setMessages( List.of( "Dashboard not found" ) ), HttpStatus.BAD_REQUEST ) );
-		} catch( Exception exception ) {
-			log.error( "Error generating dashboard", exception );
-			return new ResponseEntity<>( new ReactPublicDashboard().setMessages( List.of( "Error generating dashboard" ) ), HttpStatus.INTERNAL_SERVER_ERROR );
 		}
 	}
 
