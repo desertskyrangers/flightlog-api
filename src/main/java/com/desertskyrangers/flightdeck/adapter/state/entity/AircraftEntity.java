@@ -36,22 +36,22 @@ public class AircraftEntity {
 
 	private String connector;
 
-	private double wingspan;
+	private Double wingspan;
 
-	private double length;
+	private Double length;
 
-	private double wingarea;
+	private Double wingarea;
 
-	private double weight;
+	private Double weight;
 
 	@Column( name = "nightlights" )
 	private Boolean nightLights;
 
 	@Column( name = "flightcount" )
-	private int flightCount;
+	private Integer flightCount;
 
 	@Column( name = "flighttime" )
-	private long flightTime;
+	private Long flightTime;
 
 	@Column( nullable = false, columnDefinition = "BINARY(16)" )
 	private UUID owner;
@@ -95,13 +95,13 @@ public class AircraftEntity {
 		aircraft.status( AircraftStatus.valueOf( entity.getStatus().toUpperCase() ) );
 		aircraft.nightLights( entity.getNightLights() != null && entity.getNightLights() );
 
-		aircraft.wingspan( entity.getWingspan() );
-		aircraft.length( entity.getLength() );
-		aircraft.wingarea( entity.getWingarea() );
-		aircraft.weight( entity.getWeight() );
+		aircraft.wingspan( entity.getWingspan() == null ? 0.0 : entity.getWingspan() );
+		aircraft.length( entity.getLength() == null ? 0.0 : entity.getLength() );
+		aircraft.wingarea( entity.getWingarea() == null ? 0.0 : entity.getWingarea() );
+		aircraft.weight( entity.getWeight() == null ? 0.0 : entity.getWeight() );
 
-		aircraft.flightCount( entity.getFlightCount() );
-		aircraft.flightTime( entity.getFlightTime() );
+		aircraft.flightCount( entity.getFlightCount() == null ? 0 : entity.getFlightCount() );
+		aircraft.flightTime( entity.getFlightTime() == null ? 0 : entity.getFlightCount() );
 
 		aircraft.owner( entity.getOwner() );
 		if( entity.getOwnerType() != null ) aircraft.ownerType( OwnerType.valueOf( entity.getOwnerType().toUpperCase() ) );
