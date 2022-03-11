@@ -107,30 +107,14 @@ public class FlightService implements FlightServices {
 	@Override
 	public Flight upsert( Flight flight ) {
 		statePersisting.upsert( flight );
-
-		// Update batteries
-		flight.batteries().forEach( b -> batteryServices.updateCycleCount( b ) );
-
-		// Update private dashboard
-		dashboardServices.update( flight.pilot() );
-		if( !Objects.equals( flight.pilot(), flight.observer() ) ) dashboardServices.update( flight.observer() );
-		if( flight.aircraft().ownerType() == OwnerType.USER && !Objects.equals( flight.pilot().id(), flight.aircraft().owner() ) ) {
-			stateRetrieving.findUser( flight.aircraft().owner() ).ifPresent( dashboardServices::update );
-		}
-
-		// Update public dashboards
-		publicDashboardServices.update( flight.pilot() );
-		if( !Objects.equals( flight.pilot(), flight.observer() ) ) publicDashboardServices.update( flight.observer() );
-		if( flight.aircraft().ownerType() == OwnerType.USER && !Objects.equals( flight.pilot().id(), flight.aircraft().owner() ) ) {
-			stateRetrieving.findUser( flight.aircraft().owner() ).ifPresent( publicDashboardServices::update );
-		}
-
+		updateMetrics( flight );
 		return flight;
 	}
 
 	@Override
 	public void remove( Flight flight ) {
 		statePersisting.remove( flight );
+		updateMetrics( flight );
 	}
 
 	@Override
@@ -195,6 +179,25 @@ public class FlightService implements FlightServices {
 		if( observer ) flights.addAll( stateRetrieving.findFlightsByObserverAndCount( user.id(), count ) );
 		if( owner ) flights.addAll( stateRetrieving.findFlightsByOwnerAndCount( user.id(), count ) );
 		return flights;
+	}
+
+	private void updateMetrics( Flight flight ) {
+		// Update batteries
+		flight.batteries().forEach( b -> batteryServices.updateCycleCount( b ) );
+
+		// Update private dashboard
+		dashboardServices.update( flight.pilot() );
+		if( !Objects.equals( flight.pilot(), flight.observer() ) ) dashboardServices.update( flight.observer() );
+		if( flight.aircraft().ownerType() == OwnerType.USER && !Objects.equals( flight.pilot().id(), flight.aircraft().owner() ) ) {
+			stateRetrieving.findUser( flight.aircraft().owner() ).ifPresent( dashboardServices::update );
+		}
+
+		// Update public dashboards
+		publicDashboardServices.update( flight.pilot() );
+		if( !Objects.equals( flight.pilot(), flight.observer() ) ) publicDashboardServices.update( flight.observer() );
+		if( flight.aircraft().ownerType() == OwnerType.USER && !Objects.equals( flight.pilot().id(), flight.aircraft().owner() ) ) {
+			stateRetrieving.findUser( flight.aircraft().owner() ).ifPresent( publicDashboardServices::update );
+		}
 	}
 
 }
