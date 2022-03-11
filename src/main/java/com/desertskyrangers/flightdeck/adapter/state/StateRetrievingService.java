@@ -73,12 +73,17 @@ public class StateRetrievingService implements StateRetrieving {
 
 	@Override
 	public List<Aircraft> findAircraftByOwner( UUID owner ) {
-		return aircraftRepo.findAircraftByOwnerOrderByName( owner ).stream().map( AircraftEntity::toAircraft ).collect( Collectors.toList() );
+		return convertAircraft( aircraftRepo.findAircraftByOwnerOrderByName( owner ) );
 	}
 
 	@Override
 	public List<Aircraft> findAircraftByOwnerAndStatus( UUID id, AircraftStatus status ) {
-		return aircraftRepo.findAircraftByOwnerAndStatusOrderByName( id, status.name().toLowerCase() ).stream().map( AircraftEntity::toAircraft ).collect( Collectors.toList() );
+		return convertAircraft( aircraftRepo.findAircraftByOwnerAndStatusOrderByName( id, status.name().toLowerCase() ) );
+	}
+
+	@Override
+	public List<Aircraft> findAllAircraft() {
+		return convertAircraft( aircraftRepo.findAll() );
 	}
 
 	@Override
@@ -88,7 +93,12 @@ public class StateRetrievingService implements StateRetrieving {
 
 	@Override
 	public List<Battery> findBatteriesByOwner( UUID owner ) {
-		return batteryRepo.findBatteryEntitiesByOwnerOrderByName( owner ).stream().map( BatteryEntity::toBattery ).collect( Collectors.toList() );
+		return convertBatteries( batteryRepo.findBatteryEntitiesByOwnerOrderByName( owner ) );
+	}
+
+	@Override
+	public List<Battery> findAllBatteries() {
+		return convertBatteries( batteryRepo.findAll() );
 	}
 
 	@Override
@@ -104,46 +114,49 @@ public class StateRetrievingService implements StateRetrieving {
 	// Pilot
 
 	public List<Flight> findFlightsByPilotAndTimestampAfter( UUID id, long timestamp ) {
-		return convert( flightRepo.findFlightEntitiesByPilotIdAndTimestampAfterOrderByTimestampDesc( id, timestamp ) );
+		return convertFlights( flightRepo.findFlightEntitiesByPilotIdAndTimestampAfterOrderByTimestampDesc( id, timestamp ) );
 	}
 
 	public List<Flight> findFlightsByPilotAndCount( UUID id, int count ) {
-		return convert( new ArrayList<>( flightRepo.findAllByPilotId( id, PageRequest.of( 0, count, Sort.Direction.DESC, "timestamp" ) ) ) );
+		return convertFlights( new ArrayList<>( flightRepo.findAllByPilotId( id, PageRequest.of( 0, count, Sort.Direction.DESC, "timestamp" ) ) ) );
 	}
 
 	// Observer
 
 	public List<Flight> findFlightsByObserverAndTimestampAfter( UUID id, long timestamp ) {
-		return convert( flightRepo.findFlightEntitiesByObserverIdAndTimestampAfterOrderByTimestampDesc( id, timestamp ) );
+		return convertFlights( flightRepo.findFlightEntitiesByObserverIdAndTimestampAfterOrderByTimestampDesc( id, timestamp ) );
 	}
 
 	public List<Flight> findFlightsByObserverAndCount( UUID id, int count ) {
-		return convert( new ArrayList<>( flightRepo.findAllByObserverId( id, PageRequest.of( 0, count, Sort.Direction.DESC, "timestamp" ) ) ) );
+		return convertFlights( new ArrayList<>( flightRepo.findAllByObserverId( id, PageRequest.of( 0, count, Sort.Direction.DESC, "timestamp" ) ) ) );
 	}
 
 	// Owner
 
 	public List<Flight> findFlightsByOwnerAndTimestampAfter( UUID id, long timestamp ) {
-		return convert( flightRepo.findFlightEntitiesByAircraft_OwnerAndTimestampAfterOrderByTimestampDesc( id, timestamp ) );
+		return convertFlights( flightRepo.findFlightEntitiesByAircraft_OwnerAndTimestampAfterOrderByTimestampDesc( id, timestamp ) );
 	}
 
 	public List<Flight> findFlightsByOwnerAndCount( UUID id, int count ) {
-		return convert( new ArrayList<>( flightRepo.findAllByAircraft_Owner( id, PageRequest.of( 0, count, Sort.Direction.DESC, "timestamp" ) ) ) );
+		return convertFlights( new ArrayList<>( flightRepo.findAllByAircraft_Owner( id, PageRequest.of( 0, count, Sort.Direction.DESC, "timestamp" ) ) ) );
 	}
 
-	private List<Flight> convert( List<FlightEntity> entities ) {
+	@Override
+	public List<Flight> findAllFlights() {
+		return convertFlights( flightRepo.findAll() );
+	}
+
+	private List<Aircraft> convertAircraft( List<AircraftEntity> entities ) {
+		return entities.stream().map( AircraftEntity::toAircraft ).toList();
+	}
+
+	private List<Battery> convertBatteries( List<BatteryEntity> entities ) {
+		return entities.stream().map( BatteryEntity::toBattery ).toList();
+	}
+
+	private List<Flight> convertFlights( List<FlightEntity> entities ) {
 		return entities.stream().map( FlightEntity::toFlight ).toList();
 	}
-
-	//	@Override
-	//	public List<Flight> findFlightsByObserver( UUID id ) {
-	//		return flightRepo.findFlightEntitiesByObserver_IdOrderByTimestampDesc( id ).stream().map( FlightEntity::toFlight ).toList();
-	//	}
-	//
-	//	@Override
-	//	public List<Flight> findFlightsByOwner( UUID id ) {
-	//		return flightRepo.findFlightEntitiesByAircraft_OwnerOrderByTimestampDesc( id ).stream().map( FlightEntity::toFlight ).toList();
-	//	}
 
 	@Override
 	public List<Flight> findFlightsByAircraft( UUID id ) {

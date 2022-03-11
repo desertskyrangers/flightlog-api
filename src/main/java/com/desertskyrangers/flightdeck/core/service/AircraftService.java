@@ -57,8 +57,6 @@ public class AircraftService implements AircraftServices {
 		int flightCount = flightServices.getAircraftFlightCount( aircraft );
 		long flightTime = flightServices.getAircraftFlightTime( aircraft );
 
-		log.warn( "Flight count=" + flightCount );
-
 		aircraft = optional.get();
 		aircraft.flightCount( flightCount );
 		aircraft.flightTime( flightTime );

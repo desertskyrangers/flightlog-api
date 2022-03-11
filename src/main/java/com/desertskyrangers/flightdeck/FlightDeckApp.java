@@ -20,6 +20,7 @@ public class FlightDeckApp {
 	public static void main( String[] args ) {
 		ConfigurableApplicationContext context = SpringApplication.run( FlightDeckApp.class, args );
 		context.getBean( InitialConfig.class ).init();
+		context.getBean( DataRefresh.class ).run();
 	}
 
 	public FlightDeckApp( final ApplicationContext context ) {

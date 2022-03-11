@@ -12,9 +12,13 @@ public interface StateRetrieving {
 
 	List<Aircraft> findAircraftByOwnerAndStatus( UUID id, AircraftStatus status );
 
+	List<Aircraft> findAllAircraft();
+
 	Optional<Battery> findBattery( UUID id );
 
 	List<Battery> findBatteriesByOwner( UUID id );
+
+	List<Battery> findAllBatteries();
 
 	Optional<Flight> findFlight( UUID id );
 
@@ -37,6 +41,8 @@ public interface StateRetrieving {
 	List<Flight> findFlightsByBattery( UUID id );
 
 	List<Flight> findFlightsByUser( UUID id );
+
+	List<Flight> findAllFlights();
 
 	Set<Group> findAllAvailableGroups( User user );
 

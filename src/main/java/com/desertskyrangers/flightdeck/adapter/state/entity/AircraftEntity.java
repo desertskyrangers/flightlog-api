@@ -101,7 +101,7 @@ public class AircraftEntity {
 		aircraft.weight( entity.getWeight() == null ? 0.0 : entity.getWeight() );
 
 		aircraft.flightCount( entity.getFlightCount() == null ? 0 : entity.getFlightCount() );
-		aircraft.flightTime( entity.getFlightTime() == null ? 0 : entity.getFlightCount() );
+		aircraft.flightTime( entity.getFlightTime() == null ? 0 : entity.getFlightTime() );
 
 		aircraft.owner( entity.getOwner() );
 		if( entity.getOwnerType() != null ) aircraft.ownerType( OwnerType.valueOf( entity.getOwnerType().toUpperCase() ) );
