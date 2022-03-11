@@ -7,15 +7,12 @@ import com.desertskyrangers.flightdeck.core.model.UserToken;
 import com.desertskyrangers.flightdeck.core.model.Verification;
 import com.desertskyrangers.flightdeck.port.*;
 import com.desertskyrangers.flightdeck.util.Email;
+import com.desertskyrangers.flightdeck.util.Template;
 import com.desertskyrangers.flightdeck.util.Text;
-import com.mitchellbosecke.pebble.PebbleEngine;
-import com.mitchellbosecke.pebble.template.PebbleTemplate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.io.StringWriter;
 import java.util.*;
 
 @Service
@@ -247,7 +244,7 @@ public class AuthService implements AuthServices {
 	void sendAccountRecoveryMessage( User account, String id ) {
 		String subject = RECOVERY_EMAIL_SUBJECT;
 		String link = generateRecoveryLink( id );
-		String message = createFromTemplate( RECOVERY_EMAIL_TEMPLATE, Map.of( "subject", subject, "link", link ) );
+		String message = Template.fill( RECOVERY_EMAIL_TEMPLATE, Map.of( "subject", subject, "link", link ) );
 		if( message == null ) return;
 
 		EmailMessage email = new EmailMessage();
@@ -290,21 +287,7 @@ public class AuthService implements AuthServices {
 		values.put( "subject", subject );
 		values.put( "link", generateVerifyLink( id, code ) );
 		values.put( "code", code );
-		return createFromTemplate( VERIFY_EMAIL_TEMPLATE, values );
-	}
-
-	private String createFromTemplate( String template, Map<String, Object> values ) {
-		PebbleEngine engine = new PebbleEngine.Builder().build();
-		PebbleTemplate compiledTemplate = engine.getTemplate( template );
-
-		StringWriter writer = new StringWriter();
-		try {
-			compiledTemplate.evaluate( writer, values );
-		} catch( IOException exception ) {
-			log.error( "Unable to process email template", exception );
-			return null;
-		}
-		return writer.toString();
+		return Template.fill( VERIFY_EMAIL_TEMPLATE, values );
 	}
 
 }

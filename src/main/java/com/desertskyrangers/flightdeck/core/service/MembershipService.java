@@ -1,31 +1,36 @@
 package com.desertskyrangers.flightdeck.core.service;
 
 import com.desertskyrangers.flightdeck.core.exception.UnauthorizedException;
-import com.desertskyrangers.flightdeck.core.model.Group;
-import com.desertskyrangers.flightdeck.core.model.Member;
-import com.desertskyrangers.flightdeck.core.model.MemberStatus;
-import com.desertskyrangers.flightdeck.core.model.User;
+import com.desertskyrangers.flightdeck.core.model.*;
+import com.desertskyrangers.flightdeck.port.HumanInterface;
 import com.desertskyrangers.flightdeck.port.MembershipServices;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
 import com.desertskyrangers.flightdeck.port.StateRetrieving;
+import com.desertskyrangers.flightdeck.util.Template;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class MembershipService implements MembershipServices {
 
+	private static final String MEMBER_INVITE_EMAIL_TEMPLATE = "templates/member-invite.html";
+
+	private static final String MEMBER_REQUEST_EMAIL_TEMPLATE = "templates/member-request.html";
+
 	private final StatePersisting statePersisting;
 
 	private final StateRetrieving stateRetrieving;
 
-	public MembershipService( StatePersisting statePersisting, StateRetrieving stateRetrieving ) {
+	private final HumanInterface humanInterface;
+
+	public MembershipService( StatePersisting statePersisting, StateRetrieving stateRetrieving, HumanInterface humanInterface ) {
 		this.statePersisting = statePersisting;
 		this.stateRetrieving = stateRetrieving;
+		this.humanInterface = humanInterface;
 	}
 
 	@Override
@@ -60,7 +65,61 @@ public class MembershipService implements MembershipServices {
 	}
 
 	public Member requestMembership( User requester, User user, Group group, MemberStatus status ) {
-		return upsert( requester, new Member().user( user ).group( group ).status( status ) );
+		Member member = null;
+		Set<EmailMessage> messages = Set.of();
+
+		if( status == MemberStatus.INVITED ) {
+			member = upsert( requester, new Member().user( user ).group( group ).status( status ) );
+			messages = createEmailInvitations( user, group );
+		} else if( status == MemberStatus.REQUESTED ) {
+			member = upsert( requester, new Member().user( user ).group( group ).status( status ) );
+			messages = createEmailMembershipRequests( user, group );
+		}
+
+		messages.forEach( humanInterface::email );
+
+		return member;
+	}
+
+	private Set<EmailMessage> createEmailInvitations( User user, Group group ) {
+		String subject = "FlightDeck Group Membership Invite";
+		Map<String, Object> values = new HashMap<>();
+		values.put( "subject", subject );
+		values.put( "memberName", user.name() );
+		values.put( "groupName", group.name() );
+		String content = Template.fill( MEMBER_INVITE_EMAIL_TEMPLATE, values );
+		if( content == null ) return Set.of();
+
+		System.out.println( content );
+
+		EmailMessage email = new EmailMessage();
+		email.recipient( user.email(), user.name() );
+		email.subject( subject );
+		email.message( content );
+		email.isHtml( true );
+		return Set.of( email );
+	}
+
+	private Set<EmailMessage> createEmailMembershipRequests( User user, Group group ) {
+		return stateRetrieving.findGroupOwners( group ).stream().map( o -> {
+			String subject = "FlightDeck Group Membership Request";
+			Map<String, Object> values = new HashMap<>();
+			values.put( "subject", subject );
+			values.put( "memberName", user.name() );
+			values.put( "groupName", group.name() );
+			String content = Template.fill( MEMBER_REQUEST_EMAIL_TEMPLATE, values );
+
+			if( content != null ) {
+				EmailMessage email = new EmailMessage();
+				email.recipient( o.email(), o.name() );
+				email.subject( subject );
+				email.message( content );
+				email.isHtml( true );
+				return email;
+			} else {
+				return null;
+			}
+		} ).filter( Objects::nonNull ).collect( Collectors.toSet() );
 	}
 
 	public Member cancelMembership( User requester, Member member ) {

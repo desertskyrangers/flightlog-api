@@ -48,7 +48,7 @@ public class User implements Comparable<User> {
 		this.roles = roles == null ? Set.of() : roles;
 	}
 
-	public String getName() {
+	public String name() {
 		String name = preferredName();
 		if( name == null ) name = firstName() + " " + lastName();
 		return name.trim();
@@ -56,7 +56,7 @@ public class User implements Comparable<User> {
 
 	@Override
 	public int compareTo( User that ) {
-		return this.getName().compareTo( that.getName() );
+		return this.name().compareTo( that.name() );
 	}
 
 }
