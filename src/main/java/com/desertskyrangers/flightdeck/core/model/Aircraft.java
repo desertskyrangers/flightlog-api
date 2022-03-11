@@ -33,4 +33,6 @@ public class Aircraft {
 
 	private double weight;
 
+	private boolean nightLights;
+
 }

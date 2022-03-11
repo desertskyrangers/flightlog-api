@@ -39,6 +39,8 @@ public class ReactAircraft {
 
 	private double weight;
 
+	private Boolean nightLights;
+
 	public static ReactAircraft from( Aircraft aircraft ) {
 		ReactAircraft result = new ReactAircraft();
 
@@ -55,6 +57,8 @@ public class ReactAircraft {
 		result.setLength( aircraft.length() );
 		result.setWingarea( aircraft.wingarea() );
 		result.setWeight( aircraft.weight() );
+
+		if( aircraft.nightLights() ) result.setNightLights( aircraft.nightLights() );
 
 		return result;
 	}
@@ -76,8 +80,9 @@ public class ReactAircraft {
 		aircraft.wingarea( reactAircraft.getWingarea() );
 		aircraft.weight( reactAircraft.getWeight() );
 
+		aircraft.nightLights( reactAircraft.getNightLights() != null && reactAircraft.getNightLights() );
+
 		return aircraft;
 	}
 
 }
-

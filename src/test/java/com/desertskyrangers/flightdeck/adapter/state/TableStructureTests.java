@@ -58,6 +58,8 @@ public class TableStructureTests {
 		expected.add( "wingarea" );
 		expected.add( "weight" );
 
+		expected.add( "nightlights" );
+
 		assertThat( getColumns( "aircraft" ) ).containsExactlyInAnyOrderElementsOf( expected );
 	}
 

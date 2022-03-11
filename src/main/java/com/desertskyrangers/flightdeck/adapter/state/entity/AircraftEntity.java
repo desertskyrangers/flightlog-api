@@ -44,6 +44,9 @@ public class AircraftEntity {
 
 	private double weight;
 
+	@Column( name = "nightlights" )
+	private boolean nightLights;
+
 	@Column( nullable = false, columnDefinition = "BINARY(16)" )
 	private UUID owner;
 
@@ -67,6 +70,8 @@ public class AircraftEntity {
 		entity.setWingarea( aircraft.wingarea() );
 		entity.setWeight( aircraft.weight() );
 
+		entity.setNightLights( aircraft.nightLights() );
+
 		return entity;
 	}
 
@@ -86,6 +91,8 @@ public class AircraftEntity {
 		aircraft.length( entity.getLength() );
 		aircraft.wingarea( entity.getWingarea() );
 		aircraft.weight( entity.getWeight() );
+
+		aircraft.nightLights( entity.isNightLights() );
 
 		return aircraft;
 	}
