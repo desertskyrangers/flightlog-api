@@ -47,6 +47,12 @@ public class AircraftEntity {
 	@Column( name = "nightlights" )
 	private Boolean nightLights;
 
+	@Column( name = "flightcount" )
+	private int flightCount;
+
+	@Column( name = "flighttime" )
+	private long flightTime;
+
 	@Column( nullable = false, columnDefinition = "BINARY(16)" )
 	private UUID owner;
 
@@ -62,15 +68,18 @@ public class AircraftEntity {
 		entity.setMake( aircraft.make() );
 		entity.setModel( aircraft.model() );
 		entity.setStatus( aircraft.status().name().toLowerCase() );
-		entity.setOwner( aircraft.owner() );
-		if( aircraft.ownerType() != null ) entity.setOwnerType( aircraft.ownerType().name().toLowerCase() );
+		entity.setNightLights( aircraft.nightLights() );
 
 		entity.setWingspan( aircraft.wingspan() );
 		entity.setLength( aircraft.length() );
 		entity.setWingarea( aircraft.wingarea() );
 		entity.setWeight( aircraft.weight() );
 
-		entity.setNightLights( aircraft.nightLights() );
+		entity.setFlightCount( aircraft.flightCount() );
+		entity.setFlightTime( aircraft.flightTime() );
+
+		entity.setOwner( aircraft.owner() );
+		if( aircraft.ownerType() != null ) entity.setOwnerType( aircraft.ownerType().name().toLowerCase() );
 
 		return entity;
 	}
@@ -84,15 +93,18 @@ public class AircraftEntity {
 		aircraft.make( entity.getMake() );
 		aircraft.model( entity.getModel() );
 		aircraft.status( AircraftStatus.valueOf( entity.getStatus().toUpperCase() ) );
-		aircraft.owner( entity.getOwner() );
-		if( entity.getOwnerType() != null ) aircraft.ownerType( OwnerType.valueOf( entity.getOwnerType().toUpperCase() ) );
+		aircraft.nightLights( entity.getNightLights() != null && entity.getNightLights() );
 
 		aircraft.wingspan( entity.getWingspan() );
 		aircraft.length( entity.getLength() );
 		aircraft.wingarea( entity.getWingarea() );
 		aircraft.weight( entity.getWeight() );
 
-		aircraft.nightLights( entity.getNightLights() != null && entity.getNightLights() );
+		aircraft.flightCount( entity.getFlightCount() );
+		aircraft.flightTime( entity.getFlightTime() );
+
+		aircraft.owner( entity.getOwner() );
+		if( entity.getOwnerType() != null ) aircraft.ownerType( OwnerType.valueOf( entity.getOwnerType().toUpperCase() ) );
 
 		return aircraft;
 	}

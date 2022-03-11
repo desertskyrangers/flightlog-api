@@ -53,10 +53,19 @@ public class BatteryService implements BatteryServices {
 	}
 
 	@Override
-	public Battery updateCycleCount( Battery battery ) {
+	public Battery updateFlightData( Battery battery ) {
 		Optional<Battery> optional = stateRetrieving.findBattery( battery.id() );
-		int initialCycles = optional.map( Battery::initialCycles ).orElse( 0 );
-		return upsert( battery.cycles( initialCycles + flightServices.getBatteryFlightCount( battery ) ) );
+		if( optional.isEmpty() ) return battery;
+
+		int flightCount = flightServices.getBatteryFlightCount( battery );
+		long flightTime = flightServices.getBatteryFlightTime( battery );
+
+		battery = optional.get();
+		battery.cycles( battery.initialCycles() + flightCount );
+		battery.flightCount( flightCount );
+		battery.flightTime( flightTime );
+
+		return upsert( battery );
 	}
 
 }

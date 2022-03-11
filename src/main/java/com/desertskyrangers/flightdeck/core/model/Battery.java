@@ -41,6 +41,10 @@ public class Battery {
 
 	private OwnerType ownerType;
 
+	private int flightCount;
+
+	private long flightTime;
+
 	public int life() {
 		return (int)((100D * (Battery.MAX_CYCLES - cycles()) / Battery.MAX_CYCLES));
 	}

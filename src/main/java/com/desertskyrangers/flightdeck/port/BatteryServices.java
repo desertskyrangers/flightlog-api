@@ -16,5 +16,5 @@ public interface BatteryServices {
 
 	void remove( Battery battery );
 
-	Battery updateCycleCount( Battery battery );
+	Battery updateFlightData( Battery battery );
 }

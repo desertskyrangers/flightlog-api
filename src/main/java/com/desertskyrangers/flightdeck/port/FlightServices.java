@@ -1,13 +1,14 @@
 package com.desertskyrangers.flightdeck.port;
 
 import com.desertskyrangers.flightdeck.core.model.*;
-import com.desertskyrangers.flightdeck.core.service.DashboardService;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface FlightServices {
+
+	void setAircraftServices( AircraftServices aircraftServices );
 
 	void setBatteryServices( BatteryServices batteryServices );
 

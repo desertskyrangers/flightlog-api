@@ -35,4 +35,8 @@ public class Aircraft {
 
 	private boolean nightLights;
 
+	private int flightCount;
+
+	private long flightTime;
+
 }

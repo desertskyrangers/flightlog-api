@@ -15,8 +15,10 @@ public interface AircraftServices {
 
 	List<Aircraft> findByOwnerAndStatus( UUID owner, AircraftStatus status );
 
-	void upsert( Aircraft aircraft );
+	Aircraft upsert( Aircraft aircraft );
 
 	void remove( Aircraft aircraft );
+
+	Aircraft updateFlightData( Aircraft aircraft );
 
 }

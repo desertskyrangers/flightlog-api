@@ -47,6 +47,12 @@ public class BatteryEntity {
 	@Column( name = "dischargerating" )
 	private int dischargeRating;
 
+	@Column( name = "flightcount" )
+	private int flightCount;
+
+	@Column( name = "flighttime" )
+	private long flightTime;
+
 	@Column( nullable = false, columnDefinition = "BINARY(16)" )
 	private UUID owner;
 
@@ -69,6 +75,10 @@ public class BatteryEntity {
 		entity.setCycles( battery.cycles() );
 		entity.setCapacity( battery.capacity() );
 		entity.setDischargeRating( battery.dischargeRating() );
+
+		entity.setFlightCount( battery.flightCount() );
+		entity.setFlightTime( battery.flightTime() );
+
 		entity.setOwner( battery.owner() );
 		if( battery.ownerType() != null ) entity.setOwnerType( battery.ownerType().name().toLowerCase() );
 
@@ -91,6 +101,10 @@ public class BatteryEntity {
 		battery.cycles( entity.getCycles() );
 		battery.capacity( entity.getCapacity() );
 		battery.dischargeRating( entity.getDischargeRating() );
+
+		battery.flightCount( entity.getFlightCount() );
+		battery.flightTime( entity.getFlightTime() );
+
 		battery.owner( entity.getOwner() );
 		if( entity.getOwnerType() != null ) battery.ownerType( OwnerType.valueOf( entity.getOwnerType().toUpperCase() ) );
 

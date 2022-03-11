@@ -50,15 +50,18 @@ public class TableStructureTests {
 		expected.add( "model" );
 		expected.add( "status" );
 		expected.add( "connector" );
-		expected.add( "owner" );
-		expected.add( "ownertype" );
+		expected.add( "nightlights" );
 
 		expected.add( "wingspan" );
 		expected.add( "length" );
 		expected.add( "wingarea" );
 		expected.add( "weight" );
 
-		expected.add( "nightlights" );
+		expected.add( "flightcount" );
+		expected.add( "flighttime" );
+
+		expected.add( "owner" );
+		expected.add( "ownertype" );
 
 		assertThat( getColumns( "aircraft" ) ).containsExactlyInAnyOrderElementsOf( expected );
 	}
@@ -73,8 +76,6 @@ public class TableStructureTests {
 		expected.add( "connector" );
 		expected.add( "unlistedconnector" );
 		expected.add( "status" );
-		expected.add( "owner" );
-		expected.add( "ownertype" );
 
 		expected.add( "type" );
 		expected.add( "cells" );
@@ -82,6 +83,12 @@ public class TableStructureTests {
 		expected.add( "cycles" );
 		expected.add( "capacity" );
 		expected.add( "dischargerating" );
+
+		expected.add( "flightcount" );
+		expected.add( "flighttime" );
+
+		expected.add( "owner" );
+		expected.add( "ownertype" );
 
 		assertThat( getColumns( "battery" ) ).containsExactlyInAnyOrderElementsOf( expected );
 	}

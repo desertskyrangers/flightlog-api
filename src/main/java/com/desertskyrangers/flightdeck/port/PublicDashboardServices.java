@@ -6,7 +6,7 @@ import com.desertskyrangers.flightdeck.core.model.User;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface PublicDashboardServices {
+public interface PublicDashboardServices extends CommonDashboard<PublicDashboard> {
 
 	Optional<PublicDashboard> find( UUID uuid );
 

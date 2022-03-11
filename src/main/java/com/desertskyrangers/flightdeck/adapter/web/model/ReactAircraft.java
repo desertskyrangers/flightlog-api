@@ -41,6 +41,10 @@ public class ReactAircraft {
 
 	private Boolean nightLights;
 
+	private int flightCount;
+
+	private long flightTime;
+
 	public static ReactAircraft from( Aircraft aircraft ) {
 		ReactAircraft result = new ReactAircraft();
 
@@ -50,15 +54,18 @@ public class ReactAircraft {
 		result.setMake( aircraft.make() );
 		result.setModel( aircraft.model() );
 		result.setStatus( aircraft.status().name().toLowerCase() );
-		result.setOwner( aircraft.owner().toString() );
-		result.setOwnerType( aircraft.ownerType().name().toLowerCase() );
+		if( aircraft.nightLights() ) result.setNightLights( aircraft.nightLights() );
 
 		result.setWingspan( aircraft.wingspan() );
 		result.setLength( aircraft.length() );
 		result.setWingarea( aircraft.wingarea() );
 		result.setWeight( aircraft.weight() );
 
-		if( aircraft.nightLights() ) result.setNightLights( aircraft.nightLights() );
+		result.setFlightCount( aircraft.flightCount() );
+		result.setFlightTime( aircraft.flightTime() );
+
+		result.setOwner( aircraft.owner().toString() );
+		result.setOwnerType( aircraft.ownerType().name().toLowerCase() );
 
 		return result;
 	}
@@ -72,15 +79,18 @@ public class ReactAircraft {
 		aircraft.make( reactAircraft.getMake() );
 		aircraft.model( reactAircraft.getModel() );
 		aircraft.status( AircraftStatus.valueOf( reactAircraft.getStatus().toUpperCase() ) );
-		if( reactAircraft.getOwner() != null ) aircraft.owner( UUID.fromString( reactAircraft.getOwner() ) );
-		if( reactAircraft.getOwnerType() != null ) aircraft.ownerType( OwnerType.valueOf( reactAircraft.getOwnerType().toUpperCase() ) );
+		aircraft.nightLights( reactAircraft.getNightLights() != null && reactAircraft.getNightLights() );
 
 		aircraft.wingspan( reactAircraft.getWingspan() );
 		aircraft.length( reactAircraft.getLength() );
 		aircraft.wingarea( reactAircraft.getWingarea() );
 		aircraft.weight( reactAircraft.getWeight() );
 
-		aircraft.nightLights( reactAircraft.getNightLights() != null && reactAircraft.getNightLights() );
+		// Flight count is a derived value
+		// Flight time is a derived value
+
+		if( reactAircraft.getOwner() != null ) aircraft.owner( UUID.fromString( reactAircraft.getOwner() ) );
+		if( reactAircraft.getOwnerType() != null ) aircraft.ownerType( OwnerType.valueOf( reactAircraft.getOwnerType().toUpperCase() ) );
 
 		return aircraft;
 	}

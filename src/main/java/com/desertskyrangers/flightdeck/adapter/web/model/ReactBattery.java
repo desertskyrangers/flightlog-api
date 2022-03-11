@@ -42,6 +42,10 @@ public class ReactBattery {
 
 	private int life;
 
+	private int flightCount;
+
+	private long flightTime;
+
 	public static ReactBattery from( Battery battery ) {
 		ReactBattery result = new ReactBattery();
 
@@ -63,6 +67,8 @@ public class ReactBattery {
 		result.setOwnerType( battery.ownerType().name().toLowerCase() );
 
 		result.setLife( battery.life() );
+		result.setFlightCount( battery.flightCount() );
+		result.setFlightTime( battery.flightTime() );
 
 		return result;
 	}
@@ -86,6 +92,10 @@ public class ReactBattery {
 
 		if( reactBattery.getOwner() != null ) battery.owner( UUID.fromString( reactBattery.getOwner() ) );
 		if( reactBattery.getOwnerType() != null ) battery.ownerType( OwnerType.valueOf( reactBattery.getOwnerType().toUpperCase() ) );
+
+		// Life is a derived value
+		// Flight count is a derived value
+		// Flight time is a derived value
 
 		return battery;
 	}
