@@ -49,10 +49,9 @@ public class MembershipService implements MembershipServices {
 		boolean memberAccepted = member.status() == MemberStatus.ACCEPTED;
 		boolean isAccepting = currentlyInvited && memberAccepted;
 
+		// Is the user requesting membership and not have an existing membership?
 		boolean memberRequested = member.status() == MemberStatus.REQUESTED;
 		boolean isRequesting = current == null && memberRequested;
-
-		//log.info( "currentStatus=" + ( current == null ? "null" : current.status() ) + " memberStatus=" + member.status() + " isGroupOwner=" + isGroupOwner + " isAccepting=" + isAccepting );
 
 		if( isGroupOwner || isAccepting || isRequesting ) return statePersisting.upsert( member );
 
