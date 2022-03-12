@@ -40,12 +40,18 @@ public class MembershipService implements MembershipServices {
 
 	@Override
 	public Member upsert( User requester, Member member ) {
-		Member current = stateRetrieving.findMembership( requester.id() ).orElse( null );
+		// Is the requester a group owner?
+		boolean isGroupOwner = stateRetrieving.findGroupOwners( member.group() ).contains( requester );
 
-		boolean isOwned = stateRetrieving.findGroupOwners( member.group() ).contains( requester );
-		boolean isAccepting = current != null && current.status() == MemberStatus.INVITED && member.status() == MemberStatus.ACCEPTED;
+		// Is the member currently invited and accepting membership?
+		Member current = stateRetrieving.findMembership( member.group(), requester ).orElse( null );
+		boolean currentlyInvited = current != null && current.status() == MemberStatus.INVITED;
+		boolean memberAccepted = member.status() == MemberStatus.ACCEPTED;
+		boolean isAccepting = currentlyInvited && memberAccepted;
 
-		if( isOwned || isAccepting ) return statePersisting.upsert( member );
+		log.info( "currentStatus=" + ( current == null ? "null" : current.status() ) + " memberStatus=" + member.status() + " isGroupOwner=" + isGroupOwner + " isAccepting=" + isAccepting );
+
+		if( isGroupOwner || isAccepting ) return statePersisting.upsert( member );
 
 		throw new UnauthorizedException( requester );
 	}

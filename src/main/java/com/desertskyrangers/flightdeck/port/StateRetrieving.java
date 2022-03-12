@@ -54,6 +54,8 @@ public interface StateRetrieving {
 
 	Optional<Member> findMembership( UUID id );
 
+	Optional<Member> findMembership( Group group, User user );
+
 	Set<Member> findMemberships( User user );
 
 	Set<Member> findMemberships( Group group );

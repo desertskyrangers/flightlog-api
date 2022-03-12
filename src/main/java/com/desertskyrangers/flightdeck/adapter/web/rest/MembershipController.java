@@ -46,8 +46,8 @@ public class MembershipController extends BaseController {
 			Optional<Member> optional = memberService.find( UUID.fromString( id ) );
 
 			if( optional.isPresent() ) {
-				Member membership = optional.get();
-				memberService.upsert( requester, membership.status( MemberStatus.valueOf( status.toUpperCase() ) ) );
+				Member membership = optional.get().status( MemberStatus.valueOf( status.toUpperCase() ) );
+				memberService.upsert( requester, membership );
 				return new ResponseEntity<>( new ReactMembershipResponse().setMembership( ReactMembership.from( membership ) ), HttpStatus.OK );
 			}
 		} catch( UnauthorizedException exception ) {
