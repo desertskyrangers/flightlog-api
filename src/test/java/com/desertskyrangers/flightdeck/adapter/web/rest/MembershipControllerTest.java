@@ -88,6 +88,20 @@ public class MembershipControllerTest extends BaseControllerTest {
 		this.mockMvc.perform( put( ApiPath.MEMBERSHIP ).with( jwt() ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
 	}
 
+
+//	@Test
+//	void testUpdateMembership_UserCanRequestMembership() throws Exception {
+//		// given
+//		User user = statePersisting.upsert( createTestUser() );
+//		Group group = statePersisting.upsert( createTestGroup( "Group A", GroupType.CLUB ) );
+//		statePersisting.upsert( new Member().user( user ).group( group ).status( MemberStatus.OWNER ) );
+//		//Member membership = statePersisting.upsert( new Member().user( getMockUser() ).group( group ).status( MemberStatus.INVITED ) );
+//
+//		// when
+//		Map<String, String> request = Map.of( "status", MemberStatus.REQUESTED.name().toLowerCase() );
+//		this.mockMvc.perform( put( ApiPath.MEMBERSHIP ).with( jwt() ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
+//	}
+
 	@Test
 	void testCancelMembership() throws Exception {
 		// given

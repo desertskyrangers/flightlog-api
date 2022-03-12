@@ -272,13 +272,16 @@ public class UserControllerTest extends BaseControllerTest {
 	}
 
 	@Test
-	void testPutMembership() throws Exception {
+	void testPutMembershipAsOwner() throws Exception {
 		// given
-		User user = statePersisting.upsert( createTestUser() );
+		User user = statePersisting.upsert( createTestUser( "sammy", "sammy@example.com" ) );
 		Group group = statePersisting.upsert( new Group().name( "Group A" ).type( GroupType.CLUB ) );
+
+		// Make the mock user the group owner
 		statePersisting.upsert( new Member().user( getMockUser() ).group( group ).status( MemberStatus.OWNER ) );
 
 		// when
+		// Because the mock user is making the request, this is an owner request
 		Map<String, String> request = Map.of( "userid", user.id().toString(), "groupid", group.id().toString(), "status", "requested" );
 		MvcResult result = this.mockMvc
 			.perform( put( ApiPath.USER_MEMBERSHIP ).with( jwt() ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) )
@@ -292,6 +295,81 @@ public class UserControllerTest extends BaseControllerTest {
 
 		assertThat( memberships.size() ).isEqualTo( 1 );
 		assertThat( messages ).isNull();
+	}
+
+	@Test
+	void testRequestMembership() throws Exception {
+		// given
+		User user = getMockUser();
+		User owner = statePersisting.upsert( createTestUser().preferredName( "Tamara" ).email( "tammy@example.com" ) );
+		Group group = statePersisting.upsert( new Group().name( "Group A" ).type( GroupType.CLUB ) );
+		statePersisting.upsert( new Member().user( owner ).group( group ).status( MemberStatus.OWNER ) );
+
+		// when
+		// Because the requesting user is the mock user, this should fail
+		Map<String, String> request = Map.of( "userid", user.id().toString(), "groupid", group.id().toString(), "status", "requested" );
+		MvcResult result = this.mockMvc
+			.perform( put( ApiPath.USER_MEMBERSHIP ).with( jwt() ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) )
+			.andExpect( status().isOk() )
+			.andReturn();
+
+		// then
+		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
+		List<?> memberships = (List<?>)map.get( "memberships" );
+		List<?> messages = (List<?>)map.get( "messages" );
+
+		assertThat( memberships.size() ).isEqualTo( 1 );
+		assertThat( messages ).isNull();
+	}
+
+	@Test
+	void testInviteMembershipWhenNotOwner() throws Exception {
+		// given
+		User user = getMockUser();
+		User owner = statePersisting.upsert( createTestUser() );
+		Group group = statePersisting.upsert( new Group().name( "Group A" ).type( GroupType.CLUB ) );
+		statePersisting.upsert( new Member().user( owner ).group( group ).status( MemberStatus.OWNER ) );
+
+		// when
+		// Because the requesting user is the mock user, this should fail
+		Map<String, String> request = Map.of( "userid", user.id().toString(), "groupid", group.id().toString(), "status", MemberStatus.INVITED.name().toLowerCase() );
+		MvcResult result = this.mockMvc
+			.perform( put( ApiPath.USER_MEMBERSHIP ).with( jwt() ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) )
+			.andExpect( status().isUnauthorized() )
+			.andReturn();
+
+		// then
+		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
+		List<?> memberships = (List<?>)map.get( "memberships" );
+		List<?> messages = (List<?>)map.get( "messages" );
+
+		assertThat( memberships ).isNull();
+		assertThat( messages.size() ).isEqualTo( 1 );
+	}
+
+	@Test
+	void testAcceptMembershipWhenNotInvited() throws Exception {
+		// given
+		User user = getMockUser();
+		User owner = statePersisting.upsert( createTestUser() );
+		Group group = statePersisting.upsert( new Group().name( "Group A" ).type( GroupType.CLUB ) );
+		statePersisting.upsert( new Member().user( owner ).group( group ).status( MemberStatus.OWNER ) );
+
+		// when
+		// Because the requesting user is the mock user, this should fail
+		Map<String, String> request = Map.of( "userid", user.id().toString(), "groupid", group.id().toString(), "status", MemberStatus.ACCEPTED.name().toLowerCase() );
+		MvcResult result = this.mockMvc
+			.perform( put( ApiPath.USER_MEMBERSHIP ).with( jwt() ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) )
+			.andExpect( status().isUnauthorized() )
+			.andReturn();
+
+		// then
+		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
+		List<?> memberships = (List<?>)map.get( "memberships" );
+		List<?> messages = (List<?>)map.get( "messages" );
+
+		assertThat( memberships ).isNull();
+		assertThat( messages.size() ).isEqualTo( 1 );
 	}
 
 	@Test

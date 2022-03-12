@@ -2,6 +2,7 @@ package com.desertskyrangers.flightdeck.adapter.web.rest;
 
 import com.desertskyrangers.flightdeck.adapter.web.ApiPath;
 import com.desertskyrangers.flightdeck.adapter.web.model.*;
+import com.desertskyrangers.flightdeck.core.exception.UnauthorizedException;
 import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.*;
 import com.desertskyrangers.flightdeck.util.Uuid;
@@ -175,7 +176,7 @@ public class UserController extends BaseController {
 			List<ReactAircraft> aircraftPage = aircraftServices.findByOwner( user.id() ).stream().map( ReactAircraft::from ).toList();
 			return new ResponseEntity<>( new ReactAircraftPageResponse().setAircraft( aircraftPage ), HttpStatus.OK );
 		} catch( Exception exception ) {
-			log.error( "Error creating new aircraft", exception );
+			log.error( "Error getting aircraft page", exception );
 			messages.add( exception.getMessage() );
 		}
 
@@ -192,7 +193,7 @@ public class UserController extends BaseController {
 			List<ReactBattery> batteryPage = batteryServices.findByOwner( user.id() ).stream().map( ReactBattery::from ).toList();
 			return new ResponseEntity<>( new ReactBatteryPageResponse().setBatteries( batteryPage ), HttpStatus.OK );
 		} catch( Exception exception ) {
-			log.error( "Error creating new battery", exception );
+			log.error( "Error getting battery page", exception );
 			messages.add( exception.getMessage() );
 		}
 
@@ -209,7 +210,7 @@ public class UserController extends BaseController {
 			List<ReactFlight> flightPage = flightServices.findFlightsByUser( requester ).stream().map( f -> ReactFlight.from( requester, f ) ).toList();
 			return new ResponseEntity<>( new ReactFlightPageResponse().setFlights( flightPage ), HttpStatus.OK );
 		} catch( Exception exception ) {
-			log.error( "Error creating new battery", exception );
+			log.error( "Error getting flight page", exception );
 			messages.add( exception.getMessage() );
 		}
 
@@ -218,7 +219,7 @@ public class UserController extends BaseController {
 
 	@PreAuthorize( "hasAuthority('USER')" )
 	@GetMapping( path = ApiPath.USER_GROUP + "/{page}" )
-	ResponseEntity<ReactGroupPageResponse> getOrgPage( Authentication authentication, @PathVariable int page ) {
+	ResponseEntity<ReactGroupPageResponse> getGroupPage( Authentication authentication, @PathVariable int page ) {
 		List<String> messages = new ArrayList<>();
 
 		try {
@@ -226,7 +227,7 @@ public class UserController extends BaseController {
 			List<ReactGroup> groupPage = groupServices.findGroupsByUser( user ).stream().map( ReactGroup::from ).toList();
 			return new ResponseEntity<>( new ReactGroupPageResponse().setGroups( groupPage ), HttpStatus.OK );
 		} catch( Exception exception ) {
-			log.error( "Error creating new battery", exception );
+			log.error( "Error getting group page", exception );
 			messages.add( exception.getMessage() );
 		}
 
@@ -242,7 +243,7 @@ public class UserController extends BaseController {
 			User user = getRequester( authentication );
 			return new ResponseEntity<>( new ReactMembershipPageResponse().setMemberships( getMemberships( user ) ), HttpStatus.OK );
 		} catch( Exception exception ) {
-			log.error( "Error creating new battery", exception );
+			log.error( "Error getting membership page", exception );
 			messages.add( exception.getMessage() );
 		}
 
@@ -317,8 +318,10 @@ public class UserController extends BaseController {
 			memberService.requestMembership( requester, user, group, status );
 
 			return new ResponseEntity<>( new ReactMembershipPageResponse().setMemberships( getMemberships( user ) ), HttpStatus.OK );
+		} catch( UnauthorizedException exception ) {
+			return new ResponseEntity<>( new ReactMembershipPageResponse().setMessages( List.of("Unauthorized") ), HttpStatus.UNAUTHORIZED );
 		} catch( Exception exception ) {
-			log.error( "Error creating new battery", exception );
+			log.error( "Error requesting group membership", exception );
 			messages.add( exception.getMessage() );
 		}
 
@@ -348,7 +351,7 @@ public class UserController extends BaseController {
 
 			return new ResponseEntity<>( new ReactMembershipPageResponse().setMemberships( getMemberships( user ) ), HttpStatus.OK );
 		} catch( Exception exception ) {
-			log.error( "Error creating new battery", exception );
+			log.error( "Error cancelling group membership", exception );
 			messages.add( exception.getMessage() );
 		}
 

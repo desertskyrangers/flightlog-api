@@ -49,9 +49,12 @@ public class MembershipService implements MembershipServices {
 		boolean memberAccepted = member.status() == MemberStatus.ACCEPTED;
 		boolean isAccepting = currentlyInvited && memberAccepted;
 
-		log.info( "currentStatus=" + ( current == null ? "null" : current.status() ) + " memberStatus=" + member.status() + " isGroupOwner=" + isGroupOwner + " isAccepting=" + isAccepting );
+		boolean memberRequested = member.status() == MemberStatus.REQUESTED;
+		boolean isRequesting = current == null && memberRequested;
 
-		if( isGroupOwner || isAccepting ) return statePersisting.upsert( member );
+		//log.info( "currentStatus=" + ( current == null ? "null" : current.status() ) + " memberStatus=" + member.status() + " isGroupOwner=" + isGroupOwner + " isAccepting=" + isAccepting );
+
+		if( isGroupOwner || isAccepting || isRequesting ) return statePersisting.upsert( member );
 
 		throw new UnauthorizedException( requester );
 	}
@@ -71,20 +74,17 @@ public class MembershipService implements MembershipServices {
 	}
 
 	public Member requestMembership( User requester, User user, Group group, MemberStatus status ) {
-		Member member = null;
-		Set<EmailMessage> messages = Set.of();
-
 		if( status == MemberStatus.INVITED ) {
-			member = upsert( requester, new Member().user( user ).group( group ).status( status ) );
-			messages = createEmailInvitations( user, group );
+			Member member = upsert( requester, new Member().user( user ).group( group ).status( status ) );
+			createEmailInvitations( user, group ).forEach( humanInterface::email );
+			return member;
 		} else if( status == MemberStatus.REQUESTED ) {
-			member = upsert( requester, new Member().user( user ).group( group ).status( status ) );
-			messages = createEmailMembershipRequests( user, group );
+			Member member = upsert( requester, new Member().user( user ).group( group ).status( status ) );
+			createEmailMembershipRequests( user, group ).forEach( humanInterface::email );
+			return member;
 		}
 
-		messages.forEach( humanInterface::email );
-
-		return member;
+		throw new UnauthorizedException( requester );
 	}
 
 	private Set<EmailMessage> createEmailInvitations( User user, Group group ) {
