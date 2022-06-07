@@ -2,9 +2,7 @@ package com.desertskyrangers.flightdeck.core.service;
 
 import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.core.model.UserToken;
-import com.desertskyrangers.flightdeck.port.StatePersisting;
-import com.desertskyrangers.flightdeck.port.StateRetrieving;
-import com.desertskyrangers.flightdeck.port.UserServices;
+import com.desertskyrangers.flightdeck.port.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,10 +18,22 @@ public class UserService implements UserServices {
 
 	private final PasswordEncoder passwordEncoder;
 
+	private DashboardServices dashboardServices;
+
+	private PublicDashboardServices publicDashboardServices;
+
 	public UserService( StateRetrieving stateRetrieving, StatePersisting statePersisting, PasswordEncoder passwordEncoder ) {
 		this.stateRetrieving = stateRetrieving;
 		this.statePersisting = statePersisting;
 		this.passwordEncoder = passwordEncoder;
+	}
+
+	public void setDashboardServices( DashboardServices dashboardServices ) {
+		this.dashboardServices = dashboardServices;
+	}
+
+	public void setPublicDashboardServices( PublicDashboardServices publicDashboardServices ) {
+		this.publicDashboardServices = publicDashboardServices;
 	}
 
 	@Override
@@ -120,7 +130,16 @@ public class UserService implements UserServices {
 	@Override
 	public User setPreferences( User user, Map<String, Object> preferences ) {
 		statePersisting.upsertPreferences( user, preferences );
+		updateDashboard( user );
 		return user;
+	}
+
+	private void updateDashboard( User user) {
+		// Update private dashboards
+		dashboardServices.update( user );
+
+		// Update public dashboards
+		publicDashboardServices.update( user );
 	}
 
 }

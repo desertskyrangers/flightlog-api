@@ -63,6 +63,9 @@ public class UserControllerTest extends BaseControllerTest {
 	protected void setup() {
 		super.setup();
 
+		userServices.setDashboardServices( dashboardServices );
+		userServices.setPublicDashboardServices( publicDashboardServices );
+
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String jwtToken = tokenProvider.createToken( getMockUser(), authentication, false );
 		headers = new HttpHeaders();

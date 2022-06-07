@@ -195,13 +195,13 @@ public class FlightService implements FlightServices {
 		flight.batteries().forEach( b -> batteryServices.updateFlightData( b ) );
 
 		// Update private dashboards
-		updateDashboard( flight, dashboardServices );
+		updateDashboards( flight, dashboardServices );
 
 		// Update public dashboards
-		updateDashboard( flight, publicDashboardServices );
+		updateDashboards( flight, publicDashboardServices );
 	}
 
-	private void updateDashboard( Flight flight, CommonDashboard<?> dashboard ) {
+	private void updateDashboards( Flight flight, CommonDashboardServices<?> dashboard ) {
 		// Pilot dashboard
 		dashboard.update( flight.pilot() );
 

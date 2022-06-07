@@ -1,19 +1,5 @@
 package com.desertskyrangers.flightdeck.port;
 
 import com.desertskyrangers.flightdeck.core.model.PublicDashboard;
-import com.desertskyrangers.flightdeck.core.model.User;
 
-import java.util.Optional;
-import java.util.UUID;
-
-public interface PublicDashboardServices extends CommonDashboard<PublicDashboard> {
-
-	Optional<PublicDashboard> find( UUID uuid );
-
-	Optional<PublicDashboard> findByUser( User user );
-
-	PublicDashboard upsert( User user, PublicDashboard dashboard );
-
-	PublicDashboard update( User user );
-
-}
+public interface PublicDashboardServices extends CommonDashboardServices<PublicDashboard> {}

@@ -7,6 +7,10 @@ import java.util.*;
 
 public interface UserServices {
 
+	void setDashboardServices( DashboardServices dashboardServices );
+
+	void setPublicDashboardServices( PublicDashboardServices publicDashboardServices );
+
 	List<User> find();
 
 	Optional<User> find( UUID id );

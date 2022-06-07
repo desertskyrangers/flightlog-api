@@ -1,11 +1,15 @@
 package com.desertskyrangers.flightdeck.core.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.util.List;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Accessors( fluent = true )
 public class Dashboard {
 
