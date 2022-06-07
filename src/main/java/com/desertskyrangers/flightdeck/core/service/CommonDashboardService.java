@@ -34,8 +34,9 @@ public class CommonDashboardService<T extends Dashboard> {
 
 	protected T populate( User user, T dashboard ) {
 		Map<String, Object> preferences = getUserServices().getPreferences( user );
+
 		List<Aircraft> aircraft;
-		log.warn( "showAllAircraft=" + preferences.get( PreferenceKey.SHOW_ALL_AIRCRAFT ) );
+		// FIXME What if the dashboard is public???
 		if( "true".equals( String.valueOf( preferences.get( PreferenceKey.SHOW_ALL_AIRCRAFT ) ) ) ) {
 			aircraft = getAircraftServices().findByOwner( user.id() );
 		} else {
