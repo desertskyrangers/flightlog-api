@@ -18,7 +18,7 @@ public interface PreferenceKey {
 	 * Preference to show all the user's aircraft in the aircraft stats.
 	 * Valid values are "true" and "false".
 	 */
-	String SHOW_ALL_AIRCRAFT = "showPublicAllAircraft";
+	String SHOW_ALL_AIRCRAFT = "showAllAircraft";
 
 	/**
 	 * Preference to enable the user's public dashboard. Valid values are "true"

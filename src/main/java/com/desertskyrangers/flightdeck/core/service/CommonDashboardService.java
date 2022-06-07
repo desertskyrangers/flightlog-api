@@ -33,9 +33,10 @@ public class CommonDashboardService<T extends Dashboard> {
 	}
 
 	protected T populate( User user, T dashboard ) {
-		Map<String,Object> preferences = getUserServices().getPreferences( user );
+		Map<String, Object> preferences = getUserServices().getPreferences( user );
 		List<Aircraft> aircraft;
-		if( "true".equals( preferences.get( PreferenceKey.SHOW_ALL_AIRCRAFT) ) ) {
+		log.warn( "showAllAircraft=" + preferences.get( PreferenceKey.SHOW_ALL_AIRCRAFT ) );
+		if( "true".equals( String.valueOf( preferences.get( PreferenceKey.SHOW_ALL_AIRCRAFT ) ) ) ) {
 			aircraft = getAircraftServices().findByOwner( user.id() );
 		} else {
 			aircraft = getAircraftServices().findByOwnerAndStatus( user.id(), AircraftStatus.AIRWORTHY );
