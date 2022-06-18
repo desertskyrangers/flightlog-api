@@ -1,11 +1,13 @@
 package com.desertskyrangers.flightdeck.adapter.state.entity;
 
+import com.desertskyrangers.flightdeck.core.model.Group;
 import com.desertskyrangers.flightdeck.core.model.Member;
 import com.desertskyrangers.flightdeck.core.model.MemberStatus;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
+import java.util.Map;
 import java.util.UUID;
 
 @Data
@@ -43,6 +45,36 @@ public class MemberEntity {
 		member.user( UserEntity.toUser( entity.getUser() ) );
 		member.group( GroupEntity.toGroup( entity.getGroup() ) );
 		member.status( MemberStatus.valueOf( entity.getStatus().toUpperCase() ) );
+		return member;
+	}
+
+	/**
+	 * This method is specifically built to avoid a stack overflow when converting
+	 * a membership record from the {@link GroupEntity#toGroup(GroupEntity)} method.
+	 *
+	 * @param entity
+	 * @param groups
+	 * @param members
+	 * @return
+	 */
+	static Member toMemberFromGroup( MemberEntity entity, Map<UUID, Group> groups, Map<UUID, Member> members ) {
+		Member member = members.get( entity.getId() );
+		if( member != null ) return member;
+
+		member = toMemberSkipGroup( entity );
+		members.put( entity.getId(), member );
+		//member.groups( entity.getGroups().stream().map( e -> GroupEntity.toGroupFromUser( e, members, groups ) ).collect( Collectors.toSet() ) );
+		return member;
+	}
+
+	private static Member toMemberSkipGroup( MemberEntity entity ) {
+		Member member = new Member();
+
+		member.id( entity.getId() );
+		member.user( UserEntity.toUser( entity.getUser() ) );
+		//member.group( GroupEntity.toGroup( entity.getGroup() ) );
+		member.status( MemberStatus.valueOf( entity.getStatus().toUpperCase() ) );
+
 		return member;
 	}
 

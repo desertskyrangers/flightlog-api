@@ -2,6 +2,7 @@ package com.desertskyrangers.flightdeck.adapter.state.entity;
 
 import com.desertskyrangers.flightdeck.core.model.Group;
 import com.desertskyrangers.flightdeck.core.model.GroupType;
+import com.desertskyrangers.flightdeck.core.model.Member;
 import com.desertskyrangers.flightdeck.core.model.User;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -32,7 +33,7 @@ public class GroupEntity {
 	@EqualsAndHashCode.Exclude
 	private Set<UserEntity> users = new HashSet<>();
 
-	@OneToMany( mappedBy = "group", fetch = FetchType.EAGER)
+	@OneToMany( mappedBy = "group", fetch = FetchType.EAGER )
 	@EqualsAndHashCode.Exclude
 	private Set<MemberEntity> memberships = new HashSet<>();
 
@@ -47,11 +48,11 @@ public class GroupEntity {
 	}
 
 	static GroupEntity fromGroupFromUser( Group group, Map<UUID, GroupEntity> groups, Map<UUID, UserEntity> users ) {
-		GroupEntity entity = groups.get(group.id() );
+		GroupEntity entity = groups.get( group.id() );
 		if( entity != null ) return entity;
 
-		entity = fromGroupShallow(group);
-		groups.put(group.id(), entity);
+		entity = fromGroupShallow( group );
+		groups.put( group.id(), entity );
 		entity.setUsers( group.users().stream().map( u -> UserEntity.fromUserFromGroup( u, users, groups ) ).collect( Collectors.toSet() ) );
 
 		return entity;
@@ -71,9 +72,10 @@ public class GroupEntity {
 		Group group = toGroupShallow( entity );
 
 		final Map<UUID, Group> groups = new HashMap<>();
+		final Map<UUID, Member> members = new HashMap<>();
 		final Map<UUID, User> users = new HashMap<>();
 		groups.put( entity.getId(), group );
-
+		group.members( entity.getMemberships().stream().map( e -> MemberEntity.toMemberFromGroup( e, groups, members ) ).collect( Collectors.toSet() ) );
 		group.users( entity.getUsers().stream().map( e -> UserEntity.toUserFromGroup( e, groups, users ) ).collect( Collectors.toSet() ) );
 
 		return group;

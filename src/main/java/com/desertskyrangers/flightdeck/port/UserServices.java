@@ -1,7 +1,6 @@
 package com.desertskyrangers.flightdeck.port;
 
 import com.desertskyrangers.flightdeck.core.model.User;
-import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.*;
 
@@ -28,6 +27,8 @@ public interface UserServices {
 	Optional<User> findVerificationUser( UUID verificationId );
 
 	Set<User> findAllGroupPeers( User user );
+
+	Set<User> findAllAcceptedGroupPeers( User user );
 
 	Map<String, Object> getPreferences( User user );
 

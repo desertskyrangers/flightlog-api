@@ -269,22 +269,22 @@ public class UserController extends BaseController {
 	}
 
 	@PreAuthorize( "hasAuthority('USER')" )
-	@GetMapping( path = ApiPath.USER_OBSERVER_LOOKUP )
-	ResponseEntity<List<ReactOption>> getObserverLookup( Authentication authentication ) {
-		return getPilotLookup( authentication );
-	}
-
-	@PreAuthorize( "hasAuthority('USER')" )
 	@GetMapping( path = ApiPath.USER_PILOT_LOOKUP )
 	ResponseEntity<List<ReactOption>> getPilotLookup( Authentication authentication ) {
 		User user = getRequester( authentication );
 
-		List<User> users = new ArrayList<>( userServices.findAllGroupPeers( user ) );
+		List<User> users = new ArrayList<>( userServices.findAllAcceptedGroupPeers( user ) );
 		users.sort( null );
 		users.add( 0, user );
 		users.add( unlistedUser() );
 
 		return new ResponseEntity<>( users.stream().map( c -> new ReactOption( c.id().toString(), c.preferredName() ) ).toList(), HttpStatus.OK );
+	}
+
+	@PreAuthorize( "hasAuthority('USER')" )
+	@GetMapping( path = ApiPath.USER_OBSERVER_LOOKUP )
+	ResponseEntity<List<ReactOption>> getObserverLookup( Authentication authentication ) {
+		return getPilotLookup( authentication );
 	}
 
 	@PreAuthorize( "hasAuthority('USER')" )

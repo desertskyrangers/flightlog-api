@@ -6,7 +6,6 @@ import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.util.Text;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -115,6 +114,15 @@ public class UserEntity {
 		return user;
 	}
 
+	/**
+	 * This method is specifically built to avoid a stack overflow when converting
+	 * a user record from the {@link GroupEntity#toGroup(GroupEntity)} method.
+	 *
+	 * @param entity
+	 * @param groups
+	 * @param users
+	 * @return
+	 */
 	static User toUserFromGroup( UserEntity entity, Map<UUID, Group> groups, Map<UUID, User> users ) {
 		User user = users.get( entity.getId() );
 		if( user != null ) return user;

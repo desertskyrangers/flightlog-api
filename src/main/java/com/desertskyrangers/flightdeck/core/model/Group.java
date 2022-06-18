@@ -20,6 +20,10 @@ public class Group implements Comparable<Group> {
 
 	@EqualsAndHashCode.Exclude
 	@ToString.Exclude
+	Set<Member> members = Set.of();
+
+	@EqualsAndHashCode.Exclude
+	@ToString.Exclude
 	Set<User> users = Set.of();
 
 	@Override

@@ -1,5 +1,7 @@
 package com.desertskyrangers.flightdeck.core.service;
 
+import com.desertskyrangers.flightdeck.core.model.Member;
+import com.desertskyrangers.flightdeck.core.model.MemberStatus;
 import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.core.model.UserToken;
 import com.desertskyrangers.flightdeck.port.*;
@@ -119,8 +121,21 @@ public class UserService implements UserServices {
 	}
 
 	@Override
+	public Set<User> findAllAcceptedGroupPeers( User user ) {
+		return stateRetrieving
+			.findUser( user.id() )
+			.stream()
+			.flatMap( u -> u.groups().stream() )
+			.flatMap( g -> g.members().stream() )
+			.filter( m -> m.status() == MemberStatus.ACCEPTED || m.status() == MemberStatus.INVITED )
+			.map( Member::user )
+			.filter( u -> !Objects.equals( u, user ) )
+			.collect( Collectors.toSet() );
+	}
+
+	@Override
 	public Map<String, Object> getPreferences( User user ) {
-		Map<String,Object> preferences = stateRetrieving.findPreferences( user );
+		Map<String, Object> preferences = stateRetrieving.findPreferences( user );
 
 		preferences.put( "username", user.username() );
 
@@ -134,7 +149,7 @@ public class UserService implements UserServices {
 		return user;
 	}
 
-	private void updateDashboard( User user) {
+	private void updateDashboard( User user ) {
 		// Update private dashboards
 		dashboardServices.update( user );
 
