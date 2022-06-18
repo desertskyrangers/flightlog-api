@@ -112,8 +112,9 @@ public class FlightService implements FlightServices {
 
 	@Override
 	public Flight upsert( Flight flight ) {
+		Optional<Flight> prior = stateRetrieving.findFlight( flight.id() );
 		statePersisting.upsert( flight );
-		updateMetrics( flight );
+		updateMetrics( flight, prior );
 		return flight;
 	}
 
@@ -188,6 +189,13 @@ public class FlightService implements FlightServices {
 	}
 
 	private void updateMetrics( Flight flight ) {
+		updateMetrics( flight, Optional.empty() );
+	}
+
+	private void updateMetrics( Flight flight, Optional<Flight> prior ) {
+		// If the aircraft was changed, the old aircraft data also needs to be updated
+		prior.ifPresent( value -> aircraftServices.updateFlightData( value.aircraft() ) );
+
 		// Update aircraft flight data
 		aircraftServices.updateFlightData( flight.aircraft() );
 
