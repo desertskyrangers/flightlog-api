@@ -127,7 +127,7 @@ public class UserService implements UserServices {
 			.stream()
 			.flatMap( u -> u.groups().stream() )
 			.flatMap( g -> g.members().stream() )
-			.filter( m -> m.status() == MemberStatus.ACCEPTED || m.status() == MemberStatus.INVITED )
+			.filter( m -> m.status() != MemberStatus.REVOKED & m.status() != MemberStatus.REQUESTED )
 			.map( Member::user )
 			.filter( u -> !Objects.equals( u, user ) )
 			.collect( Collectors.toSet() );

@@ -26,15 +26,39 @@ public class UserServiceTest extends BaseTest {
 		// given
 		User john = statePersisting.upsert( createTestUser( "john", "john@example.com" ) );
 		User kara = statePersisting.upsert( createTestUser( "kara", "kara@example.com" ) );
+		User paul = statePersisting.upsert( createTestUser( "paul", "paul@example.com" ) );
+		User sara = statePersisting.upsert( createTestUser( "sara", "sara@example.com" ) );
 		Group group = statePersisting.upsert( createTestGroup( "Test Group", GroupType.GROUP ) );
 		statePersisting.upsert( new Member().user( john ).group( group ).status( MemberStatus.OWNER ) );
-		statePersisting.upsert( new Member().user( kara ).group( group ).status( MemberStatus.OWNER ) );
+		statePersisting.upsert( new Member().user( kara ).group( group ).status( MemberStatus.REQUESTED ) );
+		statePersisting.upsert( new Member().user( paul ).group( group ).status( MemberStatus.REVOKED ) );
+		statePersisting.upsert( new Member().user( sara ).group( group ).status( MemberStatus.ACCEPTED ) );
 
 		// when
 		Set<User> users = userServices.findAllGroupPeers( john );
 
 		// then
-		assertThat( users ).containsAll( Set.of( kara ) );
+		assertThat( users ).containsExactlyInAnyOrder( kara, paul, sara );
+	}
+
+	@Test
+	void testFindAllAcceptedGroupPeers() {
+		// given
+		User john = statePersisting.upsert( createTestUser( "john", "john@example.com" ) );
+		User kara = statePersisting.upsert( createTestUser( "kara", "kara@example.com" ) );
+		User paul = statePersisting.upsert( createTestUser( "paul", "paul@example.com" ) );
+		User sara = statePersisting.upsert( createTestUser( "sara", "sara@example.com" ) );
+		Group group = statePersisting.upsert( createTestGroup( "Test Group", GroupType.GROUP ) );
+		statePersisting.upsert( new Member().user( john ).group( group ).status( MemberStatus.OWNER ) );
+		statePersisting.upsert( new Member().user( kara ).group( group ).status( MemberStatus.REQUESTED ) );
+		statePersisting.upsert( new Member().user( paul ).group( group ).status( MemberStatus.REVOKED ) );
+		statePersisting.upsert( new Member().user( sara ).group( group ).status( MemberStatus.ACCEPTED ) );
+
+		// when
+		Set<User> users = userServices.findAllAcceptedGroupPeers( john );
+
+		// then
+		assertThat( users ).containsExactlyInAnyOrder( sara );
 	}
 
 }

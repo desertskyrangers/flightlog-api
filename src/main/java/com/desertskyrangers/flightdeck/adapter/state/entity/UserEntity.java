@@ -1,6 +1,7 @@
 package com.desertskyrangers.flightdeck.adapter.state.entity;
 
 import com.desertskyrangers.flightdeck.core.model.Group;
+import com.desertskyrangers.flightdeck.core.model.Member;
 import com.desertskyrangers.flightdeck.core.model.SmsCarrier;
 import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.util.Text;
@@ -107,9 +108,10 @@ public class UserEntity {
 
 		final Map<UUID, User> users = new HashMap<>();
 		final Map<UUID, Group> groups = new HashMap<>();
+		final Map<UUID, Member> members = new HashMap<>();
 		users.put( entity.getId(), user );
 
-		user.groups( entity.getGroups().stream().map( e -> GroupEntity.toGroupFromUser( e, users, groups ) ).collect( Collectors.toSet() ) );
+		user.groups( entity.getGroups().stream().map( e -> GroupEntity.toGroupFromRelated( e, groups, members, users ) ).collect( Collectors.toSet() ) );
 
 		return user;
 	}
@@ -123,13 +125,18 @@ public class UserEntity {
 	 * @param users
 	 * @return
 	 */
-	static User toUserFromGroup( UserEntity entity, Map<UUID, Group> groups, Map<UUID, User> users ) {
+	static User toUserFromRelated( UserEntity entity, Map<UUID, User> users, Map<UUID, Group> groups, Map<UUID, Member> members ) {
+		// If the user already exists, just return it
 		User user = users.get( entity.getId() );
 		if( user != null ) return user;
 
+		// Create the shallow version of the user and put it in the users map
 		user = toUserShallow( entity );
 		users.put( entity.getId(), user );
-		user.groups( entity.getGroups().stream().map( e -> GroupEntity.toGroupFromUser( e, users, groups ) ).collect( Collectors.toSet() ) );
+
+		// Link the user to related entities
+		user.groups( entity.getGroups().stream().map( e -> GroupEntity.toGroupFromRelated( e, groups, members, users ) ).collect( Collectors.toSet() ) );
+
 		return user;
 	}
 

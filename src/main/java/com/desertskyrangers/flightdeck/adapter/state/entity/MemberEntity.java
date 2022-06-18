@@ -3,10 +3,12 @@ package com.desertskyrangers.flightdeck.adapter.state.entity;
 import com.desertskyrangers.flightdeck.core.model.Group;
 import com.desertskyrangers.flightdeck.core.model.Member;
 import com.desertskyrangers.flightdeck.core.model.MemberStatus;
+import com.desertskyrangers.flightdeck.core.model.User;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -40,11 +42,16 @@ public class MemberEntity {
 	}
 
 	public static Member toMember( MemberEntity entity ) {
-		Member member = new Member();
-		member.id( entity.getId() );
-		member.user( UserEntity.toUser( entity.getUser() ) );
-		member.group( GroupEntity.toGroup( entity.getGroup() ) );
-		member.status( MemberStatus.valueOf( entity.getStatus().toUpperCase() ) );
+		Member member = toMemberShallow( entity );
+
+		final Map<UUID, Group> groups = new HashMap<>();
+		final Map<UUID, Member> members = new HashMap<>();
+		final Map<UUID, User> users = new HashMap<>();
+		members.put( entity.getId(), member );
+
+		member.group( GroupEntity.toGroupFromRelated( entity.getGroup(), groups, members, users ) );
+		member.user( UserEntity.toUserFromRelated( entity.getUser(), users, groups, members ) );
+
 		return member;
 	}
 
@@ -57,22 +64,26 @@ public class MemberEntity {
 	 * @param members
 	 * @return
 	 */
-	static Member toMemberFromGroup( MemberEntity entity, Map<UUID, Group> groups, Map<UUID, Member> members ) {
+	static Member toMemberFromRelated( MemberEntity entity, Map<UUID, Member> members, Map<UUID, Group> groups, Map<UUID, User> users ) {
+		// If the member already exists, just return it
 		Member member = members.get( entity.getId() );
 		if( member != null ) return member;
 
-		member = toMemberSkipGroup( entity );
+		// Create the shallow version of the member and put it in the members map
+		member = toMemberShallow( entity );
 		members.put( entity.getId(), member );
-		//member.groups( entity.getGroups().stream().map( e -> GroupEntity.toGroupFromUser( e, members, groups ) ).collect( Collectors.toSet() ) );
+
+		// Link the member to related entities
+		member.user( UserEntity.toUserFromRelated( entity.getUser(), users, groups, members ) );
+		member.group( GroupEntity.toGroupFromRelated( entity.getGroup(), groups, members, users ) );
+
 		return member;
 	}
 
-	private static Member toMemberSkipGroup( MemberEntity entity ) {
+	private static Member toMemberShallow( MemberEntity entity ) {
 		Member member = new Member();
 
 		member.id( entity.getId() );
-		member.user( UserEntity.toUser( entity.getUser() ) );
-		//member.group( GroupEntity.toGroup( entity.getGroup() ) );
 		member.status( MemberStatus.valueOf( entity.getStatus().toUpperCase() ) );
 
 		return member;

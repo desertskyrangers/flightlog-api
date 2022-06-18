@@ -74,20 +74,27 @@ public class GroupEntity {
 		final Map<UUID, Group> groups = new HashMap<>();
 		final Map<UUID, Member> members = new HashMap<>();
 		final Map<UUID, User> users = new HashMap<>();
+
 		groups.put( entity.getId(), group );
-		group.members( entity.getMemberships().stream().map( e -> MemberEntity.toMemberFromGroup( e, groups, members ) ).collect( Collectors.toSet() ) );
-		group.users( entity.getUsers().stream().map( e -> UserEntity.toUserFromGroup( e, groups, users ) ).collect( Collectors.toSet() ) );
+
+		group.members( entity.getMemberships().stream().map( e -> MemberEntity.toMemberFromRelated( e, members, groups, users ) ).collect( Collectors.toSet() ) );
+		group.users( entity.getUsers().stream().map( e -> UserEntity.toUserFromRelated( e, users, groups, members ) ).collect( Collectors.toSet() ) );
 
 		return group;
 	}
 
-	static Group toGroupFromUser( GroupEntity entity, Map<UUID, User> users, Map<UUID, Group> groups ) {
+	static Group toGroupFromRelated( GroupEntity entity, Map<UUID, Group> groups, Map<UUID, Member> members, Map<UUID, User> users ) {
+		// If the group already exists, just return it
 		Group group = groups.get( entity.getId() );
 		if( group != null ) return group;
 
+		// Create the shallow version of the group and put it in the groups map
 		group = toGroupShallow( entity );
 		groups.put( entity.getId(), group );
-		group.users( entity.getUsers().stream().map( e -> UserEntity.toUserFromGroup( e, groups, users ) ).collect( Collectors.toSet() ) );
+
+		// Link the group to related entities
+		group.members( entity.getMemberships().stream().map( e -> MemberEntity.toMemberFromRelated( e, members, groups, users ) ).collect( Collectors.toSet() ) );
+		group.users( entity.getUsers().stream().map( e -> UserEntity.toUserFromRelated( e, users, groups, members ) ).collect( Collectors.toSet() ) );
 		return group;
 	}
 
