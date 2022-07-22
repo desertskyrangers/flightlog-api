@@ -186,6 +186,7 @@ public class TableStructureTests {
 		expected.add( "firstname" );
 		expected.add( "lastname" );
 		expected.add( "preferredname" );
+		expected.add( "callsign" );
 		expected.add( "email" );
 		expected.add( "emailverified" );
 		expected.add( "smsnumber" );

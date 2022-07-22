@@ -34,6 +34,9 @@ public class UserEntity {
 	@Column( name = "preferredname" )
 	private String preferredName;
 
+	@Column( name = "callsign" )
+	private String callSign;
+
 	private String email;
 
 	@Column( name = "emailverified" )
@@ -148,6 +151,7 @@ public class UserEntity {
 		entity.setFirstName( user.firstName() );
 		entity.setLastName( user.lastName() );
 		entity.setPreferredName( user.preferredName() );
+		entity.setCallSign( user.callSign() );
 		entity.setEmail( user.email() );
 		entity.setEmailVerified( user.emailVerified() );
 		entity.setSmsNumber( user.smsNumber() );
@@ -166,6 +170,7 @@ public class UserEntity {
 		user.firstName( entity.getFirstName() );
 		user.lastName( entity.getLastName() );
 		user.preferredName( entity.getPreferredName() );
+		user.callSign( entity.getCallSign() );
 		user.email( entity.getEmail() );
 		user.emailVerified( entity.getEmailVerified() != null && entity.getEmailVerified() );
 		user.smsNumber( entity.getSmsNumber() );

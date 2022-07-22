@@ -23,6 +23,8 @@ public class User implements Comparable<User> {
 
 	private String preferredName;
 
+	private String callSign;
+
 	private String email;
 
 	private boolean emailVerified;
