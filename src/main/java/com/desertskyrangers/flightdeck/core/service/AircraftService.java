@@ -43,7 +43,13 @@ public class AircraftService implements AircraftServices {
 	}
 
 	public Aircraft upsert( Aircraft aircraft ) {
-		return statePersisting.upsert( updateFlightData( aircraft, false ) );
+		int flightCount = flightServices.getAircraftFlightCount( aircraft );
+		long flightTime = flightServices.getAircraftFlightTime( aircraft );
+
+		aircraft.flightCount( flightCount );
+		aircraft.flightTime( flightTime );
+
+		return statePersisting.upsert( aircraft );
 	}
 
 	public void remove( Aircraft aircraft ) {
@@ -51,22 +57,8 @@ public class AircraftService implements AircraftServices {
 	}
 
 	public Aircraft updateFlightData( Aircraft aircraft ) {
-		return updateFlightData( aircraft, true );
-	}
-
-	private Aircraft updateFlightData( Aircraft aircraft, boolean callUpsert ) {
 		Optional<Aircraft> optional = stateRetrieving.findAircraft( aircraft.id() );
-		if( optional.isEmpty() ) return aircraft;
-
-		int flightCount = flightServices.getAircraftFlightCount( aircraft );
-		long flightTime = flightServices.getAircraftFlightTime( aircraft );
-
-		aircraft = optional.get();
-		aircraft.flightCount( flightCount );
-		aircraft.flightTime( flightTime );
-
-		if( callUpsert ) upsert( aircraft );
-
+		optional.ifPresent( this::upsert );
 		return aircraft;
 	}
 
