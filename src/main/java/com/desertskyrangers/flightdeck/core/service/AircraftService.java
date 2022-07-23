@@ -43,7 +43,9 @@ public class AircraftService implements AircraftServices {
 	}
 
 	public Aircraft upsert( Aircraft aircraft ) {
-		return statePersisting.upsert( aircraft );
+		Aircraft updated = statePersisting.upsert( aircraft );
+		updateFlightData( updated );
+		return updated;
 	}
 
 	public void remove( Aircraft aircraft ) {
