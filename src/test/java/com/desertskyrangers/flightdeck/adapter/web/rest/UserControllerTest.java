@@ -144,11 +144,11 @@ public class UserControllerTest extends BaseControllerTest {
 		statePersisting.upsert( bianca );
 
 		// when
-		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_AIRCRAFT + "/0" ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
+		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_AIRCRAFT ).param( "pg", "0" ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
 
 		// then
 		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
-		List<?> aircraftList = (List<?>)map.get( "aircraft" );
+		List<?> aircraftList = (List<?>)((Map<?, ?>)map.get( "page" )).get( "content" );
 		Map<?, ?> messagesMap = (Map<?, ?>)map.get( "messages" );
 
 		assertThat( aircraftList.size() ).isEqualTo( 2 );

@@ -2,6 +2,7 @@ package com.desertskyrangers.flightdeck.adapter.web.model;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -9,7 +10,7 @@ import java.util.List;
 @Accessors( chain = true )
 public class ReactAircraftPageResponse {
 
-	private List<ReactAircraft> aircraft;
+	private Page<ReactAircraft> aircraft;
 
 	private List<String> messages;
 

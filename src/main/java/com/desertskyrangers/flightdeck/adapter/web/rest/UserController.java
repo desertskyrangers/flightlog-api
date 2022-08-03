@@ -1,6 +1,5 @@
 package com.desertskyrangers.flightdeck.adapter.web.rest;
 
-import com.desertskyrangers.flightdeck.adapter.state.entity.AircraftEntity;
 import com.desertskyrangers.flightdeck.adapter.web.ApiPath;
 import com.desertskyrangers.flightdeck.adapter.web.model.*;
 import com.desertskyrangers.flightdeck.core.exception.UnauthorizedException;
@@ -171,10 +170,12 @@ public class UserController extends BaseController {
 
 	@PreAuthorize( "hasAuthority('USER')" )
 	@GetMapping( path = ApiPath.USER_AIRCRAFT )
-	ResponseEntity<ReactAircraftPageResponse> getAircraftPage( Authentication authentication, @RequestParam("pg") int page, @RequestParam("pz") int size ) {
+	ResponseEntity<ReactPageResponse<?>> getAircraftPage(
+		Authentication authentication,
+		@RequestParam( value = "pg", defaultValue = "0" ) int page,
+		@RequestParam( value = "pz", defaultValue = "20" ) int size
+	) {
 		List<String> messages = new ArrayList<>();
-
-		// TODO Make page and pageSize query parameters (pz and pg)
 
 		// boolean airworthy only?
 		// boolean not-airworthy only?
@@ -184,14 +185,15 @@ public class UserController extends BaseController {
 			User user = getRequester( authentication );
 			Page<Aircraft> aircraftPage = aircraftServices.findPageByOwner( user.id(), page, size );
 			List<ReactAircraft> aircraftList = aircraftPage.stream().map( ReactAircraft::from ).toList();
+			Page<ReactAircraft> reactAircraftPage = new PageImpl<>( aircraftList, aircraftPage.getPageable(), aircraftList.size() );
 
-			return new ResponseEntity<>( new ReactAircraftPageResponse().setAircraft( aircraftList ), HttpStatus.OK );
+			return new ResponseEntity<>( ReactPageResponse.of( reactAircraftPage ), HttpStatus.OK );
 		} catch( Exception exception ) {
 			log.error( "Error getting aircraft page", exception );
 			messages.add( exception.getMessage() );
 		}
 
-		return new ResponseEntity<>( new ReactAircraftPageResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
+		return new ResponseEntity<>( ReactPageResponse.of( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
 	}
 
 	@PreAuthorize( "hasAuthority('USER')" )
@@ -336,7 +338,7 @@ public class UserController extends BaseController {
 
 			return new ResponseEntity<>( new ReactMembershipPageResponse().setMemberships( getMemberships( user ) ), HttpStatus.OK );
 		} catch( UnauthorizedException exception ) {
-			return new ResponseEntity<>( new ReactMembershipPageResponse().setMessages( List.of("Unauthorized") ), HttpStatus.UNAUTHORIZED );
+			return new ResponseEntity<>( new ReactMembershipPageResponse().setMessages( List.of( "Unauthorized" ) ), HttpStatus.UNAUTHORIZED );
 		} catch( Exception exception ) {
 			log.error( "Error requesting group membership", exception );
 			messages.add( exception.getMessage() );
