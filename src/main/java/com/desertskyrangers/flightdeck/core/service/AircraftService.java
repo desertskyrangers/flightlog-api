@@ -6,6 +6,7 @@ import com.desertskyrangers.flightdeck.port.FlightServices;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
 import com.desertskyrangers.flightdeck.port.StateRetrieving;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,11 +35,15 @@ public class AircraftService implements AircraftServices {
 		return stateRetrieving.findAircraft( id );
 	}
 
-	public List<Aircraft> findByOwner( UUID owner ) {
+	public List<Aircraft> findAllByOwner( UUID owner ) {
 		return stateRetrieving.findAircraftByOwner( owner );
 	}
 
-	public List<Aircraft> findByOwnerAndStatus( UUID owner, AircraftStatus status ) {
+	public Page<Aircraft> findPageByOwner( UUID owner, int page, int size ) {
+		return stateRetrieving.findAircraftPageByOwner( owner, page, size );
+	}
+
+	public List<Aircraft> findAllByOwnerAndStatus( UUID owner, AircraftStatus status ) {
 		return stateRetrieving.findAircraftByOwnerAndStatus( owner, status );
 	}
 

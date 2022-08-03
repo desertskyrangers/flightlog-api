@@ -1,6 +1,7 @@
 package com.desertskyrangers.flightdeck.port;
 
 import com.desertskyrangers.flightdeck.core.model.*;
+import org.springframework.data.domain.Page;
 
 import java.util.*;
 
@@ -9,6 +10,8 @@ public interface StateRetrieving {
 	Optional<Aircraft> findAircraft( UUID id );
 
 	List<Aircraft> findAircraftByOwner( UUID id );
+
+	Page<Aircraft> findAircraftPageByOwner( UUID owner, int page, int size );
 
 	List<Aircraft> findAircraftByOwnerAndStatus( UUID id, AircraftStatus status );
 

@@ -38,9 +38,9 @@ public class CommonDashboardService<T extends Dashboard> {
 		List<Aircraft> aircraft;
 		// FIXME What if the dashboard is public???
 		if( "true".equals( String.valueOf( preferences.get( PreferenceKey.SHOW_ALL_AIRCRAFT ) ) ) ) {
-			aircraft = getAircraftServices().findByOwner( user.id() );
+			aircraft = getAircraftServices().findAllByOwner( user.id() );
 		} else {
-			aircraft = getAircraftServices().findByOwnerAndStatus( user.id(), AircraftStatus.AIRWORTHY );
+			aircraft = getAircraftServices().findAllByOwnerAndStatus( user.id(), AircraftStatus.AIRWORTHY );
 		}
 
 		List<AircraftStats> aircraftStats = aircraft.stream().map( a -> {

@@ -6,8 +6,7 @@ import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.StateRetrieving;
 import com.desertskyrangers.flightdeck.util.Json;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -74,6 +73,11 @@ public class StateRetrievingService implements StateRetrieving {
 	@Override
 	public List<Aircraft> findAircraftByOwner( UUID owner ) {
 		return convertAircraft( aircraftRepo.findAircraftByOwnerOrderByName( owner ) );
+	}
+
+	@Override
+	public Page<Aircraft> findAircraftPageByOwner( UUID owner, int page, int size ) {
+		return convertAircraftPage( aircraftRepo.findAircraftByOwnerOrderByName( owner, Pageable.ofSize( size ).withPage( page ) ) );
 	}
 
 	@Override
@@ -146,8 +150,13 @@ public class StateRetrievingService implements StateRetrieving {
 		return convertFlights( flightRepo.findAll() );
 	}
 
-	private List<Aircraft> convertAircraft( List<AircraftEntity> entities ) {
-		return entities.stream().map( AircraftEntity::toAircraft ).toList();
+	private List<Aircraft> convertAircraft( Iterable<AircraftEntity> entities ) {
+		return StreamSupport.stream(entities.spliterator(), false).map( AircraftEntity::toAircraft ).toList();
+	}
+
+	private Page<Aircraft> convertAircraftPage( Page<AircraftEntity> entities ) {
+		List<Aircraft> aircraft = entities.stream().map( AircraftEntity::toAircraft ).toList();
+		return new PageImpl<>( aircraft, entities.getPageable(), aircraft.size() );
 	}
 
 	private List<Battery> convertBatteries( List<BatteryEntity> entities ) {

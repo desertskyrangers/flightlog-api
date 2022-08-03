@@ -1,5 +1,6 @@
 package com.desertskyrangers.flightdeck.adapter.web.rest;
 
+import com.desertskyrangers.flightdeck.adapter.state.entity.AircraftEntity;
 import com.desertskyrangers.flightdeck.adapter.web.ApiPath;
 import com.desertskyrangers.flightdeck.adapter.web.model.*;
 import com.desertskyrangers.flightdeck.core.exception.UnauthorizedException;
@@ -7,6 +8,8 @@ import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.*;
 import com.desertskyrangers.flightdeck.util.Uuid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -167,14 +170,22 @@ public class UserController extends BaseController {
 	}
 
 	@PreAuthorize( "hasAuthority('USER')" )
-	@GetMapping( path = ApiPath.USER_AIRCRAFT + "/{page}" )
-	ResponseEntity<ReactAircraftPageResponse> getAircraftPage( Authentication authentication, @PathVariable int page ) {
+	@GetMapping( path = ApiPath.USER_AIRCRAFT )
+	ResponseEntity<ReactAircraftPageResponse> getAircraftPage( Authentication authentication, @RequestParam("pg") int page, @RequestParam("pz") int size ) {
 		List<String> messages = new ArrayList<>();
+
+		// TODO Make page and pageSize query parameters (pz and pg)
+
+		// boolean airworthy only?
+		// boolean not-airworthy only?
+		// string state filter?
 
 		try {
 			User user = getRequester( authentication );
-			List<ReactAircraft> aircraftPage = aircraftServices.findByOwner( user.id() ).stream().map( ReactAircraft::from ).toList();
-			return new ResponseEntity<>( new ReactAircraftPageResponse().setAircraft( aircraftPage ), HttpStatus.OK );
+			Page<Aircraft> aircraftPage = aircraftServices.findPageByOwner( user.id(), page, size );
+			List<ReactAircraft> aircraftList = aircraftPage.stream().map( ReactAircraft::from ).toList();
+
+			return new ResponseEntity<>( new ReactAircraftPageResponse().setAircraft( aircraftList ), HttpStatus.OK );
 		} catch( Exception exception ) {
 			log.error( "Error getting aircraft page", exception );
 			messages.add( exception.getMessage() );
@@ -250,11 +261,17 @@ public class UserController extends BaseController {
 		return new ResponseEntity<>( new ReactMembershipPageResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
 	}
 
+	/**
+	 * This retrieves the list of aircraft to show in the flight aircraft drop-down
+	 *
+	 * @param authentication The user authentication
+	 * @return The list of airworthy aircraft to show in the flight aircraft drop-down
+	 */
 	@PreAuthorize( "hasAuthority('USER')" )
 	@GetMapping( path = ApiPath.USER_AIRCRAFT_LOOKUP )
 	ResponseEntity<List<ReactOption>> getAircraftLookup( Authentication authentication ) {
 		User user = getRequester( authentication );
-		List<Aircraft> objects = aircraftServices.findByOwner( user.id() );
+		List<Aircraft> objects = aircraftServices.findAllByOwner( user.id() );
 		return new ResponseEntity<>( objects.stream().filter( a -> a.status().isAirworthy() ).map( c -> new ReactOption( c.id().toString(), c.name() ) ).toList(), HttpStatus.OK );
 	}
 
