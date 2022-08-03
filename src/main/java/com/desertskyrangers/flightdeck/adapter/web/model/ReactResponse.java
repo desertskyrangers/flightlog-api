@@ -9,8 +9,18 @@ import java.util.List;
 @Accessors( chain = true )
 public class ReactResponse<T> {
 
-	T data;
+	private T data;
 
-	List<String> messages;
+	private List<String> messages;
+
+	private ReactResponse() {}
+
+	public static <S> ReactResponse<S> of( S data ) {
+		return new ReactResponse<S>().setData( data );
+	}
+
+	public static <S> ReactResponse<S> messages( List<String> messages ) {
+		return new ReactResponse<S>().setMessages( messages );
+	}
 
 }

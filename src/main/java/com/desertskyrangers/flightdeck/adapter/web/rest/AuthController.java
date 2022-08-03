@@ -48,20 +48,20 @@ public class AuthController {
 	}
 
 	@PostMapping( path = ApiPath.AUTH_RECOVER, consumes = "application/json", produces = "application/json" )
-	ResponseEntity<ReactRecoverResponse> register( @RequestBody ReactRecoverRequest request ) {
+	ResponseEntity<?> register( @RequestBody ReactRecoverRequest request ) {
 		List<String> messages = new ArrayList<>();
 		if( Text.isBlank( request.getUsername() ) ) messages.add( "Username or email required" );
 
-		if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactRecoverResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
+		if( !messages.isEmpty() ) return new ResponseEntity<>( ReactResponse.messages( messages ), HttpStatus.BAD_REQUEST );
 
 		try {
 			messages.addAll( authServices.requestUserRecover( request.getUsername() ) );
 		} catch( Exception exception ) {
 			log.error( "Error during account sign up, username=" + request.getUsername(), exception );
-			return new ResponseEntity<>( new ReactRecoverResponse().setMessages( List.of( "There was an error recovering the account" ) ), HttpStatus.INTERNAL_SERVER_ERROR );
+			return new ResponseEntity<>( ReactResponse.messages( List.of( "There was an error recovering the account" ) ), HttpStatus.INTERNAL_SERVER_ERROR );
 		}
 
-		return new ResponseEntity<>( new ReactRecoverResponse().setMessages( messages ), HttpStatus.OK );
+		return new ResponseEntity<>( ReactResponse.messages( messages ), HttpStatus.OK );
 	}
 
 	@PostMapping( path = ApiPath.AUTH_RESET, consumes = "application/json", produces = "application/json" )

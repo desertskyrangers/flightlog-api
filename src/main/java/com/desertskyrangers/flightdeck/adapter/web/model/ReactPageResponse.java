@@ -14,6 +14,8 @@ public class ReactPageResponse<T> {
 
 	private List<String> messages;
 
+	private ReactPageResponse() {}
+
 	public static <S> ReactPageResponse<S> of( Page<S> page ) {
 		return new ReactPageResponse<S>().setPage( page );
 	}
