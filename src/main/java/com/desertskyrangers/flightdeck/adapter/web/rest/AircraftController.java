@@ -2,7 +2,6 @@ package com.desertskyrangers.flightdeck.adapter.web.rest;
 
 import com.desertskyrangers.flightdeck.adapter.web.ApiPath;
 import com.desertskyrangers.flightdeck.adapter.web.model.ReactAircraft;
-import com.desertskyrangers.flightdeck.adapter.web.model.ReactAircraftResponse;
 import com.desertskyrangers.flightdeck.adapter.web.model.ReactResponse;
 import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.AircraftServices;
