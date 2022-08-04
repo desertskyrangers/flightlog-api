@@ -3,6 +3,7 @@ package com.desertskyrangers.flightdeck.adapter.web.rest;
 import com.desertskyrangers.flightdeck.adapter.web.ApiPath;
 import com.desertskyrangers.flightdeck.adapter.web.model.ReactAircraft;
 import com.desertskyrangers.flightdeck.adapter.web.model.ReactAircraftResponse;
+import com.desertskyrangers.flightdeck.adapter.web.model.ReactResponse;
 import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.AircraftServices;
 import com.desertskyrangers.flightdeck.port.UserServices;
@@ -30,13 +31,13 @@ public class AircraftController {
 	}
 
 	@GetMapping( path = ApiPath.AIRCRAFT + "/{id}" )
-	ResponseEntity<ReactAircraftResponse> getAircraft( @PathVariable UUID id ) {
+	ResponseEntity<ReactResponse<ReactAircraft>> getAircraft( @PathVariable UUID id ) {
 		log.info( "Get aircraft" );
 		List<String> messages = new ArrayList<>();
 		try {
 			Optional<Aircraft> optional = aircraftServices.find( id );
 			if( optional.isPresent() ) {
-				return new ResponseEntity<>( new ReactAircraftResponse().setAircraft( ReactAircraft.from( optional.get() ) ), HttpStatus.OK );
+				return new ResponseEntity<>( ReactResponse.of( ReactAircraft.from( optional.get() ) ), HttpStatus.OK );
 			} else {
 				messages.add( "Aircraft id not found: " + id );
 			}
@@ -45,11 +46,11 @@ public class AircraftController {
 			messages.add( exception.getMessage() );
 		}
 
-		return new ResponseEntity<>( new ReactAircraftResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
+		return new ResponseEntity<>( ReactResponse.messages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
 	}
 
 	@PostMapping( path = ApiPath.AIRCRAFT )
-	ResponseEntity<ReactAircraftResponse> newAircraft( Authentication authentication, @RequestBody ReactAircraft request ) {
+	ResponseEntity<ReactResponse<ReactAircraft>> newAircraft( Authentication authentication, @RequestBody ReactAircraft request ) {
 		String name = request.getName();
 		String type = request.getType();
 		String status = request.getStatus();
@@ -60,7 +61,7 @@ public class AircraftController {
 		if( Text.isBlank( status ) ) messages.add( "Status required" );
 		if( AircraftType.isNotValid( type ) ) messages.add( "Invalid type: " + type );
 		if( AircraftStatus.isNotValid( status ) ) messages.add( "Invalid status: " + status );
-		if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactAircraftResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
+		if( !messages.isEmpty() ) return new ResponseEntity<>( ReactResponse.messages( messages ), HttpStatus.BAD_REQUEST );
 
 		try {
 			String username = authentication.getName();
@@ -72,17 +73,17 @@ public class AircraftController {
 			request.setOwner( user.id().toString() );
 			request.setOwnerType( OwnerType.USER.name().toLowerCase() );
 			aircraftServices.upsert( ReactAircraft.toAircraft( request ) );
-			return new ResponseEntity<>( new ReactAircraftResponse().setAircraft( request ), HttpStatus.OK );
+			return new ResponseEntity<>( ReactResponse.of( request ), HttpStatus.OK );
 		} catch( Exception exception ) {
 			log.error( "Error creating new aircraft", exception );
 			messages.add( exception.getMessage() );
 		}
 
-		return new ResponseEntity<>( new ReactAircraftResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
+		return new ResponseEntity<>( ReactResponse.messages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
 	}
 
 	@PutMapping( path = ApiPath.AIRCRAFT )
-	ResponseEntity<ReactAircraftResponse> updateAircraft( Authentication authentication, @RequestBody ReactAircraft request ) {
+	ResponseEntity<ReactResponse<ReactAircraft>> updateAircraft( Authentication authentication, @RequestBody ReactAircraft request ) {
 		log.info( "Update aircraft" );
 		String id = request.getId();
 		String name = request.getName();
@@ -96,7 +97,7 @@ public class AircraftController {
 		if( Text.isBlank( status ) ) messages.add( "Status required" );
 		if( AircraftType.isNotValid( type ) ) messages.add( "Invalid type: " + type );
 		if( AircraftStatus.isNotValid( status ) ) messages.add( "Invalid status: " + status );
-		if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactAircraftResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
+		if( !messages.isEmpty() ) return new ResponseEntity<>( ReactResponse.messages( messages ), HttpStatus.BAD_REQUEST );
 
 		try {
 			// Default to user ownership for now
@@ -107,17 +108,17 @@ public class AircraftController {
 			request.setOwner( user.id().toString() );
 			request.setOwnerType( OwnerType.USER.name().toLowerCase() );
 			aircraftServices.upsert( ReactAircraft.toAircraft( request ) );
-			return new ResponseEntity<>( new ReactAircraftResponse().setAircraft( request ), HttpStatus.OK );
+			return new ResponseEntity<>( ReactResponse.of( request ), HttpStatus.OK );
 		} catch( Exception exception ) {
 			log.error( "Error updating aircraft", exception );
 			messages.add( exception.getMessage() );
 		}
 
-		return new ResponseEntity<>( new ReactAircraftResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
+		return new ResponseEntity<>( ReactResponse.messages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
 	}
 
 	@DeleteMapping( path = ApiPath.AIRCRAFT )
-	ResponseEntity<ReactAircraftResponse> deleteAircraft( @RequestBody Map<String, Object> aircraft ) {
+	ResponseEntity<ReactResponse<ReactAircraft>> deleteAircraft( @RequestBody Map<String, Object> aircraft ) {
 		UUID id = UUID.fromString( String.valueOf( aircraft.get( "id" ) ) );
 		log.info( "Delete aircraft" );
 		List<String> messages = new ArrayList<>();
@@ -126,7 +127,7 @@ public class AircraftController {
 			if( optional.isPresent() ) {
 				Aircraft deletedAircraft = optional.get();
 				aircraftServices.remove( deletedAircraft );
-				return new ResponseEntity<>( new ReactAircraftResponse().setAircraft( ReactAircraft.from( deletedAircraft ) ), HttpStatus.OK );
+				return new ResponseEntity<>( ReactResponse.of( ReactAircraft.from( deletedAircraft ) ), HttpStatus.OK );
 			} else {
 				messages.add( "Aircraft id not found: " + id );
 			}
@@ -135,7 +136,7 @@ public class AircraftController {
 			messages.add( exception.getMessage() );
 		}
 
-		return new ResponseEntity<>( new ReactAircraftResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
+		return new ResponseEntity<>( ReactResponse.messages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
 	}
 
 }

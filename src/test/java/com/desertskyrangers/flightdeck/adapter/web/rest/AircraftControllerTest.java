@@ -36,7 +36,7 @@ public class AircraftControllerTest extends BaseControllerTest {
 
 		// then
 		Map<?, ?> map = Json.asMap( result.getResponse().getContentAsString() );
-		Map<?, ?> resultAircraft = (Map<?, ?>)map.get( "aircraft" );
+		Map<?, ?> resultAircraft = (Map<?, ?>)map.get( "data" );
 		assertThat( resultAircraft.get( "name" ) ).isEqualTo( "Aftyn" );
 	}
 
@@ -65,8 +65,14 @@ public class AircraftControllerTest extends BaseControllerTest {
 	@Test
 	void testUpdateAircraftWithSuccess() throws Exception {
 		ReactAircraft aircraft = createTestReactAircraft();
+		aircraft.setName( "Afton" );
 
-		this.mockMvc.perform( put( ApiPath.AIRCRAFT ).content( Json.stringify( aircraft ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
+		MvcResult result = this.mockMvc.perform( put( ApiPath.AIRCRAFT ).content( Json.stringify( aircraft ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
+
+		// then
+		Map<?, ?> map = Json.asMap( result.getResponse().getContentAsString() );
+		Map<?, ?> resultAircraft = (Map<?, ?>)map.get( "data" );
+		assertThat( resultAircraft.get( "name" ) ).isEqualTo( "Afton" );
 	}
 
 	@Test
@@ -91,7 +97,7 @@ public class AircraftControllerTest extends BaseControllerTest {
 
 		// then
 		Map<?, ?> map = Json.asMap( result.getResponse().getContentAsString() );
-		Map<?, ?> resultAircraft = (Map<?, ?>)map.get( "aircraft" );
+		Map<?, ?> resultAircraft = (Map<?, ?>)map.get( "data" );
 		assertThat( resultAircraft.get( "name" ) ).isEqualTo( "Aftyn" );
 	}
 
