@@ -8,7 +8,6 @@ import com.desertskyrangers.flightdeck.port.*;
 import com.desertskyrangers.flightdeck.util.Uuid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -181,11 +180,8 @@ public class UserController extends BaseController {
 
 		try {
 			User user = getRequester( authentication );
-			Page<Aircraft> aircraftPage = aircraftServices.findPageByOwner( user.id(), page, size );
-			List<ReactAircraft> aircraftList = aircraftPage.stream().map( ReactAircraft::from ).toList();
-			Page<ReactAircraft> reactAircraftPage = new PageImpl<>( aircraftList, aircraftPage.getPageable(), aircraftList.size() );
-
-			return new ResponseEntity<>( ReactPageResponse.of( reactAircraftPage ), HttpStatus.OK );
+			Page<ReactAircraft> aircraftPage = aircraftServices.findPageByOwner( user.id(), page, size ).map( ReactAircraft::from );
+			return new ResponseEntity<>( ReactPageResponse.of( aircraftPage ), HttpStatus.OK );
 		} catch( Exception exception ) {
 			log.error( "Error getting aircraft page", exception );
 			messages.add( exception.getMessage() );
@@ -203,11 +199,8 @@ public class UserController extends BaseController {
 
 		try {
 			User user = getRequester( authentication );
-			Page<Battery> batteryPage = batteryServices.findPageByOwner( user.id(), page, size );
-			List<ReactBattery> batteryList = batteryPage.stream().map( ReactBattery::from ).toList();
-			Page<ReactBattery> reactBatteryPage = new PageImpl<>( batteryList, batteryPage.getPageable(), batteryList.size() );
-
-			return new ResponseEntity<>( ReactPageResponse.of( reactBatteryPage ), HttpStatus.OK );
+			Page<ReactBattery> batteryPage = batteryServices.findPageByOwner( user.id(), page, size ).map(ReactBattery::from);
+			return new ResponseEntity<>( ReactPageResponse.of( batteryPage ), HttpStatus.OK );
 		} catch( Exception exception ) {
 			log.error( "Error getting battery page", exception );
 			messages.add( exception.getMessage() );

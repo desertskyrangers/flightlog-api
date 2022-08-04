@@ -176,7 +176,7 @@ public class UserControllerTest extends BaseControllerTest {
 		List<?> aircraftList = (List<?>)((Map<?, ?>)map.get( "page" )).get( "content" );
 		Map<?, ?> messagesMap = (Map<?, ?>)map.get( "messages" );
 
-		assertThat( aircraftList.size() ).isEqualTo( 1);
+		assertThat( aircraftList.size() ).isEqualTo( 1 );
 		assertThat( messagesMap ).isNull();
 
 		Map<?, ?> aircraft0 = (Map<?, ?>)aircraftList.get( 0 );
@@ -217,15 +217,20 @@ public class UserControllerTest extends BaseControllerTest {
 		statePersisting.upsert( b );
 
 		// when
-		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_BATTERY ).param( "pg", "0" ).param("pz","1").with( jwt() ) ).andExpect( status().isOk() ).andReturn();
+		MvcResult result0 = this.mockMvc.perform( get( ApiPath.USER_BATTERY ).param( "pg", "0" ).param( "pz", "1" ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
+		MvcResult result1 = this.mockMvc.perform( get( ApiPath.USER_BATTERY ).param( "pg", "1" ).param( "pz", "1" ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
 
 		// then
-		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
-		List<?> batteryList = (List<?>)((Map<?, ?>)map.get( "page" )).get( "content" );
+		Map<String, Object> map = Json.asMap( result0.getResponse().getContentAsString() );
+		Map<?, ?> page = ((Map<?, ?>)map.get( "page" ));
+		List<?> batteryList = (List<?>)page.get( "content" );
 		Map<?, ?> messagesMap = (Map<?, ?>)map.get( "messages" );
+
+		int totalPages = Integer.parseInt( String.valueOf( page.get( "totalPages" ) ) );
 
 		assertThat( batteryList.size() ).isEqualTo( 1 );
 		assertThat( messagesMap ).isNull();
+		assertThat( totalPages ).isEqualTo( 2 );
 
 		Map<?, ?> battery0 = (Map<?, ?>)batteryList.get( 0 );
 		assertThat( battery0.get( "name" ) ).isEqualTo( "A" );
@@ -258,6 +263,37 @@ public class UserControllerTest extends BaseControllerTest {
 		Map<?, ?> flight1 = (Map<?, ?>)flightList.get( 1 );
 		assertThat( flight0.get( "aircraft" ) ).isEqualTo( aftyn.id().toString() );
 		assertThat( flight1.get( "aircraft" ) ).isEqualTo( aftyn.id().toString() );
+	}
+
+	@Test
+	void testGetFlightPageWithSize() throws Exception {
+		// given
+		Aircraft aftyn = new Aircraft().name( "AFTYN" ).type( AircraftType.FIXEDWING ).status( AircraftStatus.DESTROYED ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
+		Battery batteryA = new Battery().name( "A" ).status( BatteryStatus.NEW ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
+		statePersisting.upsert( aftyn );
+		statePersisting.upsert( batteryA );
+		Flight flightA = new Flight().pilot( getMockUser() ).aircraft( aftyn ).batteries( Set.of( batteryA ) );
+		Flight flightB = new Flight().pilot( getMockUser() ).aircraft( aftyn ).batteries( Set.of( batteryA ) );
+		statePersisting.upsert( flightA );
+		statePersisting.upsert( flightB );
+
+		// when
+		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_FLIGHT ).param( "pg", "0" ).param( "pz", "1" ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
+
+		// then
+		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
+		Map<?, ?> page = ((Map<?, ?>)map.get( "page" ));
+		List<?> flightList = (List<?>)page.get( "content" );
+		Map<?, ?> messagesMap = (Map<?, ?>)map.get( "messages" );
+
+		int totalPages = Integer.parseInt( String.valueOf( page.get( "totalPages" ) ) );
+
+		assertThat( flightList.size() ).isEqualTo( 1 );
+		assertThat( messagesMap ).isNull();
+		//assertThat( totalPages ).isEqualTo( 2 );
+
+		Map<?, ?> flight0 = (Map<?, ?>)flightList.get( 0 );
+		assertThat( flight0.get( "aircraft" ) ).isEqualTo( aftyn.id().toString() );
 	}
 
 	@Test

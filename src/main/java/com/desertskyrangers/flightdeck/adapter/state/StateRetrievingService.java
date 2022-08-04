@@ -171,8 +171,8 @@ public class StateRetrievingService implements StateRetrieving {
 		return StreamSupport.stream( entities.spliterator(), false ).map( AircraftEntity::toAircraft ).toList();
 	}
 
-	private List<Battery> convertBatteries( List<BatteryEntity> entities ) {
-		return entities.stream().map( BatteryEntity::toBattery ).toList();
+	private List<Battery> convertBatteries( Iterable<BatteryEntity> entities ) {
+		return StreamSupport.stream( entities.spliterator(), false ).map( BatteryEntity::toBattery ).toList();
 	}
 
 	private List<Flight> convertFlights( List<FlightEntity> entities ) {
