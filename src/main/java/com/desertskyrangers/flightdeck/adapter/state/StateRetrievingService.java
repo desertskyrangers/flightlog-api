@@ -77,7 +77,7 @@ public class StateRetrievingService implements StateRetrieving {
 
 	@Override
 	public Page<Aircraft> findAircraftPageByOwner( UUID owner, int page, int size ) {
-		return convertAircraftPage( aircraftRepo.findAircraftByOwnerOrderByName( owner, Pageable.ofSize( size ).withPage( page ) ) );
+		return aircraftRepo.findAircraftByOwner( owner, PageRequest.of( page, size, Sort.Direction.ASC, "name" ) ).map( AircraftEntity::toAircraft );
 	}
 
 	@Override
@@ -101,6 +101,11 @@ public class StateRetrievingService implements StateRetrieving {
 	}
 
 	@Override
+	public Page<Battery> findBatteriesPageByOwner( UUID owner, int page, int size ) {
+		return batteryRepo.findBatteryEntitiesByOwnerOrderByName( owner, PageRequest.of( page, size ) ).map( BatteryEntity::toBattery );
+	}
+
+	@Override
 	public List<Battery> findAllBatteries() {
 		return convertBatteries( batteryRepo.findAll() );
 	}
@@ -116,6 +121,10 @@ public class StateRetrievingService implements StateRetrieving {
 	}
 
 	// Pilot
+	@Override
+	public Page<Flight> findFlightsPageByPilot( UUID id, int page, int size ) {
+		return flightRepo.findFlightEntitiesByPilot_IdOrderByTimestampDesc( id, PageRequest.of( page, size ) ).map( FlightEntity::toFlight );
+	}
 
 	public List<Flight> findFlightsByPilotAndTimestampAfter( UUID id, long timestamp ) {
 		return convertFlights( flightRepo.findFlightEntitiesByPilotIdAndTimestampAfterOrderByTimestampDesc( id, timestamp ) );
@@ -126,6 +135,10 @@ public class StateRetrievingService implements StateRetrieving {
 	}
 
 	// Observer
+	@Override
+	public Page<Flight> findFlightsPageByObserver( UUID id, int page, int size ) {
+		return flightRepo.findFlightEntitiesByObserver_IdOrderByTimestampDesc( id, PageRequest.of( page, size ) ).map( FlightEntity::toFlight );
+	}
 
 	public List<Flight> findFlightsByObserverAndTimestampAfter( UUID id, long timestamp ) {
 		return convertFlights( flightRepo.findFlightEntitiesByObserverIdAndTimestampAfterOrderByTimestampDesc( id, timestamp ) );
@@ -136,6 +149,10 @@ public class StateRetrievingService implements StateRetrieving {
 	}
 
 	// Owner
+	@Override
+	public Page<Flight> findFlightsPageByOwner( UUID id, int page, int size ) {
+		return flightRepo.findFlightEntitiesByAircraft_IdOrderByTimestampDesc( id, PageRequest.of( page, size ) ).map( FlightEntity::toFlight );
+	}
 
 	public List<Flight> findFlightsByOwnerAndTimestampAfter( UUID id, long timestamp ) {
 		return convertFlights( flightRepo.findFlightEntitiesByAircraft_OwnerAndTimestampAfterOrderByTimestampDesc( id, timestamp ) );
@@ -151,12 +168,7 @@ public class StateRetrievingService implements StateRetrieving {
 	}
 
 	private List<Aircraft> convertAircraft( Iterable<AircraftEntity> entities ) {
-		return StreamSupport.stream(entities.spliterator(), false).map( AircraftEntity::toAircraft ).toList();
-	}
-
-	private Page<Aircraft> convertAircraftPage( Page<AircraftEntity> entities ) {
-		List<Aircraft> aircraft = entities.stream().map( AircraftEntity::toAircraft ).toList();
-		return new PageImpl<>( aircraft, entities.getPageable(), aircraft.size() );
+		return StreamSupport.stream( entities.spliterator(), false ).map( AircraftEntity::toAircraft ).toList();
 	}
 
 	private List<Battery> convertBatteries( List<BatteryEntity> entities ) {
@@ -207,6 +219,11 @@ public class StateRetrievingService implements StateRetrieving {
 	@Override
 	public Set<Group> findGroupsByOwner( User user ) {
 		return memberRepo.findAllByUser_IdAndStatus( user.id(), MemberStatus.OWNER.name().toLowerCase() ).stream().map( MemberEntity::getGroup ).map( GroupEntity::toGroup ).collect( Collectors.toSet() );
+	}
+
+	@Override
+	public Page<Group> findGroupsPageByOwner( User user, int page, int size ) {
+		return memberRepo.findAllByUser_IdAndStatus( user.id(), MemberStatus.OWNER.name().toLowerCase(), PageRequest.of( page, size ) ).map( MemberEntity::getGroup ).map( GroupEntity::toGroup );
 	}
 
 	@Override

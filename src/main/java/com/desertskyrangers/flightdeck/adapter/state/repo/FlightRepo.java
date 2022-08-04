@@ -5,6 +5,7 @@ import com.desertskyrangers.flightdeck.adapter.state.entity.BatteryEntity;
 import com.desertskyrangers.flightdeck.adapter.state.entity.FlightEntity;
 import com.desertskyrangers.flightdeck.adapter.state.entity.UserEntity;
 import com.desertskyrangers.flightdeck.core.model.Battery;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,9 +18,15 @@ public interface FlightRepo extends JpaRepository<FlightEntity, UUID> {
 
 	List<FlightEntity> findFlightEntitiesByPilot_IdOrderByTimestampDesc( UUID id );
 
+	Page<FlightEntity> findFlightEntitiesByPilot_IdOrderByTimestampDesc( UUID id, Pageable pageable );
+
 	List<FlightEntity> findFlightEntitiesByObserver_IdOrderByTimestampDesc( UUID id );
 
+	Page<FlightEntity> findFlightEntitiesByObserver_IdOrderByTimestampDesc( UUID id, Pageable pageable );
+
 	List<FlightEntity> findFlightEntitiesByAircraft_IdOrderByTimestampDesc( UUID id );
+
+	Page<FlightEntity> findFlightEntitiesByAircraft_IdOrderByTimestampDesc( UUID id, Pageable pageable );
 
 	// Pilot
 	List<FlightEntity> findFlightEntitiesByPilotIdAndTimestampAfterOrderByTimestampDesc( UUID id, long timestamp );

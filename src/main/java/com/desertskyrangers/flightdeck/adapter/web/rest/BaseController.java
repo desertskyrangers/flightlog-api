@@ -12,6 +12,8 @@ import java.util.UUID;
 @Controller
 public abstract class BaseController {
 
+	protected static final String DEFAULT_PAGE_SIZE = "20";
+
 	private UserServices userServices;
 
 	private JwtTokenProvider jwtTokenProvider;

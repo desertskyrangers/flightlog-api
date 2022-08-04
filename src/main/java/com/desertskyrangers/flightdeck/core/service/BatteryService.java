@@ -5,6 +5,7 @@ import com.desertskyrangers.flightdeck.port.BatteryServices;
 import com.desertskyrangers.flightdeck.port.FlightServices;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
 import com.desertskyrangers.flightdeck.port.StateRetrieving;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,6 +37,11 @@ public class BatteryService implements BatteryServices {
 	@Override
 	public List<Battery> findByOwner( UUID owner ) {
 		return stateRetrieving.findBatteriesByOwner( owner );
+	}
+
+	@Override
+	public Page<Battery> findPageByOwner( UUID owner, int page, int size ) {
+		return stateRetrieving.findBatteriesPageByOwner( owner, page, size );
 	}
 
 	@Override

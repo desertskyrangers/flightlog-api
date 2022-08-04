@@ -8,6 +8,7 @@ import com.desertskyrangers.flightdeck.port.GroupServices;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
 import com.desertskyrangers.flightdeck.port.StateRetrieving;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -58,6 +59,11 @@ public class GroupService implements GroupServices {
 	@Override
 	public Set<Group> findGroupsByUser( User user ) {
 		return stateRetrieving.findGroupsByOwner( user );
+	}
+
+	@Override
+	public Page<Group> findGroupsPageByUser( User user, int page, int size ) {
+		return stateRetrieving.findGroupsPageByOwner( user, page, size );
 	}
 
 }

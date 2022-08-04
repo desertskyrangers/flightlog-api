@@ -1,6 +1,7 @@
 package com.desertskyrangers.flightdeck.port;
 
 import com.desertskyrangers.flightdeck.core.model.*;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,7 +21,7 @@ public interface FlightServices {
 
 	List<Flight> findByPilot( User pilot );
 
-	List<Flight> findFlightsByUser( User user );
+	Page<Flight> findFlightsByUser( User user, int page, int size );
 
 	Flight upsert( FlightUpsertRequest flight );
 

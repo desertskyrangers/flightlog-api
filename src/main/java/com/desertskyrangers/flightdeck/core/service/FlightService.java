@@ -3,6 +3,9 @@ package com.desertskyrangers.flightdeck.core.service;
 import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -59,10 +62,10 @@ public class FlightService implements FlightServices {
 	}
 
 	@Override
-	public List<Flight> findFlightsByUser( User user ) {
+	public Page<Flight> findFlightsByUser( User user, int page, int size ) {
 		boolean showObserverFlights = stateRetrieving.isPreferenceSetTo( user, PreferenceKey.SHOW_OBSERVER_FLIGHTS, "true" );
 		boolean showOwnerFlights = stateRetrieving.isPreferenceSetTo( user, PreferenceKey.SHOW_OWNER_FLIGHTS, "true" );
-		String view = stateRetrieving.getPreference( user, PreferenceKey.FLIGHT_LIST_VIEW, "10" );
+		String view = stateRetrieving.getPreference( user, PreferenceKey.FLIGHT_LIST_VIEW, String.valueOf( size ) );
 
 		int count;
 		try {
@@ -84,7 +87,7 @@ public class FlightService implements FlightServices {
 		if( count >= 0 ) orderedFlights = orderedFlights.subList( 0, Math.min( count, orderedFlights.size() ) );
 		orderedFlights.sort( new FlightTimestampComparator().reversed() );
 
-		return orderedFlights;
+		return new PageImpl<>( orderedFlights, PageRequest.of( page, size ), orderedFlights.size() );
 	}
 
 	@Override

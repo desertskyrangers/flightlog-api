@@ -171,9 +171,7 @@ public class UserController extends BaseController {
 	@PreAuthorize( "hasAuthority('USER')" )
 	@GetMapping( path = ApiPath.USER_AIRCRAFT )
 	ResponseEntity<ReactPageResponse<?>> getAircraftPage(
-		Authentication authentication,
-		@RequestParam( value = "pg", defaultValue = "0" ) int page,
-		@RequestParam( value = "pz", defaultValue = "20" ) int size
+		Authentication authentication, @RequestParam( value = "pg", defaultValue = "0" ) int page, @RequestParam( value = "pz", defaultValue = DEFAULT_PAGE_SIZE ) int size
 	) {
 		List<String> messages = new ArrayList<>();
 
@@ -193,74 +191,85 @@ public class UserController extends BaseController {
 			messages.add( exception.getMessage() );
 		}
 
-		return new ResponseEntity<>( ReactPageResponse.of( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
+		return new ResponseEntity<>( ReactPageResponse.messages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
 	}
 
 	@PreAuthorize( "hasAuthority('USER')" )
-	@GetMapping( path = ApiPath.USER_BATTERY + "/{page}" )
-	ResponseEntity<ReactBatteryPageResponse> getBatteryPage( Authentication authentication, @PathVariable int page ) {
+	@GetMapping( path = ApiPath.USER_BATTERY )
+	ResponseEntity<ReactPageResponse<?>> getBatteryPage(
+		Authentication authentication, @RequestParam( value = "pg", defaultValue = "0" ) int page, @RequestParam( value = "pz", defaultValue = DEFAULT_PAGE_SIZE ) int size
+	) {
 		List<String> messages = new ArrayList<>();
 
 		try {
 			User user = getRequester( authentication );
-			List<ReactBattery> batteryPage = batteryServices.findByOwner( user.id() ).stream().map( ReactBattery::from ).toList();
-			return new ResponseEntity<>( new ReactBatteryPageResponse().setBatteries( batteryPage ), HttpStatus.OK );
+			Page<Battery> batteryPage = batteryServices.findPageByOwner( user.id(), page, size );
+			List<ReactBattery> batteryList = batteryPage.stream().map( ReactBattery::from ).toList();
+			Page<ReactBattery> reactBatteryPage = new PageImpl<>( batteryList, batteryPage.getPageable(), batteryList.size() );
+
+			return new ResponseEntity<>( ReactPageResponse.of( reactBatteryPage ), HttpStatus.OK );
 		} catch( Exception exception ) {
 			log.error( "Error getting battery page", exception );
 			messages.add( exception.getMessage() );
 		}
 
-		return new ResponseEntity<>( new ReactBatteryPageResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
+		return new ResponseEntity<>( ReactPageResponse.messages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
 	}
 
 	@PreAuthorize( "hasAuthority('USER')" )
-	@GetMapping( path = ApiPath.USER_FLIGHT + "/{page}" )
-	ResponseEntity<ReactFlightPageResponse> getFlightPage( Authentication authentication, @PathVariable int page ) {
+	@GetMapping( path = ApiPath.USER_FLIGHT )
+	ResponseEntity<ReactPageResponse<?>> getFlightPage(
+		Authentication authentication, @RequestParam( value = "pg", defaultValue = "0" ) int page, @RequestParam( value = "pz", defaultValue = DEFAULT_PAGE_SIZE ) int size
+	) {
 		List<String> messages = new ArrayList<>();
 
 		try {
 			User requester = getRequester( authentication );
-			List<ReactFlight> flightPage = flightServices.findFlightsByUser( requester ).stream().map( f -> ReactFlight.from( requester, f ) ).toList();
-			return new ResponseEntity<>( new ReactFlightPageResponse().setFlights( flightPage ), HttpStatus.OK );
+			Page<ReactFlight> flightPage = flightServices.findFlightsByUser( requester, page, size ).map( f -> ReactFlight.from( requester, f ) );
+			return new ResponseEntity<>( ReactPageResponse.of( flightPage ), HttpStatus.OK );
 		} catch( Exception exception ) {
 			log.error( "Error getting flight page", exception );
 			messages.add( exception.getMessage() );
 		}
 
-		return new ResponseEntity<>( new ReactFlightPageResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
+		return new ResponseEntity<>( ReactPageResponse.messages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
 	}
 
 	@PreAuthorize( "hasAuthority('USER')" )
-	@GetMapping( path = ApiPath.USER_GROUP + "/{page}" )
-	ResponseEntity<ReactGroupPageResponse> getGroupPage( Authentication authentication, @PathVariable int page ) {
+	@GetMapping( path = ApiPath.USER_GROUP )
+	ResponseEntity<ReactPageResponse<?>> getGroupPage(
+		Authentication authentication,
+		@RequestParam( value = "pg", defaultValue = "0" ) int page,
+		@RequestParam( value = "pz", defaultValue = DEFAULT_PAGE_SIZE ) int size
+	) {
 		List<String> messages = new ArrayList<>();
 
 		try {
 			User user = getRequester( authentication );
-			List<ReactGroup> groupPage = groupServices.findGroupsByUser( user ).stream().map( ReactGroup::from ).toList();
-			return new ResponseEntity<>( new ReactGroupPageResponse().setGroups( groupPage ), HttpStatus.OK );
+			Page<ReactGroup> groupPage = groupServices.findGroupsPageByUser( user,page, size ).map( ReactGroup::from );
+			return new ResponseEntity<>( ReactPageResponse.of( groupPage ), HttpStatus.OK );
 		} catch( Exception exception ) {
 			log.error( "Error getting group page", exception );
 			messages.add( exception.getMessage() );
 		}
 
-		return new ResponseEntity<>( new ReactGroupPageResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
+		return new ResponseEntity<>( ReactPageResponse.messages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
 	}
 
 	@PreAuthorize( "hasAuthority('USER')" )
 	@GetMapping( path = ApiPath.USER_MEMBERSHIP )
-	ResponseEntity<ReactMembershipPageResponse> getMembershipPage( Authentication authentication ) {
+	ResponseEntity<ReactResponse<?>> getMembershipPage( Authentication authentication ) {
 		List<String> messages = new ArrayList<>();
 
 		try {
 			User user = getRequester( authentication );
-			return new ResponseEntity<>( new ReactMembershipPageResponse().setMemberships( getMemberships( user ) ), HttpStatus.OK );
+			return new ResponseEntity<>( ReactResponse.of( getMemberships( user ) ), HttpStatus.OK );
 		} catch( Exception exception ) {
 			log.error( "Error getting membership page", exception );
 			messages.add( exception.getMessage() );
 		}
 
-		return new ResponseEntity<>( new ReactMembershipPageResponse().setMessages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
+		return new ResponseEntity<>( ReactResponse.messages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
 	}
 
 	/**

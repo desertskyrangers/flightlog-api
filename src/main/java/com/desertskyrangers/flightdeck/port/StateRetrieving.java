@@ -21,15 +21,23 @@ public interface StateRetrieving {
 
 	List<Battery> findBatteriesByOwner( UUID id );
 
+	Page<Battery> findBatteriesPageByOwner( UUID id, int page, int size );
+
 	List<Battery> findAllBatteries();
 
 	Optional<Flight> findFlight( UUID id );
 
 	List<Flight> findFlightsByPilot( UUID id );
 
+	Page<Flight> findFlightsPageByPilot( UUID id, int page, int size );
+
 	List<Flight> findFlightsByPilotAndTimestampAfter( UUID id, long timestamp );
 
+	Page<Flight> findFlightsPageByObserver( UUID id, int page, int size );
+
 	List<Flight> findFlightsByObserverAndTimestampAfter( UUID id, long timestamp );
+
+	Page<Flight> findFlightsPageByOwner( UUID id, int page, int size );
 
 	List<Flight> findFlightsByOwnerAndTimestampAfter( UUID id, long timestamp );
 
@@ -52,6 +60,8 @@ public interface StateRetrieving {
 	Optional<Group> findGroup( UUID id );
 
 	Set<Group> findGroupsByOwner( User user );
+
+	Page<Group> findGroupsPageByOwner( User user, int page, int size );
 
 	Set<User> findGroupOwners( Group group );
 

@@ -20,7 +20,7 @@ public class ReactPageResponse<T> {
 		return new ReactPageResponse<S>().setPage( page );
 	}
 
-	public static ReactPageResponse<?> of( List<String> messages ) {
+	public static ReactPageResponse<?> messages( List<String> messages ) {
 		return new ReactPageResponse<>().setMessages( messages );
 	}
 
