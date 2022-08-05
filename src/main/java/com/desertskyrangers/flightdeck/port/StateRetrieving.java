@@ -23,6 +23,8 @@ public interface StateRetrieving {
 
 	Page<Battery> findBatteriesPageByOwner( UUID id, int page, int size );
 
+	Page<Battery> findBatteriesPageByOwnerAndStatus( UUID owner, Set<BatteryStatus> status, int page, int size );
+
 	List<Battery> findAllBatteries();
 
 	Optional<Flight> findFlight( UUID id );

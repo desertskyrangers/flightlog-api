@@ -1,9 +1,7 @@
 package com.desertskyrangers.flightdeck;
 
 import com.desertskyrangers.flightdeck.core.model.*;
-import com.desertskyrangers.flightdeck.port.DashboardServices;
-import com.desertskyrangers.flightdeck.port.StatePersisting;
-import com.desertskyrangers.flightdeck.port.StateRetrieving;
+import com.desertskyrangers.flightdeck.port.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,14 +21,20 @@ public class InitialConfig {
 
 	private final StateRetrieving stateRetrieving;
 
+	private final AircraftServices aircraftServices;
+
+	private final BatteryServices batteryServices;
+
 	private final DashboardServices dashboardServices;
 
 	private User unlisted;
 
-	public InitialConfig( FlightDeckApp app, StatePersisting statePersisting, StateRetrieving stateRetrieving, DashboardServices dashboardServices ) {
+	public InitialConfig( FlightDeckApp app, StatePersisting statePersisting, StateRetrieving stateRetrieving, AircraftServices aircraftServices, BatteryServices batteryServices, DashboardServices dashboardServices ) {
 		this.app = app;
 		this.statePersisting = statePersisting;
 		this.stateRetrieving = stateRetrieving;
+		this.aircraftServices = aircraftServices;
+		this.batteryServices = batteryServices;
 		this.dashboardServices = dashboardServices;
 	}
 
@@ -67,11 +71,23 @@ public class InitialConfig {
 		User tea = createTeaTest();
 		User tim = createTimTest();
 
-		Aircraft aftyn = statePersisting.upsert(createAftyn().owner( tia.id() ).ownerType( OwnerType.USER ));
-		Aircraft bianca = statePersisting.upsert(createBianca().owner( tia.id() ).ownerType( OwnerType.USER ));
-		Aircraft gemma = statePersisting.upsert(createGemma().owner( tia.id() ).ownerType( OwnerType.USER ));
-		Aircraft helena = statePersisting.upsert(createHelena().owner( tia.id() ).ownerType( OwnerType.USER ));
+		Aircraft aftyn = statePersisting.upsert( createAftyn().owner( tia.id() ).ownerType( OwnerType.USER ) );
+		Aircraft bianca = statePersisting.upsert( createBianca().owner( tia.id() ).ownerType( OwnerType.USER ) );
+		Aircraft gemma = statePersisting.upsert( createGemma().owner( tia.id() ).ownerType( OwnerType.USER ) );
+		Aircraft helena = statePersisting.upsert( createHelena().owner( tia.id() ).ownerType( OwnerType.USER ) );
 
+		Battery a4s2650turnigy = new Battery()
+			.name( "A 4S 2650 Turnigy" )
+			.status( BatteryStatus.DESTROYED )
+			.make( "Hobby King" )
+			.model( "Turnigy" )
+			.connector( BatteryConnector.XT60 )
+			.type( BatteryType.LIPO )
+			.cells( 4 )
+			.initialCycles( 255 )
+			.capacity( 2650 )
+			.owner( tia.id() )
+			.ownerType( OwnerType.USER );
 		Battery b4s2650turnigy = new Battery()
 			.name( "B 4S 2650 Turnigy" )
 			.status( BatteryStatus.AVAILABLE )
@@ -80,7 +96,7 @@ public class InitialConfig {
 			.connector( BatteryConnector.XT60 )
 			.type( BatteryType.LIPO )
 			.cells( 4 )
-			.cycles( 57 )
+			.initialCycles( 87 )
 			.capacity( 2650 )
 			.owner( tia.id() )
 			.ownerType( OwnerType.USER );
@@ -92,7 +108,7 @@ public class InitialConfig {
 			.connector( BatteryConnector.XT60 )
 			.type( BatteryType.LIPO )
 			.cells( 4 )
-			.cycles( 43 )
+			.initialCycles( 57 )
 			.capacity( 2650 )
 			.owner( tia.id() )
 			.ownerType( OwnerType.USER );
@@ -104,10 +120,11 @@ public class InitialConfig {
 			.connector( BatteryConnector.XT60 )
 			.type( BatteryType.LIPO )
 			.cells( 4 )
-			.cycles( 87 )
+			.initialCycles( 43 )
 			.capacity( 2650 )
 			.owner( tia.id() )
 			.ownerType( OwnerType.USER );
+		statePersisting.upsert( a4s2650turnigy );
 		statePersisting.upsert( b4s2650turnigy );
 		statePersisting.upsert( c4s2650turnigy );
 		statePersisting.upsert( d4s2650turnigy );
@@ -133,6 +150,11 @@ public class InitialConfig {
 
 		statePersisting.upsert( new Member().user( tom ).group( testersUnlimited ).status( MemberStatus.OWNER ) );
 		statePersisting.upsert( new Member().user( tom ).group( testersInfinite ).status( MemberStatus.ACCEPTED ) );
+
+		batteryServices.updateFlightData( a4s2650turnigy );
+		batteryServices.updateFlightData( b4s2650turnigy );
+		batteryServices.updateFlightData( c4s2650turnigy );
+		batteryServices.updateFlightData( d4s2650turnigy );
 
 		dashboardServices.update( tia );
 		dashboardServices.update( tom );

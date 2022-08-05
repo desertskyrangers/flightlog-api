@@ -193,13 +193,19 @@ public class UserController extends BaseController {
 	@PreAuthorize( "hasAuthority('USER')" )
 	@GetMapping( path = ApiPath.USER_BATTERY )
 	ResponseEntity<ReactPageResponse<?>> getBatteryPage(
-		Authentication authentication, @RequestParam( value = "pg", defaultValue = "0" ) int page, @RequestParam( value = "pz", defaultValue = DEFAULT_PAGE_SIZE ) int size
+		Authentication authentication,
+		@RequestParam( value = "filter", defaultValue = "available" ) String filter,
+		@RequestParam( value = "pg", defaultValue = "0" ) int page,
+		@RequestParam( value = "pz", defaultValue = DEFAULT_PAGE_SIZE ) int size
 	) {
 		List<String> messages = new ArrayList<>();
 
+		Set<BatteryStatus> status = Set.of( BatteryStatus.NEW, BatteryStatus.AVAILABLE );
+		if( "unavailable".equals( filter ) ) status = Set.of( BatteryStatus.DESTROYED );
+
 		try {
 			User user = getRequester( authentication );
-			Page<ReactBattery> batteryPage = batteryServices.findPageByOwner( user.id(), page, size ).map(ReactBattery::from);
+			Page<ReactBattery> batteryPage = batteryServices.findPageByOwnerAndStatus( user.id(), status, page, size ).map( ReactBattery::from );
 			return new ResponseEntity<>( ReactPageResponse.of( batteryPage ), HttpStatus.OK );
 		} catch( Exception exception ) {
 			log.error( "Error getting battery page", exception );
@@ -231,15 +237,13 @@ public class UserController extends BaseController {
 	@PreAuthorize( "hasAuthority('USER')" )
 	@GetMapping( path = ApiPath.USER_GROUP )
 	ResponseEntity<ReactPageResponse<?>> getGroupPage(
-		Authentication authentication,
-		@RequestParam( value = "pg", defaultValue = "0" ) int page,
-		@RequestParam( value = "pz", defaultValue = DEFAULT_PAGE_SIZE ) int size
+		Authentication authentication, @RequestParam( value = "pg", defaultValue = "0" ) int page, @RequestParam( value = "pz", defaultValue = DEFAULT_PAGE_SIZE ) int size
 	) {
 		List<String> messages = new ArrayList<>();
 
 		try {
 			User user = getRequester( authentication );
-			Page<ReactGroup> groupPage = groupServices.findGroupsPageByUser( user,page, size ).map( ReactGroup::from );
+			Page<ReactGroup> groupPage = groupServices.findGroupsPageByUser( user, page, size ).map( ReactGroup::from );
 			return new ResponseEntity<>( ReactPageResponse.of( groupPage ), HttpStatus.OK );
 		} catch( Exception exception ) {
 			log.error( "Error getting group page", exception );

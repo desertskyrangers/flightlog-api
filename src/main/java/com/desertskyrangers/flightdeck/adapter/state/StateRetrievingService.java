@@ -106,6 +106,12 @@ public class StateRetrievingService implements StateRetrieving {
 	}
 
 	@Override
+	public Page<Battery> findBatteriesPageByOwnerAndStatus( UUID owner, Set<BatteryStatus> status, int page, int size ) {
+		Set<String> statusValues = status.stream().map( s -> s.name().toLowerCase() ).collect( Collectors.toSet());
+		return batteryRepo.findBatteryEntitiesByOwnerAndStatusInOrderByName( owner, statusValues, PageRequest.of( page, size ) ).map( BatteryEntity::toBattery );
+	}
+
+	@Override
 	public List<Battery> findAllBatteries() {
 		return convertBatteries( batteryRepo.findAll() );
 	}

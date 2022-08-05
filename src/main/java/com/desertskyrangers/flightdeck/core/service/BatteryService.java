@@ -1,6 +1,7 @@
 package com.desertskyrangers.flightdeck.core.service;
 
 import com.desertskyrangers.flightdeck.core.model.Battery;
+import com.desertskyrangers.flightdeck.core.model.BatteryStatus;
 import com.desertskyrangers.flightdeck.port.BatteryServices;
 import com.desertskyrangers.flightdeck.port.FlightServices;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
@@ -10,7 +11,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class BatteryService implements BatteryServices {
@@ -42,6 +45,11 @@ public class BatteryService implements BatteryServices {
 	@Override
 	public Page<Battery> findPageByOwner( UUID owner, int page, int size ) {
 		return stateRetrieving.findBatteriesPageByOwner( owner, page, size );
+	}
+
+	@Override
+	public Page<Battery> findPageByOwnerAndStatus( UUID owner, Set<BatteryStatus> status, int page, int size ) {
+		return stateRetrieving.findBatteriesPageByOwnerAndStatus( owner, status, page, size );
 	}
 
 	@Override
