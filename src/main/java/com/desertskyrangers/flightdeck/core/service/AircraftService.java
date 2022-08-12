@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -41,6 +42,10 @@ public class AircraftService implements AircraftServices {
 
 	public Page<Aircraft> findPageByOwner( UUID owner, int page, int size ) {
 		return stateRetrieving.findAircraftPageByOwner( owner, page, size );
+	}
+
+	public Page<Aircraft> findPageByOwnerAndStatus( UUID owner, Set<AircraftStatus> status, int page, int size ) {
+		return stateRetrieving.findAircraftPageByOwnerAndStatus( owner, status, page, size );
 	}
 
 	public List<Aircraft> findAllByOwnerAndStatus( UUID owner, AircraftStatus status ) {

@@ -13,6 +13,8 @@ public interface StateRetrieving {
 
 	Page<Aircraft> findAircraftPageByOwner( UUID owner, int page, int size );
 
+	Page<Aircraft> findAircraftPageByOwnerAndStatus( UUID owner, Set<AircraftStatus> status, int page, int size );
+
 	List<Aircraft> findAircraftByOwnerAndStatus( UUID id, AircraftStatus status );
 
 	List<Aircraft> findAllAircraft();

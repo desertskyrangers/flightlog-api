@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 public interface AircraftServices {
@@ -17,6 +18,8 @@ public interface AircraftServices {
 	List<Aircraft> findAllByOwnerAndStatus( UUID owner, AircraftStatus status );
 
 	Page<Aircraft> findPageByOwner( UUID owner, int page, int size );
+
+	Page<Aircraft> findPageByOwnerAndStatus( UUID owner, Set<AircraftStatus> status, int page, int size );
 
 	Aircraft upsert( Aircraft aircraft );
 

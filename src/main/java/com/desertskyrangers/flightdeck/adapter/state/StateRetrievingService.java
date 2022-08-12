@@ -81,6 +81,12 @@ public class StateRetrievingService implements StateRetrieving {
 	}
 
 	@Override
+	public Page<Aircraft> findAircraftPageByOwnerAndStatus( UUID owner, Set<AircraftStatus> status, int page, int size ) {
+		Set<String> statusValues = status.stream().map( s -> s.name().toLowerCase() ).collect( Collectors.toSet());
+		return aircraftRepo.findAircraftByOwnerAndStatusInOrderByName( owner, statusValues, PageRequest.of( page, size, Sort.Direction.ASC, "name" ) ).map( AircraftEntity::toAircraft );
+	}
+
+	@Override
 	public List<Aircraft> findAircraftByOwnerAndStatus( UUID id, AircraftStatus status ) {
 		return convertAircraft( aircraftRepo.findAircraftByOwnerAndStatusOrderByName( id, status.name().toLowerCase() ) );
 	}

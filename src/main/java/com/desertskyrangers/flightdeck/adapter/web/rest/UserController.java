@@ -170,7 +170,10 @@ public class UserController extends BaseController {
 	@PreAuthorize( "hasAuthority('USER')" )
 	@GetMapping( path = ApiPath.USER_AIRCRAFT )
 	ResponseEntity<ReactPageResponse<?>> getAircraftPage(
-		Authentication authentication, @RequestParam( value = "pg", defaultValue = "0" ) int page, @RequestParam( value = "pz", defaultValue = DEFAULT_PAGE_SIZE ) int size
+		Authentication authentication,
+		@RequestParam( value = "filter", defaultValue = "available" ) String filter,
+		@RequestParam( value = "pg", defaultValue = "0" ) int page,
+		@RequestParam( value = "pz", defaultValue = DEFAULT_PAGE_SIZE ) int size
 	) {
 		List<String> messages = new ArrayList<>();
 
@@ -178,9 +181,12 @@ public class UserController extends BaseController {
 		// boolean not-airworthy only?
 		// string state filter?
 
+		Set<AircraftStatus> status = Set.of( AircraftStatus.PREFLIGHT, AircraftStatus.AIRWORTHY );
+		if( "unavailable".equals( filter ) ) status = Set.of( AircraftStatus.INOPERATIVE, AircraftStatus.DECOMMISSIONED, AircraftStatus.DESTROYED );
+
 		try {
 			User user = getRequester( authentication );
-			Page<ReactAircraft> aircraftPage = aircraftServices.findPageByOwner( user.id(), page, size ).map( ReactAircraft::from );
+			Page<ReactAircraft> aircraftPage = aircraftServices.findPageByOwnerAndStatus( user.id(), status, page, size ).map( ReactAircraft::from );
 			return new ResponseEntity<>( ReactPageResponse.of( aircraftPage ), HttpStatus.OK );
 		} catch( Exception exception ) {
 			log.error( "Error getting aircraft page", exception );
