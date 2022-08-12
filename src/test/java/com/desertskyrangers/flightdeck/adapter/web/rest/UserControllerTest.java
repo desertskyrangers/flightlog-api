@@ -138,8 +138,8 @@ public class UserControllerTest extends BaseControllerTest {
 	@Test
 	void testGetAircraftPage() throws Exception {
 		// given
-		Aircraft aftyn = new Aircraft().name( "AFTYN" ).type( AircraftType.FIXEDWING ).status( AircraftStatus.DESTROYED ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
-		Aircraft bianca = new Aircraft().name( "BIANCA" ).type( AircraftType.FIXEDWING ).status( AircraftStatus.DESTROYED ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
+		Aircraft aftyn = new Aircraft().name( "AFTYN" ).type( AircraftType.FIXEDWING ).status( AircraftStatus.AIRWORTHY ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
+		Aircraft bianca = new Aircraft().name( "BIANCA" ).type( AircraftType.FIXEDWING ).status( AircraftStatus.AIRWORTHY ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
 		statePersisting.upsert( aftyn );
 		statePersisting.upsert( bianca );
 
@@ -163,8 +163,8 @@ public class UserControllerTest extends BaseControllerTest {
 	@Test
 	void testGetAircraftPageWithSize() throws Exception {
 		// given
-		Aircraft aftyn = new Aircraft().name( "AFTYN" ).type( AircraftType.FIXEDWING ).status( AircraftStatus.DESTROYED ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
-		Aircraft bianca = new Aircraft().name( "BIANCA" ).type( AircraftType.FIXEDWING ).status( AircraftStatus.DESTROYED ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
+		Aircraft aftyn = new Aircraft().name( "AFTYN" ).type( AircraftType.FIXEDWING ).status( AircraftStatus.AIRWORTHY ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
+		Aircraft bianca = new Aircraft().name( "BIANCA" ).type( AircraftType.FIXEDWING ).status( AircraftStatus.AIRWORTHY ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
 		statePersisting.upsert( aftyn );
 		statePersisting.upsert( bianca );
 
@@ -184,9 +184,32 @@ public class UserControllerTest extends BaseControllerTest {
 	}
 
 	@Test
+	void testGetAircraftPageWithStatus() throws Exception {
+		// given
+		Aircraft aftyn = new Aircraft().name( "AFTYN" ).type( AircraftType.FIXEDWING ).status( AircraftStatus.AIRWORTHY ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
+		Aircraft bianca = new Aircraft().name( "BIANCA" ).type( AircraftType.FIXEDWING ).status( AircraftStatus.DESTROYED ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
+		statePersisting.upsert( aftyn );
+		statePersisting.upsert( bianca );
+
+		// when
+		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_AIRCRAFT ).param("status", "available").param( "pg", "0" ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
+
+		// then
+		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
+		List<?> aircraftList = (List<?>)((Map<?, ?>)map.get( "page" )).get( "content" );
+		Map<?, ?> messagesMap = (Map<?, ?>)map.get( "messages" );
+
+		assertThat( aircraftList.size() ).isEqualTo( 1 );
+		assertThat( messagesMap ).isNull();
+
+		Map<?, ?> aircraft0 = (Map<?, ?>)aircraftList.get( 0 );
+		assertThat( aircraft0.get( "name" ) ).isEqualTo( "AFTYN" );
+	}
+
+	@Test
 	void testGetBatteryPage() throws Exception {
 		// given
-		Battery a = new Battery().name( "A" ).status( BatteryStatus.NEW ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
+		Battery a = new Battery().name( "A" ).status( BatteryStatus.AVAILABLE ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
 		Battery b = new Battery().name( "B" ).status( BatteryStatus.NEW ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
 		statePersisting.upsert( a );
 		statePersisting.upsert( b );
@@ -211,7 +234,7 @@ public class UserControllerTest extends BaseControllerTest {
 	@Test
 	void testGetBatteryPageWithSize() throws Exception {
 		// given
-		Battery a = new Battery().name( "A" ).status( BatteryStatus.NEW ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
+		Battery a = new Battery().name( "A" ).status( BatteryStatus.AVAILABLE ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
 		Battery b = new Battery().name( "B" ).status( BatteryStatus.NEW ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
 		statePersisting.upsert( a );
 		statePersisting.upsert( b );
@@ -231,6 +254,29 @@ public class UserControllerTest extends BaseControllerTest {
 		assertThat( batteryList.size() ).isEqualTo( 1 );
 		assertThat( messagesMap ).isNull();
 		assertThat( totalPages ).isEqualTo( 2 );
+
+		Map<?, ?> battery0 = (Map<?, ?>)batteryList.get( 0 );
+		assertThat( battery0.get( "name" ) ).isEqualTo( "A" );
+	}
+
+	@Test
+	void testGetBatteryPageWithStatus() throws Exception {
+		// given
+		Battery a = new Battery().name( "A" ).status( BatteryStatus.AVAILABLE ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
+		Battery b = new Battery().name( "B" ).status( BatteryStatus.DESTROYED ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
+		statePersisting.upsert( a );
+		statePersisting.upsert( b );
+
+		// when
+		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_BATTERY ).param("status", "available").param( "pg", "0" ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
+
+		// then
+		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
+		List<?> batteryList = (List<?>)((Map<?, ?>)map.get( "page" )).get( "content" );
+		Map<?, ?> messagesMap = (Map<?, ?>)map.get( "messages" );
+
+		assertThat( batteryList.size() ).isEqualTo( 1 );
+		assertThat( messagesMap ).isNull();
 
 		Map<?, ?> battery0 = (Map<?, ?>)batteryList.get( 0 );
 		assertThat( battery0.get( "name" ) ).isEqualTo( "A" );
