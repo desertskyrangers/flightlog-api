@@ -77,6 +77,10 @@ public class AppColor {
 		return getClass().getName() + "[r=" + getRed() + ",g=" + getGreen() + ",b=" + getBlue() + ",a=" + getAlpha() + "]";
 	}
 
+	public String toWeb() {
+		return AppColor.toWeb( this );
+	}
+
 	public static AppColor of( int r, int g, int b ) {
 		return new AppColor( r, g, b );
 	}

@@ -87,6 +87,9 @@ public class AircraftEntity {
 		entity.setOwner( aircraft.owner() );
 		if( aircraft.ownerType() != null ) entity.setOwnerType( aircraft.ownerType().name().toLowerCase() );
 
+		entity.setBaseColor( aircraft.baseColor() );
+		entity.setTrimColor( aircraft.trimColor() );
+
 		return entity;
 	}
 
@@ -111,6 +114,9 @@ public class AircraftEntity {
 
 		aircraft.owner( entity.getOwner() );
 		if( entity.getOwnerType() != null ) aircraft.ownerType( OwnerType.valueOf( entity.getOwnerType().toUpperCase() ) );
+
+		aircraft.baseColor( entity.getBaseColor() );
+		aircraft.trimColor( entity.getTrimColor() );
 
 		return aircraft;
 	}

@@ -1,5 +1,6 @@
 package com.desertskyrangers.flightdeck.core.model;
 
+import com.desertskyrangers.flightdeck.AppColor;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -38,5 +39,9 @@ public class Aircraft {
 	private int flightCount;
 
 	private long flightTime;
+
+	private AppColor baseColor;
+
+	private AppColor trimColor;
 
 }

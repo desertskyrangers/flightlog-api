@@ -1,5 +1,6 @@
 package com.desertskyrangers.flightdeck.adapter.web.model;
 
+import com.desertskyrangers.flightdeck.AppColor;
 import com.desertskyrangers.flightdeck.core.model.Aircraft;
 import com.desertskyrangers.flightdeck.core.model.AircraftStatus;
 import com.desertskyrangers.flightdeck.core.model.AircraftType;
@@ -45,6 +46,10 @@ public class ReactAircraft {
 
 	private long flightTime;
 
+	private String baseColor;
+
+	private String trimColor;
+
 	public static ReactAircraft from( Aircraft aircraft ) {
 		ReactAircraft result = new ReactAircraft();
 
@@ -66,6 +71,9 @@ public class ReactAircraft {
 
 		result.setOwner( aircraft.owner().toString() );
 		result.setOwnerType( aircraft.ownerType().name().toLowerCase() );
+
+		if( aircraft.baseColor() != null ) result.setBaseColor( aircraft.baseColor().toWeb() );
+		if( aircraft.trimColor() != null ) result.setTrimColor( aircraft.trimColor().toWeb() );
 
 		return result;
 	}
@@ -91,6 +99,9 @@ public class ReactAircraft {
 
 		if( reactAircraft.getOwner() != null ) aircraft.owner( UUID.fromString( reactAircraft.getOwner() ) );
 		if( reactAircraft.getOwnerType() != null ) aircraft.ownerType( OwnerType.valueOf( reactAircraft.getOwnerType().toUpperCase() ) );
+
+		if( reactAircraft.getBaseColor() != null ) aircraft.baseColor( AppColor.fromWeb( reactAircraft.getBaseColor() ) );
+		if( reactAircraft.getTrimColor() != null ) aircraft.trimColor( AppColor.fromWeb( reactAircraft.getTrimColor() ) );
 
 		return aircraft;
 	}
