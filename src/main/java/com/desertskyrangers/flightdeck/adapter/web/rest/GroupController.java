@@ -32,6 +32,11 @@ public class GroupController extends BaseController {
 		this.userServices = userServices;
 	}
 
+	@GetMapping( path = ApiPath.GROUP + "/{id}/dashboard" )
+	ResponseEntity<?> dashboard( Authentication authentication, @PathVariable String id ) {
+		return new ResponseEntity<>( ReactResponse.messages( List.of( "Group dashboard not available yet" ) ), HttpStatus.BAD_REQUEST );
+	}
+
 	@PostMapping( path = ApiPath.GROUP_INVITE )
 	ResponseEntity<ReactMembershipPageResponse> inviteMember( Authentication authentication, @RequestBody Map<String, String> request ) {
 		String id = request.get( "id" );
