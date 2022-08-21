@@ -2,6 +2,34 @@ package com.desertskyrangers.flightdeck;
 
 public class AppColor {
 
+	/* Gray scale */
+	public static final AppColor WHITE = AppColor.of( 255, 255, 255 );
+
+	public static final AppColor LIGHT_GRAY = AppColor.of( 192, 192, 192 );
+
+	public static final AppColor GRAY = AppColor.of( 128, 128, 128 );
+
+	public static final AppColor DARK_GRAY = AppColor.of( 64, 64, 64 );
+
+	public static final AppColor BLACK = AppColor.of( 0, 0, 0 );
+
+	/* Common colors */
+	public static final AppColor RED = AppColor.of( 255, 0, 0 );
+
+	public static final AppColor ORANGE = AppColor.of( 255, 128, 0 );
+
+	public static final AppColor YELLOW = AppColor.of( 255, 255, 0 );
+
+	public static final AppColor GREEN = AppColor.of( 0, 255, 0 );
+
+	public static final AppColor BLUE = AppColor.of( 0, 0, 255 );
+
+	public static final AppColor PURPLE = AppColor.of( 128, 0, 256 );
+
+	public static final AppColor MAGENTA = AppColor.of( 255, 0, 255 );
+
+	public static final AppColor CYAN = AppColor.of( 0, 255, 255 );
+
 	/**
 	 * The color values are stored in ARGB order.
 	 */
@@ -109,7 +137,7 @@ public class AppColor {
 
 	public static String toHex( AppColor color ) throws NumberFormatException {
 		// Hex colors are in the form #aarrggbb
-		return "0x".concat( Integer.toHexString( color.value ) );
+		return "0x".concat( String.format( "%08x", color.value ) );
 	}
 
 	public static AppColor fromWeb( String web ) throws NumberFormatException {
@@ -124,7 +152,7 @@ public class AppColor {
 
 	public static String toWeb( AppColor color ) throws NumberFormatException {
 		// Web colors are in the form #rrggbbaa
-		return "#".concat( Integer.toHexString( color.value << 8 | (color.value >> 24) & 0xFF ) );
+		return "#".concat( String.format( "%08x", color.value << 8 | (color.value >> 24) & 0xFF ) );
 	}
 
 	public static int hsbToRgb( float hue, float saturation, float brightness ) {

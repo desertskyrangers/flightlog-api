@@ -262,7 +262,9 @@ public class InitialConfig {
 			.wingspan( 1500 )
 			.length( 963 )
 			.wingarea( 2500 )
-			.weight( 960 );
+			.weight( 960 )
+			.baseColor(AppColor.WHITE)
+			.trimColor(AppColor.BLUE);
 	}
 
 	private Aircraft createBianca() {
