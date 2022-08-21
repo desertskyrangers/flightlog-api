@@ -22,6 +22,8 @@ public class AppColorTest {
 	@Test
 	void testToHex() {
 		assertThat( AppColor.toHex( AppColor.of( 32, 64, 128, 160 ) ) ).isEqualTo( "0xa0204080" );
+		// Check padding
+		assertThat( AppColor.toHex( AppColor.of( 0, 0, 128, 255 ) ) ).isEqualTo( "0xff000080" );
 	}
 
 	@Test
@@ -34,6 +36,8 @@ public class AppColorTest {
 	@Test
 	void testToWeb() {
 		assertThat( AppColor.toWeb( AppColor.of( 32, 64, 128, 160 ) ) ).isEqualTo( "#204080a0" );
+		// Check padding
+		assertThat( AppColor.toWeb( AppColor.of( 0, 0, 128, 255 ) ) ).isEqualTo( "#000080ff" );
 	}
 
 	@Test
