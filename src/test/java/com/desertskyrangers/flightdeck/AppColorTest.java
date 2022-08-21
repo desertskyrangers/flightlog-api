@@ -36,4 +36,19 @@ public class AppColorTest {
 		assertThat( AppColor.toWeb( AppColor.of( 32, 64, 128, 160 ) ) ).isEqualTo( "#204080a0" );
 	}
 
+	@Test
+	void testHsbToRgb() {
+		assertThat( new AppColor( AppColor.hsbToRgb( 0.6111111f, 0.75f, 0.5019608f ) ) ).isEqualTo( AppColor.of( 32, 64, 128, 255 ) );
+	}
+
+	@Test
+	void testRgbToHsb() {
+		assertThat( AppColor.rgbToHsb( 32, 64, 128 ) ).isEqualTo( new float[]{ 0.6111111f, 0.75f, 0.5019608f, 1.0f } );
+	}
+
+	@Test
+	void testRgbToHsbWithArray() {
+		assertThat( AppColor.rgbToHsb( 32, 64, 128, new float[ 4 ] ) ).isEqualTo( new float[]{ 0.6111111f, 0.75f, 0.5019608f, 1.0f } );
+	}
+
 }

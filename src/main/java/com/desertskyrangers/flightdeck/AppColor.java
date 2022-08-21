@@ -198,18 +198,18 @@ public class AppColor {
 
 		if( hsbaValues == null ) hsbaValues = new float[ 4 ];
 
-		int cmax = Math.max( r, g );
-		if( b > cmax ) cmax = b;
-		int cmin = Math.min( r, g );
-		if( b < cmin ) cmin = b;
+		int max = Math.max( r, g );
+		if( b > max ) max = b;
+		int min = Math.min( r, g );
+		if( b < min ) min = b;
 
-		brightness = ((float)cmax) / 255.0f;
-		if( cmax != 0 ) {saturation = ((float)(cmax - cmin)) / ((float)cmax);} else saturation = 0;
+		brightness = ((float)max) / 255.0f;
+		if( max != 0 ) {saturation = ((float)(max - min)) / ((float)max);} else saturation = 0;
 		if( saturation == 0 ) {hue = 0;} else {
-			float redc = ((float)(cmax - r)) / ((float)(cmax - cmin));
-			float greenc = ((float)(cmax - g)) / ((float)(cmax - cmin));
-			float bluec = ((float)(cmax - b)) / ((float)(cmax - cmin));
-			if( r == cmax ) {hue = bluec - greenc;} else if( g == cmax ) {hue = 2.0f + redc - bluec;} else hue = 4.0f + greenc - redc;
+			float cRed = ((float)(max - r)) / ((float)(max - min));
+			float cGreen = ((float)(max - g)) / ((float)(max - min));
+			float cBlue = ((float)(max - b)) / ((float)(max - min));
+			if( r == max ) {hue = cBlue - cGreen;} else if( g == max ) {hue = 2.0f + cRed - cBlue;} else hue = 4.0f + cGreen - cRed;
 			hue = hue / 6.0f;
 			if( hue < 0 ) hue = hue + 1.0f;
 		}
