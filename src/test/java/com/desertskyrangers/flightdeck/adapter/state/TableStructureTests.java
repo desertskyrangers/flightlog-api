@@ -63,6 +63,9 @@ public class TableStructureTests {
 		expected.add( "owner" );
 		expected.add( "ownertype" );
 
+		expected.add( "basecolor" );
+		expected.add( "trimcolor" );
+
 		assertThat( getColumns( "aircraft" ) ).containsExactlyInAnyOrderElementsOf( expected );
 	}
 
