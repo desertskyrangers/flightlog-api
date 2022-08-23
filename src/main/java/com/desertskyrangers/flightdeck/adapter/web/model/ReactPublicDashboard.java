@@ -27,6 +27,10 @@ public class ReactPublicDashboard {
 
 	private List<ReactAircraftStats> aircraftStats;
 
+	/**
+	 * @deprecated Should be replaced with ReactResponse.messages
+	 */
+	@Deprecated
 	private List<String> messages;
 
 	public static ReactPublicDashboard from( PublicDashboard dashboard, Map<String, Object> preferences ) {

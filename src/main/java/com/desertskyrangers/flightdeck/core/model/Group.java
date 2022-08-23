@@ -12,19 +12,21 @@ import java.util.UUID;
 @Accessors( fluent = true )
 public class Group implements Comparable<Group> {
 
-	UUID id = UUID.randomUUID();
+	private UUID id = UUID.randomUUID();
 
-	GroupType type;
+	private GroupType type;
 
-	String name;
+	private String name;
 
-	@EqualsAndHashCode.Exclude
-	@ToString.Exclude
-	Set<Member> members = Set.of();
+	private UUID dashboardId;
 
 	@EqualsAndHashCode.Exclude
 	@ToString.Exclude
-	Set<User> users = Set.of();
+	private Set<Member> members = Set.of();
+
+	@EqualsAndHashCode.Exclude
+	@ToString.Exclude
+	private Set<User> users = Set.of();
 
 	@Override
 	public int compareTo( Group that ) {

@@ -5,6 +5,7 @@ import com.desertskyrangers.flightdeck.adapter.web.model.*;
 import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.GroupServices;
 import com.desertskyrangers.flightdeck.port.MembershipServices;
+import com.desertskyrangers.flightdeck.port.ProjectionServices;
 import com.desertskyrangers.flightdeck.port.UserServices;
 import com.desertskyrangers.flightdeck.util.Text;
 import com.desertskyrangers.flightdeck.util.Uuid;
@@ -26,15 +27,42 @@ public class GroupController extends BaseController {
 
 	private final UserServices userServices;
 
-	public GroupController( GroupServices groupServices, MembershipServices membershipServices, UserServices userServices ) {
+	private final ProjectionServices projectionServices;
+
+	public GroupController( GroupServices groupServices, MembershipServices membershipServices, UserServices userServices, ProjectionServices projectionServices ) {
 		this.groupServices = groupServices;
 		this.membershipServices = membershipServices;
 		this.userServices = userServices;
+		this.projectionServices = projectionServices;
 	}
 
 	@GetMapping( path = ApiPath.GROUP + "/{id}/dashboard" )
 	ResponseEntity<?> dashboard( Authentication authentication, @PathVariable String id ) {
-		return new ResponseEntity<>( ReactResponse.messages( List.of( "Group dashboard not available yet" ) ), HttpStatus.BAD_REQUEST );
+		User user = getRequester( authentication );
+
+		List<String> messages = new ArrayList<>();
+		// Get and verify the group id
+		if( Text.isBlank( id ) ) messages.add( "ID required" );
+		if( Uuid.isNotValid( id ) ) messages.add( "Invalid ID" );
+		// Get and verify the group
+		Optional<Group> optionalGroup = groupServices.find( UUID.fromString( id ) );
+		if( optionalGroup.isEmpty() ) messages.add( "Group not found" );
+		if( !messages.isEmpty() ) return new ResponseEntity<>( ReactResponse.messages( messages ), HttpStatus.BAD_REQUEST );
+
+		// Verify group membership
+		Group group = optionalGroup.get();
+		if( !group.users().contains( user ) ) messages.add( "User not a member of group" );
+		// Get and verify the dashboard
+		Optional<String> projection = projectionServices.findProjection( group.dashboardId() );
+		if( projection.isEmpty() ) messages.add( "Error retrieving group dashboard" );
+		if( !messages.isEmpty() ) return new ResponseEntity<>( ReactResponse.messages( messages ), HttpStatus.BAD_REQUEST );
+
+		try {
+			return new ResponseEntity<>( ReactResponse.wrapProjection( projection.get() ), HttpStatus.OK );
+		} catch( Exception exception ) {
+			log.warn( "Error retrieving group dashboard", exception );
+			return new ResponseEntity<>( ReactResponse.messages( List.of( "Error retrieving group dashboard" ) ), HttpStatus.BAD_REQUEST );
+		}
 	}
 
 	@PostMapping( path = ApiPath.GROUP_INVITE )
@@ -44,7 +72,7 @@ public class GroupController extends BaseController {
 
 		List<String> messages = new ArrayList<>();
 		if( Text.isBlank( id ) ) messages.add( "ID required" );
-		if( Text.isNotBlank( id ) && Uuid.isNotValid( id ) ) messages.add( "Invalid group id" );
+		if( Text.isNotBlank( id ) && Uuid.isNotValid( id ) ) messages.add( "Invalid id" );
 		if( Text.isBlank( invitee ) ) messages.add( "Invitee required" );
 		Optional<Group> optionalGroup = groupServices.find( UUID.fromString( id ) );
 		if( optionalGroup.isEmpty() ) messages.add( "Group not found" );

@@ -23,4 +23,8 @@ public class ReactResponse<T> {
 		return new ReactResponse<S>().setMessages( messages );
 	}
 
+	public static String wrapProjection( String projection ) {
+		return "{\"data\":" + projection + "}";
+	}
+
 }
