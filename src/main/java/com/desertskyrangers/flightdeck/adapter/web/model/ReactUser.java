@@ -25,6 +25,8 @@ public class ReactUser {
 
 	private String callSign;
 
+	private String name;
+
 	private String email;
 
 	private boolean emailVerified;
@@ -61,6 +63,7 @@ public class ReactUser {
 		reactUser.setLastName( user.lastName() );
 		reactUser.setPreferredName( user.preferredName() );
 		reactUser.setCallSign( user.callSign() );
+		reactUser.setName( user.name() );
 		reactUser.setEmail( user.email() );
 		reactUser.setEmailVerified( user.emailVerified() );
 		reactUser.setSmsNumber( user.smsNumber() );

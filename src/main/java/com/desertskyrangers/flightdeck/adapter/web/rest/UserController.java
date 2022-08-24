@@ -314,7 +314,7 @@ public class UserController extends BaseController {
 		users.add( 0, user );
 		users.add( unlistedUser() );
 
-		return new ResponseEntity<>( users.stream().map( c -> new ReactOption( c.id().toString(), c.preferredName() ) ).toList(), HttpStatus.OK );
+		return new ResponseEntity<>( users.stream().map( c -> new ReactOption( c.id().toString(), c.name() ) ).toList(), HttpStatus.OK );
 	}
 
 	@PreAuthorize( "hasAuthority('USER')" )

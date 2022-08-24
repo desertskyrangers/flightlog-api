@@ -248,7 +248,7 @@ public class AuthService implements AuthServices {
 		if( message == null ) return;
 
 		EmailMessage email = new EmailMessage();
-		email.recipient( account.email(), account.preferredName() );
+		email.recipient( account.email(), account.name() );
 		email.subject( subject );
 		email.message( message );
 		email.isHtml( true );

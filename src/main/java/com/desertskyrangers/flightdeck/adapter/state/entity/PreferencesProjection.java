@@ -16,6 +16,7 @@ import java.util.UUID;
 @Entity
 @Table( name = "preferences" )
 @Accessors( chain = true )
+@Deprecated
 public class PreferencesProjection {
 
 	@Id

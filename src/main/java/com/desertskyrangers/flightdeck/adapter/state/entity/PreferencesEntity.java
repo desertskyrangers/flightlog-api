@@ -9,6 +9,7 @@ import java.util.Map;
 /**
  * @deprecated Part of an old projection strategy see {@link ProjectionEntity}
  */
+@Deprecated
 public class PreferencesEntity extends HashMap<String, Object> {
 
 	@SuppressWarnings( "unused" )

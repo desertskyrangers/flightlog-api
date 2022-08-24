@@ -30,12 +30,7 @@ public class InitialConfig {
 	private User unlisted;
 
 	public InitialConfig(
-		FlightDeckApp app,
-		StatePersisting statePersisting,
-		StateRetrieving stateRetrieving,
-		AircraftServices aircraftServices,
-		BatteryServices batteryServices,
-		DashboardServices dashboardServices
+		FlightDeckApp app, StatePersisting statePersisting, StateRetrieving stateRetrieving, AircraftServices aircraftServices, BatteryServices batteryServices, DashboardServices dashboardServices
 	) {
 		this.app = app;
 		this.statePersisting = statePersisting;
@@ -167,7 +162,7 @@ public class InitialConfig {
 		user.username( "tia" );
 		user.firstName( "Tia" );
 		user.lastName( "Test" );
-		user.preferredName( "Tia Test" );
+		//user.preferredName( "Tia Test" );
 		user.callSign( "Trickster" );
 		user.email( "tiat@noreply.com" );
 		user.smsNumber( "800-555-8428" );
@@ -193,7 +188,8 @@ public class InitialConfig {
 		user.username( "tom" );
 		user.firstName( "Tom" );
 		user.lastName( "Test" );
-		user.preferredName( "Tommy Test" );
+		//user.preferredName( "Tommy Test" );
+		user.callSign( "Two Tone" );
 		user.email( "tomt@noreply.com" );
 		user.smsNumber( "800-555-8668" );
 		user.smsCarrier( SmsCarrier.SPRINT );
@@ -214,7 +210,8 @@ public class InitialConfig {
 		user.username( "tea" );
 		user.firstName( "Téa" );
 		user.lastName( "Test" );
-		user.preferredName( "Téa Test" );
+		//user.preferredName( "Téa Test" );
+		user.callSign( "Teapot" );
 		user.email( "teat@noreply.com" );
 		user.smsNumber( "800-555-8328" );
 		user.smsCarrier( SmsCarrier.SPRINT );
@@ -235,7 +232,7 @@ public class InitialConfig {
 		user.username( "tim" );
 		user.firstName( "Tim" );
 		user.lastName( "Test" );
-		user.preferredName( "Timmy Test" );
+		//user.preferredName( "Timmy Test" );
 		user.email( "timt@noreply.com" );
 		user.smsNumber( "800-555-8468" );
 		user.smsCarrier( SmsCarrier.SPRINT );
