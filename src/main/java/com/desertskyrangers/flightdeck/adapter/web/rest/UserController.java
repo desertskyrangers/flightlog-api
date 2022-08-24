@@ -129,13 +129,13 @@ public class UserController extends BaseController {
 	// FIXME Normal users should not be able to update other users
 	@PreAuthorize( "hasAuthority('USER')" )
 	@PutMapping( value = ApiPath.USER + "/{id}" )
-	ResponseEntity<ReactProfileResponse> update( @PathVariable( "id" ) UUID id, @RequestBody ReactUser account ) {
+	ResponseEntity<ReactProfileResponse> update( @PathVariable( "id" ) UUID id, @RequestBody ReactUser request ) {
 		Optional<User> optional = userServices.find( id );
 		if( optional.isEmpty() ) return new ResponseEntity<>( new ReactProfileResponse().setAccount( new ReactUser() ), HttpStatus.BAD_REQUEST );
 
-		User user = account.updateFrom( optional.get() );
+		User user = request.updateFrom( optional.get() );
 
-		// Update the user account
+		// Update the user
 		userServices.upsert( user );
 
 		return new ResponseEntity<>( new ReactProfileResponse().setAccount( ReactUser.from( user ) ), HttpStatus.OK );

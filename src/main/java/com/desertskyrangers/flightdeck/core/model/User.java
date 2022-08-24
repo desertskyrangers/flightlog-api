@@ -1,5 +1,6 @@
 package com.desertskyrangers.flightdeck.core.model;
 
+import com.desertskyrangers.flightdeck.util.Text;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -52,13 +53,9 @@ public class User implements Comparable<User> {
 
 	public String name() {
 		String name = preferredName();
-		if( isBlank( name ) && !isBlank( callSign() ) ) name = firstName() + " \"" + callSign() + "\" " + lastName();
-		if( isBlank( name ) ) name = firstName() + " " + lastName();
+		if( Text.isBlank( name ) && Text.isNotBlank( callSign() ) ) name = firstName() + " \"" + callSign() + "\" " + lastName();
+		if( Text.isBlank( name ) ) name = firstName() + " " + lastName();
 		return name.trim();
-	}
-
-	private boolean isBlank( String string ) {
-		return string == null || "".equals( string.trim() );
 	}
 
 	public void roles( Set<String> roles ) {
