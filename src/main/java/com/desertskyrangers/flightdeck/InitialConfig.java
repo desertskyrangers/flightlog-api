@@ -29,7 +29,14 @@ public class InitialConfig {
 
 	private User unlisted;
 
-	public InitialConfig( FlightDeckApp app, StatePersisting statePersisting, StateRetrieving stateRetrieving, AircraftServices aircraftServices, BatteryServices batteryServices, DashboardServices dashboardServices ) {
+	public InitialConfig(
+		FlightDeckApp app,
+		StatePersisting statePersisting,
+		StateRetrieving stateRetrieving,
+		AircraftServices aircraftServices,
+		BatteryServices batteryServices,
+		DashboardServices dashboardServices
+	) {
 		this.app = app;
 		this.statePersisting = statePersisting;
 		this.stateRetrieving = stateRetrieving;
@@ -161,6 +168,7 @@ public class InitialConfig {
 		user.firstName( "Tia" );
 		user.lastName( "Test" );
 		user.preferredName( "Tia Test" );
+		user.callSign( "Trickster" );
 		user.email( "tiat@noreply.com" );
 		user.smsNumber( "800-555-8428" );
 		user.smsCarrier( SmsCarrier.SPRINT );
@@ -253,8 +261,8 @@ public class InitialConfig {
 			.length( 963 )
 			.wingarea( 2500 )
 			.weight( 960 )
-			.baseColor(AppColor.WHITE)
-			.trimColor(AppColor.BLUE);
+			.baseColor( AppColor.WHITE )
+			.trimColor( AppColor.BLUE );
 	}
 
 	private Aircraft createBianca() {

@@ -50,14 +50,15 @@ public class User implements Comparable<User> {
 	@EqualsAndHashCode.Exclude
 	private Set<Group> groups = new CopyOnWriteArraySet<>();
 
-	public void roles( Set<String> roles ) {
-		this.roles = roles == null ? Set.of() : roles;
-	}
-
 	public String name() {
 		String name = preferredName();
+		if( name == null && callSign() != null && !callSign().trim().isEmpty() ) name = firstName() + " \"" + callSign() + "\" " + lastName();
 		if( name == null ) name = firstName() + " " + lastName();
 		return name.trim();
+	}
+
+	public void roles( Set<String> roles ) {
+		this.roles = roles == null ? Set.of() : roles;
 	}
 
 	@Override
