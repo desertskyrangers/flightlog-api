@@ -34,9 +34,9 @@ public class UserService implements UserServices {
 		this.dashboardServices = dashboardServices;
 	}
 
-//	public void setPublicDashboardServices( PublicDashboardServices publicDashboardServices ) {
-//		this.publicDashboardServices = publicDashboardServices;
-//	}
+	//	public void setPublicDashboardServices( PublicDashboardServices publicDashboardServices ) {
+	//		this.publicDashboardServices = publicDashboardServices;
+	//	}
 
 	@Override
 	public Set<User> find() {
@@ -76,6 +76,7 @@ public class UserService implements UserServices {
 		} );
 
 		statePersisting.upsert( user );
+		dashboardServices.update( user );
 	}
 
 	@Override
