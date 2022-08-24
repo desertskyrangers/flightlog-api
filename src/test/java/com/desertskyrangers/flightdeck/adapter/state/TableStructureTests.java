@@ -24,14 +24,12 @@ public class TableStructureTests {
 		Set<String> expected = new HashSet<>();
 		expected.add( "aircraft" );
 		expected.add( "battery" );
-		expected.add( "dashboard" );
 		expected.add( "flight" );
 		expected.add( "flightbattery" );
 		expected.add( "member" );
 		expected.add( "org" );
 		expected.add( "preferences" );
 		expected.add( "projection" );
-		expected.add( "publicdashboard" );
 		expected.add( "user" );
 		expected.add( "usertoken" );
 		expected.add( "userrole" );
@@ -98,15 +96,6 @@ public class TableStructureTests {
 	}
 
 	@Test
-	void testDashboardTable() throws Exception {
-		Set<String> expected = new HashSet<>();
-		expected.add( "id" );
-		expected.add( "json" );
-
-		assertThat( getColumns( "dashboard" ) ).containsExactlyInAnyOrderElementsOf( expected );
-	}
-
-	@Test
 	void testFlightTable() throws Exception {
 		Set<String> expected = new HashSet<>();
 		expected.add( "id" );
@@ -170,15 +159,6 @@ public class TableStructureTests {
 		expected.add( "json" );
 
 		assertThat( getColumns( "projection" ) ).containsExactlyInAnyOrderElementsOf( expected );
-	}
-
-	@Test
-	void testPublicDashboardTable() throws Exception {
-		Set<String> expected = new HashSet<>();
-		expected.add( "id" );
-		expected.add( "json" );
-
-		assertThat( getColumns( "publicdashboard" ) ).containsExactlyInAnyOrderElementsOf( expected );
 	}
 
 	@Test
