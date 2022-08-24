@@ -14,7 +14,7 @@ public interface CommonDashboardServices<T> {
 
 	T upsert( User user, T dashboard );
 
-	T update( User user );
+	String update( User user );
 
 	String update( Group group );
 

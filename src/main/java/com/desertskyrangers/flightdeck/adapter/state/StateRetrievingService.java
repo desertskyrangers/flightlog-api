@@ -300,8 +300,8 @@ public class StateRetrievingService implements StateRetrieving {
 	}
 
 	@Override
-	public List<User> findAllUserAccounts() {
-		return userRepo.findAll().stream().map( UserEntity::toUser ).collect( Collectors.toList() );
+	public Set<User> findAllUsers() {
+		return userRepo.findAll().stream().map( UserEntity::toUser ).collect( Collectors.toSet() );
 	}
 
 	@Override

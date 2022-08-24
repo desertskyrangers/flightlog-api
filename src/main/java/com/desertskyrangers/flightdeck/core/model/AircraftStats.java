@@ -5,8 +5,12 @@ import lombok.experimental.Accessors;
 
 import java.util.UUID;
 
+/**
+ * @deprecated Use new projection pattern
+ */
 @Data
 @Accessors( fluent = true )
+@Deprecated
 public class AircraftStats {
 
 	private UUID id = UUID.randomUUID();

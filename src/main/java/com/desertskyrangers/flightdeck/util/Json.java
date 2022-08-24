@@ -3,6 +3,7 @@ package com.desertskyrangers.flightdeck.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -15,7 +16,7 @@ public class Json {
 
 	public static String stringify( Object object ) throws ResponseStatusException {
 		try {
-			return new ObjectMapper().writeValueAsString( object );
+			return new ObjectMapper().enable( SerializationFeature.EAGER_SERIALIZER_FETCH ).writeValueAsString( object );
 		} catch( JsonProcessingException exception ) {
 			throw new ResponseStatusException( HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage(), exception );
 		}

@@ -56,7 +56,7 @@ public class InitialConfig {
 		return unlisted;
 	}
 
-	void init() {
+	void run() {
 		User unlisted = new User();
 		unlisted.id( UUID.fromString( "6e0c4460-357b-4a86-901d-e2ba16000c59" ) );
 		unlisted.lastName( "Unlisted" );
@@ -150,16 +150,6 @@ public class InitialConfig {
 
 		statePersisting.upsert( new Member().user( tom ).group( testersUnlimited ).status( MemberStatus.OWNER ) );
 		statePersisting.upsert( new Member().user( tom ).group( testersInfinite ).status( MemberStatus.ACCEPTED ) );
-
-		batteryServices.updateFlightData( a4s2650turnigy );
-		batteryServices.updateFlightData( b4s2650turnigy );
-		batteryServices.updateFlightData( c4s2650turnigy );
-		batteryServices.updateFlightData( d4s2650turnigy );
-
-		dashboardServices.update( tia );
-		dashboardServices.update( tom );
-		dashboardServices.update( tea );
-		dashboardServices.update( tim );
 
 		log.warn( "Test data created!" );
 	}

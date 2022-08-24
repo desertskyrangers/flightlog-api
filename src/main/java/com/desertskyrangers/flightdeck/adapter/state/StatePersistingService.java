@@ -5,6 +5,7 @@ import com.desertskyrangers.flightdeck.adapter.state.repo.*;
 import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
 import com.desertskyrangers.flightdeck.util.Json;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -12,6 +13,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@Slf4j
 public class StatePersistingService implements StatePersisting {
 
 	public static final String EMPTY_PROJECTION = "{}";
@@ -152,13 +154,13 @@ public class StatePersistingService implements StatePersisting {
 	}
 
 	@Override
-	public User upsert( User account ) {
-		return UserEntity.toUser( userRepo.save( UserEntity.from( account ) ) );
+	public User upsert( User user ) {
+		return UserEntity.toUser( userRepo.save( UserEntity.from( user ) ) );
 	}
 
 	@Override
-	public void remove( User account ) {
-		userRepo.deleteById( account.id() );
+	public void remove( User user ) {
+		userRepo.deleteById( user.id() );
 	}
 
 	@Override

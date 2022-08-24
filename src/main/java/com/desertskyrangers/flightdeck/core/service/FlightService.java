@@ -26,8 +26,6 @@ public class FlightService implements FlightServices {
 
 	private DashboardServices dashboardServices;
 
-	private PublicDashboardServices publicDashboardServices;
-
 	private static final Map<String, Integer> times = Map.of( "month", 30, "week", 7, "day", 1 );
 
 	public FlightService( StatePersisting statePersisting, StateRetrieving stateRetrieving ) {
@@ -45,10 +43,6 @@ public class FlightService implements FlightServices {
 
 	public void setDashboardServices( DashboardServices dashboardServices ) {
 		this.dashboardServices = dashboardServices;
-	}
-
-	public void setPublicDashboardServices( PublicDashboardServices publicDashboardServices ) {
-		this.publicDashboardServices = publicDashboardServices;
 	}
 
 	@Override
@@ -207,9 +201,6 @@ public class FlightService implements FlightServices {
 
 		// Update private dashboards
 		updateDashboards( flight, dashboardServices );
-
-		// Update public dashboards
-		updateDashboards( flight, publicDashboardServices );
 	}
 
 	private void updateDashboards( Flight flight, CommonDashboardServices<?> dashboard ) {

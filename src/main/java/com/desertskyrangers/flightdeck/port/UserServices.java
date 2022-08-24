@@ -8,9 +8,7 @@ public interface UserServices {
 
 	void setDashboardServices( DashboardServices dashboardServices );
 
-	void setPublicDashboardServices( PublicDashboardServices publicDashboardServices );
-
-	List<User> find();
+	Set<User> find();
 
 	Optional<User> find( UUID id );
 

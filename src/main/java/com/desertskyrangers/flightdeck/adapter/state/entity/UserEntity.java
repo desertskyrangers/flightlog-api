@@ -7,6 +7,7 @@ import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.util.Text;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 @Data
 @Entity
 @Table( name = "user" )
+@Slf4j
 public class UserEntity {
 
 	@Id
@@ -51,7 +53,10 @@ public class UserEntity {
 	@Column( name = "smsverified" )
 	private Boolean smsVerified;
 
-	@OneToMany( cascade = CascadeType.ALL, fetch = FetchType.EAGER )
+	@Column( name = "dashboardid" )
+	private UUID dashboardId;
+
+	@OneToMany( fetch = FetchType.EAGER, cascade = CascadeType.ALL )
 	@CollectionTable( name = "usertoken", joinColumns = @JoinColumn( name = "userid" ) )
 	@EqualsAndHashCode.Exclude
 	private Set<TokenEntity> tokens = new HashSet<>();
@@ -76,20 +81,9 @@ public class UserEntity {
 		UserEntity entity = fromUserShallow( user );
 
 		Map<UUID, UserEntity> users = new HashMap<>();
-		Map<UUID, TokenEntity> tokens = new HashMap<>();
 		Map<UUID, GroupEntity> groups = new HashMap<>();
-		entity.setTokens( user.tokens().stream().map( t -> TokenEntity.fromTokenFromUser( t, tokens, users ) ).collect( Collectors.toSet() ) );
+		Map<UUID, TokenEntity> tokens = new HashMap<>();
 		entity.setGroups( user.groups().stream().map( g -> GroupEntity.fromGroupFromUser( g, groups, users ) ).collect( Collectors.toSet() ) );
-
-		return entity;
-	}
-
-	static UserEntity fromUserFromToken( User user, Map<UUID, UserEntity> users, Map<UUID, TokenEntity> tokens ) {
-		UserEntity entity = users.get( user.id() );
-		if( entity != null ) return entity;
-
-		entity = fromUserShallow( user );
-		users.put( user.id(), entity );
 		entity.setTokens( user.tokens().stream().map( t -> TokenEntity.fromTokenFromUser( t, tokens, users ) ).collect( Collectors.toSet() ) );
 
 		return entity;
@@ -102,6 +96,17 @@ public class UserEntity {
 		entity = fromUserShallow( user );
 		users.put( user.id(), entity );
 		entity.setGroups( user.groups().stream().map( g -> GroupEntity.fromGroupFromUser( g, groups, users ) ).collect( Collectors.toSet() ) );
+
+		return entity;
+	}
+
+	static UserEntity fromUserFromToken( User user, Map<UUID, UserEntity> users, Map<UUID, TokenEntity> tokens ) {
+		UserEntity entity = users.get( user.id() );
+		if( entity != null ) return entity;
+
+		entity = fromUserShallow( user );
+		users.put( user.id(), entity );
+		entity.setTokens( user.tokens().stream().map( t -> TokenEntity.fromTokenFromUser( t, tokens, users ) ).collect( Collectors.toSet() ) );
 
 		return entity;
 	}
@@ -155,6 +160,7 @@ public class UserEntity {
 		entity.setEmail( user.email() );
 		entity.setEmailVerified( user.emailVerified() );
 		entity.setSmsNumber( user.smsNumber() );
+		entity.setDashboardId( user.dashboardId() );
 		if( user.smsCarrier() != null ) entity.setSmsCarrier( user.smsCarrier().name().toLowerCase() );
 		entity.setSmsVerified( user.smsVerified() );
 		entity.setRoles( user.roles() );
@@ -174,6 +180,7 @@ public class UserEntity {
 		user.email( entity.getEmail() );
 		user.emailVerified( entity.getEmailVerified() != null && entity.getEmailVerified() );
 		user.smsNumber( entity.getSmsNumber() );
+		user.dashboardId( entity.getDashboardId() );
 		if( Text.isNotBlank( entity.getSmsCarrier() ) ) user.smsCarrier( SmsCarrier.valueOf( entity.getSmsCarrier().toUpperCase() ) );
 		user.smsVerified( entity.getSmsVerified() != null && entity.getSmsVerified() );
 		user.tokens( entity.getTokens().stream().map( c -> TokenEntity.toUserToken( c ).user( user ) ).collect( Collectors.toSet() ) );

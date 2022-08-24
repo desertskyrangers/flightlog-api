@@ -85,7 +85,7 @@ public interface StateRetrieving {
 
 	Optional<UserToken> findUserTokenByPrincipal( String username );
 
-	List<User> findAllUserAccounts();
+	Set<User> findAllUsers();
 
 	Optional<User> findUser( UUID id );
 

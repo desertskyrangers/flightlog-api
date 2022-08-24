@@ -15,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.PermitAll;
 import java.util.*;
 
 @RestController
@@ -25,13 +26,11 @@ public class UserController extends BaseController {
 
 	private final BatteryServices batteryServices;
 
-	private final DashboardServices dashboardServices;
-
 	private final FlightServices flightServices;
 
 	private final GroupServices groupServices;
 
-	private final PublicDashboardServices publicDashboardServices;
+	private final ProjectionServices projectionServices;
 
 	private final UserServices userServices;
 
@@ -40,63 +39,69 @@ public class UserController extends BaseController {
 	public UserController(
 		AircraftServices aircraftServices,
 		BatteryServices batteryServices,
-		DashboardServices dashboardServices,
 		FlightServices flightServices,
 		GroupServices groupServices,
 		MembershipServices memberService,
-		PublicDashboardServices publicDashboardServices,
+		ProjectionServices projectionServices,
 		UserServices userServices
 	) {
 		this.aircraftServices = aircraftServices;
 		this.batteryServices = batteryServices;
-		this.dashboardServices = dashboardServices;
 		this.flightServices = flightServices;
 		this.groupServices = groupServices;
 		this.memberService = memberService;
-		this.publicDashboardServices = publicDashboardServices;
+		this.projectionServices = projectionServices;
 		this.userServices = userServices;
 	}
 
+	@PermitAll
 	@GetMapping( path = ApiPath.PUBLIC_DASHBOARD + "/{id}" )
-	ResponseEntity<ReactPublicDashboard> publicDashboard( @PathVariable String id ) {
+	ResponseEntity<?> publicDashboard( @PathVariable String id ) {
 		List<String> messages = new ArrayList<>();
 
-		try {
-			Optional<User> optional = userServices.findByPrincipal( id );
-			if( optional.isEmpty() ) optional = userServices.find( UUID.fromString( id ) );
-			if( optional.isEmpty() ) messages.add( "Dashboard not found" );
-			if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactPublicDashboard().setMessages( messages ), HttpStatus.BAD_REQUEST );
+		// FIXME Public dashboards need a separate projection id
 
-			User owner = optional.get();
-			Map<String, Object> preferences = userServices.getPreferences( owner );
+		try {
+			Optional<User> optionalUser = userServices.findByPrincipal( id );
+			if( optionalUser.isEmpty() ) optionalUser = userServices.find( UUID.fromString( id ) );
+			if( optionalUser.isEmpty() ) messages.add( "Dashboard not found" );
+			if( !messages.isEmpty() ) return new ResponseEntity<>( ReactResponse.messages( List.of( "Dashboard not found" ) ), HttpStatus.BAD_REQUEST );
+
+			User dashboardOwner = optionalUser.get();
+			Map<String, Object> preferences = userServices.getPreferences( dashboardOwner );
 
 			boolean showPublicDashboard = Objects.equals( String.valueOf( preferences.get( PreferenceKey.ENABLE_PUBLIC_DASHBOARD ) ), "true" );
-			if( !showPublicDashboard ) return new ResponseEntity<>( new ReactPublicDashboard().setMessages( List.of( "Dashboard not found" ) ), HttpStatus.BAD_REQUEST );
+			if( !showPublicDashboard ) return new ResponseEntity<>( ReactResponse.messages( List.of( "Dashboard not found" ) ), HttpStatus.BAD_REQUEST );
 
-			return publicDashboardServices
-				.findByUser( owner )
-				.map( dashboard -> new ResponseEntity<>( ReactPublicDashboard.from( dashboard, preferences ), HttpStatus.OK ) )
-				.orElseGet( () -> new ResponseEntity<>( new ReactPublicDashboard().setMessages( List.of( "Dashboard not found" ) ), HttpStatus.BAD_REQUEST ) );
+			// Get and verify the dashboard
+			Optional<String> projection = projectionServices.findProjection( dashboardOwner.dashboardId() );
+			if( projection.isEmpty() ) messages.add( "Dashboard not found" );
+			if( !messages.isEmpty() ) return new ResponseEntity<>( ReactResponse.messages( messages ), HttpStatus.BAD_REQUEST );
+
+			return new ResponseEntity<>( ReactResponse.wrapProjection( projection.get() ), HttpStatus.OK );
 		} catch( Exception exception ) {
-			log.error( "Error generating dashboard", exception );
-			return new ResponseEntity<>( new ReactPublicDashboard().setMessages( List.of( "Dashboard not found" ) ), HttpStatus.INTERNAL_SERVER_ERROR );
+			log.error( "Error retrieving dashboard", exception );
+			return new ResponseEntity<>( ReactResponse.messages( List.of( "Error retrieving dashboard" ) ), HttpStatus.INTERNAL_SERVER_ERROR );
 		}
 	}
 
 	@PreAuthorize( "hasAuthority('USER')" )
 	@GetMapping( path = ApiPath.DASHBOARD )
-	ResponseEntity<ReactDashboardResponse> dashboard( Authentication authentication ) {
+	ResponseEntity<?> dashboard( Authentication authentication ) {
+		List<String> messages = new ArrayList<>();
+
 		try {
 			User requester = getRequester( authentication );
-			Map<String, Object> preferences = userServices.getPreferences( requester );
 
-			return dashboardServices
-				.findByUser( requester )
-				.map( dashboard -> new ResponseEntity<>( new ReactDashboardResponse().setDashboard( ReactDashboard.from( dashboard, preferences ) ), HttpStatus.OK ) )
-				.orElseGet( () -> new ResponseEntity<>( new ReactDashboardResponse().setMessages( List.of( "Dashboard not found" ) ), HttpStatus.BAD_REQUEST ) );
+			// Get and verify the dashboard
+			Optional<String> projection = projectionServices.findProjection( requester.dashboardId() );
+			if( projection.isEmpty() ) messages.add( "Dashboard not found" );
+			if( !messages.isEmpty() ) return new ResponseEntity<>( ReactResponse.messages( messages ), HttpStatus.BAD_REQUEST );
+
+			return new ResponseEntity<>( ReactResponse.wrapProjection( projection.get() ), HttpStatus.OK );
 		} catch( Exception exception ) {
-			log.error( "Error generating dashboard", exception );
-			return new ResponseEntity<>( new ReactDashboardResponse().setMessages( List.of( "Error generating dashboard" ) ), HttpStatus.INTERNAL_SERVER_ERROR );
+			log.error( "Error retrieving dashboard", exception );
+			return new ResponseEntity<>( ReactResponse.messages( List.of( "Error retrieving dashboard" ) ), HttpStatus.INTERNAL_SERVER_ERROR );
 		}
 	}
 

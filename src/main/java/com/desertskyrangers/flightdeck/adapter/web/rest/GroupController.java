@@ -38,30 +38,33 @@ public class GroupController extends BaseController {
 
 	@GetMapping( path = ApiPath.GROUP + "/{id}/dashboard" )
 	ResponseEntity<?> dashboard( Authentication authentication, @PathVariable String id ) {
-		User user = getRequester( authentication );
-
 		List<String> messages = new ArrayList<>();
-		// Get and verify the group id
-		if( Text.isBlank( id ) ) messages.add( "ID required" );
-		if( Uuid.isNotValid( id ) ) messages.add( "Invalid ID" );
-		// Get and verify the group
-		Optional<Group> optionalGroup = groupServices.find( UUID.fromString( id ) );
-		if( optionalGroup.isEmpty() ) messages.add( "Group not found" );
-		if( !messages.isEmpty() ) return new ResponseEntity<>( ReactResponse.messages( messages ), HttpStatus.BAD_REQUEST );
-
-		// Verify group membership
-		Group group = optionalGroup.get();
-		if( !group.users().contains( user ) ) messages.add( "User not a member of group" );
-		// Get and verify the dashboard
-		Optional<String> projection = projectionServices.findProjection( group.dashboardId() );
-		if( projection.isEmpty() ) messages.add( "Error retrieving group dashboard" );
-		if( !messages.isEmpty() ) return new ResponseEntity<>( ReactResponse.messages( messages ), HttpStatus.BAD_REQUEST );
 
 		try {
+			User user = getRequester( authentication );
+
+			// Get and verify the group id
+			if( Text.isBlank( id ) ) messages.add( "ID required" );
+			if( Uuid.isNotValid( id ) ) messages.add( "Invalid ID" );
+
+			// Get and verify the group
+			Optional<Group> optionalGroup = groupServices.find( UUID.fromString( id ) );
+			if( optionalGroup.isEmpty() ) messages.add( "Group not found" );
+			if( !messages.isEmpty() ) return new ResponseEntity<>( ReactResponse.messages( messages ), HttpStatus.BAD_REQUEST );
+
+			// Get and verify group membership
+			Group group = optionalGroup.get();
+			if( !group.users().contains( user ) ) messages.add( "User not a member of group" );
+
+			// Get and verify the dashboard
+			Optional<String> projection = projectionServices.findProjection( group.dashboardId() );
+			if( projection.isEmpty() ) messages.add( "Error retrieving group dashboard" );
+			if( !messages.isEmpty() ) return new ResponseEntity<>( ReactResponse.messages( messages ), HttpStatus.BAD_REQUEST );
+
 			return new ResponseEntity<>( ReactResponse.wrapProjection( projection.get() ), HttpStatus.OK );
 		} catch( Exception exception ) {
 			log.warn( "Error retrieving group dashboard", exception );
-			return new ResponseEntity<>( ReactResponse.messages( List.of( "Error retrieving group dashboard" ) ), HttpStatus.BAD_REQUEST );
+			return new ResponseEntity<>( ReactResponse.messages( List.of( "Error retrieving group dashboard" ) ), HttpStatus.INTERNAL_SERVER_ERROR );
 		}
 	}
 

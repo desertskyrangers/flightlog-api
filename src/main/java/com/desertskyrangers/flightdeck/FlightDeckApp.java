@@ -18,8 +18,13 @@ public class FlightDeckApp {
 
 	public static void main( String[] args ) {
 		ConfigurableApplicationContext context = SpringApplication.run( FlightDeckApp.class, args );
-		context.getBean( InitialConfig.class ).init();
-		context.getBean( DataRefresh.class ).run();
+		context.getBean( InitialConfig.class ).run();
+//		try {
+//			Thread.sleep( 1000 );
+//		} catch( InterruptedException exception ) {
+//			// Ignore
+//		}
+		context.getBean( DataUpdate.class ).run();
 	}
 
 	public FlightDeckApp( final ApplicationContext context ) {

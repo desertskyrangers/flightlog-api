@@ -22,7 +22,7 @@ public class UserService implements UserServices {
 
 	private DashboardServices dashboardServices;
 
-	private PublicDashboardServices publicDashboardServices;
+	//private PublicDashboardServices publicDashboardServices;
 
 	public UserService( StateRetrieving stateRetrieving, StatePersisting statePersisting, PasswordEncoder passwordEncoder ) {
 		this.stateRetrieving = stateRetrieving;
@@ -34,13 +34,13 @@ public class UserService implements UserServices {
 		this.dashboardServices = dashboardServices;
 	}
 
-	public void setPublicDashboardServices( PublicDashboardServices publicDashboardServices ) {
-		this.publicDashboardServices = publicDashboardServices;
-	}
+//	public void setPublicDashboardServices( PublicDashboardServices publicDashboardServices ) {
+//		this.publicDashboardServices = publicDashboardServices;
+//	}
 
 	@Override
-	public List<User> find() {
-		return stateRetrieving.findAllUserAccounts();
+	public Set<User> find() {
+		return stateRetrieving.findAllUsers();
 	}
 
 	@Override
@@ -154,7 +154,7 @@ public class UserService implements UserServices {
 		dashboardServices.update( user );
 
 		// Update public dashboards
-		publicDashboardServices.update( user );
+		//publicDashboardServices.update( user );
 	}
 
 }

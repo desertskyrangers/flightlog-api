@@ -35,6 +35,8 @@ public class User implements Comparable<User> {
 
 	private boolean smsVerified;
 
+	private UUID dashboardId;
+
 	@ToString.Exclude
 	@EqualsAndHashCode.Exclude
 	private Set<UserToken> tokens = new CopyOnWriteArraySet<>();
