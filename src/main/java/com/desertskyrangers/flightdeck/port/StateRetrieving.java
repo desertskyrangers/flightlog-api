@@ -121,10 +121,6 @@ public interface StateRetrieving {
 
 	String getPreference( User user, String key, String defaultValue );
 
-	Optional<Dashboard> findDashboard( User user );
-
-	Optional<PublicDashboard> findPublicDashboard( User user );
-
 	Optional<String> findProjection( UUID id );
 
 }

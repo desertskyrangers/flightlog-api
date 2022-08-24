@@ -53,8 +53,13 @@ public class UserEntity {
 	@Column( name = "smsverified" )
 	private Boolean smsVerified;
 
+	// This is stored as a projection
 	@Column( name = "dashboardid" )
 	private UUID dashboardId;
+
+	// This is stored as a projection
+	@Column( name = "publicdashboardid" )
+	private UUID publicDashboardId;
 
 	@OneToMany( fetch = FetchType.EAGER, cascade = CascadeType.ALL )
 	@CollectionTable( name = "usertoken", joinColumns = @JoinColumn( name = "userid" ) )
@@ -161,6 +166,7 @@ public class UserEntity {
 		entity.setEmailVerified( user.emailVerified() );
 		entity.setSmsNumber( user.smsNumber() );
 		entity.setDashboardId( user.dashboardId() );
+		entity.setPublicDashboardId( user.publicDashboardId() );
 		if( user.smsCarrier() != null ) entity.setSmsCarrier( user.smsCarrier().name().toLowerCase() );
 		entity.setSmsVerified( user.smsVerified() );
 		entity.setRoles( user.roles() );
@@ -181,6 +187,7 @@ public class UserEntity {
 		user.emailVerified( entity.getEmailVerified() != null && entity.getEmailVerified() );
 		user.smsNumber( entity.getSmsNumber() );
 		user.dashboardId( entity.getDashboardId() );
+		user.publicDashboardId( entity.getPublicDashboardId() );
 		if( Text.isNotBlank( entity.getSmsCarrier() ) ) user.smsCarrier( SmsCarrier.valueOf( entity.getSmsCarrier().toUpperCase() ) );
 		user.smsVerified( entity.getSmsVerified() != null && entity.getSmsVerified() );
 		user.tokens( entity.getTokens().stream().map( c -> TokenEntity.toUserToken( c ).user( user ) ).collect( Collectors.toSet() ) );

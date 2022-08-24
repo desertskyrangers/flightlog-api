@@ -13,35 +13,42 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 @Slf4j
-public class DashboardService extends CommonDashboardService<Dashboard> implements DashboardServices {
+public class DashboardService implements DashboardServices {
+
+	private final FlightServices flightServices;
+
+	private final AircraftServices aircraftServices;
+
+	private final UserServices userServices;
+
+	private final StateRetrieving stateRetrieving;
+
+	private final StatePersisting statePersisting;
+
+
 
 	public DashboardService( AircraftServices aircraftServices, FlightServices flightServices, UserServices userServices, StateRetrieving stateRetrieving, StatePersisting statePersisting ) {
-		super( aircraftServices, flightServices, userServices, stateRetrieving, statePersisting );
+		this.aircraftServices = aircraftServices;
+		this.flightServices = flightServices;
+		this.userServices = userServices;
+		this.stateRetrieving = stateRetrieving;
+		this.statePersisting = statePersisting;
 		flightServices.setDashboardServices( this );
 		userServices.setDashboardServices( this );
 	}
 
 	@Override
-	public Optional<Dashboard> find( UUID uuid ) {
-		return Optional.empty();
-	}
-
-	@Override
-	public Optional<Dashboard> findByUser( User user ) {
-		return getStateRetrieving().findDashboard( user );
-	}
-
-	@Override
-	public Dashboard upsert( User user, Dashboard dashboard ) {
-		return getStatePersisting().upsertDashboard( user, dashboard );
-	}
-
-	@Override
 	public String update( User user ) {
-		// Assign a user dashboard id if one does not exist
-		if( user.dashboardId() == null ) getStatePersisting().upsert( user.dashboardId( UUID.randomUUID() ) );
+		// NEXT Continue here with creating the public dashboard projection
+		//update( user, true );
+		return update( user, false );
+	}
 
-		Map<String, Object> preferences = getUserServices().getPreferences( user );
+	private String update( User user, boolean isPublic ) {
+		// Assign a user dashboard id if one does not exist
+		if( user.dashboardId() == null ) statePersisting.upsert( user.dashboardId( UUID.randomUUID() ) );
+
+		Map<String, Object> preferences = userServices.getPreferences( user );
 
 		boolean showObserverStats = Boolean.parseBoolean( String.valueOf( preferences.get( PreferenceKey.SHOW_OBSERVER_STATS ) ) );
 		boolean showAircraftStats = Boolean.parseBoolean( String.valueOf( preferences.get( PreferenceKey.SHOW_AIRCRAFT_STATS ) ) );
@@ -49,9 +56,9 @@ public class DashboardService extends CommonDashboardService<Dashboard> implemen
 		List<Aircraft> aircraft;
 		// FIXME What if the dashboard is public???
 		if( "true".equals( String.valueOf( preferences.get( PreferenceKey.SHOW_ALL_AIRCRAFT ) ) ) ) {
-			aircraft = getAircraftServices().findAllByOwner( user.id() );
+			aircraft = aircraftServices.findAllByOwner( user.id() );
 		} else {
-			aircraft = getAircraftServices().findAllByOwnerAndStatus( user.id(), AircraftStatus.AIRWORTHY );
+			aircraft = aircraftServices.findAllByOwnerAndStatus( user.id(), AircraftStatus.AIRWORTHY );
 		}
 
 		// Collect the aircraft statistics
@@ -60,33 +67,33 @@ public class DashboardService extends CommonDashboardService<Dashboard> implemen
 			stats.setId( a.id().toString() );
 			stats.setName( a.name() );
 			stats.setType( a.type().name().toLowerCase() );
-			stats.setLastFlightTimestamp( getFlightServices().getLastAircraftFlight( a ).map( Flight::timestamp ).orElse( -1L ) );
-			stats.setFlightCount( getFlightServices().getAircraftFlightCount( a ) );
-			stats.setFlightTime( getFlightServices().getAircraftFlightTime( a ) );
+			stats.setLastFlightTimestamp( flightServices.getLastAircraftFlight( a ).map( Flight::timestamp ).orElse( -1L ) );
+			stats.setFlightCount( flightServices.getAircraftFlightCount( a ) );
+			stats.setFlightTime( flightServices.getAircraftFlightTime( a ) );
 			return stats;
 		} ).toList();
 
 		// Create a map for the dashboard
 		Map<String, Object> map = new HashMap<>();
 		map.put( "displayName", user.name() );
-		map.put( "pilotFlightCount", String.valueOf( getFlightServices().getPilotFlightCount( user.id() ) ) );
-		map.put( "pilotFlightTime", String.valueOf( getFlightServices().getPilotFlightTime( user.id() ) ) );
+		map.put( "pilotFlightCount", String.valueOf( flightServices.getPilotFlightCount( user.id() ) ) );
+		map.put( "pilotFlightTime", String.valueOf( flightServices.getPilotFlightTime( user.id() ) ) );
 		if( showObserverStats ) {
-			map.put( "observerFlightCount", String.valueOf( getFlightServices().getObserverFlightCount( user.id() ) ) );
-			map.put( "observerFlightTime", String.valueOf( getFlightServices().getObserverFlightTime( user.id() ) ) );
+			map.put( "observerFlightCount", String.valueOf( flightServices.getObserverFlightCount( user.id() ) ) );
+			map.put( "observerFlightTime", String.valueOf( flightServices.getObserverFlightTime( user.id() ) ) );
 		}
-		map.put( "lastPilotFlightTimestamp", getFlightServices().getLastPilotFlight( user ).map( Flight::timestamp ).orElse( -1L ) );
+		map.put( "lastPilotFlightTimestamp", flightServices.getLastPilotFlight( user ).map( Flight::timestamp ).orElse( -1L ) );
 		if( showAircraftStats && aircraftStats.size() > 0 ) map.put( "aircraftStats", aircraftStats );
 
-		log.warn( "storing {} -> {}", user.dashboardId(), Json.stringify( map ));
+		//log.warn( "storing {} -> {}", user.dashboardId(), Json.stringify( map ));
 
-		return getStatePersisting().upsertProjection( user.dashboardId(), Json.stringify( map ) );
+		return statePersisting.upsertProjection( user.dashboardId(), Json.stringify( map ) );
 	}
 
 	//@Override
 	public String update( Group group ) {
 		// Assign a group dashboard id if one does not exist
-		if( group.dashboardId() == null ) group = getStatePersisting().upsert( group.dashboardId( UUID.randomUUID() ) );
+		if( group.dashboardId() == null ) group = statePersisting.upsert( group.dashboardId( UUID.randomUUID() ) );
 
 		// For each user in the group find their pilot flight count and time
 		AtomicLong pilotFlightCount = new AtomicLong( 0 );
@@ -94,10 +101,10 @@ public class DashboardService extends CommonDashboardService<Dashboard> implemen
 		AtomicLong observerFlightCount = new AtomicLong( 0 );
 		AtomicLong observerFlightTime = new AtomicLong( 0 );
 		group.users().forEach( u -> {
-			pilotFlightCount.addAndGet( getFlightServices().getPilotFlightCount( u.id() ) );
-			pilotFlightTime.addAndGet( getFlightServices().getPilotFlightTime( u.id() ) );
-			observerFlightCount.addAndGet( getFlightServices().getObserverFlightCount( u.id() ) );
-			observerFlightTime.addAndGet( getFlightServices().getObserverFlightTime( u.id() ) );
+			pilotFlightCount.addAndGet( flightServices.getPilotFlightCount( u.id() ) );
+			pilotFlightTime.addAndGet( flightServices.getPilotFlightTime( u.id() ) );
+			observerFlightCount.addAndGet( flightServices.getObserverFlightCount( u.id() ) );
+			observerFlightTime.addAndGet( flightServices.getObserverFlightTime( u.id() ) );
 		} );
 
 		// Create a map for the dashboard
@@ -108,7 +115,7 @@ public class DashboardService extends CommonDashboardService<Dashboard> implemen
 		map.put( "observerFlightCount", String.valueOf( observerFlightCount ) );
 		map.put( "observerFlightTime", String.valueOf( observerFlightTime ) );
 
-		return getStatePersisting().upsertProjection( group.dashboardId(), Json.stringify( map ) );
+		return statePersisting.upsertProjection( group.dashboardId(), Json.stringify( map ) );
 	}
 
 	@Data

@@ -21,8 +21,6 @@ public class StateRetrievingService implements StateRetrieving {
 
 	private final BatteryRepo batteryRepo;
 
-	private final DashboardRepo dashboardRepo;
-
 	private final FlightRepo flightRepo;
 
 	private final GroupRepo groupRepo;
@@ -33,8 +31,6 @@ public class StateRetrievingService implements StateRetrieving {
 
 	private final ProjectionRepo projectionRepo;
 
-	private final PublicDashboardRepo publicDashboardRepo;
-
 	private final UserRepo userRepo;
 
 	private final TokenRepo tokenRepo;
@@ -44,26 +40,22 @@ public class StateRetrievingService implements StateRetrieving {
 	public StateRetrievingService(
 		AircraftRepo aircraftRepo,
 		BatteryRepo batteryRepo,
-		DashboardRepo dashboardRepo,
 		FlightRepo flightRepo,
 		GroupRepo groupRepo,
 		MemberRepo memberRepo,
 		PreferencesRepo preferencesRepo,
 		ProjectionRepo projectionRepo,
-		PublicDashboardRepo publicDashboardRepo,
 		UserRepo userRepo,
 		TokenRepo tokenRepo,
 		VerificationRepo verificationRepo
 	) {
 		this.aircraftRepo = aircraftRepo;
 		this.batteryRepo = batteryRepo;
-		this.dashboardRepo = dashboardRepo;
 		this.flightRepo = flightRepo;
 		this.groupRepo = groupRepo;
 		this.memberRepo = memberRepo;
 		this.preferencesRepo = preferencesRepo;
 		this.projectionRepo = projectionRepo;
-		this.publicDashboardRepo = publicDashboardRepo;
 		this.userRepo = userRepo;
 		this.tokenRepo = tokenRepo;
 		this.verificationRepo = verificationRepo;
@@ -376,18 +368,6 @@ public class StateRetrievingService implements StateRetrieving {
 	public long getBatteryFlightTime( Battery battery ) {
 		Long time = flightRepo.getFlightTimeByBattery( BatteryEntity.from( battery ) );
 		return time == null ? 0 : time;
-	}
-
-	@Override
-	public Optional<Dashboard> findDashboard( User user ) {
-		DashboardProjection entity = dashboardRepo.findById( user.id() ).orElse( null );
-		return entity == null ? Optional.empty() : Optional.of( DashboardEntity.toDashboard( entity ) );
-	}
-
-	@Override
-	public Optional<PublicDashboard> findPublicDashboard( User user ) {
-		PublicDashboardProjection entity = publicDashboardRepo.findById( user.id() ).orElse( null );
-		return entity == null ? Optional.empty() : Optional.of( PublicDashboardEntity.toDashboard( entity ) );
 	}
 
 	@Override

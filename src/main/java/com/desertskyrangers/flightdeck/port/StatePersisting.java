@@ -47,14 +47,6 @@ public interface StatePersisting {
 
 	Verification remove( Verification verification );
 
-	Dashboard upsertDashboard( User user, Dashboard dashboard );
-
-	Dashboard removeDashboard( User user );
-
-	PublicDashboard upsertPublicDashboard( User user, PublicDashboard dashboard );
-
-	PublicDashboard removePublicDashboard( User user );
-
 	String upsertProjection( UUID id, String projection );
 
 	String removeProjections( UUID id );

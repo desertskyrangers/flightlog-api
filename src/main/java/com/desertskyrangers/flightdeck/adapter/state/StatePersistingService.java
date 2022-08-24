@@ -22,8 +22,6 @@ public class StatePersistingService implements StatePersisting {
 
 	private final BatteryRepo batteryRepo;
 
-	private final DashboardRepo dashboardRepo;
-
 	private final FlightRepo flightRepo;
 
 	private final GroupRepo groupRepo;
@@ -34,8 +32,6 @@ public class StatePersistingService implements StatePersisting {
 
 	private final ProjectionRepo projectionRepo;
 
-	private final PublicDashboardRepo publicDashboardRepo;
-
 	private final TokenRepo tokenRepo;
 
 	private final UserRepo userRepo;
@@ -45,26 +41,22 @@ public class StatePersistingService implements StatePersisting {
 	public StatePersistingService(
 		AircraftRepo aircraftRepo,
 		BatteryRepo batteryRepo,
-		DashboardRepo dashboardRepo,
 		FlightRepo flightRepo,
 		GroupRepo groupRepo,
 		MemberRepo memberRepo,
 		PreferencesRepo preferencesRepo,
 		ProjectionRepo projectionRepo,
-		PublicDashboardRepo publicDashboardRepo,
 		TokenRepo tokenRepo,
 		UserRepo userRepo,
 		VerificationRepo verificationRepo
 	) {
 		this.aircraftRepo = aircraftRepo;
 		this.batteryRepo = batteryRepo;
-		this.dashboardRepo = dashboardRepo;
 		this.flightRepo = flightRepo;
 		this.groupRepo = groupRepo;
 		this.memberRepo = memberRepo;
 		this.preferencesRepo = preferencesRepo;
 		this.projectionRepo = projectionRepo;
-		this.publicDashboardRepo = publicDashboardRepo;
 		this.tokenRepo = tokenRepo;
 		this.userRepo = userRepo;
 		this.verificationRepo = verificationRepo;
@@ -173,34 +165,6 @@ public class StatePersistingService implements StatePersisting {
 	public Verification remove( Verification verification ) {
 		verificationRepo.deleteById( verification.id() );
 		return verification;
-	}
-
-	@Override
-	public Dashboard upsertDashboard( User user, Dashboard dashboard ) {
-		dashboardRepo.save( DashboardEntity.from( user, dashboard ) );
-		return dashboard;
-	}
-
-	@Override
-	public Dashboard removeDashboard( User user ) {
-		DashboardProjection projection = dashboardRepo.getById( user.id() );
-		Dashboard dashboard = DashboardEntity.toDashboard( projection );
-		dashboardRepo.deleteById( user.id() );
-		return dashboard;
-	}
-
-	@Override
-	public PublicDashboard upsertPublicDashboard( User user, PublicDashboard dashboard ) {
-		publicDashboardRepo.save( PublicDashboardEntity.from( user, dashboard ) );
-		return dashboard;
-	}
-
-	@Override
-	public PublicDashboard removePublicDashboard( User user ) {
-		PublicDashboardProjection projection = publicDashboardRepo.getById( user.id() );
-		PublicDashboard dashboard = PublicDashboardEntity.toDashboard( projection );
-		publicDashboardRepo.deleteById( user.id() );
-		return dashboard;
 	}
 
 	@Override

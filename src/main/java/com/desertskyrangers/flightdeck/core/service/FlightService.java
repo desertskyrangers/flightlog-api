@@ -199,23 +199,25 @@ public class FlightService implements FlightServices {
 		// Update battery flight data
 		flight.batteries().forEach( b -> batteryServices.updateFlightData( b ) );
 
-		// Update private dashboards
-		updateDashboards( flight, dashboardServices );
+		// Update dashboards
+		updateDashboards( flight );
 	}
 
-	private void updateDashboards( Flight flight, CommonDashboardServices<?> dashboard ) {
+	private void updateDashboards( Flight flight ) {
 		// Collect the users involved
 		Set<User> users = new HashSet<>();
 		users.add( flight.pilot() );
 		users.add( flight.observer() );
 		if( flight.aircraft().ownerType() == OwnerType.USER ) stateRetrieving.findUser( flight.aircraft().owner() ).ifPresent( users::add );
 
+		// Collect the groups involved
+		Set<Group> groups = users.stream().flatMap( u -> u.groups().stream() ).collect( Collectors.toSet() );
+
 		// For each user update the dashboard
-		users.forEach( dashboard::update );
+		users.forEach( dashboardServices::update );
 
 		// Group dashboards
-		Set<Group> groups = users.stream().flatMap( u -> u.groups().stream() ).collect( Collectors.toSet() );
-		groups.forEach( dashboard::update );
+		groups.forEach( dashboardServices::update );
 	}
 
 }

@@ -207,7 +207,7 @@ public class TableStructureTests {
 		expected.add( "smscarrier" );
 		expected.add( "smsverified" );
 		expected.add( "dashboardid");
-		//expected.add( "publicdashboardid");
+		expected.add( "publicdashboardid");
 
 		assertThat( getColumns( "user" ) ).containsExactlyInAnyOrderElementsOf( expected );
 	}

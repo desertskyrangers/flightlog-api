@@ -37,6 +37,8 @@ public class User implements Comparable<User> {
 
 	private UUID dashboardId;
 
+	private UUID publicDashboardId;
+
 	@ToString.Exclude
 	@EqualsAndHashCode.Exclude
 	private Set<UserToken> tokens = new CopyOnWriteArraySet<>();
