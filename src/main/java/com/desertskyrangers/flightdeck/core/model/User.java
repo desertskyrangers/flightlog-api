@@ -52,9 +52,13 @@ public class User implements Comparable<User> {
 
 	public String name() {
 		String name = preferredName();
-		if( name == null && callSign() != null && !callSign().trim().isEmpty() ) name = firstName() + " \"" + callSign() + "\" " + lastName();
-		if( name == null ) name = firstName() + " " + lastName();
+		if( isBlank( name ) && !isBlank( callSign() ) ) name = firstName() + " \"" + callSign() + "\" " + lastName();
+		if( isBlank( name ) ) name = firstName() + " " + lastName();
 		return name.trim();
+	}
+
+	private boolean isBlank( String string ) {
+		return string == null || "".equals( string.trim() );
 	}
 
 	public void roles( Set<String> roles ) {
