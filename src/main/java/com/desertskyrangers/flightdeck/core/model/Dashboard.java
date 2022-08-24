@@ -13,6 +13,8 @@ import java.util.List;
 @Accessors( fluent = true )
 public class Dashboard {
 
+	private String displayName;
+
 	private int flightCount;
 
 	private long flightTime;

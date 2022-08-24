@@ -59,6 +59,8 @@ public interface StateRetrieving {
 
 	List<Flight> findAllFlights();
 
+	Set<Group> findAllGroups();
+
 	Set<Group> findAllAvailableGroups( User user );
 
 	Optional<Group> findGroup( UUID id );
@@ -122,5 +124,7 @@ public interface StateRetrieving {
 	Optional<Dashboard> findDashboard( User user );
 
 	Optional<PublicDashboard> findPublicDashboard( User user );
+
+	Optional<String> findProjection( UUID id );
 
 }

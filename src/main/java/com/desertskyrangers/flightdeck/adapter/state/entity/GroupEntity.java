@@ -23,10 +23,13 @@ public class GroupEntity {
 	private UUID id;
 
 	@Column( nullable = false )
-	String type;
+	private String type;
 
 	@Column( nullable = false )
-	String name;
+	private String name;
+
+	@Column( name = "dashboardid" )
+	private UUID dashboardId;
 
 	@ManyToMany( fetch = FetchType.EAGER )
 	@JoinTable( name = "member", joinColumns = @JoinColumn( name = "orgid" ), inverseJoinColumns = @JoinColumn( name = "userid" ) )
@@ -64,6 +67,7 @@ public class GroupEntity {
 		entity.setId( group.id() );
 		entity.setType( group.type().name().toLowerCase() );
 		entity.setName( group.name() );
+		entity.setDashboardId( group.dashboardId() );
 
 		return entity;
 	}
@@ -104,6 +108,7 @@ public class GroupEntity {
 		group.id( entity.getId() );
 		group.type( GroupType.valueOf( entity.getType().toUpperCase() ) );
 		group.name( entity.getName() );
+		group.dashboardId( entity.getDashboardId() );
 
 		return group;
 	}

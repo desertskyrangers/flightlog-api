@@ -10,13 +10,13 @@ import javax.persistence.Table;
 import java.util.UUID;
 
 /**
- * @deprecated Part of an old projection strategy see {@link ProjectionEntity}
+ * The new projection strategy where all projections are stored in one table.
  */
 @Data
 @Entity
-@Table( name = "preferences" )
+@Table( name = "projection" )
 @Accessors( chain = true )
-public class PreferencesProjection {
+public class ProjectionEntity {
 
 	@Id
 	@Column( columnDefinition = "BINARY(16)" )

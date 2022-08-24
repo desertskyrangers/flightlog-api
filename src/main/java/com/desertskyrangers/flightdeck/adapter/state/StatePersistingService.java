@@ -8,9 +8,13 @@ import com.desertskyrangers.flightdeck.util.Json;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class StatePersistingService implements StatePersisting {
+
+	public static final String EMPTY_PROJECTION = "{}";
 
 	private final AircraftRepo aircraftRepo;
 
@@ -25,6 +29,8 @@ public class StatePersistingService implements StatePersisting {
 	private final MemberRepo memberRepo;
 
 	private final PreferencesRepo preferencesRepo;
+
+	private final ProjectionRepo projectionRepo;
 
 	private final PublicDashboardRepo publicDashboardRepo;
 
@@ -42,6 +48,7 @@ public class StatePersistingService implements StatePersisting {
 		GroupRepo groupRepo,
 		MemberRepo memberRepo,
 		PreferencesRepo preferencesRepo,
+		ProjectionRepo projectionRepo,
 		PublicDashboardRepo publicDashboardRepo,
 		TokenRepo tokenRepo,
 		UserRepo userRepo,
@@ -54,6 +61,7 @@ public class StatePersistingService implements StatePersisting {
 		this.groupRepo = groupRepo;
 		this.memberRepo = memberRepo;
 		this.preferencesRepo = preferencesRepo;
+		this.projectionRepo = projectionRepo;
 		this.publicDashboardRepo = publicDashboardRepo;
 		this.tokenRepo = tokenRepo;
 		this.userRepo = userRepo;
@@ -191,6 +199,19 @@ public class StatePersistingService implements StatePersisting {
 		PublicDashboard dashboard = PublicDashboardEntity.toDashboard( projection );
 		publicDashboardRepo.deleteById( user.id() );
 		return dashboard;
+	}
+
+	@Override
+	public String upsertProjection( UUID id, String projection ) {
+		return projectionRepo.save( new ProjectionEntity().setId( id ).setJson( projection ) ).getJson();
+	}
+
+	@Override
+	public String removeProjections( UUID id ) {
+		Optional<ProjectionEntity> entity = projectionRepo.findById( id );
+		if( entity.isEmpty() ) return null;
+		projectionRepo.deleteById( id );
+		return entity.get().getJson();
 	}
 
 }

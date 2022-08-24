@@ -9,6 +9,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.UUID;
 
+/**
+ * @deprecated Part of an old projection strategy see {@link ProjectionEntity}
+ */
 @Data
 @Entity
 @Table( name = "publicdashboard" )

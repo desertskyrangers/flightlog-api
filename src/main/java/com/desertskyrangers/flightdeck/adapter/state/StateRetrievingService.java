@@ -31,6 +31,8 @@ public class StateRetrievingService implements StateRetrieving {
 
 	private final PreferencesRepo preferencesRepo;
 
+	private final ProjectionRepo projectionRepo;
+
 	private final PublicDashboardRepo publicDashboardRepo;
 
 	private final UserRepo userRepo;
@@ -47,6 +49,7 @@ public class StateRetrievingService implements StateRetrieving {
 		GroupRepo groupRepo,
 		MemberRepo memberRepo,
 		PreferencesRepo preferencesRepo,
+		ProjectionRepo projectionRepo,
 		PublicDashboardRepo publicDashboardRepo,
 		UserRepo userRepo,
 		TokenRepo tokenRepo,
@@ -59,6 +62,7 @@ public class StateRetrievingService implements StateRetrieving {
 		this.groupRepo = groupRepo;
 		this.memberRepo = memberRepo;
 		this.preferencesRepo = preferencesRepo;
+		this.projectionRepo = projectionRepo;
 		this.publicDashboardRepo = publicDashboardRepo;
 		this.userRepo = userRepo;
 		this.tokenRepo = tokenRepo;
@@ -82,7 +86,7 @@ public class StateRetrievingService implements StateRetrieving {
 
 	@Override
 	public Page<Aircraft> findAircraftPageByOwnerAndStatus( UUID owner, Set<AircraftStatus> status, int page, int size ) {
-		Set<String> statusValues = status.stream().map( s -> s.name().toLowerCase() ).collect( Collectors.toSet());
+		Set<String> statusValues = status.stream().map( s -> s.name().toLowerCase() ).collect( Collectors.toSet() );
 		return aircraftRepo.findAircraftByOwnerAndStatusInOrderByName( owner, statusValues, PageRequest.of( page, size, Sort.Direction.ASC, "name" ) ).map( AircraftEntity::toAircraft );
 	}
 
@@ -113,7 +117,7 @@ public class StateRetrievingService implements StateRetrieving {
 
 	@Override
 	public Page<Battery> findBatteriesPageByOwnerAndStatus( UUID owner, Set<BatteryStatus> status, int page, int size ) {
-		Set<String> statusValues = status.stream().map( s -> s.name().toLowerCase() ).collect( Collectors.toSet());
+		Set<String> statusValues = status.stream().map( s -> s.name().toLowerCase() ).collect( Collectors.toSet() );
 		return batteryRepo.findBatteryEntitiesByOwnerAndStatusInOrderByName( owner, statusValues, PageRequest.of( page, size ) ).map( BatteryEntity::toBattery );
 	}
 
@@ -384,6 +388,13 @@ public class StateRetrievingService implements StateRetrieving {
 	public Optional<PublicDashboard> findPublicDashboard( User user ) {
 		PublicDashboardProjection entity = publicDashboardRepo.findById( user.id() ).orElse( null );
 		return entity == null ? Optional.empty() : Optional.of( PublicDashboardEntity.toDashboard( entity ) );
+	}
+
+	@Override
+	public Optional<String> findProjection( UUID id ) {
+		Optional<ProjectionEntity> entity = projectionRepo.findById( id );
+		if( entity.isEmpty() ) return Optional.empty();
+		return Optional.of( entity.get().getJson() );
 	}
 
 }

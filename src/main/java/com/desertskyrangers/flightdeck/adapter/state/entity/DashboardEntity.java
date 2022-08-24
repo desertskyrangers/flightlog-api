@@ -8,6 +8,9 @@ import lombok.experimental.Accessors;
 
 import java.util.List;
 
+/**
+ * @deprecated Part of an old projection strategy see {@link ProjectionEntity}
+ */
 @Data
 @Accessors( chain = true )
 public class DashboardEntity {

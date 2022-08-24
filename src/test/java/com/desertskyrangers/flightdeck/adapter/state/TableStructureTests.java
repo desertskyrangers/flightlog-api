@@ -30,6 +30,7 @@ public class TableStructureTests {
 		expected.add( "member" );
 		expected.add( "org" );
 		expected.add( "preferences" );
+		expected.add( "projection" );
 		expected.add( "publicdashboard" );
 		expected.add( "user" );
 		expected.add( "usertoken" );
@@ -148,6 +149,7 @@ public class TableStructureTests {
 		expected.add( "id" );
 		expected.add( "type" );
 		expected.add( "name" );
+		expected.add( "dashboardid" );
 
 		assertThat( getColumns( "org" ) ).containsExactlyInAnyOrderElementsOf( expected );
 	}
@@ -159,6 +161,15 @@ public class TableStructureTests {
 		expected.add( "json" );
 
 		assertThat( getColumns( "preferences" ) ).containsExactlyInAnyOrderElementsOf( expected );
+	}
+
+	@Test
+	void testProjectionTable() throws Exception {
+		Set<String> expected = new HashSet<>();
+		expected.add( "id" );
+		expected.add( "json" );
+
+		assertThat( getColumns( "projection" ) ).containsExactlyInAnyOrderElementsOf( expected );
 	}
 
 	@Test

@@ -1,5 +1,6 @@
 package com.desertskyrangers.flightdeck.port;
 
+import com.desertskyrangers.flightdeck.core.model.Group;
 import com.desertskyrangers.flightdeck.core.model.User;
 
 import java.util.Optional;
@@ -14,5 +15,7 @@ public interface CommonDashboardServices<T> {
 	T upsert( User user, T dashboard );
 
 	T update( User user );
+
+	String update( Group group );
 
 }

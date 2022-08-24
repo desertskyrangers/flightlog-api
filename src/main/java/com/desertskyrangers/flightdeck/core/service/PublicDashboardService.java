@@ -11,6 +11,7 @@ import java.util.UUID;
 
 @Service
 @Slf4j
+@Deprecated
 public class PublicDashboardService extends CommonDashboardService<PublicDashboard> implements PublicDashboardServices {
 
 	public PublicDashboardService( AircraftServices aircraftServices, FlightServices flightServices, UserServices userServices, StateRetrieving stateRetrieving, StatePersisting statePersisting ) {
@@ -41,6 +42,11 @@ public class PublicDashboardService extends CommonDashboardService<PublicDashboa
 		dashboard.displayName( Names.firstNameAndLastInitial( user ) );
 		upsert( user, dashboard );
 		return dashboard;
+	}
+
+	@Override
+	public String update( Group group ) {
+		return null;
 	}
 
 }

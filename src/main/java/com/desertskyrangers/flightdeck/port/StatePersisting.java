@@ -3,6 +3,7 @@ package com.desertskyrangers.flightdeck.port;
 import com.desertskyrangers.flightdeck.core.model.*;
 
 import java.util.Map;
+import java.util.UUID;
 
 public interface StatePersisting {
 
@@ -53,5 +54,9 @@ public interface StatePersisting {
 	PublicDashboard upsertPublicDashboard( User user, PublicDashboard dashboard );
 
 	PublicDashboard removePublicDashboard( User user );
+
+	String upsertProjection( UUID id, String projection );
+
+	String removeProjections( UUID id );
 
 }

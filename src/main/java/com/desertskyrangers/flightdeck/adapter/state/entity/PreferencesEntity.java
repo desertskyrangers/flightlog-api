@@ -6,6 +6,9 @@ import com.desertskyrangers.flightdeck.util.Json;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @deprecated Part of an old projection strategy see {@link ProjectionEntity}
+ */
 public class PreferencesEntity extends HashMap<String, Object> {
 
 	@SuppressWarnings( "unused" )
