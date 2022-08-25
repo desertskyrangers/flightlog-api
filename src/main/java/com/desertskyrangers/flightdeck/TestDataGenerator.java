@@ -2,6 +2,8 @@ package com.desertskyrangers.flightdeck;
 
 import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.*;
+import com.desertskyrangers.flightdeck.util.AppColor;
+import com.desertskyrangers.flightdeck.util.SmsCarrier;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,7 +13,7 @@ import java.util.*;
 
 @Configuration
 @Slf4j
-public class InitialConfig {
+public class TestDataGenerator {
 
 	private static final UUID UNLISTED_USER_ID = UUID.fromString( "6e0c4460-357b-4a86-901d-e2ba16000c59" );
 
@@ -29,7 +31,7 @@ public class InitialConfig {
 
 	private User unlisted;
 
-	public InitialConfig(
+	public TestDataGenerator(
 		FlightDeckApp app, StatePersisting statePersisting, StateRetrieving stateRetrieving, AircraftServices aircraftServices, BatteryServices batteryServices, DashboardServices dashboardServices
 	) {
 		this.app = app;
@@ -166,7 +168,7 @@ public class InitialConfig {
 		user.callSign( "Trickster" );
 		user.email( "tiat@noreply.com" );
 		user.smsNumber( "800-555-8428" );
-		user.smsCarrier( SmsCarrier.SPRINT );
+		user.smsCarrier( SmsCarrier.NONE );
 		statePersisting.upsert( user );
 
 		String credential = new BCryptPasswordEncoder().encode( "tester" );
@@ -192,7 +194,7 @@ public class InitialConfig {
 		user.callSign( "Two Tone" );
 		user.email( "tomt@noreply.com" );
 		user.smsNumber( "800-555-8668" );
-		user.smsCarrier( SmsCarrier.SPRINT );
+		user.smsCarrier( SmsCarrier.NONE );
 		statePersisting.upsert( user );
 
 		String credential = new BCryptPasswordEncoder().encode( "tester" );
@@ -218,7 +220,7 @@ public class InitialConfig {
 		user.callSign( "Teapot" );
 		user.email( "teat@noreply.com" );
 		user.smsNumber( "800-555-8328" );
-		user.smsCarrier( SmsCarrier.SPRINT );
+		user.smsCarrier( SmsCarrier.NONE );
 		statePersisting.upsert( user );
 
 		String credential = new BCryptPasswordEncoder().encode( "tester" );
@@ -243,7 +245,7 @@ public class InitialConfig {
 		//user.preferredName( "Timmy Test" );
 		user.email( "timt@noreply.com" );
 		user.smsNumber( "800-555-8468" );
-		user.smsCarrier( SmsCarrier.SPRINT );
+		user.smsCarrier( SmsCarrier.NONE );
 		statePersisting.upsert( user );
 
 		String credential = new BCryptPasswordEncoder().encode( "tester" );

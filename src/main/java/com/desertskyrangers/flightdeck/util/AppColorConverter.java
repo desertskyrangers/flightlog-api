@@ -1,4 +1,4 @@
-package com.desertskyrangers.flightdeck;
+package com.desertskyrangers.flightdeck.util;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;

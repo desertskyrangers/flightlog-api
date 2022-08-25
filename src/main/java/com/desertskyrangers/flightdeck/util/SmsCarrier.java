@@ -1,7 +1,8 @@
-package com.desertskyrangers.flightdeck.core.model;
+package com.desertskyrangers.flightdeck.util;
 
 public enum SmsCarrier {
 	ATT( "AT&T", "txt.att.net", "mms.att.net" ),
+	GABB( "Gabb", "vtext.com", "vzwpix.com" ),
 	SPRINT( "Sprint", "messaging.sprintpcs.com", "pm.sprint.com" ),
 	TMOBILE( "T-Mobile", "tmomail.net", "tmomail.net" ),
 	VERIZON( "Verizon", "vtext.com", "vzwpix.com" ),
@@ -29,6 +30,14 @@ public enum SmsCarrier {
 
 	public String getMmsGateway() {
 		return mmsGateway;
+	}
+
+	public String smsFor( String number ) {
+		return number +"@" + getSmsGateway();
+	}
+
+	public String mmsFor( String number ) {
+		return number +"@" + getMmsGateway();
 	}
 
 }

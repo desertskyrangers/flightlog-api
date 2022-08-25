@@ -1,5 +1,6 @@
 package com.desertskyrangers.flightdeck.core.model;
 
+import com.desertskyrangers.flightdeck.util.SmsCarrier;
 import com.desertskyrangers.flightdeck.util.Text;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

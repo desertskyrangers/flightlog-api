@@ -1,16 +1,15 @@
 package com.desertskyrangers.flightdeck.core.service;
 
-import com.desertskyrangers.flightdeck.core.model.Group;
-import com.desertskyrangers.flightdeck.core.model.Member;
-import com.desertskyrangers.flightdeck.core.model.MemberStatus;
-import com.desertskyrangers.flightdeck.core.model.User;
+import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.GroupServices;
+import com.desertskyrangers.flightdeck.port.HumanInterface;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
 import com.desertskyrangers.flightdeck.port.StateRetrieving;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -19,11 +18,14 @@ import java.util.UUID;
 @Slf4j
 public class GroupService implements GroupServices {
 
+	private final HumanInterface humanInterface;
+
 	private final StatePersisting statePersisting;
 
 	private final StateRetrieving stateRetrieving;
 
-	public GroupService( StatePersisting statePersisting, StateRetrieving stateRetrieving ) {
+	public GroupService( HumanInterface humanInterface, StatePersisting statePersisting, StateRetrieving stateRetrieving ) {
+		this.humanInterface = humanInterface;
 		this.statePersisting = statePersisting;
 		this.stateRetrieving = stateRetrieving;
 	}
@@ -64,6 +66,21 @@ public class GroupService implements GroupServices {
 	@Override
 	public Page<Group> findGroupsPageByUser( User user, int page, int size ) {
 		return stateRetrieving.findGroupsPageByOwner( user, page, size );
+	}
+
+	@Override
+	public Group callout( User caller, Group group ) {
+		String message = caller.name() + " has sent a callout";
+
+		// Go through each member of the group and notify them of a callout
+		group.users().forEach( user -> {
+			SmsMessage sms = new SmsMessage();
+			sms.recipient( user.smsCarrier().smsFor( user.smsNumber() ), user.name() );
+			sms.message( message );
+			humanInterface.sms( sms );
+		} );
+
+		return group;
 	}
 
 }

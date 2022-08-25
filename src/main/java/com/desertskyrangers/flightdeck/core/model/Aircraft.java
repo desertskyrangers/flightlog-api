@@ -1,6 +1,6 @@
 package com.desertskyrangers.flightdeck.core.model;
 
-import com.desertskyrangers.flightdeck.AppColor;
+import com.desertskyrangers.flightdeck.util.AppColor;
 import lombok.Data;
 import lombok.experimental.Accessors;
 

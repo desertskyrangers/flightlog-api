@@ -1,6 +1,6 @@
 package com.desertskyrangers.flightdeck.adapter.web.model;
 
-import com.desertskyrangers.flightdeck.AppColor;
+import com.desertskyrangers.flightdeck.util.AppColor;
 import com.desertskyrangers.flightdeck.core.model.Aircraft;
 import com.desertskyrangers.flightdeck.core.model.AircraftStatus;
 import com.desertskyrangers.flightdeck.core.model.AircraftType;

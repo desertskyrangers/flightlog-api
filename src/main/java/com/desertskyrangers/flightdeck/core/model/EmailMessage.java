@@ -37,13 +37,6 @@ public class EmailMessage {
 		return recipients.toArray( new InternetAddress[ 0 ] );
 	}
 
-	public EmailMessage message( String message ) {
-		this.message = message;
-		if( message.startsWith( "<!DOCTYPE html" ) ) isHtml = true;
-		if( message.startsWith( "<html" ) ) isHtml = true;
-		return this;
-	}
-
 	public EmailMessage recipient( String address, String recipient ) {
 		recipients( Map.of( address, recipient ) );
 		return this;
@@ -52,6 +45,13 @@ public class EmailMessage {
 	public EmailMessage recipients( Map<String, String> recipients ) {
 		if( this.recipients == null ) this.recipients = new ConcurrentHashMap<>();
 		this.recipients.putAll( recipients );
+		return this;
+	}
+
+	public EmailMessage message( String message ) {
+		this.message = message;
+		if( message.startsWith( "<!DOCTYPE html" ) ) isHtml = true;
+		if( message.startsWith( "<html" ) ) isHtml = true;
 		return this;
 	}
 

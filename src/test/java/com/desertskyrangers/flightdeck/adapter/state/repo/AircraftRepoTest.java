@@ -1,6 +1,6 @@
 package com.desertskyrangers.flightdeck.adapter.state.repo;
 
-import com.desertskyrangers.flightdeck.AppColor;
+import com.desertskyrangers.flightdeck.util.AppColor;
 import com.desertskyrangers.flightdeck.BaseTest;
 import com.desertskyrangers.flightdeck.adapter.state.entity.AircraftEntity;
 import org.junit.jupiter.api.Test;

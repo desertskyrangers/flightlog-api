@@ -5,6 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -18,7 +19,7 @@ public class FlightDeckApp {
 
 	public static void main( String[] args ) {
 		ConfigurableApplicationContext context = SpringApplication.run( FlightDeckApp.class, args );
-		context.getBean( InitialConfig.class ).run();
+		context.getBean( TestDataGenerator.class ).run();
 //		try {
 //			Thread.sleep( 1000 );
 //		} catch( InterruptedException exception ) {

@@ -1,5 +1,6 @@
 package com.desertskyrangers.flightdeck;
 
+import com.desertskyrangers.flightdeck.util.AppColor;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

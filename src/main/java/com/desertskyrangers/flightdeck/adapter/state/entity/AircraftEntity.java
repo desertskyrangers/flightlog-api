@@ -1,10 +1,11 @@
 package com.desertskyrangers.flightdeck.adapter.state.entity;
 
-import com.desertskyrangers.flightdeck.AppColor;
+import com.desertskyrangers.flightdeck.util.AppColor;
 import com.desertskyrangers.flightdeck.core.model.Aircraft;
 import com.desertskyrangers.flightdeck.core.model.AircraftStatus;
 import com.desertskyrangers.flightdeck.core.model.AircraftType;
 import com.desertskyrangers.flightdeck.core.model.OwnerType;
+import com.desertskyrangers.flightdeck.util.AppColorConverter;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -58,11 +59,11 @@ public class AircraftEntity {
 	private String ownerType;
 
 	@Column( name = "basecolor" )
-	@Convert( converter = com.desertskyrangers.flightdeck.AppColorConverter.class )
+	@Convert( converter = AppColorConverter.class )
 	private AppColor baseColor;
 
 	@Column( name = "trimcolor" )
-	@Convert( converter = com.desertskyrangers.flightdeck.AppColorConverter.class )
+	@Convert( converter = AppColorConverter.class )
 	private AppColor trimColor;
 
 	public static AircraftEntity from( Aircraft aircraft ) {

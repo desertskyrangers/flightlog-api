@@ -1,6 +1,6 @@
 package com.desertskyrangers.flightdeck.adapter.web.model;
 
-import com.desertskyrangers.flightdeck.core.model.SmsCarrier;
+import com.desertskyrangers.flightdeck.util.SmsCarrier;
 import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.util.Text;
 import lombok.Data;

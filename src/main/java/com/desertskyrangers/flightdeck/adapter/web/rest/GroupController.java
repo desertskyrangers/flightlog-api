@@ -36,6 +36,36 @@ public class GroupController extends BaseController {
 		this.projectionServices = projectionServices;
 	}
 
+	@GetMapping( path = ApiPath.GROUP + "/{id}/callout" )
+	ResponseEntity<?> callout( Authentication authentication, @PathVariable String id ) {
+		List<String> messages = new ArrayList<>();
+
+		try {
+			User user = getRequester( authentication );
+
+			// Get and verify the group id
+			if( Text.isBlank( id ) ) messages.add( "ID required" );
+			if( Uuid.isNotValid( id ) ) messages.add( "Invalid ID" );
+
+			// Get and verify the group
+			Optional<Group> optionalGroup = groupServices.find( UUID.fromString( id ) );
+			if( optionalGroup.isEmpty() ) messages.add( "Group not found" );
+			if( !messages.isEmpty() ) return new ResponseEntity<>( ReactResponse.messages( messages ), HttpStatus.BAD_REQUEST );
+
+			// Get and verify group membership
+			Group group = optionalGroup.get();
+			if( !group.users().contains( user ) ) messages.add( "User not a member of group" );
+
+			// Callout the group
+			groupServices.callout( user, group );
+
+			return new ResponseEntity<>( ReactResponse.messages( List.of( "Callout sent to " + group.type().name().toLowerCase() ) ), HttpStatus.OK );
+		} catch( Exception exception ) {
+			log.warn( "Error retrieving group dashboard", exception );
+			return new ResponseEntity<>( ReactResponse.messages( List.of( "Error retrieving group dashboard" ) ), HttpStatus.INTERNAL_SERVER_ERROR );
+		}
+	}
+
 	@GetMapping( path = ApiPath.GROUP + "/{id}/dashboard" )
 	ResponseEntity<?> dashboard( Authentication authentication, @PathVariable String id ) {
 		List<String> messages = new ArrayList<>();

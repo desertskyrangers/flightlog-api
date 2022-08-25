@@ -63,12 +63,10 @@ public class HumanInterfaceService implements HumanInterface {
 	}
 
 	public void sms( SmsMessage message ) {
-		SimpleMailMessage mailMessage = new SimpleMailMessage();
-		mailMessage.setFrom( REPLY_TO_ADDRESS );
-		//		mailMessage.setTo( number + provider );
-		//		mailMessage.setSubject( message.subject() );
-		//		mailMessage.setText( message.message() );
-		//		emailSender.send( mailMessage );
+		EmailMessage mailMessage = new EmailMessage();
+		mailMessage.recipients( message.recipients() );
+		mailMessage.subject( message.message() );
+		email( mailMessage );
 	}
 
 }

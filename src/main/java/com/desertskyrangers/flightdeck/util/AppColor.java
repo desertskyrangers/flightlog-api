@@ -1,4 +1,4 @@
-package com.desertskyrangers.flightdeck;
+package com.desertskyrangers.flightdeck.util;
 
 public class AppColor {
 
