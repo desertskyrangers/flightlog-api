@@ -6,6 +6,7 @@ import com.desertskyrangers.flightdeck.port.HumanInterface;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
 import com.desertskyrangers.flightdeck.port.StateRetrieving;
 import com.desertskyrangers.flightdeck.util.SmsCarrier;
+import com.desertskyrangers.flightdeck.util.Text;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -80,7 +81,7 @@ public class GroupService implements GroupServices {
 		group
 			.users()
 			.stream()
-			.filter( u -> u.smsNumber() != null )
+			.filter( u -> Text.isNotBlank( u.smsNumber() ) )
 			.filter( u -> u.smsCarrier() != SmsCarrier.NONE )
 			.forEach( user -> sms.recipient( user.smsCarrier().smsFor( user.smsNumber() ), user.name() ) );
 		humanInterface.sms( sms );
