@@ -4,7 +4,6 @@ import com.desertskyrangers.flightdeck.adapter.state.entity.AircraftEntity;
 import com.desertskyrangers.flightdeck.adapter.state.entity.BatteryEntity;
 import com.desertskyrangers.flightdeck.adapter.state.entity.FlightEntity;
 import com.desertskyrangers.flightdeck.adapter.state.entity.UserEntity;
-import com.desertskyrangers.flightdeck.core.model.Battery;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -46,15 +45,30 @@ public interface FlightRepo extends JpaRepository<FlightEntity, UUID> {
 	// All flight roles
 	List<FlightEntity> findFlightEntitiesByPilot_IdOrObserver_IdOrAircraft_OwnerOrderByTimestampDesc( UUID pilotId, UUID observerId, UUID aircraftOwnerId );
 
+	Integer countByPilot( UserEntity user );
+
+	@Deprecated
 	Integer countByPilot_Id( UUID id );
 
+	@Query( "select sum(f.duration) from FlightEntity f where f.pilot = ?1" )
+	Long getFlightTimeByPilot( UserEntity user );
+
 	@Query( "select sum(f.duration) from FlightEntity f where f.pilot.id = ?1" )
+	@Deprecated
 	Long getFlightTimeByPilot_Id( UUID id );
 
+	@Query( "select count(f) from FlightEntity f where f.observer = ?1 and f.pilot <> ?1" )
+	Integer getFlightCountByObserver( UserEntity user );
+
 	@Query( "select count(f) from FlightEntity f where f.observer.id = ?1 and f.pilot.id <> ?1" )
-	Integer getFlightCountByObserver( UUID id );
+	@Deprecated
+	Integer getFlightCountByObserver_Id( UUID id );
+
+	@Query( "select sum(f.duration) from FlightEntity f where f.observer = ?1 and f.pilot <> ?1" )
+	Long getFlightTimeByObserver( UserEntity user );
 
 	@Query( "select sum(f.duration) from FlightEntity f where f.observer.id = ?1 and f.pilot.id <> ?1" )
+	@Deprecated
 	Long getFlightTimeByObserver_Id( UUID id );
 
 	Optional<FlightEntity> findFirstByAircraftOrderByTimestampDesc( AircraftEntity aircraft );

@@ -151,11 +151,11 @@ public class UserService implements UserServices {
 	}
 
 	private void updateDashboard( User user ) {
-		// Update private dashboards
+		// Update user dashboards
 		dashboardServices.update( user );
 
-		// Update public dashboards
-		//publicDashboardServices.update( user );
+		// Update group dashboards
+		user.groups().forEach( group -> dashboardServices.update( group ) );
 	}
 
 }

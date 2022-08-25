@@ -27,13 +27,13 @@ public interface FlightServices {
 
 	void remove( Flight flight );
 
-	int getPilotFlightCount( UUID user );
+	int getPilotFlightCount( User user );
 
-	long getPilotFlightTime( UUID user );
+	long getPilotFlightTime( User user );
 
-	int getObserverFlightCount( UUID user );
+	int getObserverFlightCount( User user );
 
-	long getObserverFlightTime( UUID user );
+	long getObserverFlightTime( User user );
 
 	Optional<Flight> getLastAircraftFlight( Aircraft aircraft );
 

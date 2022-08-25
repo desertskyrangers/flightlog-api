@@ -6,6 +6,7 @@ import com.desertskyrangers.flightdeck.core.model.Member;
 import com.desertskyrangers.flightdeck.core.model.User;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
@@ -34,10 +35,12 @@ public class GroupEntity {
 	@ManyToMany( fetch = FetchType.EAGER )
 	@JoinTable( name = "member", joinColumns = @JoinColumn( name = "orgid" ), inverseJoinColumns = @JoinColumn( name = "userid" ) )
 	@EqualsAndHashCode.Exclude
+	@ToString.Exclude()
 	private Set<UserEntity> users = new HashSet<>();
 
 	@OneToMany( mappedBy = "group", fetch = FetchType.EAGER )
 	@EqualsAndHashCode.Exclude
+	@ToString.Exclude()
 	private Set<MemberEntity> memberships = new HashSet<>();
 
 	public static GroupEntity from( Group group ) {

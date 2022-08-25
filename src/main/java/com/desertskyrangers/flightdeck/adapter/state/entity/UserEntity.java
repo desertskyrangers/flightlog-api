@@ -7,6 +7,7 @@ import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.util.Text;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -64,6 +65,7 @@ public class UserEntity {
 	@OneToMany( fetch = FetchType.EAGER, cascade = CascadeType.ALL )
 	@CollectionTable( name = "usertoken", joinColumns = @JoinColumn( name = "userid" ) )
 	@EqualsAndHashCode.Exclude
+	@ToString.Exclude()
 	private Set<TokenEntity> tokens = new HashSet<>();
 
 	@ElementCollection
@@ -71,15 +73,18 @@ public class UserEntity {
 	@CollectionTable( name = "userrole", joinColumns = @JoinColumn( name = "userid" ) )
 	@Fetch( FetchMode.JOIN )
 	@EqualsAndHashCode.Exclude
+	@ToString.Exclude()
 	private Set<String> roles = new HashSet<>();
 
 	@ManyToMany( fetch = FetchType.EAGER )
 	@JoinTable( name = "member", joinColumns = @JoinColumn( name = "userid" ), inverseJoinColumns = @JoinColumn( name = "orgid" ) )
 	@EqualsAndHashCode.Exclude
+	@ToString.Exclude()
 	private Set<GroupEntity> groups = new HashSet<>();
 
 	@OneToMany( mappedBy = "user", fetch = FetchType.EAGER )
 	@EqualsAndHashCode.Exclude
+	@ToString.Exclude()
 	private Set<MemberEntity> memberships = new HashSet<>();
 
 	public static UserEntity from( User user ) {

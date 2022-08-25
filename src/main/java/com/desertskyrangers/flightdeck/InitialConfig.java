@@ -201,6 +201,10 @@ public class InitialConfig {
 		user.tokens( Set.of( usernameToken, emailToken ) );
 		statePersisting.upsert( user );
 
+		Map<String, Object> preferences = new HashMap<>();
+		preferences.put( PreferenceKey.ENABLE_PUBLIC_DASHBOARD, true );
+		statePersisting.upsertPreferences( user, preferences );
+
 		return user;
 	}
 
@@ -222,6 +226,10 @@ public class InitialConfig {
 		UserToken emailToken = new UserToken().user( user ).principal( user.email() ).credential( credential );
 		user.tokens( Set.of( usernameToken, emailToken ) );
 		statePersisting.upsert( user );
+
+		Map<String, Object> preferences = new HashMap<>();
+		preferences.put( PreferenceKey.ENABLE_PUBLIC_DASHBOARD, true );
+		statePersisting.upsertPreferences( user, preferences );
 
 		return user;
 	}

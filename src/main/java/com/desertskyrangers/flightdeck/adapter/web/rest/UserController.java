@@ -59,8 +59,6 @@ public class UserController extends BaseController {
 	ResponseEntity<?> publicDashboard( @PathVariable String id ) {
 		List<String> messages = new ArrayList<>();
 
-		// FIXME Public dashboards need a separate projection id
-
 		try {
 			Optional<User> optionalUser = userServices.findByPrincipal( id );
 			if( optionalUser.isEmpty() && Uuid.isValid( id ) ) optionalUser = userServices.find( UUID.fromString( id ) );
@@ -74,7 +72,7 @@ public class UserController extends BaseController {
 			if( !showPublicDashboard ) return new ResponseEntity<>( ReactResponse.messages( List.of( "Dashboard not found" ) ), HttpStatus.BAD_REQUEST );
 
 			// Get and verify the dashboard
-			Optional<String> projection = projectionServices.findProjection( dashboardOwner.dashboardId() );
+			Optional<String> projection = projectionServices.findProjection( dashboardOwner.publicDashboardId() );
 			if( projection.isEmpty() ) messages.add( "Dashboard not found" );
 			if( !messages.isEmpty() ) return new ResponseEntity<>( ReactResponse.messages( messages ), HttpStatus.BAD_REQUEST );
 

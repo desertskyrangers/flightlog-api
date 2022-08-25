@@ -36,9 +36,9 @@ public class User implements Comparable<User> {
 
 	private boolean smsVerified;
 
-	private UUID dashboardId;
+	private UUID dashboardId = UUID.randomUUID();
 
-	private UUID publicDashboardId;
+	private UUID publicDashboardId = UUID.randomUUID();
 
 	@ToString.Exclude
 	@EqualsAndHashCode.Exclude

@@ -122,22 +122,22 @@ public class FlightService implements FlightServices {
 	}
 
 	@Override
-	public int getPilotFlightCount( UUID user ) {
+	public int getPilotFlightCount( User user ) {
 		return stateRetrieving.getPilotFlightCount( user );
 	}
 
 	@Override
-	public long getPilotFlightTime( UUID user ) {
+	public long getPilotFlightTime( User user ) {
 		return stateRetrieving.getPilotFlightTime( user );
 	}
 
 	@Override
-	public int getObserverFlightCount( UUID user ) {
+	public int getObserverFlightCount( User user ) {
 		return stateRetrieving.getObserverFlightCount( user );
 	}
 
 	@Override
-	public long getObserverFlightTime( UUID user ) {
+	public long getObserverFlightTime( User user ) {
 		return stateRetrieving.getObserverFlightTime( user );
 	}
 

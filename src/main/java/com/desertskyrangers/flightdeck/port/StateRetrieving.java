@@ -93,13 +93,13 @@ public interface StateRetrieving {
 
 	Optional<Verification> findVerification( UUID id );
 
-	int getPilotFlightCount( UUID id );
+	int getPilotFlightCount( User user );
 
-	long getPilotFlightTime( UUID id );
+	long getPilotFlightTime( User user );
 
-	int getObserverFlightCount( UUID id );
+	int getObserverFlightCount( User user );
 
-	long getObserverFlightTime( UUID id );
+	long getObserverFlightTime( User user );
 
 	Optional<Flight> getLastAircraftFlight( Aircraft aircraft );
 

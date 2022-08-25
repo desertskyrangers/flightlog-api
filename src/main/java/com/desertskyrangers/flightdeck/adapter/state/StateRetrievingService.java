@@ -313,26 +313,26 @@ public class StateRetrievingService implements StateRetrieving {
 	}
 
 	@Override
-	public int getPilotFlightCount( UUID id ) {
-		Integer count = flightRepo.countByPilot_Id( id );
+	public int getPilotFlightCount( User user ) {
+		Integer count = flightRepo.countByPilot( UserEntity.from( user ) );
 		return count == null ? 0 : count;
 	}
 
 	@Override
-	public long getPilotFlightTime( UUID id ) {
-		Long time = flightRepo.getFlightTimeByPilot_Id( id );
+	public long getPilotFlightTime( User user ) {
+		Long time = flightRepo.getFlightTimeByPilot( UserEntity.from( user ) );
 		return time == null ? 0 : time;
 	}
 
 	@Override
-	public int getObserverFlightCount( UUID id ) {
-		Integer count = flightRepo.getFlightCountByObserver( id );
+	public int getObserverFlightCount( User user ) {
+		Integer count = flightRepo.getFlightCountByObserver( UserEntity.from( user ) );
 		return count == null ? 0 : count;
 	}
 
 	@Override
-	public long getObserverFlightTime( UUID id ) {
-		Long time = flightRepo.getFlightTimeByObserver_Id( id );
+	public long getObserverFlightTime( User user ) {
+		Long time = flightRepo.getFlightTimeByObserver( UserEntity.from( user ) );
 		return time == null ? 0 : time;
 	}
 
