@@ -65,8 +65,8 @@ public class HumanInterfaceService implements HumanInterface {
 	public void sms( SmsMessage message ) {
 		EmailMessage mailMessage = new EmailMessage();
 		mailMessage.recipients( message.recipients() );
-		mailMessage.subject( message.message() );
-		mailMessage.message( "" );
+		mailMessage.subject( message.subject() );
+		mailMessage.message( message.message() );
 		email( mailMessage );
 	}
 

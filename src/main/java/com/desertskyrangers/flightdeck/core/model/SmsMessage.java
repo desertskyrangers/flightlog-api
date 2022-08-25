@@ -14,6 +14,8 @@ public class SmsMessage {
 
 	private Map<String, String> recipients;
 
+	private String subject;
+
 	private String message;
 
 	public SmsMessage recipient( String address, String recipient ) {

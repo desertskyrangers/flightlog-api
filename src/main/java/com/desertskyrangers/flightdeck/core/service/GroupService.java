@@ -71,10 +71,11 @@ public class GroupService implements GroupServices {
 
 	@Override
 	public Group callout( User caller, Group group ) {
-		String message = caller.name() + " has sent a callout";
+		String message = caller.name() + " is going flying";
 
 		// Go through each member of the group and notify them of a callout
 		SmsMessage sms = new SmsMessage();
+		sms.subject( "Flight Callout" );
 		sms.message( message );
 		group
 			.users()
