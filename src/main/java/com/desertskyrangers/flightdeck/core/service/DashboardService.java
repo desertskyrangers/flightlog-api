@@ -37,11 +37,10 @@ public class DashboardService implements DashboardServices {
 
 	@Override
 	public String update( User user ) {
-//		// Assign dashboard ids if they do not exist
-//		boolean updateUser = user.dashboardId() == null || user.publicDashboardId() == null;
-//		if( user.dashboardId() == null ) user.dashboardId( UUID.randomUUID() );
-//		if( user.publicDashboardId() == null ) user.publicDashboardId( UUID.randomUUID() );
-//		if( updateUser ) statePersisting.upsert( user );
+		// Assign dashboard ids if they do not exist
+		if( user.dashboardId() == null ) user.dashboardId( UUID.randomUUID() );
+		if( user.publicDashboardId() == null ) user.publicDashboardId( UUID.randomUUID() );
+		statePersisting.upsert( user );
 
 		// Update the user dashboards
 		update( user, user.publicDashboardId(), true );
@@ -49,8 +48,6 @@ public class DashboardService implements DashboardServices {
 	}
 
 	private String update( User user, UUID id, boolean isPublic ) {
-		if( user.dashboardId() == null ) statePersisting.upsert( user.dashboardId( UUID.randomUUID() ) );
-
 		Map<String, Object> preferences = userServices.getPreferences( user );
 
 		boolean showPrivateObserverStats = Boolean.parseBoolean( String.valueOf( preferences.get( PreferenceKey.SHOW_OBSERVER_STATS ) ) );
@@ -104,13 +101,13 @@ public class DashboardService implements DashboardServices {
 	public String update( Group group ) {
 		// Assign a group dashboard id if one does not exist
 		if( group.dashboardId() == null ) group = statePersisting.upsert( group.dashboardId( UUID.randomUUID() ) );
-		UUID finalGroupDashboardId = group.dashboardId();
 
 		// For each user in the group find their pilot flight count and time
 		AtomicLong pilotFlightCount = new AtomicLong( 0 );
 		AtomicLong pilotFlightTime = new AtomicLong( 0 );
 		AtomicLong observerFlightCount = new AtomicLong( 0 );
 		AtomicLong observerFlightTime = new AtomicLong( 0 );
+		// FIXME Sort users
 		group.users().forEach( u -> {
 			pilotFlightCount.addAndGet( flightServices.getPilotFlightCount( u ) );
 			pilotFlightTime.addAndGet( flightServices.getPilotFlightTime( u ) );
