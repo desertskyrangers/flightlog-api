@@ -5,6 +5,7 @@ import com.desertskyrangers.flightdeck.port.GroupServices;
 import com.desertskyrangers.flightdeck.port.HumanInterface;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
 import com.desertskyrangers.flightdeck.port.StateRetrieving;
+import com.desertskyrangers.flightdeck.util.SmsCarrier;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -73,12 +74,15 @@ public class GroupService implements GroupServices {
 		String message = caller.name() + " has sent a callout";
 
 		// Go through each member of the group and notify them of a callout
-		group.users().forEach( user -> {
-			SmsMessage sms = new SmsMessage();
-			sms.recipient( user.smsCarrier().smsFor( user.smsNumber() ), user.name() );
-			sms.message( message );
-			humanInterface.sms( sms );
-		} );
+		SmsMessage sms = new SmsMessage();
+		sms.message( message );
+		group
+			.users()
+			.stream()
+			.filter( u -> u.smsNumber() != null )
+			.filter( u -> u.smsCarrier() != SmsCarrier.NONE )
+			.forEach( user -> sms.recipient( user.smsCarrier().smsFor( user.smsNumber() ), user.name() ) );
+		humanInterface.sms( sms );
 
 		return group;
 	}
