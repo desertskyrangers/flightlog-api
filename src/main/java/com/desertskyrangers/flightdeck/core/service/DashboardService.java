@@ -37,11 +37,11 @@ public class DashboardService implements DashboardServices {
 
 	@Override
 	public String update( User user ) {
-		// Assign dashboard ids if they do not exist
-		boolean updateUser = user.dashboardId() == null || user.publicDashboardId() == null;
-		if( user.dashboardId() == null ) user.dashboardId( UUID.randomUUID() );
-		if( user.publicDashboardId() == null ) user.publicDashboardId( UUID.randomUUID() );
-		if( updateUser ) statePersisting.upsert( user );
+//		// Assign dashboard ids if they do not exist
+//		boolean updateUser = user.dashboardId() == null || user.publicDashboardId() == null;
+//		if( user.dashboardId() == null ) user.dashboardId( UUID.randomUUID() );
+//		if( user.publicDashboardId() == null ) user.publicDashboardId( UUID.randomUUID() );
+//		if( updateUser ) statePersisting.upsert( user );
 
 		// Update the user dashboards
 		update( user, user.publicDashboardId(), true );
