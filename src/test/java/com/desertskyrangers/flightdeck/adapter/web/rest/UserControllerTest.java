@@ -638,6 +638,22 @@ public class UserControllerTest extends BaseControllerTest {
 	}
 
 	@Test
+	void testPublicDashboardWithInvalidId() throws Exception {
+		// given
+
+		// when
+		// NOTE - Do not send the JWT with this request. I should be anonymous.
+		MvcResult result = this.mockMvc.perform( get( ApiPath.PUBLIC_DASHBOARD + "/not-a-valid-id" ).with( jwt() ) ).andExpect( status().isBadRequest() ).andReturn();
+
+		// then
+		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
+		List<?> messages = (List<?>)map.get( "messages" );
+		assertThat( messages ).isNotNull();
+		assertThat( messages.size() ).isEqualTo( 1 );
+		assertThat( messages.get( 0 ) ).isEqualTo( "Dashboard not found" );
+	}
+
+	@Test
 	void testGetPreferences() throws Exception {
 		// given
 

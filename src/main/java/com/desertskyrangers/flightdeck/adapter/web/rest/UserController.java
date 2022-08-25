@@ -63,7 +63,7 @@ public class UserController extends BaseController {
 
 		try {
 			Optional<User> optionalUser = userServices.findByPrincipal( id );
-			if( optionalUser.isEmpty() ) optionalUser = userServices.find( UUID.fromString( id ) );
+			if( optionalUser.isEmpty() && Uuid.isValid( id ) ) optionalUser = userServices.find( UUID.fromString( id ) );
 			if( optionalUser.isEmpty() ) messages.add( "Dashboard not found" );
 			if( !messages.isEmpty() ) return new ResponseEntity<>( ReactResponse.messages( List.of( "Dashboard not found" ) ), HttpStatus.BAD_REQUEST );
 
