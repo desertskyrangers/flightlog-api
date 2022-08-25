@@ -99,6 +99,8 @@ public class UserControllerTest extends BaseControllerTest {
 		// given
 		ReactUser reactAccount = ReactUser.from( getMockUser() );
 		reactAccount.setFirstName( "Anton" );
+		// ReactUser does not update the name on its own...so it needs to be set as well
+		reactAccount.setName( "Anton User" );
 
 		// when
 		String content = Json.stringify( reactAccount );
