@@ -98,9 +98,9 @@ public class DashboardService implements DashboardServices {
 	}
 
 	//@Override
-	public String update( Group group ) {
+	public String update( final Group group ) {
 		// Assign a group dashboard id if one does not exist
-		if( group.dashboardId() == null ) group = statePersisting.upsert( group.dashboardId( UUID.randomUUID() ) );
+		if( group.dashboardId() == null ) statePersisting.upsert( group.dashboardId( UUID.randomUUID() ) );
 
 		// For each user in the group find their pilot flight count and time
 		AtomicLong pilotFlightCount = new AtomicLong( 0 );
