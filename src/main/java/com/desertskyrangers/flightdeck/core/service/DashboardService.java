@@ -92,7 +92,7 @@ public class DashboardService implements DashboardServices {
 		map.put( "lastPilotFlightTimestamp", flightServices.getLastPilotFlight( user ).map( Flight::timestamp ).orElse( -1L ) );
 		if( showAircraftStats && aircraftStats.size() > 0 ) map.put( "aircraftStats", aircraftStats );
 
-		log.warn( "user " + (isPublic ? "public" : "private") + " dashboard {} -> {}", id, Json.stringify( map ) );
+		//log.warn( "user " + (isPublic ? "public" : "private") + " dashboard {} -> {}", id, Json.stringify( map ) );
 
 		return statePersisting.upsertProjection( id, Json.stringify( map ) );
 	}
