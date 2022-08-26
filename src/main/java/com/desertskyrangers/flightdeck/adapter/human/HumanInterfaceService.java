@@ -63,6 +63,9 @@ public class HumanInterfaceService implements HumanInterface {
 	}
 
 	public void sms( SmsMessage message ) {
+		message.recipients().keySet().forEach( k -> {
+			log.warn( "Sending " + message.subject() + " to " + k );
+		} );
 		EmailMessage mailMessage = new EmailMessage();
 		mailMessage.recipients( message.recipients() );
 		mailMessage.subject( message.subject() );
