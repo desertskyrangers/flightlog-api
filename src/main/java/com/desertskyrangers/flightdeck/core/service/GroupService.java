@@ -78,13 +78,12 @@ public class GroupService implements GroupServices {
 		SmsMessage sms = new SmsMessage();
 		sms.subject( "Flight Callout" );
 		sms.message( message );
-		sms.recipient( SmsCarrier.VERIZON.smsFor("8014194440"), "Mark Soderquist" );
-//		group
-//			.users()
-//			.stream()
-//			.filter( u -> Text.isNotBlank( u.smsNumber() ) )
-//			.filter( u -> u.smsCarrier() != SmsCarrier.NONE )
-//			.forEach( user -> sms.recipient( user.smsCarrier().smsFor( user.smsNumber() ), user.name() ) );
+		group
+			.users()
+			.stream()
+			.filter( u -> Text.isNotBlank( u.smsNumber() ) )
+			.filter( u -> u.smsCarrier() != SmsCarrier.NONE )
+			.forEach( user -> sms.recipient( user.smsCarrier().smsFor( user.smsNumber() ), user.name() ) );
 		humanInterface.sms( sms );
 
 		return group;
