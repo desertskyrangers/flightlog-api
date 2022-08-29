@@ -107,8 +107,7 @@ public class DashboardService implements DashboardServices {
 		AtomicLong pilotFlightTime = new AtomicLong( 0 );
 		AtomicLong observerFlightCount = new AtomicLong( 0 );
 		AtomicLong observerFlightTime = new AtomicLong( 0 );
-		// FIXME Sort users
-		group.users().stream().sorted().forEach( u -> {
+		group.users().forEach( u -> {
 			pilotFlightCount.addAndGet( flightServices.getPilotFlightCount( u ) );
 			pilotFlightTime.addAndGet( flightServices.getPilotFlightTime( u ) );
 			observerFlightCount.addAndGet( flightServices.getObserverFlightCount( u ) );
@@ -116,7 +115,7 @@ public class DashboardService implements DashboardServices {
 		} );
 
 		// Collect the member statistics
-		List<MemberStats> memberStats = group.users().stream().map( user -> {
+		List<MemberStats> memberStats = group.users().stream().sorted().map( user -> {
 			Map<String, Object> preferences = userServices.getPreferences( user );
 			boolean isPublicDashboardEnabled = Boolean.parseBoolean( String.valueOf( preferences.get( PreferenceKey.ENABLE_PUBLIC_DASHBOARD ) ) );
 

@@ -77,10 +77,10 @@ public class User implements Comparable<User> {
 
 	@Override
 	public int compareTo( User that ) {
-		return this.getSortByName().compareTo( that.getSortByName() );
+		return this.getSortName().compareTo( that.getSortName() );
 	}
 
-	private String getSortByName() {
+	private String getSortName() {
 		String name = preferredName();
 		if( Text.isBlank( name ) && Text.isNotBlank( callSign() ) ) name = getFullNameWithCallSign();
 		if( Text.isBlank( name ) ) name = getFullName();
