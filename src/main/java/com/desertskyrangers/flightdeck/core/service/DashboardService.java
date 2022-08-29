@@ -108,7 +108,7 @@ public class DashboardService implements DashboardServices {
 		AtomicLong observerFlightCount = new AtomicLong( 0 );
 		AtomicLong observerFlightTime = new AtomicLong( 0 );
 		// FIXME Sort users
-		group.users().forEach( u -> {
+		group.users().stream().sorted().forEach( u -> {
 			pilotFlightCount.addAndGet( flightServices.getPilotFlightCount( u ) );
 			pilotFlightTime.addAndGet( flightServices.getPilotFlightTime( u ) );
 			observerFlightCount.addAndGet( flightServices.getObserverFlightCount( u ) );

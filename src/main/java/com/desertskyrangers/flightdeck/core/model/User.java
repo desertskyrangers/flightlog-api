@@ -54,9 +54,21 @@ public class User implements Comparable<User> {
 
 	public String name() {
 		String name = preferredName();
-		if( Text.isBlank( name ) && Text.isNotBlank( callSign() ) ) name = firstName() + " \"" + callSign() + "\" " + lastName();
-		if( Text.isBlank( name ) ) name = firstName() + " " + lastName();
+		if( Text.isBlank( name ) && Text.isNotBlank( callSign() ) ) name = getFullNameWithQuotedCallSign();
+		if( Text.isBlank( name ) ) name = getFullName();
 		return name.trim();
+	}
+
+	public String getFullName() {
+		return firstName() + " " + lastName();
+	}
+
+	public String getFullNameWithCallSign() {
+		return firstName() + " " + callSign() + " " + lastName();
+	}
+
+	public String getFullNameWithQuotedCallSign() {
+		return firstName() + " \"" + callSign() + "\" " + lastName();
 	}
 
 	public void roles( Set<String> roles ) {
@@ -65,7 +77,14 @@ public class User implements Comparable<User> {
 
 	@Override
 	public int compareTo( User that ) {
-		return this.name().compareTo( that.name() );
+		return this.getSortByName().compareTo( that.getSortByName() );
+	}
+
+	private String getSortByName() {
+		String name = preferredName();
+		if( Text.isBlank( name ) && Text.isNotBlank( callSign() ) ) name = getFullNameWithCallSign();
+		if( Text.isBlank( name ) ) name = getFullName();
+		return name.trim();
 	}
 
 }
