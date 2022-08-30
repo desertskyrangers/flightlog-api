@@ -6,9 +6,13 @@ import com.desertskyrangers.flightdeck.util.Json;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Service
@@ -36,15 +40,16 @@ public class DashboardService implements DashboardServices {
 	}
 
 	@Override
-	public String update( User user ) {
+	@Async
+	public void update( User user ) {
 		// Assign dashboard ids if they do not exist
 		if( user.dashboardId() == null ) user.dashboardId( UUID.randomUUID() );
 		if( user.publicDashboardId() == null ) user.publicDashboardId( UUID.randomUUID() );
 		statePersisting.upsert( user );
 
 		// Update the user dashboards
+		update( user, user.dashboardId(), false );
 		update( user, user.publicDashboardId(), true );
-		return update( user, user.dashboardId(), false );
 	}
 
 	private String update( User user, UUID id, boolean isPublic ) {
@@ -97,8 +102,9 @@ public class DashboardService implements DashboardServices {
 		return statePersisting.upsertProjection( id, Json.stringify( map ) );
 	}
 
-	//@Override
-	public String update( final Group group ) {
+	@Override
+	@Async
+	public void update( final Group group ) {
 		// Assign a group dashboard id if one does not exist
 		if( group.dashboardId() == null ) statePersisting.upsert( group.dashboardId( UUID.randomUUID() ) );
 
@@ -138,7 +144,7 @@ public class DashboardService implements DashboardServices {
 		map.put( "observerFlightTime", String.valueOf( observerFlightTime ) );
 		if( memberStats.size() > 0 ) map.put( "memberStats", memberStats );
 
-		return statePersisting.upsertProjection( group.dashboardId(), Json.stringify( map ) );
+		statePersisting.upsertProjection( group.dashboardId(), Json.stringify( map ) );
 	}
 
 	@Data

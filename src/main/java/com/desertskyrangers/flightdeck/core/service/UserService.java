@@ -76,7 +76,11 @@ public class UserService implements UserServices {
 		} );
 
 		statePersisting.upsert( user );
+
+		// Update user dashboards
 		dashboardServices.update( user );
+		// Update group dashboards
+		user.groups().forEach( dashboardServices::update );
 	}
 
 	@Override

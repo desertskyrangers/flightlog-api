@@ -5,8 +5,8 @@ import com.desertskyrangers.flightdeck.core.model.User;
 
 public interface DashboardServices {
 
-	String update( User user );
+	void update( User user );
 
-	String update( Group group );
+	void update( Group group );
 
 }
