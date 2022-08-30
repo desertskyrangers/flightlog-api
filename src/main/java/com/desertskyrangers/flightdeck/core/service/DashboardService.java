@@ -137,6 +137,18 @@ public class DashboardService implements DashboardServices {
 			return stats;
 		} ).toList();
 
+		// NEXT Group member record book (leader board?)
+		// Pilot with highest total flight count
+		// Pilot with highest total flight time
+		// Pilot with longest flight time [this is a historical event] (what aircraft, what date, what location)
+		// Pilot who flew most recently
+
+		// NEXT Group aircraft record book (leader board?)
+		// Aircraft with highest total flight count
+		// Aircraft with highest total flight time
+		// Aircraft with longest single flight time [this is a historical event] (what pilot, what date, what location)
+		// Aircraft that flew most recently
+
 		// Create a map for the dashboard
 		Map<String, Object> map = new HashMap<>();
 		map.put( "displayName", group.name() );
