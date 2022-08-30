@@ -46,6 +46,9 @@ public class GroupControllerTest extends BaseControllerTest {
 		statePersisting.upsert( new Member().user( owner ).group( group ).status( MemberStatus.OWNER ) );
 		statePersisting.upsert( new Member().user( user ).group( group ).status( MemberStatus.ACCEPTED ) );
 
+		// Need some flights for the group dashboard
+		statePersisting.upsert( createTestFlight( user ) );
+
 		// NOTE The group has to be retrieved again after adding the memberships
 		dashboardServices.update( groupServices.find( group.id() ).orElse( null ) ).get();
 

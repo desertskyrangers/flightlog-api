@@ -23,23 +23,12 @@ public class TestDataGenerator {
 
 	private final StateRetrieving stateRetrieving;
 
-	private final AircraftServices aircraftServices;
-
-	private final BatteryServices batteryServices;
-
-	private final DashboardServices dashboardServices;
-
 	private User unlisted;
 
-	public TestDataGenerator(
-		FlightDeckApp app, StatePersisting statePersisting, StateRetrieving stateRetrieving, AircraftServices aircraftServices, BatteryServices batteryServices, DashboardServices dashboardServices
-	) {
+	public TestDataGenerator( FlightDeckApp app, StatePersisting statePersisting, StateRetrieving stateRetrieving ) {
 		this.app = app;
 		this.statePersisting = statePersisting;
 		this.stateRetrieving = stateRetrieving;
-		this.aircraftServices = aircraftServices;
-		this.batteryServices = batteryServices;
-		this.dashboardServices = dashboardServices;
 	}
 
 	@Bean
