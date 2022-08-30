@@ -168,7 +168,7 @@ public class StatePersistingService implements StatePersisting {
 	}
 
 	@Override
-	public String upsertProjection( UUID id, String projection ) {
+	public synchronized String upsertProjection( UUID id, String projection ) {
 		return projectionRepo.save( new ProjectionEntity().setId( id ).setJson( projection ) ).getJson();
 	}
 

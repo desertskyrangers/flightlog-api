@@ -19,7 +19,7 @@ import java.util.Set;
 @WithMockUser( authorities = "USER" )
 public abstract class BaseControllerTest extends BaseTest {
 
-	private static final String HEADER_STRING = "Authorization";
+	private static final String HEADER_KEY = "Authorization";
 
 	private static final String TOKEN_PREFIX = "Bearer";
 
@@ -67,7 +67,14 @@ public abstract class BaseControllerTest extends BaseTest {
 
 	protected RequestPostProcessor jwt() {
 		return request -> {
-			request.addHeader( HEADER_STRING, TOKEN_PREFIX + " " + jwt );
+			request.addHeader( HEADER_KEY, TOKEN_PREFIX + " " + jwt );
+			return request;
+		};
+	}
+
+	protected RequestPostProcessor nojwt() {
+		return request -> {
+			request.removeHeader( HEADER_KEY );
 			return request;
 		};
 	}

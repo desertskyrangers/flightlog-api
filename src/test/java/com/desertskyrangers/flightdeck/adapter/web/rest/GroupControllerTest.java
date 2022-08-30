@@ -3,6 +3,8 @@ package com.desertskyrangers.flightdeck.adapter.web.rest;
 import com.desertskyrangers.flightdeck.adapter.web.ApiPath;
 import com.desertskyrangers.flightdeck.adapter.web.model.ReactGroup;
 import com.desertskyrangers.flightdeck.core.model.*;
+import com.desertskyrangers.flightdeck.port.DashboardServices;
+import com.desertskyrangers.flightdeck.port.GroupServices;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
 import com.desertskyrangers.flightdeck.util.Json;
 import org.junit.jupiter.api.Test;
@@ -13,6 +15,9 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -21,10 +26,39 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class GroupControllerTest extends BaseControllerTest {
 
 	@Autowired
+	private GroupServices groupServices;
+
+	@Autowired
+	private DashboardServices dashboardServices;
+
+	@Autowired
 	private StatePersisting statePersisting;
 
 	@Autowired
 	private MockMvc mockMvc;
+
+	@Test
+	void testDashboard() throws Exception {
+		// given
+		User user = getMockUser();
+		User owner = statePersisting.upsert( createTestUser() );
+		Group group = statePersisting.upsert( createTestGroup() );
+		statePersisting.upsert( new Member().user( owner ).group( group ).status( MemberStatus.OWNER ) );
+		statePersisting.upsert( new Member().user( user ).group( group ).status( MemberStatus.ACCEPTED ) );
+
+		// NOTE The group has to be retrieved again after adding the memberships
+		dashboardServices.update( groupServices.find( group.id() ).orElse( null ) ).get();
+
+		// when
+		MvcResult result = this.mockMvc.perform( get( ApiPath.GROUP + "/" + group.id() + "/dashboard" ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
+
+		// then
+		Map<?, ?> map = Json.asMap( result.getResponse().getContentAsString() );
+		Map<?, ?> data = (Map<?, ?>)map.get( "data" );
+		String displayName = (String)data.get( "displayName" );
+		assertThat( displayName ).isNotNull();
+		assertThat( displayName ).isEqualTo( "Test Group" );
+	}
 
 	@Test
 	void testInviteMemberByUsername() throws Exception {
@@ -36,11 +70,14 @@ public class GroupControllerTest extends BaseControllerTest {
 
 		// then
 		Map<String, String> request = Map.of( "id", group.id().toString(), "invitee", invitee.username() );
-		MvcResult result = this.mockMvc.perform( post( ApiPath.GROUP_INVITE ).with( jwt() ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isAccepted() ).andReturn();
+		MvcResult result = this.mockMvc
+			.perform( post( ApiPath.GROUP_INVITE ).with( jwt() ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) )
+			.andExpect( status().isAccepted() )
+			.andReturn();
 
 		// then
 		Map<?, ?> map = Json.asMap( result.getResponse().getContentAsString() );
-		List<?> list = (List<?>)map.get("memberships");
+		List<?> list = (List<?>)map.get( "memberships" );
 		assertThat( list ).isNotNull();
 		assertThat( list.size() ).isEqualTo( 2 );
 	}
@@ -55,11 +92,14 @@ public class GroupControllerTest extends BaseControllerTest {
 
 		// then
 		Map<String, String> request = Map.of( "id", group.id().toString(), "invitee", invitee.email() );
-		MvcResult result = this.mockMvc.perform( post( ApiPath.GROUP_INVITE ).with( jwt() ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isAccepted() ).andReturn();
+		MvcResult result = this.mockMvc
+			.perform( post( ApiPath.GROUP_INVITE ).with( jwt() ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) )
+			.andExpect( status().isAccepted() )
+			.andReturn();
 
 		// then
 		Map<?, ?> map = Json.asMap( result.getResponse().getContentAsString() );
-		List<?> list = (List<?>)map.get("memberships");
+		List<?> list = (List<?>)map.get( "memberships" );
 		assertThat( list ).isNotNull();
 		assertThat( list.size() ).isEqualTo( 2 );
 	}
@@ -165,7 +205,10 @@ public class GroupControllerTest extends BaseControllerTest {
 		statePersisting.upsert( group );
 
 		// when
-		MvcResult result = this.mockMvc.perform( delete( ApiPath.GROUP ).with( jwt() ).content( "{\"id\":\"" + group.id() + "\"}" ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
+		MvcResult result = this.mockMvc
+			.perform( delete( ApiPath.GROUP ).with( jwt() ).content( "{\"id\":\"" + group.id() + "\"}" ).contentType( MediaType.APPLICATION_JSON ) )
+			.andExpect( status().isOk() )
+			.andReturn();
 
 		// then
 		Map<?, ?> map = Json.asMap( result.getResponse().getContentAsString() );

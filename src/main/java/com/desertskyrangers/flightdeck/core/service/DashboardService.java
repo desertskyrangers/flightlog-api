@@ -7,12 +7,14 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Service
@@ -41,18 +43,18 @@ public class DashboardService implements DashboardServices {
 
 	@Override
 	@Async
-	public void update( User user ) {
+	public Future<String> update( User user ) {
 		// Assign dashboard ids if they do not exist
 		if( user.dashboardId() == null ) user.dashboardId( UUID.randomUUID() );
 		if( user.publicDashboardId() == null ) user.publicDashboardId( UUID.randomUUID() );
 		statePersisting.upsert( user );
 
 		// Update the user dashboards
-		update( user, user.dashboardId(), false );
 		update( user, user.publicDashboardId(), true );
+		return update( user, user.dashboardId(), false );
 	}
 
-	private String update( User user, UUID id, boolean isPublic ) {
+	private Future<String> update( User user, UUID id, boolean isPublic ) {
 		Map<String, Object> preferences = userServices.getPreferences( user );
 
 		boolean showPrivateObserverStats = Boolean.parseBoolean( String.valueOf( preferences.get( PreferenceKey.SHOW_OBSERVER_STATS ) ) );
@@ -99,12 +101,12 @@ public class DashboardService implements DashboardServices {
 
 		//log.warn( "user " + (isPublic ? "public" : "private") + " dashboard {} -> {}", id, Json.stringify( map ) );
 
-		return statePersisting.upsertProjection( id, Json.stringify( map ) );
+		return new AsyncResult<>( statePersisting.upsertProjection( id, Json.stringify( map ) ) );
 	}
 
 	@Override
 	@Async
-	public void update( final Group group ) {
+	public Future<String> update( final Group group ) {
 		// Assign a group dashboard id if one does not exist
 		if( group.dashboardId() == null ) statePersisting.upsert( group.dashboardId( UUID.randomUUID() ) );
 
@@ -144,7 +146,7 @@ public class DashboardService implements DashboardServices {
 		map.put( "observerFlightTime", String.valueOf( observerFlightTime ) );
 		if( memberStats.size() > 0 ) map.put( "memberStats", memberStats );
 
-		statePersisting.upsertProjection( group.dashboardId(), Json.stringify( map ) );
+		return new AsyncResult<>( statePersisting.upsertProjection( group.dashboardId(), Json.stringify( map ) ) );
 	}
 
 	@Data

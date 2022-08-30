@@ -574,26 +574,28 @@ public class UserControllerTest extends BaseControllerTest {
 	@Test
 	void testDashboard() throws Exception {
 		// given
-		dashboardServices.update( getMockUser() );
+		dashboardServices.update( getMockUser() ).get();
 
 		// when
 		MvcResult result = this.mockMvc.perform( get( ApiPath.DASHBOARD ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
 
 		// then
 		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
-		Map<?, ?> dashboardMap = (Map<?, ?>)map.get( "data" );
-		assertThat( dashboardMap ).isNotNull();
+		Map<?,?> data = (Map<?,?>)map.get( "data" );
+		String displayName = (String)data.get( "displayName" );
+		assertThat( displayName ).isNotNull();
+		assertThat( displayName ).isEqualTo( "Mock User" );
 	}
 
 	@Test
 	void testPublicDashboardWithId() throws Exception {
 		// given
 		userServices.setPreferences( getMockUser(), Map.of( PreferenceKey.ENABLE_PUBLIC_DASHBOARD, "true" ) );
-		dashboardServices.update( getMockUser() );
+		dashboardServices.update( getMockUser() ).get();
 
 		// when
-		// NOTE - Do not send the JWT with this request. I should be anonymous.
-		MvcResult result = this.mockMvc.perform( get( ApiPath.PUBLIC_DASHBOARD + "/" + getMockUser().id() ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
+		// NOTE - Do not send the JWT with this request. It should be anonymous.
+		MvcResult result = this.mockMvc.perform( get( ApiPath.PUBLIC_DASHBOARD + "/" + getMockUser().id() ).with( nojwt() ) ).andExpect( status().isOk() ).andReturn();
 
 		// then
 		Map<?,?> map = Json.asMap( result.getResponse().getContentAsString() );
@@ -607,11 +609,11 @@ public class UserControllerTest extends BaseControllerTest {
 	void testPublicDashboardWithUsername() throws Exception {
 		// given
 		userServices.setPreferences( getMockUser(), Map.of( PreferenceKey.ENABLE_PUBLIC_DASHBOARD, "true" ) );
-		dashboardServices.update( getMockUser() );
+		dashboardServices.update( getMockUser() ).get();
 
 		// when
-		// NOTE - Do not send the JWT with this request. I should be anonymous.
-		MvcResult result = this.mockMvc.perform( get( ApiPath.PUBLIC_DASHBOARD + "/" + getMockUser().username() ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
+		// NOTE - Do not send the JWT with this request. It should be anonymous.
+		MvcResult result = this.mockMvc.perform( get( ApiPath.PUBLIC_DASHBOARD + "/" + getMockUser().username() ).with( nojwt() ) ).andExpect( status().isOk() ).andReturn();
 
 		// then
 		Map<?,?> map = Json.asMap( result.getResponse().getContentAsString() );
@@ -626,8 +628,8 @@ public class UserControllerTest extends BaseControllerTest {
 		// given
 
 		// when
-		// NOTE - Do not send the JWT with this request. I should be anonymous.
-		MvcResult result = this.mockMvc.perform( get( ApiPath.PUBLIC_DASHBOARD + "/" + UUID.randomUUID() ).with( jwt() ) ).andExpect( status().isBadRequest() ).andReturn();
+		// NOTE - Do not send the JWT with this request. It should be anonymous.
+		MvcResult result = this.mockMvc.perform( get( ApiPath.PUBLIC_DASHBOARD + "/" + UUID.randomUUID() ).with( nojwt() ) ).andExpect( status().isBadRequest() ).andReturn();
 
 		// then
 		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
@@ -642,8 +644,8 @@ public class UserControllerTest extends BaseControllerTest {
 		// given
 
 		// when
-		// NOTE - Do not send the JWT with this request. I should be anonymous.
-		MvcResult result = this.mockMvc.perform( get( ApiPath.PUBLIC_DASHBOARD + "/not-a-valid-id" ).with( jwt() ) ).andExpect( status().isBadRequest() ).andReturn();
+		// NOTE - Do not send the JWT with this request. It should be anonymous.
+		MvcResult result = this.mockMvc.perform( get( ApiPath.PUBLIC_DASHBOARD + "/not-a-valid-id" ).with( nojwt() ) ).andExpect( status().isBadRequest() ).andReturn();
 
 		// then
 		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
