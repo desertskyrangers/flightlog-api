@@ -113,6 +113,10 @@ public interface StateRetrieving {
 
 	long getBatteryFlightTime( Battery battery );
 
+	Optional<Flight> getFlightWithLongestTime( User user );
+
+	Optional<Flight> getFlightWithLongestTime( Aircraft aircraft );
+
 	boolean isPreferenceSet( User user, String key );
 
 	boolean isPreferenceSetTo( User user, String key, String value );

@@ -18,7 +18,7 @@ public class StatCollector<T> {
 	}
 
 	public StatSeries<T> get( String key ) {
-		return new StatSeries<>( statMap.get( key ) );
+		return statMap.containsKey( key ) ? new StatSeries<>( statMap.get( key ) ) : null;
 	}
 
 }

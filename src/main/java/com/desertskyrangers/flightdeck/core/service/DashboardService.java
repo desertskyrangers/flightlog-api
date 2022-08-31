@@ -22,6 +22,22 @@ import java.util.concurrent.Future;
 @Slf4j
 public class DashboardService implements DashboardServices {
 
+	public static final String PILOT_FLIGHT_COUNT = "pilotFlightCount";
+
+	public static final String PILOT_FLIGHT_TIME = "pilotFlightTime";
+
+	public static final String OBSERVER_FLIGHT_COUNT = "observerFlightCount";
+
+	public static final String OBSERVER_FLIGHT_TIME = "observerFlightTime";
+
+	public static final String PILOT_FLIGHT_DATE = "pilotFlightDate";
+
+	public static final String DISPLAY_NAME = "displayName";
+
+	public static final String MEMBER_STATS = "memberStats";
+
+	public static final String PILOT_LONGEST_FLIGHT = "pilotLongestFlight";
+
 	private final FlightServices flightServices;
 
 	private final AircraftServices aircraftServices;
@@ -90,12 +106,12 @@ public class DashboardService implements DashboardServices {
 
 		// Create a map for the dashboard
 		Map<String, Object> map = new HashMap<>();
-		map.put( "displayName", user.name() );
-		map.put( "pilotFlightCount", String.valueOf( flightServices.getPilotFlightCount( user ) ) );
-		map.put( "pilotFlightTime", String.valueOf( flightServices.getPilotFlightTime( user ) ) );
+		map.put( DISPLAY_NAME, user.name() );
+		map.put( PILOT_FLIGHT_COUNT, String.valueOf( flightServices.getPilotFlightCount( user ) ) );
+		map.put( PILOT_FLIGHT_TIME, String.valueOf( flightServices.getPilotFlightTime( user ) ) );
 		if( showObserverStats ) {
-			map.put( "observerFlightCount", String.valueOf( flightServices.getObserverFlightCount( user ) ) );
-			map.put( "observerFlightTime", String.valueOf( flightServices.getObserverFlightTime( user ) ) );
+			map.put( OBSERVER_FLIGHT_COUNT, String.valueOf( flightServices.getObserverFlightCount( user ) ) );
+			map.put( OBSERVER_FLIGHT_TIME, String.valueOf( flightServices.getObserverFlightTime( user ) ) );
 		}
 		map.put( "lastPilotFlightTimestamp", flightServices.getLastPilotFlight( user ).map( Flight::timestamp ).orElse( -1L ) );
 		if( showAircraftStats && aircraftStats.size() > 0 ) map.put( "aircraftStats", aircraftStats );
@@ -125,23 +141,22 @@ public class DashboardService implements DashboardServices {
 			stats.setLastFlightTimestamp( flightServices.getLastPilotFlight( user ).map( Flight::timestamp ).orElse( -1L ) );
 			stats.setPublicDashboardEnabled( isPublicDashboardEnabled );
 
-			collector.add( "pilotFlightCount", user, flightServices.getPilotFlightCount( user ) );
-			collector.add( "pilotFlightTime", user, flightServices.getPilotFlightTime( user ) );
-			collector.add( "observerFlightCount", user, flightServices.getObserverFlightCount( user ) );
-			collector.add( "observerFlightTime", user, flightServices.getObserverFlightTime( user ) );
-			collector.add( "pilotFlightDate", user, stats.getLastFlightTimestamp() );
+			collector.add( PILOT_FLIGHT_COUNT, user, flightServices.getPilotFlightCount( user ) );
+			collector.add( PILOT_FLIGHT_TIME, user, flightServices.getPilotFlightTime( user ) );
+			collector.add( OBSERVER_FLIGHT_COUNT, user, flightServices.getObserverFlightCount( user ) );
+			collector.add( OBSERVER_FLIGHT_TIME, user, flightServices.getObserverFlightTime( user ) );
+			flightServices.getFlightWithLongestTime( user ).ifPresent( f -> collector.add( PILOT_LONGEST_FLIGHT, user, f.duration() ) );
+			collector.add( PILOT_FLIGHT_DATE, user, stats.getLastFlightTimestamp() );
 			return stats;
 		} ).toList();
 
-		// NEXT Group member record book (leader board?)
-		// Pilot with the highest total flight count (from memberStats)
-		StatSeries<User> pilotFlightCounts = collector.get( "pilotFlightCount" );
-		// Pilot with the highest total flight time (from memberStats)
-		StatSeries<User> pilotFlightTimes = collector.get( "pilotFlightTime" );
-		// Pilot with the longest individual flight time [this is a flight event] (what aircraft, what date, what location)
-		// Pilot who flew most recently (from memberStats)
-		StatSeries<User> pilotFlightDates = collector.get( "pilotFlightDate" );
+		// Pilot records
+		StatSeries<User> pilotFlightCounts = collector.get( PILOT_FLIGHT_COUNT );
+		StatSeries<User> pilotFlightTimes = collector.get( PILOT_FLIGHT_TIME );
+		StatSeries<User> pilotLongestFlight  = collector.get( PILOT_LONGEST_FLIGHT );
+		StatSeries<User> pilotFlightDates = collector.get( PILOT_FLIGHT_DATE );
 
+		// Aircraft records
 		// NEXT Group aircraft record book (leader board?)
 		// Aircraft with highest total flight count
 		// Aircraft with highest total flight time
@@ -150,33 +165,23 @@ public class DashboardService implements DashboardServices {
 
 		// Create a map for the dashboard
 		Map<String, Object> map = new HashMap<>();
-		map.put( "displayName", group.name() );
-		map.put( "pilotFlightCount", String.valueOf( (int)collector.get( "pilotFlightCount" ).getSum() ) );
-		map.put( "pilotFlightTime", String.valueOf( (long)collector.get( "pilotFlightTime" ).getSum() ) );
-		map.put( "observerFlightCount", String.valueOf( (int)collector.get( "observerFlightCount" ).getSum() ) );
-		map.put( "observerFlightTime", String.valueOf( (long)collector.get( "observerFlightTime" ).getSum() ) );
-		if( memberStats.size() > 0 ) map.put( "memberStats", memberStats );
+		map.put( DISPLAY_NAME, group.name() );
+		map.put( PILOT_FLIGHT_COUNT, String.valueOf( (int)collector.get( PILOT_FLIGHT_COUNT ).getSum() ) );
+		map.put( PILOT_FLIGHT_TIME, String.valueOf( (long)collector.get( PILOT_FLIGHT_TIME ).getSum() ) );
+		map.put( OBSERVER_FLIGHT_COUNT, String.valueOf( (int)collector.get( OBSERVER_FLIGHT_COUNT ).getSum() ) );
+		map.put( OBSERVER_FLIGHT_TIME, String.valueOf( (long)collector.get( OBSERVER_FLIGHT_TIME ).getSum() ) );
+		if( memberStats.size() > 0 ) map.put( MEMBER_STATS, memberStats );
 
-		map.put( "pilotWithHighestTotalFlightCount", new Record( "Highest flight count",
-			"The pilot with the highest total flight count across all flights the pilot has flown",
-			Integer.toString( (int)pilotFlightCounts.getMax() ),
-			"count",
-			pilotFlightCounts.getMaxValueOwner().name()
-		) );
-		map.put( "pilotWithHighestTotalFlightTime", new Record( "Most flight time",
-			"The pilot with the highest total flight time across all flights the pilot has flown",
-			Integer.toString( (int)pilotFlightTimes.getMax() ),
-			"flight-time",
-			pilotFlightTimes.getMaxValueOwner().name()
-		) );
-		map.put( "pilotWithMostRecentFlightDate", new Record( "Most recent pilot",
-			"The pilot most recently flew",
-			Long.toString( (long)pilotFlightDates.getMax() ),
-			"timestamp",
-			pilotFlightDates.getMaxValueOwner().name()
-		) );
+		addRecord( map, PilotRecord.TOTAL_FLIGHT_COUNT, Integer.toString( (int)pilotFlightCounts.getMax() ), "count", pilotFlightCounts.getMaxValueOwner().name() );
+		addRecord( map, PilotRecord.TOTAL_FLIGHT_TIME, Integer.toString( (int)pilotFlightTimes.getMax() ), "duration", pilotFlightTimes.getMaxValueOwner().name() );
+		if( pilotLongestFlight != null ) addRecord( map, PilotRecord.LONGEST_SINGLE_FLIGHT_TIME, Long.toString( (long)pilotLongestFlight.getMax() ), "duration", pilotLongestFlight.getMaxValueOwner().name() );
+		addRecord( map, PilotRecord.MOST_RECENT_FLIGHT, Long.toString( (long)pilotFlightDates.getMax() ), "timestamp", pilotFlightDates.getMaxValueOwner().name() );
 
 		return new AsyncResult<>( statePersisting.upsertProjection( group.dashboardId(), Json.stringify( map ) ) );
+	}
+
+	private void addRecord( Map<String, Object> map, PilotRecord record, String value, String type, String owner ) {
+		map.put( record.getKey(), new Record( record.getName(), record.getDescription(), value, type, owner ) );
 	}
 
 	/**

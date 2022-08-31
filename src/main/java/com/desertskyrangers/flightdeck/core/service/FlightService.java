@@ -162,13 +162,23 @@ public class FlightService implements FlightServices {
 	}
 
 	@Override
-	public int getBatteryFlightCount( Battery aircraft ) {
-		return stateRetrieving.getBatteryFlightCount( aircraft );
+	public int getBatteryFlightCount( Battery battery ) {
+		return stateRetrieving.getBatteryFlightCount( battery );
 	}
 
 	@Override
-	public long getBatteryFlightTime( Battery aircraft ) {
-		return stateRetrieving.getBatteryFlightTime( aircraft );
+	public long getBatteryFlightTime( Battery battery ) {
+		return stateRetrieving.getBatteryFlightTime( battery );
+	}
+
+	@Override
+	public Optional<Flight> getFlightWithLongestTime( User user ) {
+		return stateRetrieving.getFlightWithLongestTime( user );
+	}
+
+	@Override
+	public Optional<Flight> getFlightWithLongestTime( Aircraft aircraft ) {
+		return stateRetrieving.getFlightWithLongestTime( aircraft );
 	}
 
 	private Set<Flight> getFlightsByTime( User user, boolean observer, boolean owner, long time ) {

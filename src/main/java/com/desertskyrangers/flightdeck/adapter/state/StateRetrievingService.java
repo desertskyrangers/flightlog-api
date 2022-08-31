@@ -371,6 +371,16 @@ public class StateRetrievingService implements StateRetrieving {
 	}
 
 	@Override
+	public Optional<Flight> getFlightWithLongestTime( User user ) {
+		return flightRepo.findFirstByPilotOrderByDurationDesc(UserEntity.from( user )).map( FlightEntity::toFlight );
+	}
+
+	@Override
+	public Optional<Flight> getFlightWithLongestTime( Aircraft aircraft ) {
+		return flightRepo.findFirstByAircraftOrderByDurationDesc(AircraftEntity.from(aircraft)).map( FlightEntity::toFlight );
+	}
+
+	@Override
 	public Optional<String> findProjection( UUID id ) {
 		Optional<ProjectionEntity> entity = projectionRepo.findById( id );
 		if( entity.isEmpty() ) return Optional.empty();

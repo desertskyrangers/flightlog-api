@@ -47,4 +47,8 @@ public interface FlightServices {
 
 	long getBatteryFlightTime( Battery battery );
 
+	Optional<Flight> getFlightWithLongestTime( User user );
+
+	Optional<Flight> getFlightWithLongestTime( Aircraft user );
+
 }

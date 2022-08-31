@@ -75,6 +75,10 @@ public interface FlightRepo extends JpaRepository<FlightEntity, UUID> {
 
 	Optional<FlightEntity> findFirstByPilotOrderByTimestampDesc( UserEntity pilot );
 
+	Optional<FlightEntity> findFirstByAircraftOrderByDurationDesc( AircraftEntity aircraft );
+
+	Optional<FlightEntity> findFirstByPilotOrderByDurationDesc( UserEntity pilot );
+
 	Integer countByAircraft_Id( UUID id );
 
 	@Query( "select sum(f.duration) from FlightEntity f where f.aircraft.id = ?1" )
