@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -72,18 +71,10 @@ public class GroupService implements GroupServices {
 
 	@Override
 	public Group callout( User caller, Group group ) {
-		String message = caller.name() + " is going flying";
-
 		// Go through each member of the group and notify them of a callout
 		SmsMessage sms = new SmsMessage();
-		sms.subject( "Flight Callout" );
-		sms.message( message );
-		group
-			.users()
-			.stream()
-			.filter( u -> Text.isNotBlank( u.smsNumber() ) )
-			.filter( u -> u.smsCarrier() != SmsCarrier.NONE )
-			.forEach( user -> sms.recipient( user.smsCarrier().smsFor( user.smsNumber() ), user.name() ) );
+		sms.content( "Flight Callout - " + caller.name() + " is going flying" );
+		group.users().stream().filter( u -> Text.isNotBlank( u.smsNumber() ) ).forEach( user -> sms.recipient( user.smsNumber() ) );
 		humanInterface.sms( sms );
 
 		return group;

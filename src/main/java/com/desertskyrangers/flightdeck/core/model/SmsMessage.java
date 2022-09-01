@@ -5,27 +5,27 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 @Data
 @Accessors( fluent = true )
 @Slf4j
 public class SmsMessage {
 
-	private Map<String, String> recipients;
+	private Set<String> numbers;
 
-	private String subject;
+	private String content;
 
-	private String message;
-
-	public SmsMessage recipient( String address, String recipient ) {
-		recipients( Map.of( address, recipient ) );
+	public SmsMessage recipient( String number ) {
+		recipients( Set.of( number ) );
 		return this;
 	}
 
-	public SmsMessage recipients( Map<String, String> recipients ) {
-		if( this.recipients == null ) this.recipients = new ConcurrentHashMap<>();
-		this.recipients.putAll( recipients );
+	public SmsMessage recipients( Set<String> numbers ) {
+		if( this.numbers == null ) this.numbers = new CopyOnWriteArraySet<>();
+		this.numbers.addAll( numbers );
 		return this;
 	}
 

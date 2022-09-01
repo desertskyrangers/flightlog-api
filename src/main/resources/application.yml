@@ -52,4 +52,10 @@ spring:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
 
+flightdeck:
+  sms:
+    username: ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    password: 0123456789abcdef
+    from: +18005550000
+
 #management.endpoints.web.exposure.include=*

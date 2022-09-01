@@ -4,8 +4,11 @@ import com.desertskyrangers.flightdeck.FlightDeckApp;
 import com.desertskyrangers.flightdeck.core.model.EmailMessage;
 import com.desertskyrangers.flightdeck.core.model.SmsMessage;
 import com.desertskyrangers.flightdeck.port.HumanInterface;
+import com.twilio.Twilio;
+import com.twilio.rest.api.v2010.account.Message;
+import com.twilio.type.PhoneNumber;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.mail.SimpleMailMessage;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -29,6 +32,15 @@ public class HumanInterfaceService implements HumanInterface {
 	private final FlightDeckApp app;
 
 	private final JavaMailSender emailSender;
+
+	@Value( "${flightdeck.sms.username}" )
+	private String username;
+
+	@Value( "${flightdeck.sms.password}" )
+	private String password;
+
+	@Value( "${flightdeck.sms.from: +18005550000}" )
+	private String from;
 
 	public HumanInterfaceService( FlightDeckApp app, JavaMailSender emailSender ) {
 		this.app = app;
@@ -63,14 +75,29 @@ public class HumanInterfaceService implements HumanInterface {
 	}
 
 	public void sms( SmsMessage message ) {
-		message.recipients().keySet().forEach( k -> {
-			log.warn( "Sending " + message.subject() + " to " + k );
+		if( message.numbers().isEmpty() ) log.warn( "No recipients for sms: " + message.content() );
+
+		Twilio.init( username, password );
+
+		log.info( "Send sms " + message.content() );
+		message.numbers().stream().map( HumanInterfaceService::e164Format ).forEach( n -> {
+			Message twilioMessage = Message.creator( new PhoneNumber( n ), new PhoneNumber( from ), message.content() ).create();
+			log.debug( "SMS message sent with sid=" + twilioMessage.getSid() );
 		} );
-		EmailMessage mailMessage = new EmailMessage();
-		mailMessage.recipients( message.recipients() );
-		mailMessage.subject( message.subject() );
-		mailMessage.message( message.message() );
-		email( mailMessage );
+	}
+
+	public static String e164Format( String string ) {
+		if( string == null ) return null;
+
+		StringBuilder numbers = new StringBuilder();
+		for( char c : string.toCharArray() ) {
+			if( c >= '0' && c <= '9') numbers.append( c );
+		}
+
+		if( numbers.length() == 10 ) return "+1" + numbers;
+		if( numbers.length() == 11 ) return "+" + numbers;
+
+		return string;
 	}
 
 }

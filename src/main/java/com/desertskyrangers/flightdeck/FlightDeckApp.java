@@ -20,11 +20,6 @@ public class FlightDeckApp {
 	public static void main( String[] args ) {
 		ConfigurableApplicationContext context = SpringApplication.run( FlightDeckApp.class, args );
 		context.getBean( TestDataGenerator.class ).run();
-//		try {
-//			Thread.sleep( 1000 );
-//		} catch( InterruptedException exception ) {
-//			// Ignore
-//		}
 		context.getBean( DataUpdate.class ).run();
 	}
 
