@@ -19,6 +19,7 @@ import javax.annotation.security.PermitAll;
 import java.util.*;
 
 @RestController
+//@RequestMapping( produces = "application/json" )
 @Slf4j
 public class UserController extends BaseController {
 
