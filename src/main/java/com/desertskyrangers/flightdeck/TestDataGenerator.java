@@ -17,6 +17,8 @@ public class TestDataGenerator {
 
 	private static final UUID UNLISTED_USER_ID = UUID.fromString( "6e0c4460-357b-4a86-901d-e2ba16000c59" );
 
+	private final Random random = new Random();
+
 	private final FlightDeckApp app;
 
 	private final StatePersisting statePersisting;
@@ -128,6 +130,11 @@ public class TestDataGenerator {
 		statePersisting.upsert( new Flight().pilot( tom ).observer( tia ).aircraft( bianca ).timestamp( timestamp += 600000 ).duration( 163 ) );
 		statePersisting.upsert( new Flight().pilot( tea ).observer( tia ).aircraft( aftyn ).timestamp( timestamp += 600000 ).duration( 182 ) );
 		statePersisting.upsert( new Flight().pilot( tim ).observer( tea ).aircraft( aftyn ).timestamp( timestamp += 600000 ).duration( 34 ) );
+
+		// Make a lot of flights for tia
+		for( int index = 0; index < 500; index++ ) {
+			statePersisting.upsert( new Flight().pilot( tia ).observer( tia ).aircraft( bianca ).timestamp( timestamp += 600000 ).duration( random.nextInt( 270 ) + 30 ) );
+		}
 
 		Group testersInfinite = new Group().name( "Testers Infinite" ).type( GroupType.GROUP );
 		statePersisting.upsert( testersInfinite );
