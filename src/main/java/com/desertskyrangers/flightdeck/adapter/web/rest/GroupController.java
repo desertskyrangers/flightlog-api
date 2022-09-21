@@ -61,8 +61,8 @@ public class GroupController extends BaseController {
 
 			return new ResponseEntity<>( ReactResponse.messages( List.of( "Callout sent to " + group.type().name().toLowerCase() ) ), HttpStatus.OK );
 		} catch( Exception exception ) {
-			log.warn( "Error retrieving group dashboard", exception );
-			return new ResponseEntity<>( ReactResponse.messages( List.of( "Error retrieving group dashboard" ) ), HttpStatus.INTERNAL_SERVER_ERROR );
+			log.warn( "Unable to callout group", exception );
+			return new ResponseEntity<>( ReactResponse.messages( List.of( "Unable to callout group" ) ), HttpStatus.INTERNAL_SERVER_ERROR );
 		}
 	}
 
