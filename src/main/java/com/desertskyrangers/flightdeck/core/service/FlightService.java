@@ -59,32 +59,10 @@ public class FlightService implements FlightServices {
 	public Page<Flight> findFlightsByUser( User user, int page, int size ) {
 		boolean showObserverFlights = stateRetrieving.isPreferenceSetTo( user, PreferenceKey.SHOW_OBSERVER_FLIGHTS, "true" );
 		boolean showOwnerFlights = stateRetrieving.isPreferenceSetTo( user, PreferenceKey.SHOW_OWNER_FLIGHTS, "true" );
-//		String view = stateRetrieving.getPreference( user, PreferenceKey.FLIGHT_LIST_VIEW, String.valueOf( size ) );
-//
-//		int count;
-//		try {
-//			count = Integer.parseInt( view );
-//		} catch( NumberFormatException exception ) {
-//			count = -1;
-//		}
-//
-//		Set<Flight> flights = new HashSet<>();
-//		if( count < 0 ) {
-//			int days = times.get( view );
-//			long after = System.currentTimeMillis() - TimeUnit.DAYS.toMillis( days );
-//			flights.addAll( getFlightsByTime( user, showObserverFlights, showOwnerFlights, after ) );
-//		} else {
-//			flights.addAll( getFlightsByCount( user, showObserverFlights, showOwnerFlights, count ) );
-//		}
-//
-//		List<Flight> orderedFlights = new ArrayList<>( flights );
-//		if( count >= 0 ) orderedFlights = orderedFlights.subList( 0, Math.min( count, orderedFlights.size() ) );
-//		orderedFlights.sort( new FlightTimestampComparator().reversed() );
 
-		// FIXME What about observer and owner flights???
-		return stateRetrieving.findFlightsPageByPilot( user.id(), page, size );
-
-		//return new PageImpl<>( orderedFlights, PageRequest.of( page, size ), orderedFlights.size() );
+		User observer = showObserverFlights ? user : null;
+		User owner = showOwnerFlights ? user : null;
+		return stateRetrieving.findFlightsByPilotObserverOwner(user, observer, owner, page, size);
 	}
 
 	@Override

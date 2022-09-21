@@ -55,7 +55,7 @@ public interface StateRetrieving {
 
 	List<Flight> findFlightsByBattery( UUID id );
 
-	List<Flight> findFlightsByUser( UUID id );
+	Page<Flight> findFlightsByPilotObserverOwner( User pilot, User observer, User owner, int page, int size );
 
 	List<Flight> findAllFlights();
 

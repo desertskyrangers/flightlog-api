@@ -42,8 +42,8 @@ public interface FlightRepo extends JpaRepository<FlightEntity, UUID> {
 
 	List<FlightEntity> findAllByAircraft_Owner( UUID id, Pageable pageable );
 
-	// All flight roles
-	List<FlightEntity> findFlightEntitiesByPilot_IdOrObserver_IdOrAircraft_OwnerOrderByTimestampDesc( UUID pilotId, UUID observerId, UUID aircraftOwnerId );
+	// All flights by role
+	Page<FlightEntity> findFlightEntitiesByPilot_IdOrObserver_IdOrAircraft_OwnerOrderByTimestampDesc( UUID pilotId, UUID observerId, UUID aircraftOwnerId, Pageable pageable );
 
 	Integer countByPilot( UserEntity user );
 

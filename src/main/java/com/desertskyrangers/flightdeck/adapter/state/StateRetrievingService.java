@@ -197,15 +197,12 @@ public class StateRetrievingService implements StateRetrieving {
 		return null;
 	}
 
-	/**
-	 * This returns the list of flights where the user is a pilot, observer, or aircraft owner.
-	 *
-	 * @param id The user id
-	 * @return The list of flights
-	 */
 	@Override
-	public List<Flight> findFlightsByUser( UUID id ) {
-		return flightRepo.findFlightEntitiesByPilot_IdOrObserver_IdOrAircraft_OwnerOrderByTimestampDesc( id, id, id ).stream().map( FlightEntity::toFlight ).toList();
+	public Page<Flight> findFlightsByPilotObserverOwner( User pilot, User observer, User owner, int page, int size ) {
+		UUID pilotId = pilot == null ? null : pilot.id();
+		UUID observerId = observer == null ? null : observer.id();
+		UUID ownerId = owner == null ? null : owner.id();
+		return flightRepo.findFlightEntitiesByPilot_IdOrObserver_IdOrAircraft_OwnerOrderByTimestampDesc( pilotId, observerId, ownerId, PageRequest.of( page, size ) ).map( FlightEntity::toFlight );
 	}
 
 	@Override
