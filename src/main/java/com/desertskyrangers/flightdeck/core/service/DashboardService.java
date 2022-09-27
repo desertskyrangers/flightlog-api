@@ -22,6 +22,10 @@ import java.util.concurrent.Future;
 @Slf4j
 public class DashboardService implements DashboardServices {
 
+	public static final String GROUPS = "groups";
+
+	public static final String DISPLAY_NAME = "displayName";
+
 	public static final String PILOT_FLIGHT_COUNT = "pilotFlightCount";
 
 	public static final String PILOT_FLIGHT_TIME = "pilotFlightTime";
@@ -32,11 +36,13 @@ public class DashboardService implements DashboardServices {
 
 	public static final String PILOT_FLIGHT_DATE = "pilotFlightDate";
 
-	public static final String DISPLAY_NAME = "displayName";
-
 	public static final String MEMBER_STATS = "memberStats";
 
 	public static final String PILOT_LONGEST_FLIGHT = "pilotLongestFlight";
+
+	public static final String PILOT_LAST_FLIGHT_TIMESTAMP = "pilotLastFlightTimestamp";
+
+	public static final String AIRCRAFT_STATS = "aircraftStats";
 
 	private final FlightServices flightServices;
 
@@ -106,6 +112,7 @@ public class DashboardService implements DashboardServices {
 
 		// Create a map for the dashboard
 		Map<String, Object> map = new HashMap<>();
+		map.put( GROUPS, user.groups().stream().sorted().map( this::toGroupProjection ).toList() );
 		map.put( DISPLAY_NAME, user.name() );
 		map.put( PILOT_FLIGHT_COUNT, String.valueOf( flightServices.getPilotFlightCount( user ) ) );
 		map.put( PILOT_FLIGHT_TIME, String.valueOf( flightServices.getPilotFlightTime( user ) ) );
@@ -113,12 +120,22 @@ public class DashboardService implements DashboardServices {
 			map.put( OBSERVER_FLIGHT_COUNT, String.valueOf( flightServices.getObserverFlightCount( user ) ) );
 			map.put( OBSERVER_FLIGHT_TIME, String.valueOf( flightServices.getObserverFlightTime( user ) ) );
 		}
-		map.put( "lastPilotFlightTimestamp", flightServices.getLastPilotFlight( user ).map( Flight::timestamp ).orElse( -1L ) );
-		if( showAircraftStats && aircraftStats.size() > 0 ) map.put( "aircraftStats", aircraftStats );
+		map.put( PILOT_LAST_FLIGHT_TIMESTAMP, flightServices.getLastPilotFlight( user ).map( Flight::timestamp ).orElse( -1L ) );
+		if( showAircraftStats && aircraftStats.size() > 0 ) map.put( AIRCRAFT_STATS, aircraftStats );
 
 		//log.warn( "user " + (isPublic ? "public" : "private") + " dashboard {} -> {}", id, Json.stringify( map ) );
 
 		return new AsyncResult<>( statePersisting.upsertProjection( id, Json.stringify( map ) ) );
+	}
+
+	private Map<String,Object> toGroupProjection( Group group ) {
+		Map<String,Object> map = new HashMap<>();
+
+		map.put( "id", group.id().toString() );
+		map.put( "name", group.name() );
+		map.put( "type", group.type().name().toLowerCase() );
+
+		return map;
 	}
 
 	@Override
