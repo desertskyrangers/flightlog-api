@@ -133,7 +133,7 @@ public class TestDataGenerator {
 
 		// Make a lot of flights for tia
 		for( int index = 0; index < 500; index++ ) {
-			statePersisting.upsert( new Flight().pilot( tia ).observer( tia ).aircraft( bianca ).timestamp( timestamp += 600000 ).duration( random.nextInt( 270 ) + 30 ) );
+			statePersisting.upsert( new Flight().pilot( tia ).observer( tia ).aircraft( aftyn ).timestamp( timestamp += 600000 ).duration( random.nextInt( 270 ) + 30 ) );
 		}
 
 		Group testersInfinite = new Group().name( "Testers Infinite" ).type( GroupType.GROUP );
