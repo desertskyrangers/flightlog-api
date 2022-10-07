@@ -65,11 +65,10 @@ public class AircraftService implements AircraftServices {
 		aircraft.flightCount( flightCount );
 		aircraft.flightTime( flightTime );
 
-		statePersisting.upsert( aircraft );
+		Aircraft result = statePersisting.upsert( aircraft );
+		userServices.find( aircraft.owner() ).ifPresent( dashboardServices::update );
 
-		userServices.find(aircraft.owner() ).ifPresent( dashboardServices::update );
-
-		return aircraft;
+		return result;
 	}
 
 	public void remove( Aircraft aircraft ) {

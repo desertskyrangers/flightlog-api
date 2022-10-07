@@ -42,19 +42,25 @@ public abstract class BaseControllerTest extends BaseTest {
 
 			// Delete the exising mock user account
 			userServices.findByPrincipal( authentication.getName() ).ifPresent( u -> userServices.remove( u ) );
+			//if( userServices.findByPrincipal( authentication.getName() ).isPresent())
 
-			// Create mock user account
-			mockUser = new User();
-			mockUser.username( username );
-			mockUser.email( username + "@example.com" );
-			mockUser.firstName( "Mock" );
-			mockUser.lastName( "User" );
-			UserToken usernameToken = new UserToken().principal( mockUser.username() ).credential( encodedPassword );
-			UserToken emailToken = new UserToken().principal( mockUser.email() ).credential( encodedPassword );
-			mockUser.tokens( Set.of( usernameToken, emailToken ) );
-			usernameToken.user( mockUser );
-			emailToken.user( mockUser );
-			userServices.upsert( mockUser );
+			mockUser = userServices.findByPrincipal( authentication.getName() ).orElseGet( () -> {
+				User user = new User();
+				user.username( username );
+				user.email( username + "@example.com" );
+				user.firstName( "Mock" );
+				user.lastName( "User" );
+				UserToken usernameToken = new UserToken().principal( user.username() ).credential( encodedPassword );
+				UserToken emailToken = new UserToken().principal( user.email() ).credential( encodedPassword );
+				user.tokens( Set.of( usernameToken, emailToken ) );
+				usernameToken.user( user );
+				emailToken.user( user );
+				userServices.upsert( user );
+				return user;
+			} );
+
+			stateRetrieving.findAircraftByOwner( getMockUser().id() ).forEach( statePersisting::remove );
+			stateRetrieving.findBatteriesByOwner( getMockUser().id() ).forEach( statePersisting::remove );
 
 			jwt = jwtTokenProvider.createToken( mockUser, authentication, false );
 		}
