@@ -1,10 +1,7 @@
 package com.desertskyrangers.flightdeck.core.service;
 
 import com.desertskyrangers.flightdeck.core.model.*;
-import com.desertskyrangers.flightdeck.port.AircraftServices;
-import com.desertskyrangers.flightdeck.port.FlightServices;
-import com.desertskyrangers.flightdeck.port.StatePersisting;
-import com.desertskyrangers.flightdeck.port.StateRetrieving;
+import com.desertskyrangers.flightdeck.port.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -24,12 +21,21 @@ public class AircraftService implements AircraftServices {
 
 	private final FlightServices flightServices;
 
-	public AircraftService( StatePersisting statePersisting, StateRetrieving stateRetrieving, FlightServices flightServices ) {
+	private final UserServices userServices;
+
+	private DashboardServices dashboardServices;
+
+	public AircraftService( StatePersisting statePersisting, StateRetrieving stateRetrieving, FlightServices flightServices, UserServices userServices ) {
 		this.statePersisting = statePersisting;
 		this.stateRetrieving = stateRetrieving;
 		this.flightServices = flightServices;
+		this.userServices = userServices;
 
 		this.flightServices.setAircraftServices( this );
+	}
+
+	public void setDashboardServices( DashboardServices dashboardServices ) {
+		this.dashboardServices = dashboardServices;
 	}
 
 	public Optional<Aircraft> find( UUID id ) {
@@ -59,11 +65,16 @@ public class AircraftService implements AircraftServices {
 		aircraft.flightCount( flightCount );
 		aircraft.flightTime( flightTime );
 
-		return statePersisting.upsert( aircraft );
+		statePersisting.upsert( aircraft );
+
+		userServices.find(aircraft.owner() ).ifPresent( dashboardServices::update );
+
+		return aircraft;
 	}
 
 	public void remove( Aircraft aircraft ) {
 		statePersisting.remove( aircraft );
+		userServices.find(aircraft.owner() ).ifPresent( dashboardServices::update );
 	}
 
 	public Aircraft updateFlightData( Aircraft aircraft ) {

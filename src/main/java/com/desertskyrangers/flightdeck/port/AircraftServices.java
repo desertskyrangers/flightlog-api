@@ -11,6 +11,8 @@ import java.util.UUID;
 
 public interface AircraftServices {
 
+	void setDashboardServices( DashboardServices dashboardServices );
+
 	Optional<Aircraft> find( UUID id );
 
 	List<Aircraft> findAllByOwner( UUID owner );

@@ -84,8 +84,13 @@ public class UserService implements UserServices {
 	}
 
 	@Override
-	public void remove( User account ) {
-		statePersisting.remove( account );
+	public void remove( User user ) {
+		statePersisting.remove( user );
+
+		// Update user dashboards
+		dashboardServices.update( user );
+		// Update group dashboards
+		user.groups().forEach( dashboardServices::update );
 	}
 
 	@Override

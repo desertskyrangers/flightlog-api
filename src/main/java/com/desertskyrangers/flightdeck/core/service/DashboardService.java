@@ -60,6 +60,7 @@ public class DashboardService implements DashboardServices {
 		this.userServices = userServices;
 		this.stateRetrieving = stateRetrieving;
 		this.statePersisting = statePersisting;
+		aircraftServices.setDashboardServices( this );
 		flightServices.setDashboardServices( this );
 		userServices.setDashboardServices( this );
 	}
@@ -104,6 +105,8 @@ public class DashboardService implements DashboardServices {
 			stats.setId( a.id() );
 			stats.setName( a.name() );
 			stats.setType( a.type().name().toLowerCase() );
+			if( a.baseColor() != null ) stats.setBaseColor( a.baseColor().toWeb() );
+			if( a.trimColor() != null ) stats.setTrimColor( a.trimColor().toWeb() );
 			stats.setFlightCount( flightServices.getAircraftFlightCount( a ) );
 			stats.setFlightTime( flightServices.getAircraftFlightTime( a ) );
 			stats.setLastFlightTimestamp( flightServices.getLastAircraftFlight( a ).map( Flight::timestamp ).orElse( -1L ) );
@@ -215,6 +218,10 @@ public class DashboardService implements DashboardServices {
 		private String name;
 
 		private String type;
+
+		private String baseColor;
+
+		private String trimColor;
 
 		private Integer flightCount;
 
