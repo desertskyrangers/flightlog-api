@@ -1,5 +1,6 @@
 package com.desertskyrangers.flightdeck.adapter.web.model;
 
+import com.desertskyrangers.flightdeck.core.model.Aircraft;
 import com.desertskyrangers.flightdeck.core.model.Flight;
 import com.desertskyrangers.flightdeck.core.model.FlightUpsertRequest;
 import com.desertskyrangers.flightdeck.core.model.User;
@@ -43,6 +44,10 @@ public class ReactFlight {
 
 	private String type;
 
+	private String baseColor;
+
+	private String trimColor;
+
 	public static ReactFlight from( User requester, Flight flight ) {
 		ReactFlight reactFlight = new ReactFlight();
 
@@ -58,8 +63,13 @@ public class ReactFlight {
 		reactFlight.setNotes( flight.notes() );
 
 		// Use aircraft info for the name and type...for now
-		if( flight.aircraft() != null ) reactFlight.setName( flight.aircraft().name() );
-		if( flight.aircraft() != null ) reactFlight.setType( flight.aircraft().type().name().toLowerCase() );
+		if( flight.aircraft() != null ) {
+			Aircraft aircraft = flight.aircraft();
+			reactFlight.setName( aircraft.name() );
+			reactFlight.setType( aircraft.type().name().toLowerCase() );
+			if( aircraft.baseColor()!= null) reactFlight.baseColor = aircraft.baseColor().toWeb();
+			if( aircraft.trimColor()!= null) reactFlight.trimColor = aircraft.trimColor().toWeb();
+		}
 
 		// User flight role
 		// TODO Should this move to the core?
