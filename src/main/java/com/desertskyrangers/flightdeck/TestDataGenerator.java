@@ -282,7 +282,7 @@ public class TestDataGenerator {
 	}
 
 	private Aircraft createGemma() {
-		return new Aircraft().name( "GEMMA" ).type( AircraftType.MULTIROTOR ).status( AircraftStatus.AIRWORTHY );
+		return new Aircraft().name( "GEMMA" ).type( AircraftType.MULTIROTOR ).status( AircraftStatus.AIRWORTHY ).baseColor( AppColor.BLACK ).trimColor( AppColor.fromHex( "#ff004000" ) );
 	}
 
 	private Aircraft createHelena() {

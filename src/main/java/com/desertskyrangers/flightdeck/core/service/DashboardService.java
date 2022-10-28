@@ -105,6 +105,7 @@ public class DashboardService implements DashboardServices {
 			stats.setId( a.id() );
 			stats.setName( a.name() );
 			stats.setType( a.type().name().toLowerCase() );
+			stats.setStatus( a.status().name().toLowerCase() );
 			if( a.baseColor() != null ) stats.setBaseColor( a.baseColor().toWeb() );
 			if( a.trimColor() != null ) stats.setTrimColor( a.trimColor().toWeb() );
 			stats.setFlightCount( flightServices.getAircraftFlightCount( a ) );
@@ -218,6 +219,8 @@ public class DashboardService implements DashboardServices {
 		private String name;
 
 		private String type;
+
+		private String status;
 
 		private String baseColor;
 

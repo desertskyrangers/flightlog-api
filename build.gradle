@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.desertskyrangers'
-version = '1.2.24'
+version = '1.2.26'
 
 java {
 	sourceCompatibility = JavaVersion.VERSION_17
