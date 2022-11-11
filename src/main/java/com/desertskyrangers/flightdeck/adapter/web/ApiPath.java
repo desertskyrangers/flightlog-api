@@ -29,6 +29,8 @@ public interface ApiPath {
 	String GROUP_INVITE = GROUP + "/invite";
 	String GROUP_MEMBERSHIP = GROUP + "/membership";
 
+	String LOCATION = API + "/location";
+
 	String MEMBERSHIP = API + "/membership";
 
 	String MONITOR = API + "/monitor";

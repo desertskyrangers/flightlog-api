@@ -5,6 +5,7 @@ import com.desertskyrangers.flightdeck.adapter.state.entity.LocationEntity;
 import com.desertskyrangers.flightdeck.adapter.state.entity.MemberEntity;
 import com.desertskyrangers.flightdeck.adapter.state.entity.UserEntity;
 import com.desertskyrangers.flightdeck.core.model.*;
+import com.desertskyrangers.flightdeck.port.LocationServices;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
 import com.desertskyrangers.flightdeck.port.StateRetrieving;
 import com.desertskyrangers.flightdeck.port.UserServices;
@@ -27,6 +28,9 @@ public class BaseTest {
 
 	@Autowired
 	protected PasswordEncoder passwordEncoder;
+
+	@Autowired
+	protected LocationServices locationServices;
 
 	@Autowired
 	protected UserServices userServices;
@@ -125,7 +129,7 @@ public class BaseTest {
 		location.name( "Morning Cloak Park");
 		location.size( 150 );
 
-		return location;
+		return locationServices.upsert( location );
 	}
 
 	protected LocationEntity createTestLocationEntity() {

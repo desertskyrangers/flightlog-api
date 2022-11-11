@@ -36,6 +36,10 @@ public class Location {
 	 */
 	private double size;
 
+	// TODO Can locations have types? Which ones?
+
+	// TODO Do locations need states? Like open, restricted, removed, etc.?
+
 	public boolean containsByRadius( double latitude, double longitude ) {
 		double dx = latitude - latitude();
 		double dy = longitude - longitude();
