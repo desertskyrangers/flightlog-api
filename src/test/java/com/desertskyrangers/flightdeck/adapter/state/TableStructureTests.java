@@ -26,6 +26,7 @@ public class TableStructureTests {
 		expected.add( "battery" );
 		expected.add( "flight" );
 		expected.add( "flightbattery" );
+		expected.add( "location" );
 		expected.add( "member" );
 		expected.add( "org" );
 		expected.add( "preferences" );
@@ -118,6 +119,18 @@ public class TableStructureTests {
 		expected.add( "batteryid" );
 
 		assertThat( getColumns( "flightbattery" ) ).containsExactlyInAnyOrderElementsOf( expected );
+	}
+
+	@Test
+	void testLocation() throws Exception {
+		Set<String> expected = new HashSet<>();
+		expected.add( "id" );
+		expected.add( "latitude" );
+		expected.add( "longitude" );
+		expected.add( "name" );
+		expected.add( "size" );
+
+		assertThat( getColumns( "location" ) ).containsExactlyInAnyOrderElementsOf( expected );
 	}
 
 	@Test

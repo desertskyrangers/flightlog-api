@@ -31,19 +31,20 @@ public class Location {
 	private String name;
 
 	/**
-	 * The diameter of the location in meters.
+	 * The size of the location in meters. This is currently interpreted as a
+	 * radius around the location that covers the location.
 	 */
-	private double radius;
+	private double size;
 
 	public boolean containsByRadius( double latitude, double longitude ) {
 		double dx = latitude - latitude();
 		double dy = longitude - longitude();
 		double offset = Math.sqrt( dx * dx + dy * dy );
-		return degreesToMetersOnEarth( offset ) <= radius;
+		return degreesToMetersOnEarth( offset ) <= size;
 	}
 
 	public boolean containsBySquare( double latitude, double longitude ) {
-		double offset = metersToDegreesOnEarth( radius() );
+		double offset = metersToDegreesOnEarth( size() );
 		double x1 = latitude() - offset;
 		double x2 = latitude() + offset;
 		double y1 = longitude() - offset;

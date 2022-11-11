@@ -1,6 +1,7 @@
 package com.desertskyrangers.flightdeck;
 
 import com.desertskyrangers.flightdeck.adapter.state.entity.GroupEntity;
+import com.desertskyrangers.flightdeck.adapter.state.entity.LocationEntity;
 import com.desertskyrangers.flightdeck.adapter.state.entity.MemberEntity;
 import com.desertskyrangers.flightdeck.adapter.state.entity.UserEntity;
 import com.desertskyrangers.flightdeck.core.model.*;
@@ -114,6 +115,21 @@ public class BaseTest {
 		flight.duration( 1000 );
 		flight.notes( "Just a test flight" );
 		return flight;
+	}
+
+	protected Location createTestLocation() {
+		Location location = new Location();
+
+		location.latitude( 40.50353298117737 );
+		location.longitude( -112.01466589278837 );
+		location.name( "Morning Cloak Park");
+		location.size( 150 );
+
+		return location;
+	}
+
+	protected LocationEntity createTestLocationEntity() {
+		return LocationEntity.from( createTestLocation() );
 	}
 
 	protected Group createTestGroup() {

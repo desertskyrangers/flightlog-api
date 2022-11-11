@@ -15,7 +15,7 @@ public class LocationTest {
 
 	@Test
 	void testContainsByRadius() {
-		Location location = new Location().latitude( 40.50353298117737 ).longitude( -112.01466589278837 ).name( "Morning Cloak Park" ).radius( 150 );
+		Location location = new Location().latitude( 40.50353298117737 ).longitude( -112.01466589278837 ).name( "Morning Cloak Park" ).size( 150 );
 		assertTrue( location.containsByRadius( 40.503336827514715, -112.0146147755627 ) );
 		// Monarch Meadows Park
 		assertFalse( location.containsByRadius( 40.50381857223479, -112.00869407480226 ) );
@@ -23,7 +23,7 @@ public class LocationTest {
 
 	@Test
 	void testContainsBySquare() {
-		Location location = new Location().latitude( 40.50353298117737 ).longitude( -112.01466589278837 ).name( "Morning Cloak Park" ).radius( 150 );
+		Location location = new Location().latitude( 40.50353298117737 ).longitude( -112.01466589278837 ).name( "Morning Cloak Park" ).size( 150 );
 		assertTrue( location.containsBySquare( 40.503336827514715, -112.0146147755627 ) );
 		// Monarch Meadows Park
 		assertFalse( location.containsBySquare( 40.50381857223479, -112.00869407480226 ) );
