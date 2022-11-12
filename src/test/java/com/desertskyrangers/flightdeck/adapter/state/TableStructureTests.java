@@ -129,6 +129,7 @@ public class TableStructureTests {
 		expected.add( "longitude" );
 		expected.add( "name" );
 		expected.add( "size" );
+		expected.add( "status" );
 
 		assertThat( getColumns( "location" ) ).containsExactlyInAnyOrderElementsOf( expected );
 	}

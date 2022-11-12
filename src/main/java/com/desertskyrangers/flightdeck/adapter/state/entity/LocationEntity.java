@@ -2,6 +2,7 @@ package com.desertskyrangers.flightdeck.adapter.state.entity;
 
 import com.desertskyrangers.flightdeck.core.model.Flight;
 import com.desertskyrangers.flightdeck.core.model.Location;
+import com.desertskyrangers.flightdeck.core.model.LocationStatus;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -30,6 +31,8 @@ public class LocationEntity {
 
 	private double size;
 
+	private String status;
+
 	public static LocationEntity from( Location location ) {
 		LocationEntity entity = new LocationEntity();
 
@@ -38,6 +41,7 @@ public class LocationEntity {
 		entity.setLongitude( location.longitude() );
 		entity.setName( location.name() );
 		entity.setSize( location.size() );
+		entity.setStatus( location.status().name().toLowerCase() );
 
 		return entity;
 	}
@@ -50,6 +54,7 @@ public class LocationEntity {
 		location.longitude( entity.getLongitude() );
 		location.name( entity.getName() );
 		location.size( entity.getSize() );
+		location.status( LocationStatus.valueOf( entity.getStatus().toUpperCase() ) );
 
 		return location;
 	}
