@@ -9,6 +9,10 @@ import java.util.UUID;
 @Accessors( fluent = true )
 public class Location {
 
+	public static final double DEFAULT_LOCATION_SIZE = 100;
+
+	public static final LocationStatus DEFAULT_LOCATION_STATUS = LocationStatus.ACTIVE;
+
 	// The average radius of the Earth in meters
 	// https://en.wikipedia.org/wiki/Earth_radius
 	private static final double rE = 6.3781e6;
@@ -34,17 +38,26 @@ public class Location {
 	 * The size of the location in meters. This is currently interpreted as a
 	 * radius around the location that covers the location.
 	 */
-	private double size;
+	private double size = DEFAULT_LOCATION_SIZE;
+
+	private LocationStatus status = DEFAULT_LOCATION_STATUS;
 
 	// TODO Can locations have types? Which ones?
 
-	// TODO Do locations need states? Like open, restricted, removed, etc.?
+	public boolean contains( Location location ) {
+		return contains( location.latitude(), location.longitude() );
+	}
+
+	public boolean contains( double latitude, double longitude ) {
+		return containsByDiameter( latitude, longitude );
+	}
+
+	public boolean containsByDiameter( double latitude, double longitude ) {
+		return containedByRadius( latitude, longitude, 0.5 * size );
+	}
 
 	public boolean containsByRadius( double latitude, double longitude ) {
-		double dx = latitude - latitude();
-		double dy = longitude - longitude();
-		double offset = Math.sqrt( dx * dx + dy * dy );
-		return degreesToMetersOnEarth( offset ) <= size;
+		return containedByRadius( latitude, longitude, size );
 	}
 
 	public boolean containsBySquare( double latitude, double longitude ) {
@@ -58,6 +71,13 @@ public class Location {
 		boolean longitudeContained = longitude >= y1 && longitude <= y2;
 
 		return latitudeContained && longitudeContained;
+	}
+
+	private boolean containedByRadius( double latitude, double longitude, double size ) {
+		double dx = latitude - latitude();
+		double dy = longitude - longitude();
+		double offset = Math.sqrt( dx * dx + dy * dy );
+		return degreesToMetersOnEarth( offset ) <= size;
 	}
 
 	/**

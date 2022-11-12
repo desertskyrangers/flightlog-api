@@ -5,6 +5,7 @@ import com.desertskyrangers.flightdeck.adapter.web.model.ReactLocation;
 import com.desertskyrangers.flightdeck.adapter.web.model.ReactLocation;
 import com.desertskyrangers.flightdeck.adapter.web.model.ReactResponse;
 import com.desertskyrangers.flightdeck.core.model.Location;
+import com.desertskyrangers.flightdeck.core.model.LocationStatus;
 import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.port.LocationServices;
 import com.desertskyrangers.flightdeck.port.UserServices;
@@ -54,13 +55,14 @@ public class LocationController {
 	@PostMapping( path = ApiPath.LOCATION )
 	ResponseEntity<ReactResponse<ReactLocation>> newLocation( Authentication authentication, @RequestBody ReactLocation request ) {
 		String name = request.getName();
+		String status = request.getStatus();
 
 		List<String> messages = new ArrayList<>();
 		if( Text.isBlank( name ) ) messages.add( "Name required" );
 		//if( Text.isBlank( type ) ) messages.add( "Type required" );
-		//if( Text.isBlank( status ) ) messages.add( "Status required" );
+		if( Text.isBlank( status ) ) messages.add( "Status required" );
 		//if( LocationType.isNotValid( type ) ) messages.add( "Invalid type: " + type );
-		//if( LocationStatus.isNotValid( status ) ) messages.add( "Invalid status: " + status );
+		if( LocationStatus.isNotValid( status ) ) messages.add( "Invalid status: " + status );
 		if( !messages.isEmpty() ) return new ResponseEntity<>( ReactResponse.messages( messages ), HttpStatus.BAD_REQUEST );
 
 		try {

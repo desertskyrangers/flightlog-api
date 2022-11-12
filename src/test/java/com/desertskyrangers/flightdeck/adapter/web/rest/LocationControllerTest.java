@@ -57,8 +57,8 @@ public class LocationControllerTest extends BaseControllerTest {
 	void testNewLocationWithBadRequest() throws Exception {
 		ReactLocation location = createTestReactLocation();
 
-		//location.setStatus( "not-really-a-status" );
-		//this.mockMvc.perform( post( ApiPath.LOCATION ).content( Json.stringify( location ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isBadRequest() ).andReturn();
+		location.setStatus( "not-really-a-status" );
+		this.mockMvc.perform( post( ApiPath.LOCATION ).content( Json.stringify( location ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isBadRequest() ).andReturn();
 	}
 
 	@Test

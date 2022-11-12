@@ -1,6 +1,7 @@
 package com.desertskyrangers.flightdeck.adapter.web.model;
 
 import com.desertskyrangers.flightdeck.core.model.Location;
+import com.desertskyrangers.flightdeck.core.model.LocationStatus;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -22,6 +23,8 @@ public class ReactLocation {
 
 	private double size;
 
+	private String status;
+
 	public static ReactLocation from( Location location ) {
 		ReactLocation result = new ReactLocation();
 
@@ -30,6 +33,7 @@ public class ReactLocation {
 		result.setLongitude( location.longitude() );
 		result.setName( location.name() );
 		result.setSize( location.size() );
+		result.setStatus( location.status().name().toLowerCase() );
 
 		return result;
 	}
@@ -42,6 +46,7 @@ public class ReactLocation {
 		result.longitude( location.getLongitude() );
 		result.name( location.getName() );
 		result.size( location.getSize() );
+		result.status( LocationStatus.valueOf( location.getStatus().toUpperCase() ) );
 
 		return result;
 	}
