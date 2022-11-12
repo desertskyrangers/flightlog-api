@@ -15,6 +15,8 @@ public interface LocationServices {
 
 	Location remove( Location location );
 
+	Set<Location> findByUser( User user );
+
 	Page<Location> findPageByUserAndStatus( User user, Set<LocationStatus> status, int page, int size );
 
 }

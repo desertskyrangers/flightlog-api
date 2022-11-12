@@ -3,6 +3,8 @@ package com.desertskyrangers.flightdeck.adapter.state.entity;
 import com.desertskyrangers.flightdeck.core.model.*;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.util.HashMap;
@@ -23,7 +25,7 @@ public class LocationEntity {
 
 	private double longitude;
 
-	@ManyToOne( optional = false, fetch = FetchType.EAGER, cascade = CascadeType.REMOVE )
+	@ManyToOne( optional = false, fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
 	@JoinColumn( name = "userid", nullable = false, updatable = false, columnDefinition = "BINARY(16)" )
 	private UserEntity user;
 

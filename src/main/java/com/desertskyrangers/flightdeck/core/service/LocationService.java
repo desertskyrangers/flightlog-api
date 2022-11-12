@@ -40,6 +40,10 @@ public class LocationService implements LocationServices {
 		return location;
 	}
 
+	public Set<Location> findByUser( User user ) {
+		return locationRepo.findAllByUser( UserEntity.from( user ) ).stream().map( LocationEntity::toLocation ).collect( Collectors.toSet() );
+	}
+
 	public Page<Location> findPageByUserAndStatus( User user, Set<LocationStatus> status, int page, int size ) {
 		Set<String> statusValues = status.stream().map( s -> s.name().toLowerCase() ).collect( Collectors.toSet() );
 		return locationRepo.findLocationPageByUserAndStatusIn( UserEntity.from( user ), statusValues, PageRequest.of( page, size ) ).map( LocationEntity::toLocation );

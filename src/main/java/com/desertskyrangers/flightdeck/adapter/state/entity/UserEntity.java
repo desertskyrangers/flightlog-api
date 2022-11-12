@@ -88,6 +88,11 @@ public class UserEntity {
 	@ToString.Exclude()
 	private Set<MemberEntity> memberships = new HashSet<>();
 
+	@OneToMany( mappedBy = "user", fetch = FetchType.EAGER, orphanRemoval = true )
+	@EqualsAndHashCode.Exclude
+	@ToString.Exclude()
+	private Set<LocationEntity> locations = new HashSet<>();
+
 	public static UserEntity from( User user ) {
 		UserEntity entity = fromUserShallow( user );
 

@@ -11,6 +11,8 @@ import java.util.UUID;
 
 public interface LocationRepo extends JpaRepository<LocationEntity, UUID> {
 
+	Set<LocationEntity> findAllByUser( UserEntity user );
+
 	Page<LocationEntity> findLocationPageByUserAndStatusIn( UserEntity user, Set<String> status, Pageable pageable );
 
 }

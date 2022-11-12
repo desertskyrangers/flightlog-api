@@ -68,7 +68,7 @@ public class LocationController extends BaseController {
 
 		try {
 			request.setId( UUID.randomUUID().toString() );
-			//request.setUser( ReactUser.from( getRequester( authentication ) ) );
+			request.setUser( ReactUser.from( getRequester( authentication ) ) );
 			locationServices.upsert( ReactLocation.toLocation( request ) );
 			return new ResponseEntity<>( ReactResponse.of( request ), HttpStatus.OK );
 		} catch( Exception exception ) {
