@@ -31,6 +31,8 @@ public class UserController extends BaseController {
 
 	private final GroupServices groupServices;
 
+	private final LocationServices locationServices;
+
 	private final ProjectionServices projectionServices;
 
 	private final UserServices userServices;
@@ -42,6 +44,7 @@ public class UserController extends BaseController {
 		BatteryServices batteryServices,
 		FlightServices flightServices,
 		GroupServices groupServices,
+		LocationServices locationServices,
 		MembershipServices memberService,
 		ProjectionServices projectionServices,
 		UserServices userServices
@@ -50,6 +53,7 @@ public class UserController extends BaseController {
 		this.batteryServices = batteryServices;
 		this.flightServices = flightServices;
 		this.groupServices = groupServices;
+		this.locationServices = locationServices;
 		this.memberService = memberService;
 		this.projectionServices = projectionServices;
 		this.userServices = userServices;
@@ -277,6 +281,31 @@ public class UserController extends BaseController {
 		}
 
 		return new ResponseEntity<>( ReactResponse.messages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
+	}
+
+	@PreAuthorize( "hasAuthority('USER')" )
+	@GetMapping( path = ApiPath.USER_LOCATION )
+	ResponseEntity<ReactPageResponse<?>> getLocationPage(
+		Authentication authentication,
+		@RequestParam( value = "filter", defaultValue = "active" ) String filter,
+		@RequestParam( value = "pg", defaultValue = "0" ) int page,
+		@RequestParam( value = "pz", defaultValue = DEFAULT_PAGE_SIZE ) int size
+	) {
+		List<String> messages = new ArrayList<>();
+
+		Set<LocationStatus> status = Set.of( LocationStatus.ACTIVE );
+		if( "inactive".equals( filter ) ) status = Set.of( LocationStatus.REMOVED );
+
+		try {
+			User user = getRequester( authentication );
+			Page<ReactLocation> locationPage = locationServices.findPageByUserAndStatus( user, status, page, size ).map( ReactLocation::from );
+			return new ResponseEntity<>( ReactPageResponse.of( locationPage ), HttpStatus.OK );
+		} catch( Exception exception ) {
+			log.error( "Error getting location page", exception );
+			messages.add( exception.getMessage() );
+		}
+
+		return new ResponseEntity<>( ReactPageResponse.messages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
 	}
 
 	/**

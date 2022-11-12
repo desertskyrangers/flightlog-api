@@ -68,7 +68,7 @@ public class BaseTest {
 	}
 
 	protected UserToken createTestToken( User user, String principal, String password ) {
-		return new UserToken().user(user).principal( principal ).credential( passwordEncoder.encode( password ) );
+		return new UserToken().user( user ).principal( principal ).credential( passwordEncoder.encode( password ) );
 	}
 
 	protected Aircraft createTestAircraft( User owner ) {
@@ -84,7 +84,7 @@ public class BaseTest {
 		return aircraft;
 	}
 
-	protected Battery createTestBattery(User owner) {
+	protected Battery createTestBattery( User owner ) {
 		Battery battery = new Battery();
 		battery.name( "C 4S 2650 Turnigy" );
 		battery.make( "Hobby King" );
@@ -105,9 +105,9 @@ public class BaseTest {
 	}
 
 	protected Flight createTestFlight( User pilot ) {
-		Aircraft aircraft = createTestAircraft(pilot);
+		Aircraft aircraft = createTestAircraft( pilot );
 		statePersisting.upsert( aircraft );
-		Battery battery = createTestBattery(pilot);
+		Battery battery = createTestBattery( pilot );
 		statePersisting.upsert( battery );
 		Flight flight = new Flight();
 		flight.pilot( pilot );
@@ -121,19 +121,21 @@ public class BaseTest {
 		return flight;
 	}
 
-	protected Location createTestLocation() {
+	protected Location createTestLocation( User user ) {
 		Location location = new Location();
 
 		location.latitude( 40.50353298117737 );
 		location.longitude( -112.01466589278837 );
-		location.name( "Morning Cloak Park");
+		location.user( user );
+		location.name( "Morning Cloak Park" );
 		location.size( 150 );
 
 		return locationServices.upsert( location );
 	}
 
 	protected LocationEntity createTestLocationEntity() {
-		return LocationEntity.from( createTestLocation() );
+		User user = statePersisting.upsert( createTestUser() );
+		return LocationEntity.from( createTestLocation( user ) );
 	}
 
 	protected Group createTestGroup() {

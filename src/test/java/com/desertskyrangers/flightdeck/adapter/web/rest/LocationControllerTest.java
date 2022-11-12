@@ -2,8 +2,7 @@ package com.desertskyrangers.flightdeck.adapter.web.rest;
 
 import com.desertskyrangers.flightdeck.adapter.web.ApiPath;
 import com.desertskyrangers.flightdeck.adapter.web.model.ReactLocation;
-import com.desertskyrangers.flightdeck.core.model.Location;
-import com.desertskyrangers.flightdeck.port.LocationServices;
+import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.util.Json;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,19 +19,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class LocationControllerTest extends BaseControllerTest {
 
 	@Autowired
-	private LocationServices locationServices;
-
-	@Autowired
 	private MockMvc mockMvc;
 
 	@Test
 	void testGetLocationWithSuccess() throws Exception {
 		// given
-		Location location = createTestLocation();
-		locationServices.upsert( location );
+		ReactLocation location = createTestReactLocation();
 
 		// when
-		MvcResult result = this.mockMvc.perform( get( ApiPath.LOCATION + "/" + location.id() ) ).andExpect( status().isOk() ).andReturn();
+		MvcResult result = this.mockMvc.perform( get( ApiPath.LOCATION + "/" + location.getId() ) ).andExpect( status().isOk() ).andReturn();
 
 		// then
 		Map<?, ?> map = Json.asMap( result.getResponse().getContentAsString() );
@@ -41,16 +36,17 @@ public class LocationControllerTest extends BaseControllerTest {
 	}
 
 	@Test
-	void getLocationWithBadRequest() throws Exception {
+	void testGetLocationWithBadRequest() throws Exception {
 		this.mockMvc.perform( get( ApiPath.LOCATION + "/" + "bad-id" ) ).andExpect( status().isBadRequest() ).andReturn();
 	}
 
 	@Test
 	void testNewLocationWithSuccess() throws Exception {
 		ReactLocation location = createTestReactLocation();
+		// This id will be overwritten
 		location.setId( "new" );
 
-		this.mockMvc.perform( post( ApiPath.LOCATION ).content( Json.stringify( location ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
+		this.mockMvc.perform( post( ApiPath.LOCATION ).with( jwt() ).content( Json.stringify( location ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
 	}
 
 	@Test
@@ -66,7 +62,7 @@ public class LocationControllerTest extends BaseControllerTest {
 		ReactLocation location = createTestReactLocation();
 		location.setName( "Monarch Meadows Park" );
 
-		MvcResult result = this.mockMvc.perform( put( ApiPath.LOCATION ).content( Json.stringify( location ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
+		MvcResult result = this.mockMvc.perform( put( ApiPath.LOCATION ).with( jwt() ).content( Json.stringify( location ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
 
 		// then
 		Map<?, ?> map = Json.asMap( result.getResponse().getContentAsString() );
@@ -83,14 +79,13 @@ public class LocationControllerTest extends BaseControllerTest {
 	}
 
 	@Test
-	void deleteLocationWithSuccess() throws Exception {
+	void testDeleteLocationWithSuccess() throws Exception {
 		// given
-		Location location = createTestLocation();
-		locationServices.upsert( location );
+		ReactLocation location = createTestReactLocation();
 
 		// when
 		MvcResult result = this.mockMvc
-			.perform( delete( ApiPath.LOCATION ).content( "{\"id\":\"" + location.id() + "\"}" ).contentType( MediaType.APPLICATION_JSON ) )
+			.perform( delete( ApiPath.LOCATION ).content( "{\"id\":\"" + location.getId() + "\"}" ).contentType( MediaType.APPLICATION_JSON ) )
 			.andExpect( status().isOk() )
 			.andReturn();
 
@@ -101,7 +96,8 @@ public class LocationControllerTest extends BaseControllerTest {
 	}
 
 	private ReactLocation createTestReactLocation() {
-		return ReactLocation.from( createTestLocation() );
+		User user = statePersisting.upsert( createTestUser() );
+		return ReactLocation.from( createTestLocation( user ) );
 	}
 
 }

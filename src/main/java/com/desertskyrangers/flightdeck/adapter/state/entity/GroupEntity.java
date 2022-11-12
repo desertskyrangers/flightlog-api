@@ -1,9 +1,6 @@
 package com.desertskyrangers.flightdeck.adapter.state.entity;
 
-import com.desertskyrangers.flightdeck.core.model.Group;
-import com.desertskyrangers.flightdeck.core.model.GroupType;
-import com.desertskyrangers.flightdeck.core.model.Member;
-import com.desertskyrangers.flightdeck.core.model.User;
+import com.desertskyrangers.flightdeck.core.model.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -80,17 +77,18 @@ public class GroupEntity {
 
 		final Map<UUID, Group> groups = new HashMap<>();
 		final Map<UUID, Member> members = new HashMap<>();
+		final Map<UUID, Location> locations = new HashMap<>();
 		final Map<UUID, User> users = new HashMap<>();
 
 		groups.put( entity.getId(), group );
 
-		group.members( entity.getMemberships().stream().map( e -> MemberEntity.toMemberFromRelated( e, members, groups, users ) ).collect( Collectors.toSet() ) );
-		group.users( entity.getUsers().stream().map( e -> UserEntity.toUserFromRelated( e, users, groups, members ) ).collect( Collectors.toSet() ) );
+		group.members( entity.getMemberships().stream().map( e -> MemberEntity.toMemberFromRelated( e, members, groups, locations, users ) ).collect( Collectors.toSet() ) );
+		group.users( entity.getUsers().stream().map( e -> UserEntity.toUserFromRelated( e, users, groups, locations, members ) ).collect( Collectors.toSet() ) );
 
 		return group;
 	}
 
-	static Group toGroupFromRelated( GroupEntity entity, Map<UUID, Group> groups, Map<UUID, Member> members, Map<UUID, User> users ) {
+	static Group toGroupFromRelated( GroupEntity entity, Map<UUID, Group> groups, Map<UUID, Member> members, Map<UUID, Location> locations, Map<UUID, User> users ) {
 		// If the group already exists, just return it
 		Group group = groups.get( entity.getId() );
 		if( group != null ) return group;
@@ -100,8 +98,8 @@ public class GroupEntity {
 		groups.put( entity.getId(), group );
 
 		// Link the group to related entities
-		group.members( entity.getMemberships().stream().map( e -> MemberEntity.toMemberFromRelated( e, members, groups, users ) ).collect( Collectors.toSet() ) );
-		group.users( entity.getUsers().stream().map( e -> UserEntity.toUserFromRelated( e, users, groups, members ) ).collect( Collectors.toSet() ) );
+		group.members( entity.getMemberships().stream().map( e -> MemberEntity.toMemberFromRelated( e, members, groups, locations, users ) ).collect( Collectors.toSet() ) );
+		group.users( entity.getUsers().stream().map( e -> UserEntity.toUserFromRelated( e, users, groups, locations, members ) ).collect( Collectors.toSet() ) );
 		return group;
 	}
 

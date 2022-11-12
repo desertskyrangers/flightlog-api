@@ -2,6 +2,7 @@ package com.desertskyrangers.flightdeck.core.service;
 
 import com.desertskyrangers.flightdeck.BaseTest;
 import com.desertskyrangers.flightdeck.core.model.Location;
+import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.port.LocationServices;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,14 +17,16 @@ public class LocationServiceTest extends BaseTest {
 
 	@Test
 	void testUpsert() {
-		Location location = createTestLocation();
+		User user = statePersisting.upsert( createTestUser() );
+		Location location = createTestLocation( user );
 		userServices.upsert( location );
 		assertThat( userServices.find( location.id() ).orElse( null ) ).isEqualTo( location );
 	}
 
 	@Test
 	void testRemove() {
-		Location location = createTestLocation();
+		User user = statePersisting.upsert( createTestUser() );
+		Location location = createTestLocation( user );
 		userServices.upsert( location );
 		assertThat( userServices.find( location.id() ).orElse( null ) ).isEqualTo( location );
 		userServices.remove( location );

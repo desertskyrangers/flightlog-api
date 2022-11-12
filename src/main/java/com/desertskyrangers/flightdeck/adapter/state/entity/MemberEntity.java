@@ -1,9 +1,6 @@
 package com.desertskyrangers.flightdeck.adapter.state.entity;
 
-import com.desertskyrangers.flightdeck.core.model.Group;
-import com.desertskyrangers.flightdeck.core.model.Member;
-import com.desertskyrangers.flightdeck.core.model.MemberStatus;
-import com.desertskyrangers.flightdeck.core.model.User;
+import com.desertskyrangers.flightdeck.core.model.*;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -46,11 +43,12 @@ public class MemberEntity {
 
 		final Map<UUID, Group> groups = new HashMap<>();
 		final Map<UUID, Member> members = new HashMap<>();
+		final Map<UUID, Location> locations = new HashMap<>();
 		final Map<UUID, User> users = new HashMap<>();
 		members.put( entity.getId(), member );
 
-		member.group( GroupEntity.toGroupFromRelated( entity.getGroup(), groups, members, users ) );
-		member.user( UserEntity.toUserFromRelated( entity.getUser(), users, groups, members ) );
+		member.group( GroupEntity.toGroupFromRelated( entity.getGroup(), groups, members, locations, users ) );
+		member.user( UserEntity.toUserFromRelated( entity.getUser(), users, groups, locations, members ) );
 
 		return member;
 	}
@@ -64,7 +62,7 @@ public class MemberEntity {
 	 * @param members
 	 * @return
 	 */
-	static Member toMemberFromRelated( MemberEntity entity, Map<UUID, Member> members, Map<UUID, Group> groups, Map<UUID, User> users ) {
+	static Member toMemberFromRelated( MemberEntity entity, Map<UUID, Member> members, Map<UUID, Group> groups, Map<UUID, Location> locations, Map<UUID, User> users ) {
 		// If the member already exists, just return it
 		Member member = members.get( entity.getId() );
 		if( member != null ) return member;
@@ -74,8 +72,8 @@ public class MemberEntity {
 		members.put( entity.getId(), member );
 
 		// Link the member to related entities
-		member.user( UserEntity.toUserFromRelated( entity.getUser(), users, groups, members ) );
-		member.group( GroupEntity.toGroupFromRelated( entity.getGroup(), groups, members, users ) );
+		member.user( UserEntity.toUserFromRelated( entity.getUser(), users, groups, locations, members ) );
+		member.group( GroupEntity.toGroupFromRelated( entity.getGroup(), groups, members, locations, users ) );
 
 		return member;
 	}

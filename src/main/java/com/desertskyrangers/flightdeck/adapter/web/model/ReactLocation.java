@@ -19,6 +19,8 @@ public class ReactLocation {
 
 	private double longitude;
 
+	private ReactUser user;
+
 	private String name;
 
 	private double size;
@@ -31,6 +33,7 @@ public class ReactLocation {
 		result.setId( location.id().toString() );
 		result.setLatitude( location.latitude() );
 		result.setLongitude( location.longitude() );
+		result.setUser( ReactUser.from( location.user() ) );
 		result.setName( location.name() );
 		result.setSize( location.size() );
 		result.setStatus( location.status().name().toLowerCase() );
@@ -44,6 +47,7 @@ public class ReactLocation {
 		result.id( UUID.fromString( location.getId() ) );
 		result.latitude( location.getLatitude() );
 		result.longitude( location.getLongitude() );
+		result.user( ReactUser.to( location.getUser() ) );
 		result.name( location.getName() );
 		result.size( location.getSize() );
 		result.status( LocationStatus.valueOf( location.getStatus().toUpperCase() ) );

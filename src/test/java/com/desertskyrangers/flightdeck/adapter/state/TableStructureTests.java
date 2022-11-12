@@ -127,6 +127,7 @@ public class TableStructureTests {
 		expected.add( "id" );
 		expected.add( "latitude" );
 		expected.add( "longitude" );
+		expected.add( "userid" );
 		expected.add( "name" );
 		expected.add( "size" );
 		expected.add( "status" );

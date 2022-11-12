@@ -4,6 +4,7 @@ import com.desertskyrangers.flightdeck.adapter.web.ApiPath;
 import com.desertskyrangers.flightdeck.adapter.web.model.ReactLocation;
 import com.desertskyrangers.flightdeck.adapter.web.model.ReactLocation;
 import com.desertskyrangers.flightdeck.adapter.web.model.ReactResponse;
+import com.desertskyrangers.flightdeck.adapter.web.model.ReactUser;
 import com.desertskyrangers.flightdeck.core.model.Location;
 import com.desertskyrangers.flightdeck.core.model.LocationStatus;
 import com.desertskyrangers.flightdeck.core.model.User;
@@ -22,7 +23,7 @@ import java.util.*;
 
 @RestController
 @Slf4j
-public class LocationController {
+public class LocationController extends BaseController {
 
 	private final LocationServices locationServices;
 
@@ -66,13 +67,8 @@ public class LocationController {
 		if( !messages.isEmpty() ) return new ResponseEntity<>( ReactResponse.messages( messages ), HttpStatus.BAD_REQUEST );
 
 		try {
-			String username = authentication.getName();
-			User user = userServices.findByPrincipal( username ).orElseThrow( () -> new UsernameNotFoundException( username ) );
-
 			request.setId( UUID.randomUUID().toString() );
-
-			//request.setOwner( user.id().toString() );
-			//request.setOwnerType( OwnerType.USER.name().toLowerCase() );
+			//request.setUser( ReactUser.from( getRequester( authentication ) ) );
 			locationServices.upsert( ReactLocation.toLocation( request ) );
 			return new ResponseEntity<>( ReactResponse.of( request ), HttpStatus.OK );
 		} catch( Exception exception ) {
@@ -89,25 +85,20 @@ public class LocationController {
 		String id = request.getId();
 		String name = request.getName();
 		//		String type = request.getType();
-		//		String status = request.getStatus();
+		String status = request.getStatus();
 
 		List<String> messages = new ArrayList<>();
 		if( Text.isBlank( id ) ) messages.add( "ID required" );
 		if( Text.isBlank( name ) ) messages.add( "Name required" );
 		//		if( Text.isBlank( type ) ) messages.add( "Type required" );
-		//		if( Text.isBlank( status ) ) messages.add( "Status required" );
+		if( Text.isBlank( status ) ) messages.add( "Status required" );
 		if( Uuid.isNotValid( id ) ) messages.add( "invalid ID" );
 		//		if( LocationType.isNotValid( type ) ) messages.add( "Invalid type: " + type );
-		//		if( LocationStatus.isNotValid( status ) ) messages.add( "Invalid status: " + status );
+		if( LocationStatus.isNotValid( status ) ) messages.add( "Invalid status: " + status );
 		if( !messages.isEmpty() ) return new ResponseEntity<>( ReactResponse.messages( messages ), HttpStatus.BAD_REQUEST );
 
 		try {
-			// Default to user ownership for now
-			String username = authentication.getName();
-			User user = userServices.findByPrincipal( username ).orElseThrow( () -> new UsernameNotFoundException( username ) );
-
-			//			request.setOwner( user.id().toString() );
-			//			request.setOwnerType( OwnerType.USER.name().toLowerCase() );
+			request.setUser( ReactUser.from( getRequester( authentication ) ) );
 			locationServices.upsert( ReactLocation.toLocation( request ) );
 			return new ResponseEntity<>( ReactResponse.of( request ), HttpStatus.OK );
 		} catch( Exception exception ) {
