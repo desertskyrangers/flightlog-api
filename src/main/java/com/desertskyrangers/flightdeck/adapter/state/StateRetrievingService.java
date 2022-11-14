@@ -25,6 +25,8 @@ public class StateRetrievingService implements StateRetrieving {
 
 	private final GroupRepo groupRepo;
 
+	private final LocationRepo locationRepo;
+
 	private final MemberRepo memberRepo;
 
 	private final PreferencesRepo preferencesRepo;
@@ -42,6 +44,7 @@ public class StateRetrievingService implements StateRetrieving {
 		BatteryRepo batteryRepo,
 		FlightRepo flightRepo,
 		GroupRepo groupRepo,
+		LocationRepo locationRepo,
 		MemberRepo memberRepo,
 		PreferencesRepo preferencesRepo,
 		ProjectionRepo projectionRepo,
@@ -53,6 +56,7 @@ public class StateRetrievingService implements StateRetrieving {
 		this.batteryRepo = batteryRepo;
 		this.flightRepo = flightRepo;
 		this.groupRepo = groupRepo;
+		this.locationRepo = locationRepo;
 		this.memberRepo = memberRepo;
 		this.preferencesRepo = preferencesRepo;
 		this.projectionRepo = projectionRepo;
@@ -237,6 +241,36 @@ public class StateRetrievingService implements StateRetrieving {
 	}
 
 	@Override
+	public Set<Location> findAllActiveLocations( User user ) {
+		Set<Location> locations = findAllLocations();
+		locations.removeAll( locationRepo.findAllByUser( UserEntity.from( user ) ).stream().map( LocationEntity::toLocation ).collect( Collectors.toSet() ) );
+		return locations;
+	}
+
+	public Set<Location> findAllLocations() {
+		return locationRepo.findAll().stream().map( LocationEntity::toLocation ).collect( Collectors.toSet() );
+	}
+
+	@Override
+	public Optional<Location> findLocation( UUID id ) {
+		return locationRepo.findById( id ).map( LocationEntity::toLocation );
+	}
+
+	@Override
+	public Set<Location> findLocationsByUser( User user ) {
+		return locationRepo
+			.findAllByUserAndStatusIn( UserEntity.from( user ), Set.of( LocationStatus.ACTIVE.name().toLowerCase() ) )
+			.stream()
+			.map( LocationEntity::toLocation )
+			.collect( Collectors.toSet() );
+	}
+
+	@Override
+	public Page<Location> findLocationsPageByUser( User user, int page, int size ) {
+		return locationRepo.findAllPageByUserAndStatusIn( UserEntity.from( user ), Set.of( LocationStatus.ACTIVE.name().toLowerCase() ), PageRequest.of( page, size ) ).map( LocationEntity::toLocation );
+	}
+
+	@Override
 	public Optional<Member> findMembership( UUID id ) {
 		return memberRepo.findById( id ).map( MemberEntity::toMember );
 	}
@@ -369,12 +403,12 @@ public class StateRetrievingService implements StateRetrieving {
 
 	@Override
 	public Optional<Flight> getFlightWithLongestTime( User user ) {
-		return flightRepo.findFirstByPilotOrderByDurationDesc(UserEntity.from( user )).map( FlightEntity::toFlight );
+		return flightRepo.findFirstByPilotOrderByDurationDesc( UserEntity.from( user ) ).map( FlightEntity::toFlight );
 	}
 
 	@Override
 	public Optional<Flight> getFlightWithLongestTime( Aircraft aircraft ) {
-		return flightRepo.findFirstByAircraftOrderByDurationDesc(AircraftEntity.from(aircraft)).map( FlightEntity::toFlight );
+		return flightRepo.findFirstByAircraftOrderByDurationDesc( AircraftEntity.from( aircraft ) ).map( FlightEntity::toFlight );
 	}
 
 	@Override

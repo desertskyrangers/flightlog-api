@@ -26,6 +26,8 @@ public class StatePersistingService implements StatePersisting {
 
 	private final GroupRepo groupRepo;
 
+	private final LocationRepo locationRepo;
+
 	private final MemberRepo memberRepo;
 
 	private final PreferencesRepo preferencesRepo;
@@ -43,6 +45,7 @@ public class StatePersistingService implements StatePersisting {
 		BatteryRepo batteryRepo,
 		FlightRepo flightRepo,
 		GroupRepo groupRepo,
+		LocationRepo locationRepo,
 		MemberRepo memberRepo,
 		PreferencesRepo preferencesRepo,
 		ProjectionRepo projectionRepo,
@@ -54,6 +57,7 @@ public class StatePersistingService implements StatePersisting {
 		this.batteryRepo = batteryRepo;
 		this.flightRepo = flightRepo;
 		this.groupRepo = groupRepo;
+		this.locationRepo = locationRepo;
 		this.memberRepo = memberRepo;
 		this.preferencesRepo = preferencesRepo;
 		this.projectionRepo = projectionRepo;
@@ -110,6 +114,22 @@ public class StatePersistingService implements StatePersisting {
 	@Override
 	public void removeAllGroups() {
 		groupRepo.deleteAll();
+	}
+
+	@Override
+	public Location upsert( Location location ) {
+		return LocationEntity.toLocation( locationRepo.save( LocationEntity.from( location ) ) );
+	}
+
+	@Override
+	public Location remove( Location location ) {
+		locationRepo.deleteById( location.id() );
+		return location;
+	}
+
+	@Override
+	public void removeAllLocations() {
+		locationRepo.deleteAll();
 	}
 
 	@Override

@@ -71,6 +71,16 @@ public interface StateRetrieving {
 
 	Set<User> findGroupOwners( Group group );
 
+	Set<Location> findAllLocations();
+
+	Set<Location> findAllActiveLocations( User user );
+
+	Optional<Location> findLocation( UUID id );
+
+	Set<Location> findLocationsByUser( User user );
+
+	Page<Location> findLocationsPageByUser( User user, int page, int size );
+
 	Optional<Member> findMembership( UUID id );
 
 	Optional<Member> findMembership( Group group, User user );

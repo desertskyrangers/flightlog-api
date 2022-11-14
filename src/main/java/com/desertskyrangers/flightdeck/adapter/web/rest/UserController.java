@@ -295,6 +295,7 @@ public class UserController extends BaseController {
 
 		Set<LocationStatus> status = Set.of( LocationStatus.ACTIVE );
 		if( "inactive".equals( filter ) ) status = Set.of( LocationStatus.REMOVED );
+		if( LocationStatus.REMOVED.name().toLowerCase().equals( filter ) ) status = Set.of( LocationStatus.REMOVED );
 
 		try {
 			User user = getRequester( authentication );

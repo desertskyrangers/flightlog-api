@@ -190,7 +190,7 @@ public class UserControllerTest extends BaseControllerTest {
 		statePersisting.upsert( bianca );
 
 		// when
-		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_AIRCRAFT ).param("status", "available").param( "pg", "0" ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
+		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_AIRCRAFT ).param( "status", "available" ).param( "pg", "0" ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
 
 		// then
 		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
@@ -266,7 +266,7 @@ public class UserControllerTest extends BaseControllerTest {
 		statePersisting.upsert( b );
 
 		// when
-		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_BATTERY ).param("status", "available").param( "pg", "0" ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
+		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_BATTERY ).param( "status", "available" ).param( "pg", "0" ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
 
 		// then
 		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
@@ -338,6 +338,35 @@ public class UserControllerTest extends BaseControllerTest {
 
 		Map<?, ?> flight0 = (Map<?, ?>)flightList.get( 0 );
 		assertThat( flight0.get( "aircraft" ) ).isEqualTo( aftyn.id().toString() );
+	}
+
+	@Test
+	void testGetLocationPage() throws Exception {
+		// given
+		//		Aircraft aftyn = new Aircraft().name( "AFTYN" ).type( AircraftType.FIXEDWING ).status( AircraftStatus.DESTROYED ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
+		//		Battery batteryA = new Battery().name( "A" ).status( BatteryStatus.NEW ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
+		//		statePersisting.upsert( aftyn );
+		//		statePersisting.upsert( batteryA );
+		Location locationA = new Location().user( getMockUser() ).name( "Monarch Meadows Park" );
+		Location locationB = new Location().user( getMockUser() ).name( "Morning Cloak Park" );
+		statePersisting.upsert( locationA );
+		statePersisting.upsert( locationB );
+
+		// when
+		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_LOCATION ).param( "pg", "0" ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
+
+		// then
+		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
+		List<?> flightList = (List<?>)((Map<?, ?>)map.get( "page" )).get( "content" );
+		Map<?, ?> messagesMap = (Map<?, ?>)map.get( "messages" );
+
+		assertThat( flightList.size() ).isEqualTo( 2 );
+		assertThat( messagesMap ).isNull();
+
+		Map<?, ?> location0 = (Map<?, ?>)flightList.get( 0 );
+		Map<?, ?> location1 = (Map<?, ?>)flightList.get( 1 );
+		assertThat( location0.get( "name" ) ).isEqualTo( locationA.name() );
+		assertThat( location1.get( "name" ) ).isEqualTo( locationB.name() );
 	}
 
 	@Test
@@ -581,7 +610,7 @@ public class UserControllerTest extends BaseControllerTest {
 
 		// then
 		Map<String, Object> map = Json.asMap( result.getResponse().getContentAsString() );
-		Map<?,?> data = (Map<?,?>)map.get( "data" );
+		Map<?, ?> data = (Map<?, ?>)map.get( "data" );
 		String displayName = (String)data.get( "displayName" );
 		assertThat( displayName ).isNotNull();
 		assertThat( displayName ).isEqualTo( "Mock User" );
@@ -598,8 +627,8 @@ public class UserControllerTest extends BaseControllerTest {
 		MvcResult result = this.mockMvc.perform( get( ApiPath.PUBLIC_DASHBOARD + "/" + getMockUser().id() ).with( nojwt() ) ).andExpect( status().isOk() ).andReturn();
 
 		// then
-		Map<?,?> map = Json.asMap( result.getResponse().getContentAsString() );
-		Map<?,?> data = (Map<?,?>)map.get( "data" );
+		Map<?, ?> map = Json.asMap( result.getResponse().getContentAsString() );
+		Map<?, ?> data = (Map<?, ?>)map.get( "data" );
 		String displayName = (String)data.get( "displayName" );
 		assertThat( displayName ).isNotNull();
 		assertThat( displayName ).isEqualTo( "Mock User" );
@@ -616,8 +645,8 @@ public class UserControllerTest extends BaseControllerTest {
 		MvcResult result = this.mockMvc.perform( get( ApiPath.PUBLIC_DASHBOARD + "/" + getMockUser().username() ).with( nojwt() ) ).andExpect( status().isOk() ).andReturn();
 
 		// then
-		Map<?,?> map = Json.asMap( result.getResponse().getContentAsString() );
-		Map<?,?> data = (Map<?,?>)map.get( "data" );
+		Map<?, ?> map = Json.asMap( result.getResponse().getContentAsString() );
+		Map<?, ?> data = (Map<?, ?>)map.get( "data" );
 		String displayName = (String)data.get( "displayName" );
 		assertThat( displayName ).isNotNull();
 		assertThat( displayName ).isEqualTo( "Mock User" );

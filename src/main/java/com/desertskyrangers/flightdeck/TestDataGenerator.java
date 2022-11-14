@@ -1,5 +1,7 @@
 package com.desertskyrangers.flightdeck;
 
+import com.desertskyrangers.flightdeck.adapter.state.entity.LocationEntity;
+import com.desertskyrangers.flightdeck.adapter.state.repo.LocationRepo;
 import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.*;
 import com.desertskyrangers.flightdeck.util.AppColor;
@@ -25,12 +27,15 @@ public class TestDataGenerator {
 
 	private final StateRetrieving stateRetrieving;
 
+	private final LocationRepo locationRepo;
+
 	private User unlisted;
 
-	public TestDataGenerator( FlightDeckApp app, StatePersisting statePersisting, StateRetrieving stateRetrieving ) {
+	public TestDataGenerator( FlightDeckApp app, StatePersisting statePersisting, StateRetrieving stateRetrieving, LocationRepo locationRepo ) {
 		this.app = app;
 		this.statePersisting = statePersisting;
 		this.stateRetrieving = stateRetrieving;
+		this.locationRepo = locationRepo;
 	}
 
 	@Bean
@@ -66,10 +71,13 @@ public class TestDataGenerator {
 		User tea = createTeaTest();
 		User tim = createTimTest();
 
+		locationRepo.save( LocationEntity.from( createMonarchMeadowsPark( tia ) ) );
+		locationRepo.save( LocationEntity.from( createMorningCloakPark( tia ) ) );
+
 		Aircraft aftyn = statePersisting.upsert( createAftyn().owner( tia.id() ).ownerType( OwnerType.USER ) );
 		Aircraft bianca = statePersisting.upsert( createBianca().owner( tia.id() ).ownerType( OwnerType.USER ) );
 		Aircraft gemma = statePersisting.upsert( createGemma().owner( tia.id() ).ownerType( OwnerType.USER ) );
-		Aircraft helena = statePersisting.upsert( createHelena().owner( tia.id() ).ownerType( OwnerType.USER ) );
+		Aircraft helena = statePersisting.upsert( createHope().owner( tia.id() ).ownerType( OwnerType.USER ) );
 
 		Battery a4s2650turnigy = new Battery()
 			.name( "A 4S 2650 Turnigy" )
@@ -285,8 +293,16 @@ public class TestDataGenerator {
 		return new Aircraft().name( "GEMMA" ).type( AircraftType.MULTIROTOR ).status( AircraftStatus.AIRWORTHY ).baseColor( AppColor.BLACK ).trimColor( AppColor.fromHex( "#ff004000" ) );
 	}
 
-	private Aircraft createHelena() {
+	private Aircraft createHope() {
 		return new Aircraft().name( "HOPE" ).type( AircraftType.HELICOPTER ).status( AircraftStatus.INOPERATIVE );
+	}
+
+	private Location createMonarchMeadowsPark( User user ) {
+		return new Location().name( "Monarch Meadows Park" ).user( user );
+	}
+
+	private Location createMorningCloakPark( User user ) {
+		return new Location().name( "Morning Cloak Park" ).user( user );
 	}
 
 }

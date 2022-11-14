@@ -27,6 +27,12 @@ public interface StatePersisting {
 
 	void removeAllGroups();
 
+	Location upsert( Location location );
+
+	Location remove( Location location );
+
+	void removeAllLocations();
+
 	Member upsert( Member member );
 
 	Member remove( Member member );

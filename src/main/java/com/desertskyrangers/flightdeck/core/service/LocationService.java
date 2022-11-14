@@ -7,6 +7,8 @@ import com.desertskyrangers.flightdeck.core.model.Location;
 import com.desertskyrangers.flightdeck.core.model.LocationStatus;
 import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.port.LocationServices;
+import com.desertskyrangers.flightdeck.port.StatePersisting;
+import com.desertskyrangers.flightdeck.port.StateRetrieving;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,32 +23,33 @@ import java.util.stream.Collectors;
 @Slf4j
 public class LocationService implements LocationServices {
 
-	private final LocationRepo locationRepo;
+	private final StatePersisting statePersisting;
 
-	public LocationService( LocationRepo locationRepo ) {
-		this.locationRepo = locationRepo;
+	private final StateRetrieving stateRetrieving;
+
+	public LocationService( StatePersisting statePersisting, StateRetrieving stateRetrieving ) {
+		this.statePersisting = statePersisting;
+		this.stateRetrieving = stateRetrieving;
 	}
 
 	public Optional<Location> find( UUID id ) {
-		return locationRepo.findById( id ).map( LocationEntity::toLocation );
+		return stateRetrieving.findLocation( id );
 	}
 
 	public Location upsert( Location location ) {
-		return LocationEntity.toLocation( locationRepo.save( LocationEntity.from( location ) ) );
+		return statePersisting.upsert( location );
 	}
 
 	public Location remove( Location location ) {
-		locationRepo.delete( LocationEntity.from( location ) );
-		return location;
+		return statePersisting.remove( location );
 	}
 
 	public Set<Location> findByUser( User user ) {
-		return locationRepo.findAllByUser( UserEntity.from( user ) ).stream().map( LocationEntity::toLocation ).collect( Collectors.toSet() );
+		return stateRetrieving.findLocationsByUser( user );
 	}
 
 	public Page<Location> findPageByUserAndStatus( User user, Set<LocationStatus> status, int page, int size ) {
-		Set<String> statusValues = status.stream().map( s -> s.name().toLowerCase() ).collect( Collectors.toSet() );
-		return locationRepo.findLocationPageByUserAndStatusIn( UserEntity.from( user ), statusValues, PageRequest.of( page, size ) ).map( LocationEntity::toLocation );
+		return stateRetrieving.findLocationsPageByUser( user, page, size );
 	}
 
 }
