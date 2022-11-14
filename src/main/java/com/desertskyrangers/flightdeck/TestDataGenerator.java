@@ -73,6 +73,7 @@ public class TestDataGenerator {
 
 		locationRepo.save( LocationEntity.from( createMonarchMeadowsPark( tia ) ) );
 		locationRepo.save( LocationEntity.from( createMorningCloakPark( tia ) ) );
+		locationRepo.save( LocationEntity.from( createCottonwoodHeights( tia ) ) );
 
 		Aircraft aftyn = statePersisting.upsert( createAftyn().owner( tia.id() ).ownerType( OwnerType.USER ) );
 		Aircraft bianca = statePersisting.upsert( createBianca().owner( tia.id() ).ownerType( OwnerType.USER ) );
@@ -298,11 +299,15 @@ public class TestDataGenerator {
 	}
 
 	private Location createMonarchMeadowsPark( User user ) {
-		return new Location().name( "Monarch Meadows Park" ).user( user );
+		return new Location().name( "Monarch Meadows Park" ).user( user ).latitude( 40.50381857223479 ).longitude( -112.00869407480226 );
 	}
 
 	private Location createMorningCloakPark( User user ) {
-		return new Location().name( "Morning Cloak Park" ).user( user );
+		return new Location().name( "Morning Cloak Park" ).user( user ).latitude( 40.50353298117737 ).longitude( -112.01466589278837 );
+	}
+
+	private Location createCottonwoodHeights( User user ) {
+		return new Location().name( "Cottonwood Heights" ).user( user ).latitude( 40.6364335 ).longitude( -111.8090181 );
 	}
 
 }

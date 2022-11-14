@@ -258,8 +258,13 @@ public class StateRetrievingService implements StateRetrieving {
 
 	@Override
 	public Set<Location> findLocationsByUser( User user ) {
+		return findLocationsByUserAndStatus( user, Set.of( LocationStatus.ACTIVE) );
+	}
+
+	@Override
+	public Set<Location> findLocationsByUserAndStatus( User user, Set<LocationStatus> status ) {
 		return locationRepo
-			.findAllByUserAndStatusIn( UserEntity.from( user ), Set.of( LocationStatus.ACTIVE.name().toLowerCase() ) )
+			.findAllByUserAndStatusIn( UserEntity.from( user ), status.stream().map( s -> s.name().toLowerCase() ).collect( Collectors.toSet() ) )
 			.stream()
 			.map( LocationEntity::toLocation )
 			.collect( Collectors.toSet() );

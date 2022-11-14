@@ -8,6 +8,7 @@ import com.desertskyrangers.flightdeck.port.*;
 import com.desertskyrangers.flightdeck.util.Uuid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.PermitAll;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 //@RequestMapping( produces = "application/json" )
@@ -283,8 +285,14 @@ public class UserController extends BaseController {
 
 		try {
 			User user = getRequester( authentication );
-			Page<ReactLocation> locationPage = locationServices.findPageByUserAndStatus( user, status, page, size ).map( ReactLocation::from );
-			return new ResponseEntity<>( ReactPageResponse.of( locationPage ), HttpStatus.OK );
+			if( size == 0 ) {
+				List<ReactLocation> locationList = locationServices.findByUserAndStatus( user, status ).stream().map( ReactLocation::from ).sorted().toList();
+				Page<ReactLocation> locationPage = new PageImpl<>(locationList);
+				return new ResponseEntity<>( ReactPageResponse.of( locationPage ), HttpStatus.OK );
+			} else {
+				Page<ReactLocation> locationPage = locationServices.findPageByUserAndStatus( user, status, page, size ).map( ReactLocation::from );
+				return new ResponseEntity<>( ReactPageResponse.of( locationPage ), HttpStatus.OK );
+			}
 		} catch( Exception exception ) {
 			log.error( "Error getting location page", exception );
 			messages.add( exception.getMessage() );

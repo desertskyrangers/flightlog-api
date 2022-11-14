@@ -48,6 +48,10 @@ public class LocationService implements LocationServices {
 		return stateRetrieving.findLocationsByUser( user );
 	}
 
+	public Set<Location> findByUserAndStatus( User user, Set<LocationStatus> status ) {
+		return stateRetrieving.findLocationsByUserAndStatus( user, status );
+	}
+
 	public Page<Location> findPageByUserAndStatus( User user, Set<LocationStatus> status, int page, int size ) {
 		return stateRetrieving.findLocationsPageByUser( user, page, size );
 	}

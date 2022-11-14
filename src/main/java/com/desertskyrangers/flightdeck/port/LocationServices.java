@@ -17,6 +17,8 @@ public interface LocationServices {
 
 	Set<Location> findByUser( User user );
 
+	Set<Location> findByUserAndStatus( User user, Set<LocationStatus> status );
+
 	Page<Location> findPageByUserAndStatus( User user, Set<LocationStatus> status, int page, int size );
 
 }

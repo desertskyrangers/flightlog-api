@@ -78,6 +78,7 @@ public interface StateRetrieving {
 	Optional<Location> findLocation( UUID id );
 
 	Set<Location> findLocationsByUser( User user );
+	Set<Location> findLocationsByUserAndStatus( User user, Set<LocationStatus> status );
 
 	Page<Location> findLocationsPageByUser( User user, int page, int size );
 
