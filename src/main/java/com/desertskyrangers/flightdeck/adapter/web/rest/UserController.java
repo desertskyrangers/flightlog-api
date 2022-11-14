@@ -268,22 +268,6 @@ public class UserController extends BaseController {
 	}
 
 	@PreAuthorize( "hasAuthority('USER')" )
-	@GetMapping( path = ApiPath.USER_MEMBERSHIP )
-	ResponseEntity<ReactResponse<?>> getMembershipPage( Authentication authentication ) {
-		List<String> messages = new ArrayList<>();
-
-		try {
-			User user = getRequester( authentication );
-			return new ResponseEntity<>( ReactResponse.of( getMemberships( user ) ), HttpStatus.OK );
-		} catch( Exception exception ) {
-			log.error( "Error getting membership page", exception );
-			messages.add( exception.getMessage() );
-		}
-
-		return new ResponseEntity<>( ReactResponse.messages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
-	}
-
-	@PreAuthorize( "hasAuthority('USER')" )
 	@GetMapping( path = ApiPath.USER_LOCATION )
 	ResponseEntity<ReactPageResponse<?>> getLocationPage(
 		Authentication authentication,
@@ -309,6 +293,22 @@ public class UserController extends BaseController {
 		return new ResponseEntity<>( ReactPageResponse.messages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
 	}
 
+	@PreAuthorize( "hasAuthority('USER')" )
+	@GetMapping( path = ApiPath.USER_MEMBERSHIP )
+	ResponseEntity<ReactResponse<?>> getMembershipPage( Authentication authentication ) {
+		List<String> messages = new ArrayList<>();
+
+		try {
+			User user = getRequester( authentication );
+			return new ResponseEntity<>( ReactResponse.of( getMemberships( user ) ), HttpStatus.OK );
+		} catch( Exception exception ) {
+			log.error( "Error getting membership page", exception );
+			messages.add( exception.getMessage() );
+		}
+
+		return new ResponseEntity<>( ReactResponse.messages( messages ), HttpStatus.INTERNAL_SERVER_ERROR );
+	}
+
 	/**
 	 * This retrieves the list of aircraft to show in the flight aircraft drop-down
 	 *
@@ -330,6 +330,17 @@ public class UserController extends BaseController {
 		List<Battery> objects = batteryServices.findByOwner( user.id() );
 		List<ReactOption> options = new ArrayList<>( objects.stream().filter( b -> b.status().isAirworthy() ).map( c -> new ReactOption( c.id().toString(), c.name() ) ).toList() );
 		options.add( new ReactOption( "", "No battery specified" ) );
+		return new ResponseEntity<>( options, HttpStatus.OK );
+	}
+
+	@PreAuthorize( "hasAuthority('USER')" )
+	@GetMapping( path = ApiPath.USER_LOCATION_LOOKUP )
+	ResponseEntity<List<ReactOption>> getLocationLookup( Authentication authentication ) {
+		User user = getRequester( authentication );
+		Set<Location> objects = locationServices.findByUser( user );
+		List<ReactOption> options = new ArrayList<>( objects.stream().map( c -> new ReactOption( c.id().toString(), c.name() ) ).toList() );
+		options.add( new ReactOption( "device", "Use device location" ) );
+		options.add( new ReactOption( "", "No location specified" ) );
 		return new ResponseEntity<>( options, HttpStatus.OK );
 	}
 

@@ -59,6 +59,7 @@ public interface ApiPath {
 	String USER_LOOKUP = USER + "/lookup";
 	String USER_AIRCRAFT_LOOKUP = USER_LOOKUP + "/aircraft";
 	String USER_BATTERY_LOOKUP = USER_LOOKUP + "/battery";
+	String USER_LOCATION_LOOKUP = USER_LOOKUP + "/location";
 	String USER_OBSERVER_LOOKUP = USER_LOOKUP + "/observer";
 	String USER_PILOT_LOOKUP = USER_LOOKUP + "/pilot";
 
