@@ -19,4 +19,4 @@ public enum LocationStatus {
 		return !isValid( string );
 	}
 
-	}
+}
