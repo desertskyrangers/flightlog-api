@@ -62,7 +62,7 @@ public class FlightService implements FlightServices {
 
 		User observer = showObserverFlights ? user : null;
 		User owner = showOwnerFlights ? user : null;
-		return stateRetrieving.findFlightsByPilotObserverOwner(user, observer, owner, page, size);
+		return stateRetrieving.findFlightsByPilotObserverOwner( user, observer, owner, page, size );
 	}
 
 	@Override
@@ -71,6 +71,7 @@ public class FlightService implements FlightServices {
 		User observer = stateRetrieving.findUser( request.observer() ).orElse( null );
 		Aircraft aircraft = stateRetrieving.findAircraft( request.aircraft() ).orElse( null );
 		Set<Battery> batteries = request.batteries().stream().map( id -> stateRetrieving.findBattery( id ).orElse( null ) ).filter( Objects::nonNull ).collect( Collectors.toSet() );
+		Location location = request.location() == null ? null : stateRetrieving.findLocation( request.location() ).orElse( null );
 
 		// Convert request to a core flight object
 		Flight flight = new Flight();
@@ -83,6 +84,9 @@ public class FlightService implements FlightServices {
 		flight.batteries( batteries );
 		flight.timestamp( request.timestamp() );
 		flight.duration( request.duration() );
+		flight.location( location );
+		flight.latitude( request.latitude() );
+		flight.longitude( request.longitude() );
 		flight.notes( request.notes() );
 
 		return upsert( flight );

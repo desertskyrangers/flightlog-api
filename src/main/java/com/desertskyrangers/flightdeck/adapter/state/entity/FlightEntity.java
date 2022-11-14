@@ -47,6 +47,14 @@ public class FlightEntity {
 
 	private int duration;
 
+	@ManyToOne( fetch = FetchType.EAGER )
+	@JoinColumn( name = "locationid", nullable = true, columnDefinition = "BINARY(16)" )
+	private LocationEntity location;
+
+	private double latitude;
+
+	private double longitude;
+
 	@Column( length = 1000 )
 	private String notes;
 
@@ -68,6 +76,9 @@ public class FlightEntity {
 		if( flight.batteries() != null ) entity.setBatteries( flight.batteries().stream().map( BatteryEntity::from ).collect( Collectors.toSet() ) );
 		entity.setTimestamp( flight.timestamp() );
 		entity.setDuration( flight.duration() );
+		if( flight.location() != null ) entity.setLocation( LocationEntity.from( flight.location() ) );
+		entity.setLatitude( flight.latitude() );
+		entity.setLongitude( flight.longitude() );
 		entity.setNotes( flight.notes() );
 
 		return entity;
@@ -85,6 +96,9 @@ public class FlightEntity {
 		if( entity.getBatteries() != null ) flight.batteries( entity.getBatteries().stream().map( BatteryEntity::toBattery ).collect( Collectors.toSet() ) );
 		flight.timestamp( entity.getTimestamp() );
 		flight.duration( entity.getDuration() );
+		if( entity.getLocation() != null ) flight.location( LocationEntity.toLocation( entity.getLocation() ) );
+		flight.latitude( entity.getLatitude() );
+		flight.longitude( entity.getLongitude() );
 		flight.notes( entity.getNotes() );
 
 		return flight;

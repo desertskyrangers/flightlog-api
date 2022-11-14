@@ -107,6 +107,9 @@ public class TableStructureTests {
 		expected.add( "aircraftid" );
 		expected.add( "timestamp" );
 		expected.add( "duration" );
+		expected.add( "locationid" );
+		expected.add( "latitude" );
+		expected.add( "longitude" );
 		expected.add( "notes" );
 
 		assertThat( getColumns( "flight" ) ).containsExactlyInAnyOrderElementsOf( expected );

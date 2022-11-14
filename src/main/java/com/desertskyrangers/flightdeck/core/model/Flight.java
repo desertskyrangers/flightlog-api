@@ -28,6 +28,12 @@ public class Flight {
 
 	private int duration;
 
+	private Location location;
+
+	private double latitude;
+
+	private double longitude;
+
 	private String notes;
 
 	// departure location

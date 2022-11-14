@@ -5,6 +5,7 @@ import com.desertskyrangers.flightdeck.core.model.Flight;
 import com.desertskyrangers.flightdeck.core.model.FlightUpsertRequest;
 import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.util.Text;
+import com.desertskyrangers.flightdeck.util.Uuid;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -36,6 +37,12 @@ public class ReactFlight {
 
 	private int duration;
 
+	private String location;
+
+	private double latitude;
+
+	private double longitude;
+
 	private String notes;
 
 	private String userFlightRole;
@@ -60,6 +67,9 @@ public class ReactFlight {
 		if( flight.batteries() != null ) reactFlight.setBatteries( flight.batteries().stream().map( b -> b.id().toString() ).toList() );
 		reactFlight.setTimestamp( flight.timestamp() );
 		reactFlight.setDuration( flight.duration() );
+		if( flight.location() != null ) reactFlight.setLocation( flight.location().id().toString() );
+		reactFlight.setLatitude( flight.latitude() );
+		reactFlight.setLongitude( flight.longitude() );
 		reactFlight.setNotes( flight.notes() );
 
 		// Use aircraft info for the name and type...for now
@@ -67,8 +77,8 @@ public class ReactFlight {
 			Aircraft aircraft = flight.aircraft();
 			reactFlight.setName( aircraft.name() );
 			reactFlight.setType( aircraft.type().name().toLowerCase() );
-			if( aircraft.baseColor()!= null) reactFlight.baseColor = aircraft.baseColor().toWeb();
-			if( aircraft.trimColor()!= null) reactFlight.trimColor = aircraft.trimColor().toWeb();
+			if( aircraft.baseColor() != null ) reactFlight.baseColor = aircraft.baseColor().toWeb();
+			if( aircraft.trimColor() != null ) reactFlight.trimColor = aircraft.trimColor().toWeb();
 		}
 
 		// User flight role
@@ -108,6 +118,9 @@ public class ReactFlight {
 		request.batteries( flight.getBatteries() == null ? List.of() : flight.getBatteries().stream().filter( Text::isNotBlank ).map( UUID::fromString ).toList() );
 		request.timestamp( flight.getTimestamp() );
 		request.duration( flight.getDuration() );
+		if( Uuid.isValid( flight.location ) ) request.location( UUID.fromString( flight.getLocation() ) );
+		request.latitude( flight.getLatitude() );
+		request.longitude( flight.getLongitude() );
 		request.notes( flight.getNotes() );
 
 		return request;

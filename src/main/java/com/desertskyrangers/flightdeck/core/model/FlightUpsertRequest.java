@@ -31,6 +31,12 @@ public class FlightUpsertRequest {
 
 	private int duration;
 
+	private UUID location;
+
+	private double latitude;
+
+	private double longitude;
+
 	private String notes;
 
 }
