@@ -46,7 +46,7 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v1
+        uses: github/codeql-action/init@v2
         with:
           languages: ${{ matrix.language }}
 
@@ -55,7 +55,7 @@ jobs:
            ./gradlew clean check bootJar
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v1
+        uses: github/codeql-action/analyze@v2
 
       - name: Copy Server JAR
         run: scp -B build/libs/flightdeck-*.jar ${{env.DSR_REPO_USERNAME}}@desertskyrangers.org:/opt/dsr/store/latest/flightdeck/server.jar
