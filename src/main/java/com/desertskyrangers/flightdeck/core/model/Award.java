@@ -28,6 +28,7 @@ public class Award {
 
 	// Categories
 	// - Flight records (personal, group, app?)
+	//   - Time, count, speed, height, distance?
 	// - Milestones (first flight, first solo, flight ratings)
 	//   - First flight
 	//   - Fly the Pattern
