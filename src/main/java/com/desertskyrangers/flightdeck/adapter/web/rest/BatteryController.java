@@ -58,8 +58,8 @@ public class BatteryController {
 		if( Text.isBlank( name ) ) messages.add( "Name required" );
 		if( Text.isBlank( type ) ) messages.add( "Type required" );
 		if( Text.isBlank( status ) ) messages.add( "Status required" );
-		if( BatteryType.isNotValid( type ) ) messages.add( "Invalid type: " + type );
-		if( BatteryStatus.isNotValid( status ) ) messages.add( "Invalid status: " + status );
+		if( Battery.Chemistry.isNotValid( type ) ) messages.add( "Invalid type: " + type );
+		if( Battery.Status.isNotValid( status ) ) messages.add( "Invalid status: " + status );
 		if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactBatteryResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
 
 		try {
@@ -94,8 +94,8 @@ public class BatteryController {
 		if( Text.isBlank( name ) ) messages.add( "Name required" );
 		if( Text.isBlank( type ) ) messages.add( "Type required" );
 		if( Text.isBlank( status ) ) messages.add( "Status required" );
-		if( BatteryType.isNotValid( type ) ) messages.add( "Invalid type: " + type );
-		if( BatteryStatus.isNotValid( status ) ) messages.add( "Invalid status: " + status );
+		if( Battery.Chemistry.isNotValid( type ) ) messages.add( "Invalid type: " + type );
+		if( Battery.Status.isNotValid( status ) ) messages.add( "Invalid status: " + status );
 		if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactBatteryResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
 
 		try {

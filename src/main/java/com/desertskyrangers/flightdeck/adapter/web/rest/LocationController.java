@@ -2,12 +2,9 @@ package com.desertskyrangers.flightdeck.adapter.web.rest;
 
 import com.desertskyrangers.flightdeck.adapter.web.ApiPath;
 import com.desertskyrangers.flightdeck.adapter.web.model.ReactLocation;
-import com.desertskyrangers.flightdeck.adapter.web.model.ReactLocation;
 import com.desertskyrangers.flightdeck.adapter.web.model.ReactResponse;
 import com.desertskyrangers.flightdeck.adapter.web.model.ReactUser;
 import com.desertskyrangers.flightdeck.core.model.Location;
-import com.desertskyrangers.flightdeck.core.model.LocationStatus;
-import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.port.LocationServices;
 import com.desertskyrangers.flightdeck.port.UserServices;
 import com.desertskyrangers.flightdeck.util.Text;
@@ -16,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -63,7 +59,7 @@ public class LocationController extends BaseController {
 		//if( Text.isBlank( type ) ) messages.add( "Type required" );
 		if( Text.isBlank( status ) ) messages.add( "Status required" );
 		//if( LocationType.isNotValid( type ) ) messages.add( "Invalid type: " + type );
-		if( LocationStatus.isNotValid( status ) ) messages.add( "Invalid status: " + status );
+		if( Location.Status.isNotValid( status ) ) messages.add( "Invalid status: " + status );
 		if( !messages.isEmpty() ) return new ResponseEntity<>( ReactResponse.messages( messages ), HttpStatus.BAD_REQUEST );
 
 		try {
@@ -94,7 +90,7 @@ public class LocationController extends BaseController {
 		if( Text.isBlank( status ) ) messages.add( "Status required" );
 		if( Uuid.isNotValid( id ) ) messages.add( "invalid ID" );
 		//		if( LocationType.isNotValid( type ) ) messages.add( "Invalid type: " + type );
-		if( LocationStatus.isNotValid( status ) ) messages.add( "Invalid status: " + status );
+		if( Location.Status.isNotValid( status ) ) messages.add( "Invalid status: " + status );
 		if( !messages.isEmpty() ) return new ResponseEntity<>( ReactResponse.messages( messages ), HttpStatus.BAD_REQUEST );
 
 		try {

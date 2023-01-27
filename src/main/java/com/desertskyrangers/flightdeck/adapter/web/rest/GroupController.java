@@ -115,7 +115,7 @@ public class GroupController extends BaseController {
 
 		try {
 			User requester = getRequester( authentication );
-			membershipServices.requestMembership( requester, optionalInvitee.get(), optionalGroup.get(), MemberStatus.INVITED );
+			membershipServices.requestMembership( requester, optionalInvitee.get(), optionalGroup.get(), Member.Status.INVITED );
 
 			Set<Member> memberships = membershipServices.findMembershipsByGroup( optionalGroup.get() );
 			List<Member> objects = new ArrayList<>( memberships );
@@ -183,7 +183,7 @@ public class GroupController extends BaseController {
 		List<String> messages = new ArrayList<>();
 		if( Text.isBlank( id ) ) messages.add( "ID required" );
 		if( Text.isNotBlank( id ) && Uuid.isNotValid( id ) ) messages.add( "Invalid group id" );
-		if( GroupType.isNotValid( type ) ) messages.add( "Type required" );
+		if( Group.Type.isNotValid( type ) ) messages.add( "Type required" );
 		if( Text.isBlank( name ) ) messages.add( "Name required" );
 		if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactGroupResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
 

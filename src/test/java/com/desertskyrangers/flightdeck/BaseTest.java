@@ -78,7 +78,7 @@ public class BaseTest {
 		aircraft.make( "Hobby King" );
 		aircraft.model( "Bixler 2" );
 		aircraft.type( AircraftType.FIXEDWING );
-		aircraft.status( AircraftStatus.DESTROYED );
+		aircraft.status( Aircraft.Status.DESTROYED );
 		aircraft.owner( owner.id() );
 		aircraft.ownerType( OwnerType.USER );
 		return aircraft;
@@ -89,10 +89,10 @@ public class BaseTest {
 		battery.name( "C 4S 2650 Turnigy" );
 		battery.make( "Hobby King" );
 		battery.model( "Turnigy 2650 4S" );
-		battery.connector( BatteryConnector.XT60 );
-		battery.status( BatteryStatus.DESTROYED );
+		battery.connector( Battery.Connector.XT60 );
+		battery.status( Battery.Status.DESTROYED );
 
-		battery.type( BatteryType.LIPO );
+		battery.chemistry( Battery.Chemistry.LIPO );
 		battery.cells( 4 );
 		battery.initialCycles( 23 );
 		battery.cycles( 57 );
@@ -139,22 +139,22 @@ public class BaseTest {
 	}
 
 	protected Group createTestGroup() {
-		return createTestGroup( "Test Group", GroupType.GROUP );
+		return createTestGroup( "Test Group", Group.Type.GROUP );
 	}
 
-	protected Group createTestGroup( String name, GroupType type ) {
+	protected Group createTestGroup( String name, Group.Type type ) {
 		return new Group().name( name ).type( type );
 	}
 
-	protected GroupEntity createTestGroupEntity( String name, GroupType type ) {
+	protected GroupEntity createTestGroupEntity( String name, Group.Type type ) {
 		return GroupEntity.from( createTestGroup( name, type ) ).setId( UUID.randomUUID() );
 	}
 
-	protected Member createTestMember( User user, Group group, MemberStatus status ) {
+	protected Member createTestMember( User user, Group group, Member.Status status ) {
 		return new Member().user( user ).group( group ).status( status );
 	}
 
-	protected MemberEntity createTestMemberEntity( UserEntity user, GroupEntity group, MemberStatus status ) {
+	protected MemberEntity createTestMemberEntity( UserEntity user, GroupEntity group, Member.Status status ) {
 		return MemberEntity.from( createTestMember( UserEntity.toUser( user ), GroupEntity.toGroup( group ), status ) ).setId( UUID.randomUUID() );
 	}
 

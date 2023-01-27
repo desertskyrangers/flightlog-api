@@ -2,7 +2,6 @@ package com.desertskyrangers.flightdeck.adapter.state.entity;
 
 import com.desertskyrangers.flightdeck.util.AppColor;
 import com.desertskyrangers.flightdeck.core.model.Aircraft;
-import com.desertskyrangers.flightdeck.core.model.AircraftStatus;
 import com.desertskyrangers.flightdeck.core.model.AircraftType;
 import com.desertskyrangers.flightdeck.core.model.OwnerType;
 import com.desertskyrangers.flightdeck.util.AppColorConverter;
@@ -102,7 +101,7 @@ public class AircraftEntity {
 		aircraft.type( AircraftType.valueOf( entity.getType().toUpperCase() ) );
 		aircraft.make( entity.getMake() );
 		aircraft.model( entity.getModel() );
-		aircraft.status( AircraftStatus.valueOf( entity.getStatus().toUpperCase() ) );
+		aircraft.status( Aircraft.Status.valueOf( entity.getStatus().toUpperCase() ) );
 		aircraft.nightLights( entity.getNightLights() != null && entity.getNightLights() );
 
 		aircraft.wingspan( entity.getWingspan() == null ? 0.0 : entity.getWingspan() );

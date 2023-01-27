@@ -5,7 +5,6 @@ import com.desertskyrangers.flightdeck.port.GroupServices;
 import com.desertskyrangers.flightdeck.port.HumanInterface;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
 import com.desertskyrangers.flightdeck.port.StateRetrieving;
-import com.desertskyrangers.flightdeck.util.SmsCarrier;
 import com.desertskyrangers.flightdeck.util.Text;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -44,7 +43,7 @@ public class GroupService implements GroupServices {
 	@Override
 	public Group create( User requester, User owner, Group group ) {
 		Group result = upsert( group );
-		statePersisting.upsert( new Member().user( owner ).group( group ).status( MemberStatus.OWNER ) );
+		statePersisting.upsert( new Member().user( owner ).group( group ).status( Member.Status.OWNER ) );
 		return result;
 	}
 

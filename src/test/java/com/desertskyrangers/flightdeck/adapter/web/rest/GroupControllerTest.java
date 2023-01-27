@@ -15,9 +15,6 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -43,8 +40,8 @@ public class GroupControllerTest extends BaseControllerTest {
 		User user = getMockUser();
 		User owner = statePersisting.upsert( createTestUser() );
 		Group group = statePersisting.upsert( createTestGroup() );
-		statePersisting.upsert( new Member().user( owner ).group( group ).status( MemberStatus.OWNER ) );
-		statePersisting.upsert( new Member().user( user ).group( group ).status( MemberStatus.ACCEPTED ) );
+		statePersisting.upsert( new Member().user( owner ).group( group ).status( Member.Status.OWNER ) );
+		statePersisting.upsert( new Member().user( user ).group( group ).status( Member.Status.ACCEPTED ) );
 
 		// Need some flights for the group dashboard
 		statePersisting.upsert( createTestFlight( user ) );
@@ -66,10 +63,10 @@ public class GroupControllerTest extends BaseControllerTest {
 	@Test
 	void testInviteMemberByUsername() throws Exception {
 		// given
-		Group group = statePersisting.upsert( createTestGroup( "Group A", GroupType.CLUB ) );
+		Group group = statePersisting.upsert( createTestGroup( "Group A", Group.Type.CLUB ) );
 		User invitee = statePersisting.upsert( createTestUser( "marisa", "marisa@example.com" ) );
 		statePersisting.upsert( createTestToken( invitee, invitee.username(), "password" ) );
-		statePersisting.upsert( new Member().user( getMockUser() ).group( group ).status( MemberStatus.OWNER ) );
+		statePersisting.upsert( new Member().user( getMockUser() ).group( group ).status( Member.Status.OWNER ) );
 
 		// then
 		Map<String, String> request = Map.of( "id", group.id().toString(), "invitee", invitee.username() );
@@ -88,10 +85,10 @@ public class GroupControllerTest extends BaseControllerTest {
 	@Test
 	void testInviteMemberByEmailAddress() throws Exception {
 		// given
-		Group group = statePersisting.upsert( createTestGroup( "Group A", GroupType.CLUB ) );
+		Group group = statePersisting.upsert( createTestGroup( "Group A", Group.Type.CLUB ) );
 		User invitee = statePersisting.upsert( createTestUser( "marisa", "marisa@example.com" ) );
 		statePersisting.upsert( createTestToken( invitee, invitee.email(), "password" ) );
-		statePersisting.upsert( new Member().user( getMockUser() ).group( group ).status( MemberStatus.OWNER ) );
+		statePersisting.upsert( new Member().user( getMockUser() ).group( group ).status( Member.Status.OWNER ) );
 
 		// then
 		Map<String, String> request = Map.of( "id", group.id().toString(), "invitee", invitee.email() );
@@ -112,10 +109,10 @@ public class GroupControllerTest extends BaseControllerTest {
 		// Test get available groups for the requesting user
 
 		// given
-		Group groupA = statePersisting.upsert( createTestGroup( "Group A", GroupType.CLUB ) );
-		Group groupB = statePersisting.upsert( createTestGroup( "Group B", GroupType.CLUB ) );
-		Group groupC = statePersisting.upsert( createTestGroup( "Group C", GroupType.CLUB ) );
-		statePersisting.upsert( new Member().user( getMockUser() ).group( groupB ).status( MemberStatus.ACCEPTED ) );
+		Group groupA = statePersisting.upsert( createTestGroup( "Group A", Group.Type.CLUB ) );
+		Group groupB = statePersisting.upsert( createTestGroup( "Group B", Group.Type.CLUB ) );
+		Group groupC = statePersisting.upsert( createTestGroup( "Group C", Group.Type.CLUB ) );
+		statePersisting.upsert( new Member().user( getMockUser() ).group( groupB ).status( Member.Status.ACCEPTED ) );
 
 		// when
 		MvcResult result = this.mockMvc.perform( get( ApiPath.GROUP_AVAILABLE ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
@@ -129,16 +126,16 @@ public class GroupControllerTest extends BaseControllerTest {
 	@Test
 	void testGetGroupMembership() throws Exception {
 		// given
-		Group groupA = statePersisting.upsert( createTestGroup( "Group A", GroupType.CLUB ) );
+		Group groupA = statePersisting.upsert( createTestGroup( "Group A", Group.Type.CLUB ) );
 		User frank = statePersisting.upsert( createTestUser( "frank", "frank@example.com" ) );
 		User gemma = statePersisting.upsert( createTestUser( "gemma", "gemma@example.com" ) );
 		User helen = statePersisting.upsert( createTestUser( "helen", "helen@example.com" ) );
 		User india = statePersisting.upsert( createTestUser( "india", "india@example.com" ) );
-		statePersisting.upsert( new Member().user( getMockUser() ).group( groupA ).status( MemberStatus.OWNER ) );
-		statePersisting.upsert( new Member().user( frank ).group( groupA ).status( MemberStatus.REQUESTED ) );
-		statePersisting.upsert( new Member().user( gemma ).group( groupA ).status( MemberStatus.INVITED ) );
-		statePersisting.upsert( new Member().user( helen ).group( groupA ).status( MemberStatus.REVOKED ) );
-		statePersisting.upsert( new Member().user( india ).group( groupA ).status( MemberStatus.ACCEPTED ) );
+		statePersisting.upsert( new Member().user( getMockUser() ).group( groupA ).status( Member.Status.OWNER ) );
+		statePersisting.upsert( new Member().user( frank ).group( groupA ).status( Member.Status.REQUESTED ) );
+		statePersisting.upsert( new Member().user( gemma ).group( groupA ).status( Member.Status.INVITED ) );
+		statePersisting.upsert( new Member().user( helen ).group( groupA ).status( Member.Status.REVOKED ) );
+		statePersisting.upsert( new Member().user( india ).group( groupA ).status( Member.Status.ACCEPTED ) );
 
 		// when
 		MvcResult result = this.mockMvc.perform( get( ApiPath.GROUP + "/" + groupA.id() + "/membership" ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();

@@ -59,7 +59,7 @@ public class AircraftController {
 		if( Text.isBlank( type ) ) messages.add( "Type required" );
 		if( Text.isBlank( status ) ) messages.add( "Status required" );
 		if( AircraftType.isNotValid( type ) ) messages.add( "Invalid type: " + type );
-		if( AircraftStatus.isNotValid( status ) ) messages.add( "Invalid status: " + status );
+		if( Aircraft.Status.isNotValid( status ) ) messages.add( "Invalid status: " + status );
 		if( !messages.isEmpty() ) return new ResponseEntity<>( ReactResponse.messages( messages ), HttpStatus.BAD_REQUEST );
 
 		try {
@@ -95,7 +95,7 @@ public class AircraftController {
 		if( Text.isBlank( type ) ) messages.add( "Type required" );
 		if( Text.isBlank( status ) ) messages.add( "Status required" );
 		if( AircraftType.isNotValid( type ) ) messages.add( "Invalid type: " + type );
-		if( AircraftStatus.isNotValid( status ) ) messages.add( "Invalid status: " + status );
+		if( Aircraft.Status.isNotValid( status ) ) messages.add( "Invalid status: " + status );
 		if( !messages.isEmpty() ) return new ResponseEntity<>( ReactResponse.messages( messages ), HttpStatus.BAD_REQUEST );
 
 		try {

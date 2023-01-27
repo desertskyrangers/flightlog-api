@@ -5,7 +5,6 @@ import com.desertskyrangers.flightdeck.adapter.web.model.ReactMembership;
 import com.desertskyrangers.flightdeck.adapter.web.model.ReactMembershipResponse;
 import com.desertskyrangers.flightdeck.core.exception.UnauthorizedException;
 import com.desertskyrangers.flightdeck.core.model.Member;
-import com.desertskyrangers.flightdeck.core.model.MemberStatus;
 import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.port.MembershipServices;
 import com.desertskyrangers.flightdeck.util.Text;
@@ -38,7 +37,7 @@ public class MembershipController extends BaseController {
 
 		List<String> messages = new ArrayList<>();
 		if( Text.isBlank( id ) || Uuid.isNotValid( id ) ) messages.add( "Invalid membership ID" );
-		if( MemberStatus.isNotValid( status ) ) messages.add( "Invalid member status" );
+		if( Member.Status.isNotValid( status ) ) messages.add( "Invalid member status" );
 		if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactMembershipResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
 
 		try {
@@ -46,7 +45,7 @@ public class MembershipController extends BaseController {
 			Optional<Member> optional = memberService.find( UUID.fromString( id ) );
 
 			if( optional.isPresent() ) {
-				Member membership = optional.get().status( MemberStatus.valueOf( status.toUpperCase() ) );
+				Member membership = optional.get().status( Member.Status.valueOf( status.toUpperCase() ) );
 				memberService.upsert( requester, membership );
 				return new ResponseEntity<>( new ReactMembershipResponse().setMembership( ReactMembership.from( membership ) ), HttpStatus.OK );
 			}

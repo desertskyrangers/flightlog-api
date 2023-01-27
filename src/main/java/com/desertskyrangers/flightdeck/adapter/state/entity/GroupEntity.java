@@ -107,7 +107,7 @@ public class GroupEntity {
 		Group group = new Group();
 
 		group.id( entity.getId() );
-		group.type( GroupType.valueOf( entity.getType().toUpperCase() ) );
+		group.type( Group.Type.valueOf( entity.getType().toUpperCase() ) );
 		group.name( entity.getName() );
 		group.dashboardId( entity.getDashboardId() );
 

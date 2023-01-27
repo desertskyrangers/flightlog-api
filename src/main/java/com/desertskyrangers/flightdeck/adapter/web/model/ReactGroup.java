@@ -1,7 +1,6 @@
 package com.desertskyrangers.flightdeck.adapter.web.model;
 
 import com.desertskyrangers.flightdeck.core.model.Group;
-import com.desertskyrangers.flightdeck.core.model.GroupType;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -33,7 +32,7 @@ public class ReactGroup {
 		Group group = new Group();
 
 		group.id( UUID.fromString( reactGroup.getId() ) );
-		group.type( GroupType.valueOf( reactGroup.getType().toUpperCase() ) );
+		group.type( Group.Type.valueOf( reactGroup.getType().toUpperCase() ) );
 		group.name( reactGroup.getName() );
 
 		return group;

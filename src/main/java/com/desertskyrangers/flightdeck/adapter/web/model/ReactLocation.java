@@ -1,7 +1,6 @@
 package com.desertskyrangers.flightdeck.adapter.web.model;
 
 import com.desertskyrangers.flightdeck.core.model.Location;
-import com.desertskyrangers.flightdeck.core.model.LocationStatus;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -50,7 +49,7 @@ public class ReactLocation {
 		result.user( ReactUser.to( location.getUser() ) );
 		result.name( location.getName() );
 		result.size( location.getSize() );
-		result.status( LocationStatus.valueOf( location.getStatus().toUpperCase() ) );
+		result.status( Location.Status.valueOf( location.getStatus().toUpperCase() ) );
 
 		return result;
 	}

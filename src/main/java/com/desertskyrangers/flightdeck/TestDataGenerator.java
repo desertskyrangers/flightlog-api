@@ -82,11 +82,11 @@ public class TestDataGenerator {
 
 		Battery a4s2650turnigy = new Battery()
 			.name( "A 4S 2650 Turnigy" )
-			.status( BatteryStatus.DESTROYED )
+			.status( Battery.Status.DESTROYED )
 			.make( "Hobby King" )
 			.model( "Turnigy" )
-			.connector( BatteryConnector.XT60 )
-			.type( BatteryType.LIPO )
+			.connector( Battery.Connector.XT60 )
+			.chemistry( Battery.Chemistry.LIPO )
 			.cells( 4 )
 			.initialCycles( 255 )
 			.capacity( 2650 )
@@ -94,11 +94,11 @@ public class TestDataGenerator {
 			.ownerType( OwnerType.USER );
 		Battery b4s2650turnigy = new Battery()
 			.name( "B 4S 2650 Turnigy" )
-			.status( BatteryStatus.AVAILABLE )
+			.status( Battery.Status.AVAILABLE )
 			.make( "Hobby King" )
 			.model( "Turnigy" )
-			.connector( BatteryConnector.XT60 )
-			.type( BatteryType.LIPO )
+			.connector( Battery.Connector.XT60 )
+			.chemistry( Battery.Chemistry.LIPO )
 			.cells( 4 )
 			.initialCycles( 87 )
 			.capacity( 2650 )
@@ -106,11 +106,11 @@ public class TestDataGenerator {
 			.ownerType( OwnerType.USER );
 		Battery c4s2650turnigy = new Battery()
 			.name( "C 4S 2650 Turnigy" )
-			.status( BatteryStatus.AVAILABLE )
+			.status( Battery.Status.AVAILABLE )
 			.make( "Hobby King" )
 			.model( "Turnigy" )
-			.connector( BatteryConnector.XT60 )
-			.type( BatteryType.LIPO )
+			.connector( Battery.Connector.XT60 )
+			.chemistry( Battery.Chemistry.LIPO )
 			.cells( 4 )
 			.initialCycles( 57 )
 			.capacity( 2650 )
@@ -118,11 +118,11 @@ public class TestDataGenerator {
 			.ownerType( OwnerType.USER );
 		Battery d4s2650turnigy = new Battery()
 			.name( "D 4S 2650 Turnigy" )
-			.status( BatteryStatus.AVAILABLE )
+			.status( Battery.Status.AVAILABLE )
 			.make( "Hobby King" )
 			.model( "Turnigy" )
-			.connector( BatteryConnector.XT60 )
-			.type( BatteryType.LIPO )
+			.connector( Battery.Connector.XT60 )
+			.chemistry( Battery.Chemistry.LIPO )
 			.cells( 4 )
 			.initialCycles( 43 )
 			.capacity( 2650 )
@@ -145,20 +145,20 @@ public class TestDataGenerator {
 			statePersisting.upsert( new Flight().pilot( tia ).observer( tia ).aircraft( aftyn ).timestamp( timestamp += 600000 ).duration( random.nextInt( 270 ) + 30 ) );
 		}
 
-		Group testersInfinite = new Group().name( "Testers Infinite" ).type( GroupType.GROUP );
+		Group testersInfinite = new Group().name( "Testers Infinite" ).type( Group.Type.GROUP );
 		statePersisting.upsert( testersInfinite );
 
-		Group testersUnlimited = new Group().name( "Testers Unlimited" ).type( GroupType.GROUP );
+		Group testersUnlimited = new Group().name( "Testers Unlimited" ).type( Group.Type.GROUP );
 		statePersisting.upsert( testersUnlimited );
 
-		Group testersAroundTheClock = new Group().name( "Testers Around the Clock" ).type( GroupType.GROUP );
+		Group testersAroundTheClock = new Group().name( "Testers Around the Clock" ).type( Group.Type.GROUP );
 		statePersisting.upsert( testersAroundTheClock );
 
-		statePersisting.upsert( new Member().user( tia ).group( testersInfinite ).status( MemberStatus.OWNER ) );
-		statePersisting.upsert( new Member().user( tia ).group( testersAroundTheClock ).status( MemberStatus.ACCEPTED ) );
+		statePersisting.upsert( new Member().user( tia ).group( testersInfinite ).status( Member.Status.OWNER ) );
+		statePersisting.upsert( new Member().user( tia ).group( testersAroundTheClock ).status( Member.Status.ACCEPTED ) );
 
-		statePersisting.upsert( new Member().user( tom ).group( testersUnlimited ).status( MemberStatus.OWNER ) );
-		statePersisting.upsert( new Member().user( tom ).group( testersInfinite ).status( MemberStatus.ACCEPTED ) );
+		statePersisting.upsert( new Member().user( tom ).group( testersUnlimited ).status( Member.Status.OWNER ) );
+		statePersisting.upsert( new Member().user( tom ).group( testersInfinite ).status( Member.Status.ACCEPTED ) );
 
 		log.warn( "Test data created!" );
 	}
@@ -268,7 +268,7 @@ public class TestDataGenerator {
 			.type( AircraftType.FIXEDWING )
 			.make( "Hobby King" )
 			.model( "Bixler 2" )
-			.status( AircraftStatus.AIRWORTHY )
+			.status( Aircraft.Status.AIRWORTHY )
 			.wingspan( 1500 )
 			.length( 963 )
 			.wingarea( 2500 )
@@ -283,7 +283,7 @@ public class TestDataGenerator {
 			.type( AircraftType.FIXEDWING )
 			.make( "Hobby King" )
 			.model( "Bixler 2" )
-			.status( AircraftStatus.DESTROYED )
+			.status( Aircraft.Status.DESTROYED )
 			.wingspan( 1500 )
 			.length( 963 )
 			.wingarea( 2500 )
@@ -291,11 +291,11 @@ public class TestDataGenerator {
 	}
 
 	private Aircraft createGemma() {
-		return new Aircraft().name( "GEMMA" ).type( AircraftType.MULTIROTOR ).status( AircraftStatus.AIRWORTHY ).baseColor( AppColor.BLACK ).trimColor( AppColor.fromHex( "#ff004000" ) );
+		return new Aircraft().name( "GEMMA" ).type( AircraftType.MULTIROTOR ).status( Aircraft.Status.AIRWORTHY ).baseColor( AppColor.BLACK ).trimColor( AppColor.fromHex( "#ff004000" ) );
 	}
 
 	private Aircraft createHope() {
-		return new Aircraft().name( "HOPE" ).type( AircraftType.HELICOPTER ).status( AircraftStatus.INOPERATIVE );
+		return new Aircraft().name( "HOPE" ).type( AircraftType.HELICOPTER ).status( Aircraft.Status.INOPERATIVE );
 	}
 
 	private Location createMonarchMeadowsPark( User user ) {

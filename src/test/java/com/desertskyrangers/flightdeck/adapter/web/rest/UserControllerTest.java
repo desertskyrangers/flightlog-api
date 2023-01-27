@@ -136,8 +136,8 @@ public class UserControllerTest extends BaseControllerTest {
 	@Test
 	void testGetAircraftPage() throws Exception {
 		// given
-		Aircraft aftyn = new Aircraft().name( "AFTYN" ).type( AircraftType.FIXEDWING ).status( AircraftStatus.AIRWORTHY ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
-		Aircraft bianca = new Aircraft().name( "BIANCA" ).type( AircraftType.FIXEDWING ).status( AircraftStatus.AIRWORTHY ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
+		Aircraft aftyn = new Aircraft().name( "AFTYN" ).type( AircraftType.FIXEDWING ).status( Aircraft.Status.AIRWORTHY ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
+		Aircraft bianca = new Aircraft().name( "BIANCA" ).type( AircraftType.FIXEDWING ).status( Aircraft.Status.AIRWORTHY ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
 		statePersisting.upsert( aftyn );
 		statePersisting.upsert( bianca );
 
@@ -161,8 +161,8 @@ public class UserControllerTest extends BaseControllerTest {
 	@Test
 	void testGetAircraftPageWithSize() throws Exception {
 		// given
-		Aircraft aftyn = new Aircraft().name( "AFTYN" ).type( AircraftType.FIXEDWING ).status( AircraftStatus.AIRWORTHY ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
-		Aircraft bianca = new Aircraft().name( "BIANCA" ).type( AircraftType.FIXEDWING ).status( AircraftStatus.AIRWORTHY ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
+		Aircraft aftyn = new Aircraft().name( "AFTYN" ).type( AircraftType.FIXEDWING ).status( Aircraft.Status.AIRWORTHY ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
+		Aircraft bianca = new Aircraft().name( "BIANCA" ).type( AircraftType.FIXEDWING ).status( Aircraft.Status.AIRWORTHY ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
 		statePersisting.upsert( aftyn );
 		statePersisting.upsert( bianca );
 
@@ -184,8 +184,8 @@ public class UserControllerTest extends BaseControllerTest {
 	@Test
 	void testGetAircraftPageWithStatus() throws Exception {
 		// given
-		Aircraft aftyn = new Aircraft().name( "AFTYN" ).type( AircraftType.FIXEDWING ).status( AircraftStatus.AIRWORTHY ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
-		Aircraft bianca = new Aircraft().name( "BIANCA" ).type( AircraftType.FIXEDWING ).status( AircraftStatus.DESTROYED ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
+		Aircraft aftyn = new Aircraft().name( "AFTYN" ).type( AircraftType.FIXEDWING ).status( Aircraft.Status.AIRWORTHY ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
+		Aircraft bianca = new Aircraft().name( "BIANCA" ).type( AircraftType.FIXEDWING ).status( Aircraft.Status.DESTROYED ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
 		statePersisting.upsert( aftyn );
 		statePersisting.upsert( bianca );
 
@@ -207,8 +207,8 @@ public class UserControllerTest extends BaseControllerTest {
 	@Test
 	void testGetBatteryPage() throws Exception {
 		// given
-		Battery a = new Battery().name( "A" ).status( BatteryStatus.AVAILABLE ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
-		Battery b = new Battery().name( "B" ).status( BatteryStatus.NEW ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
+		Battery a = new Battery().name( "A" ).status( Battery.Status.AVAILABLE ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
+		Battery b = new Battery().name( "B" ).status( Battery.Status.NEW ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
 		statePersisting.upsert( a );
 		statePersisting.upsert( b );
 
@@ -232,8 +232,8 @@ public class UserControllerTest extends BaseControllerTest {
 	@Test
 	void testGetBatteryPageWithSize() throws Exception {
 		// given
-		Battery a = new Battery().name( "A" ).status( BatteryStatus.AVAILABLE ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
-		Battery b = new Battery().name( "B" ).status( BatteryStatus.NEW ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
+		Battery a = new Battery().name( "A" ).status( Battery.Status.AVAILABLE ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
+		Battery b = new Battery().name( "B" ).status( Battery.Status.NEW ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
 		statePersisting.upsert( a );
 		statePersisting.upsert( b );
 
@@ -260,8 +260,8 @@ public class UserControllerTest extends BaseControllerTest {
 	@Test
 	void testGetBatteryPageWithStatus() throws Exception {
 		// given
-		Battery a = new Battery().name( "A" ).status( BatteryStatus.AVAILABLE ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
-		Battery b = new Battery().name( "B" ).status( BatteryStatus.DESTROYED ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
+		Battery a = new Battery().name( "A" ).status( Battery.Status.AVAILABLE ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
+		Battery b = new Battery().name( "B" ).status( Battery.Status.DESTROYED ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
 		statePersisting.upsert( a );
 		statePersisting.upsert( b );
 
@@ -283,8 +283,8 @@ public class UserControllerTest extends BaseControllerTest {
 	@Test
 	void testGetFlightPage() throws Exception {
 		// given
-		Aircraft aftyn = new Aircraft().name( "AFTYN" ).type( AircraftType.FIXEDWING ).status( AircraftStatus.DESTROYED ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
-		Battery batteryA = new Battery().name( "A" ).status( BatteryStatus.NEW ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
+		Aircraft aftyn = new Aircraft().name( "AFTYN" ).type( AircraftType.FIXEDWING ).status( Aircraft.Status.DESTROYED ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
+		Battery batteryA = new Battery().name( "A" ).status( Battery.Status.NEW ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
 		statePersisting.upsert( aftyn );
 		statePersisting.upsert( batteryA );
 		Flight flightA = new Flight().pilot( getMockUser() ).aircraft( aftyn ).batteries( Set.of( batteryA ) );
@@ -312,8 +312,8 @@ public class UserControllerTest extends BaseControllerTest {
 	@Test
 	void testGetFlightPageWithSize() throws Exception {
 		// given
-		Aircraft aftyn = new Aircraft().name( "AFTYN" ).type( AircraftType.FIXEDWING ).status( AircraftStatus.DESTROYED ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
-		Battery batteryA = new Battery().name( "A" ).status( BatteryStatus.NEW ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
+		Aircraft aftyn = new Aircraft().name( "AFTYN" ).type( AircraftType.FIXEDWING ).status( Aircraft.Status.DESTROYED ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
+		Battery batteryA = new Battery().name( "A" ).status( Battery.Status.NEW ).owner( getMockUser().id() ).ownerType( OwnerType.USER );
 		statePersisting.upsert( aftyn );
 		statePersisting.upsert( batteryA );
 		Flight flightA = new Flight().pilot( getMockUser() ).aircraft( aftyn ).batteries( Set.of( batteryA ) );
@@ -373,12 +373,12 @@ public class UserControllerTest extends BaseControllerTest {
 	void testGetUserMemberships() throws Exception {
 		User user = getMockUser();
 
-		Group groupA = statePersisting.upsert( new Group().name( "Group A" ).type( GroupType.CLUB ) );
-		Group groupB = statePersisting.upsert( new Group().name( "Group B" ).type( GroupType.GROUP ) );
+		Group groupA = statePersisting.upsert( new Group().name( "Group A" ).type( Group.Type.CLUB ) );
+		Group groupB = statePersisting.upsert( new Group().name( "Group B" ).type( Group.Type.GROUP ) );
 
 		// given
-		statePersisting.upsert( new Member().user( user ).group( groupA ).status( MemberStatus.OWNER ) );
-		statePersisting.upsert( new Member().user( user ).group( groupB ).status( MemberStatus.ACCEPTED ) );
+		statePersisting.upsert( new Member().user( user ).group( groupA ).status( Member.Status.OWNER ) );
+		statePersisting.upsert( new Member().user( user ).group( groupB ).status( Member.Status.ACCEPTED ) );
 
 		// when
 		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_MEMBERSHIP ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
@@ -394,11 +394,11 @@ public class UserControllerTest extends BaseControllerTest {
 
 	@Test
 	void testGetAircraftLookup() throws Exception {
-		statePersisting.upsert( createTestAircraft( getMockUser() ).status( AircraftStatus.PREFLIGHT ) );
-		statePersisting.upsert( createTestAircraft( getMockUser() ).status( AircraftStatus.AIRWORTHY ) );
-		statePersisting.upsert( createTestAircraft( getMockUser() ).status( AircraftStatus.INOPERATIVE ) );
-		statePersisting.upsert( createTestAircraft( getMockUser() ).status( AircraftStatus.DECOMMISSIONED ) );
-		statePersisting.upsert( createTestAircraft( getMockUser() ).status( AircraftStatus.DESTROYED ) );
+		statePersisting.upsert( createTestAircraft( getMockUser() ).status( Aircraft.Status.PREFLIGHT ) );
+		statePersisting.upsert( createTestAircraft( getMockUser() ).status( Aircraft.Status.AIRWORTHY ) );
+		statePersisting.upsert( createTestAircraft( getMockUser() ).status( Aircraft.Status.INOPERATIVE ) );
+		statePersisting.upsert( createTestAircraft( getMockUser() ).status( Aircraft.Status.DECOMMISSIONED ) );
+		statePersisting.upsert( createTestAircraft( getMockUser() ).status( Aircraft.Status.DESTROYED ) );
 		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_AIRCRAFT_LOOKUP ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
 		List<Object> list = Json.asList( result.getResponse().getContentAsString() );
 		assertThat( list.size() ).isEqualTo( 2 );
@@ -406,9 +406,9 @@ public class UserControllerTest extends BaseControllerTest {
 
 	@Test
 	void testGetBatteryLookup() throws Exception {
-		statePersisting.upsert( createTestBattery( getMockUser() ).status( BatteryStatus.NEW ) );
-		statePersisting.upsert( createTestBattery( getMockUser() ).status( BatteryStatus.AVAILABLE ) );
-		statePersisting.upsert( createTestBattery( getMockUser() ).status( BatteryStatus.DESTROYED ) );
+		statePersisting.upsert( createTestBattery( getMockUser() ).status( Battery.Status.NEW ) );
+		statePersisting.upsert( createTestBattery( getMockUser() ).status( Battery.Status.AVAILABLE ) );
+		statePersisting.upsert( createTestBattery( getMockUser() ).status( Battery.Status.DESTROYED ) );
 		// Plus the 'No battery specified' option
 		MvcResult result = this.mockMvc.perform( get( ApiPath.USER_BATTERY_LOOKUP ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
 		List<Object> list = Json.asList( result.getResponse().getContentAsString() );
@@ -433,10 +433,10 @@ public class UserControllerTest extends BaseControllerTest {
 	void testPutMembershipAsOwner() throws Exception {
 		// given
 		User user = statePersisting.upsert( createTestUser( "sammy", "sammy@example.com" ) );
-		Group group = statePersisting.upsert( new Group().name( "Group A" ).type( GroupType.CLUB ) );
+		Group group = statePersisting.upsert( new Group().name( "Group A" ).type( Group.Type.CLUB ) );
 
 		// Make the mock user the group owner
-		statePersisting.upsert( new Member().user( getMockUser() ).group( group ).status( MemberStatus.OWNER ) );
+		statePersisting.upsert( new Member().user( getMockUser() ).group( group ).status( Member.Status.OWNER ) );
 
 		// when
 		// Because the mock user is making the request, this is an owner request
@@ -460,8 +460,8 @@ public class UserControllerTest extends BaseControllerTest {
 		// given
 		User user = getMockUser();
 		User owner = statePersisting.upsert( createTestUser().preferredName( "Tamara" ).email( "tammy@example.com" ) );
-		Group group = statePersisting.upsert( new Group().name( "Group A" ).type( GroupType.CLUB ) );
-		statePersisting.upsert( new Member().user( owner ).group( group ).status( MemberStatus.OWNER ) );
+		Group group = statePersisting.upsert( new Group().name( "Group A" ).type( Group.Type.CLUB ) );
+		statePersisting.upsert( new Member().user( owner ).group( group ).status( Member.Status.OWNER ) );
 
 		// when
 		// Because the requesting user is the mock user, this should fail
@@ -485,12 +485,12 @@ public class UserControllerTest extends BaseControllerTest {
 		// given
 		User user = getMockUser();
 		User owner = statePersisting.upsert( createTestUser() );
-		Group group = statePersisting.upsert( new Group().name( "Group A" ).type( GroupType.CLUB ) );
-		statePersisting.upsert( new Member().user( owner ).group( group ).status( MemberStatus.OWNER ) );
+		Group group = statePersisting.upsert( new Group().name( "Group A" ).type( Group.Type.CLUB ) );
+		statePersisting.upsert( new Member().user( owner ).group( group ).status( Member.Status.OWNER ) );
 
 		// when
 		// Because the requesting user is the mock user, this should fail
-		Map<String, String> request = Map.of( "userid", user.id().toString(), "groupid", group.id().toString(), "status", MemberStatus.INVITED.name().toLowerCase() );
+		Map<String, String> request = Map.of( "userid", user.id().toString(), "groupid", group.id().toString(), "status", Member.Status.INVITED.name().toLowerCase() );
 		MvcResult result = this.mockMvc
 			.perform( put( ApiPath.USER_MEMBERSHIP ).with( jwt() ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) )
 			.andExpect( status().isUnauthorized() )
@@ -510,12 +510,12 @@ public class UserControllerTest extends BaseControllerTest {
 		// given
 		User user = getMockUser();
 		User owner = statePersisting.upsert( createTestUser() );
-		Group group = statePersisting.upsert( new Group().name( "Group A" ).type( GroupType.CLUB ) );
-		statePersisting.upsert( new Member().user( owner ).group( group ).status( MemberStatus.OWNER ) );
+		Group group = statePersisting.upsert( new Group().name( "Group A" ).type( Group.Type.CLUB ) );
+		statePersisting.upsert( new Member().user( owner ).group( group ).status( Member.Status.OWNER ) );
 
 		// when
 		// Because the requesting user is the mock user, this should fail
-		Map<String, String> request = Map.of( "userid", user.id().toString(), "groupid", group.id().toString(), "status", MemberStatus.ACCEPTED.name().toLowerCase() );
+		Map<String, String> request = Map.of( "userid", user.id().toString(), "groupid", group.id().toString(), "status", Member.Status.ACCEPTED.name().toLowerCase() );
 		MvcResult result = this.mockMvc
 			.perform( put( ApiPath.USER_MEMBERSHIP ).with( jwt() ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) )
 			.andExpect( status().isUnauthorized() )
@@ -534,7 +534,7 @@ public class UserControllerTest extends BaseControllerTest {
 	void testPutMembershipWithBadRequest() throws Exception {
 		// given
 		User user = getMockUser();
-		Group group = statePersisting.upsert( new Group().name( "Group A" ).type( GroupType.CLUB ) );
+		Group group = statePersisting.upsert( new Group().name( "Group A" ).type( Group.Type.CLUB ) );
 		Map<String, String> request = Map.of( "userid", user.id().toString(), "groupid", "invalid", "status", "requested" );
 
 		// when
@@ -556,8 +556,8 @@ public class UserControllerTest extends BaseControllerTest {
 	void testDeleteMembership() throws Exception {
 		// given
 		User user = getMockUser();
-		Group group = statePersisting.upsert( new Group().name( "Group A" ).type( GroupType.CLUB ) );
-		Member member = statePersisting.upsert( new Member().user( user ).group( group ).status( MemberStatus.ACCEPTED ) );
+		Group group = statePersisting.upsert( new Group().name( "Group A" ).type( Group.Type.CLUB ) );
+		Member member = statePersisting.upsert( new Member().user( user ).group( group ).status( Member.Status.ACCEPTED ) );
 
 		Map<String, String> request = Map.of( "membershipid", member.id().toString() );
 
@@ -580,8 +580,8 @@ public class UserControllerTest extends BaseControllerTest {
 	void testDeleteMembershipWithBadRequest() throws Exception {
 		// given
 		User user = getMockUser();
-		Group group = statePersisting.upsert( new Group().name( "Group A" ).type( GroupType.CLUB ) );
-		statePersisting.upsert( new Member().user( user ).group( group ).status( MemberStatus.ACCEPTED ) );
+		Group group = statePersisting.upsert( new Group().name( "Group A" ).type( Group.Type.CLUB ) );
+		statePersisting.upsert( new Member().user( user ).group( group ).status( Member.Status.ACCEPTED ) );
 
 		Map<String, String> request = Map.of( "membershipid", "invalid" );
 

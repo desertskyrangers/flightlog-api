@@ -1,7 +1,6 @@
 package com.desertskyrangers.flightdeck.core.service;
 
 import com.desertskyrangers.flightdeck.core.model.Member;
-import com.desertskyrangers.flightdeck.core.model.MemberStatus;
 import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.core.model.UserToken;
 import com.desertskyrangers.flightdeck.port.*;
@@ -137,7 +136,7 @@ public class UserService implements UserServices {
 			.stream()
 			.flatMap( u -> u.groups().stream() )
 			.flatMap( g -> g.members().stream() )
-			.filter( m -> m.status() != MemberStatus.REVOKED & m.status() != MemberStatus.REQUESTED )
+			.filter( m -> m.status() != Member.Status.REVOKED & m.status() != Member.Status.REQUESTED )
 			.map( Member::user )
 			.filter( u -> !Objects.equals( u, user ) )
 			.collect( Collectors.toSet() );

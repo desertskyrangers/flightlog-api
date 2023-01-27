@@ -19,7 +19,7 @@ public class LookupController {
 
 	@GetMapping( path = ApiPath.AIRCRAFT_STATUS )
 	ResponseEntity<List<ReactOption>> aircraftStatus() {
-		return new ResponseEntity<>( Arrays.stream( AircraftStatus.values() ).map( c -> new ReactOption( c.name().toLowerCase(), c.getName() ) ).toList(), HttpStatus.OK );
+		return new ResponseEntity<>( Arrays.stream( Aircraft.Status.values() ).map( c -> new ReactOption( c.name().toLowerCase(), c.getName() ) ).toList(), HttpStatus.OK );
 	}
 
 	@GetMapping( path = ApiPath.AIRCRAFT_TYPE )
@@ -29,22 +29,22 @@ public class LookupController {
 
 	@GetMapping( path = ApiPath.BATTERY_CONNECTOR )
 	ResponseEntity<List<ReactOption>> batteryConnector() {
-		return new ResponseEntity<>( Arrays.stream( BatteryConnector.values() ).map( c -> new ReactOption( c.name().toLowerCase(), c.getName() ) ).toList(), HttpStatus.OK );
+		return new ResponseEntity<>( Arrays.stream( Battery.Connector.values() ).map( c -> new ReactOption( c.name().toLowerCase(), c.getName() ) ).toList(), HttpStatus.OK );
 	}
 
 	@GetMapping( path = ApiPath.BATTERY_STATUS )
 	ResponseEntity<List<ReactOption>> batteryStatus() {
-		return new ResponseEntity<>( Arrays.stream( BatteryStatus.values() ).map( c -> new ReactOption( c.name().toLowerCase(), c.getName() ) ).toList(), HttpStatus.OK );
+		return new ResponseEntity<>( Arrays.stream( Battery.Status.values() ).map( c -> new ReactOption( c.name().toLowerCase(), c.getName() ) ).toList(), HttpStatus.OK );
 	}
 
 	@GetMapping( path = ApiPath.BATTERY_TYPE )
 	ResponseEntity<List<ReactOption>> batteryType() {
-		return new ResponseEntity<>( Arrays.stream( BatteryType.values() ).map( c -> new ReactOption( c.name().toLowerCase(), c.getName() ) ).toList(), HttpStatus.OK );
+		return new ResponseEntity<>( Arrays.stream( Battery.Chemistry.values() ).map( c -> new ReactOption( c.name().toLowerCase(), c.getName() ) ).toList(), HttpStatus.OK );
 	}
 
 	@GetMapping( path = ApiPath.GROUP_TYPE )
 	ResponseEntity<List<ReactOption>> groupType() {
-		return new ResponseEntity<>( Arrays.stream( GroupType.values() ).map( c -> new ReactOption( c.name().toLowerCase(), c.getName() ) ).toList(), HttpStatus.OK );
+		return new ResponseEntity<>( Arrays.stream( Group.Type.values() ).map( c -> new ReactOption( c.name().toLowerCase(), c.getName() ) ).toList(), HttpStatus.OK );
 	}
 
 	@GetMapping( path = ApiPath.SMS_CARRIERS )

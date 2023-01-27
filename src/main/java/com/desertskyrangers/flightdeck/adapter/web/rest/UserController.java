@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.PermitAll;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 //@RequestMapping( produces = "application/json" )
@@ -191,8 +190,8 @@ public class UserController extends BaseController {
 		// boolean not-airworthy only?
 		// string state filter?
 
-		Set<AircraftStatus> status = Set.of( AircraftStatus.PREFLIGHT, AircraftStatus.AIRWORTHY );
-		if( "unavailable".equals( filter ) ) status = Set.of( AircraftStatus.INOPERATIVE, AircraftStatus.DECOMMISSIONED, AircraftStatus.DESTROYED );
+		Set<Aircraft.Status> status = Set.of( Aircraft.Status.PREFLIGHT, Aircraft.Status.AIRWORTHY );
+		if( "unavailable".equals( filter ) ) status = Set.of( Aircraft.Status.INOPERATIVE, Aircraft.Status.DECOMMISSIONED, Aircraft.Status.DESTROYED );
 
 		try {
 			User user = getRequester( authentication );
@@ -216,8 +215,8 @@ public class UserController extends BaseController {
 	) {
 		List<String> messages = new ArrayList<>();
 
-		Set<BatteryStatus> status = Set.of( BatteryStatus.NEW, BatteryStatus.AVAILABLE );
-		if( "unavailable".equals( filter ) ) status = Set.of( BatteryStatus.DESTROYED );
+		Set<Battery.Status> status = Set.of( Battery.Status.NEW, Battery.Status.AVAILABLE );
+		if( "unavailable".equals( filter ) ) status = Set.of( Battery.Status.DESTROYED );
 
 		try {
 			User user = getRequester( authentication );
@@ -279,9 +278,9 @@ public class UserController extends BaseController {
 	) {
 		List<String> messages = new ArrayList<>();
 
-		Set<LocationStatus> status = Set.of( LocationStatus.ACTIVE );
-		if( "inactive".equals( filter ) ) status = Set.of( LocationStatus.REMOVED );
-		if( LocationStatus.REMOVED.name().toLowerCase().equals( filter ) ) status = Set.of( LocationStatus.REMOVED );
+		Set<Location.Status> status = Set.of( Location.Status.ACTIVE );
+		if( "inactive".equals( filter ) ) status = Set.of( Location.Status.REMOVED );
+		if( Location.Status.REMOVED.name().toLowerCase().equals( filter ) ) status = Set.of( Location.Status.REMOVED );
 
 		try {
 			User user = getRequester( authentication );
@@ -381,14 +380,14 @@ public class UserController extends BaseController {
 		List<String> messages = new ArrayList<>();
 		if( Uuid.isNotValid( userId ) ) messages.add( "Invalid user ID" );
 		if( Uuid.isNotValid( groupId ) ) messages.add( "Invalid group ID" );
-		if( MemberStatus.isNotValid( statusKey ) ) messages.add( "Invalid membership status" );
+		if( Member.Status.isNotValid( statusKey ) ) messages.add( "Invalid membership status" );
 		if( !messages.isEmpty() ) return new ResponseEntity<>( new ReactMembershipPageResponse().setMessages( messages ), HttpStatus.BAD_REQUEST );
 
 		try {
 			User requester = getRequester( authentication );
 			User user = userServices.find( UUID.fromString( userId ) ).orElse( null );
 			Group group = groupServices.find( UUID.fromString( groupId ) ).orElse( null );
-			MemberStatus status = MemberStatus.valueOf( statusKey.toUpperCase() );
+			Member.Status status = Member.Status.valueOf( statusKey.toUpperCase() );
 			if( user == null ) {
 				messages.add( "User not found" );
 				log.warn( "User not found id=" + userId );

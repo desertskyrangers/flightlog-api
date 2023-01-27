@@ -30,7 +30,7 @@ public class LookupControllerTest {
 
 	@Test
 	void testGetAircraftStatuses() throws Exception {
-		List<ReactOption> response = Arrays.stream( AircraftStatus.values() ).map( c -> new ReactOption( c.name().toLowerCase(), c.getName() ) ).toList();
+		List<ReactOption> response = Arrays.stream( Aircraft.Status.values() ).map( c -> new ReactOption( c.name().toLowerCase(), c.getName() ) ).toList();
 		this.mockMvc.perform( MockMvcRequestBuilders.get( ApiPath.AIRCRAFT_STATUS ) ).andExpect( status().isOk() ).andExpect( content().json( Json.stringify( response ), true ) );
 	}
 
@@ -42,25 +42,25 @@ public class LookupControllerTest {
 
 	@Test
 	void testGetBatteryConnectors() throws Exception {
-		List<ReactOption> response = Arrays.stream( BatteryConnector.values() ).map( c -> new ReactOption( c.name().toLowerCase(), c.getName() ) ).toList();
+		List<ReactOption> response = Arrays.stream( Battery.Connector.values() ).map( c -> new ReactOption( c.name().toLowerCase(), c.getName() ) ).toList();
 		this.mockMvc.perform( MockMvcRequestBuilders.get( ApiPath.BATTERY_CONNECTOR ) ).andExpect( status().isOk() ).andExpect( content().json( Json.stringify( response ), true ) );
 	}
 
 	@Test
 	void testGetBatteryStatuses() throws Exception {
-		List<ReactOption> response = Arrays.stream( BatteryStatus.values() ).map( c -> new ReactOption( c.name().toLowerCase(), c.getName() ) ).toList();
+		List<ReactOption> response = Arrays.stream( Battery.Status.values() ).map( c -> new ReactOption( c.name().toLowerCase(), c.getName() ) ).toList();
 		this.mockMvc.perform( MockMvcRequestBuilders.get( ApiPath.BATTERY_STATUS ) ).andExpect( status().isOk() ).andExpect( content().json( Json.stringify( response ), true ) );
 	}
 
 	@Test
 	void testGetBatteryTypes() throws Exception {
-		List<ReactOption> response = Arrays.stream( BatteryType.values() ).map( c -> new ReactOption( c.name().toLowerCase(), c.getName() ) ).toList();
+		List<ReactOption> response = Arrays.stream( Battery.Chemistry.values() ).map( c -> new ReactOption( c.name().toLowerCase(), c.getName() ) ).toList();
 		this.mockMvc.perform( get( ApiPath.BATTERY_TYPE ) ).andExpect( status().isOk() ).andExpect( content().json( Json.stringify( response ), true ) );
 	}
 
 	@Test
 	void testGetGroupTypes() throws Exception {
-		List<ReactOption> response = Arrays.stream( GroupType.values() ).map( c -> new ReactOption( c.name().toLowerCase(), c.getName() ) ).toList();
+		List<ReactOption> response = Arrays.stream( Group.Type.values() ).map( c -> new ReactOption( c.name().toLowerCase(), c.getName() ) ).toList();
 		this.mockMvc.perform( get( ApiPath.GROUP_TYPE ) ).andExpect( status().isOk() ).andExpect( content().json( Json.stringify( response ), true ) );
 	}
 

@@ -34,26 +34,26 @@ public class MembershipControllerTest extends BaseControllerTest {
 	void testUpdateMembership() throws Exception {
 		// given
 		User user = statePersisting.upsert( createTestUser() );
-		Group group = statePersisting.upsert( createTestGroup( "Group A", GroupType.CLUB ) );
-		statePersisting.upsert( new Member().user( getMockUser() ).group( group ).status( MemberStatus.OWNER ) );
-		Member membership = statePersisting.upsert( new Member().user( user ).group( group ).status( MemberStatus.REQUESTED ) );
+		Group group = statePersisting.upsert( createTestGroup( "Group A", Group.Type.CLUB ) );
+		statePersisting.upsert( new Member().user( getMockUser() ).group( group ).status( Member.Status.OWNER ) );
+		Member membership = statePersisting.upsert( new Member().user( user ).group( group ).status( Member.Status.REQUESTED ) );
 
 		// when
-		Map<String, String> request = Map.of( "id", membership.id().toString(), "status", MemberStatus.ACCEPTED.name().toLowerCase() );
+		Map<String, String> request = Map.of( "id", membership.id().toString(), "status", Member.Status.ACCEPTED.name().toLowerCase() );
 		this.mockMvc.perform( put( ApiPath.MEMBERSHIP ).with( jwt() ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
 
 		// then
 		Optional<Member> optional = stateRetrieving.findMembership( membership.id() );
 		assertThat( optional.isPresent() ).isTrue();
-		assertThat( optional.get().status() ).isEqualTo( MemberStatus.ACCEPTED );
+		assertThat( optional.get().status() ).isEqualTo( Member.Status.ACCEPTED );
 	}
 
 	@Test
 	void testUpdateMembershipWithBadRequest() throws Exception {
 		// given
 		User user = getMockUser();
-		Group group = statePersisting.upsert( createTestGroup( "Group A", GroupType.CLUB ) );
-		Member membership = statePersisting.upsert( new Member().user( user ).group( group ).status( MemberStatus.REQUESTED ) );
+		Group group = statePersisting.upsert( createTestGroup( "Group A", Group.Type.CLUB ) );
+		Member membership = statePersisting.upsert( new Member().user( user ).group( group ).status( Member.Status.REQUESTED ) );
 
 		// when
 		Map<String, String> request = new HashMap<>();
@@ -66,12 +66,12 @@ public class MembershipControllerTest extends BaseControllerTest {
 	void testUpdateMembership_UserCannotAcceptTheirOwnMembershipRequest() throws Exception {
 		// given
 		User user = statePersisting.upsert( createTestUser() );
-		Group group = statePersisting.upsert( createTestGroup( "Group A", GroupType.CLUB ) );
-		statePersisting.upsert( new Member().user( user ).group( group ).status( MemberStatus.OWNER ) );
-		Member membership = statePersisting.upsert( new Member().user( getMockUser() ).group( group ).status( MemberStatus.REQUESTED ) );
+		Group group = statePersisting.upsert( createTestGroup( "Group A", Group.Type.CLUB ) );
+		statePersisting.upsert( new Member().user( user ).group( group ).status( Member.Status.OWNER ) );
+		Member membership = statePersisting.upsert( new Member().user( getMockUser() ).group( group ).status( Member.Status.REQUESTED ) );
 
 		// when
-		Map<String, String> request = Map.of( "id", membership.id().toString(), "status", MemberStatus.ACCEPTED.name().toLowerCase() );
+		Map<String, String> request = Map.of( "id", membership.id().toString(), "status", Member.Status.ACCEPTED.name().toLowerCase() );
 		this.mockMvc.perform( put( ApiPath.MEMBERSHIP ).with( jwt() ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isUnauthorized() ).andReturn();
 	}
 
@@ -79,12 +79,12 @@ public class MembershipControllerTest extends BaseControllerTest {
 	void testUpdateMembership_UserCanAcceptTheirOwnMembershipInvitation() throws Exception {
 		// given
 		User user = statePersisting.upsert( createTestUser() );
-		Group group = statePersisting.upsert( createTestGroup( "Group A", GroupType.CLUB ) );
-		statePersisting.upsert( new Member().user( user ).group( group ).status( MemberStatus.OWNER ) );
-		Member membership = statePersisting.upsert( new Member().user( getMockUser() ).group( group ).status( MemberStatus.INVITED ) );
+		Group group = statePersisting.upsert( createTestGroup( "Group A", Group.Type.CLUB ) );
+		statePersisting.upsert( new Member().user( user ).group( group ).status( Member.Status.OWNER ) );
+		Member membership = statePersisting.upsert( new Member().user( getMockUser() ).group( group ).status( Member.Status.INVITED ) );
 
 		// when
-		Map<String, String> request = Map.of( "id", membership.id().toString(), "status", MemberStatus.ACCEPTED.name().toLowerCase() );
+		Map<String, String> request = Map.of( "id", membership.id().toString(), "status", Member.Status.ACCEPTED.name().toLowerCase() );
 		this.mockMvc.perform( put( ApiPath.MEMBERSHIP ).with( jwt() ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
 	}
 
@@ -106,8 +106,8 @@ public class MembershipControllerTest extends BaseControllerTest {
 	void testCancelMembership() throws Exception {
 		// given
 		User user = getMockUser();
-		Group group = statePersisting.upsert( createTestGroup( "Group A", GroupType.CLUB ) );
-		Member membership = statePersisting.upsert( new Member().user( user ).group( group ).status( MemberStatus.REQUESTED ) );
+		Group group = statePersisting.upsert( createTestGroup( "Group A", Group.Type.CLUB ) );
+		Member membership = statePersisting.upsert( new Member().user( user ).group( group ).status( Member.Status.REQUESTED ) );
 
 		// when
 		Map<String, String> request = new HashMap<>();
@@ -124,8 +124,8 @@ public class MembershipControllerTest extends BaseControllerTest {
 	void testCancelMembershipWithBadRequest() throws Exception {
 		// given
 		User user = getMockUser();
-		Group group = statePersisting.upsert( createTestGroup( "Group A", GroupType.CLUB ) );
-		statePersisting.upsert( new Member().user( user ).group( group ).status( MemberStatus.REQUESTED ) );
+		Group group = statePersisting.upsert( createTestGroup( "Group A", Group.Type.CLUB ) );
+		statePersisting.upsert( new Member().user( user ).group( group ).status( Member.Status.REQUESTED ) );
 
 		// when
 		Map<String, String> request = new HashMap<>();

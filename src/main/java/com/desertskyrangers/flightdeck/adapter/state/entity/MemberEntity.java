@@ -82,7 +82,7 @@ public class MemberEntity {
 		Member member = new Member();
 
 		member.id( entity.getId() );
-		member.status( MemberStatus.valueOf( entity.getStatus().toUpperCase() ) );
+		member.status( Member.Status.valueOf( entity.getStatus().toUpperCase() ) );
 
 		return member;
 	}

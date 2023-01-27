@@ -3,8 +3,6 @@ package com.desertskyrangers.flightdeck.adapter.state.entity;
 import com.desertskyrangers.flightdeck.core.model.*;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.util.HashMap;
@@ -87,7 +85,7 @@ public class LocationEntity {
 		location.longitude( entity.getLongitude() );
 		location.name( entity.getName() );
 		location.size( entity.getSize() );
-		location.status( LocationStatus.valueOf( entity.getStatus().toUpperCase() ) );
+		location.status( Location.Status.valueOf( entity.getStatus().toUpperCase() ) );
 
 		return location;
 	}

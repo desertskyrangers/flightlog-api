@@ -11,9 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -29,7 +27,7 @@ public class StatePersistingServiceTest extends BaseTest {
 	@Test
 	void testUpsertGroup() {
 		// when
-		Group expected = statePersisting.upsert( createTestGroup( "Test Club", GroupType.CLUB ) );
+		Group expected = statePersisting.upsert( createTestGroup( "Test Club", Group.Type.CLUB ) );
 
 		// then
 		GroupEntity actual = groupRepo.findById( expected.id() ).orElse( null );
@@ -40,7 +38,7 @@ public class StatePersistingServiceTest extends BaseTest {
 	@Test
 	void testRemoveGroup() {
 		// when
-		Group expected = statePersisting.upsert( createTestGroup( "Test Club", GroupType.CLUB ) );
+		Group expected = statePersisting.upsert( createTestGroup( "Test Club", Group.Type.CLUB ) );
 
 		// then
 		GroupEntity actual = groupRepo.findById( expected.id() ).orElse( null );

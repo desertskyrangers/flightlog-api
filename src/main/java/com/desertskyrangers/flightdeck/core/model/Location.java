@@ -11,7 +11,7 @@ public class Location {
 
 	public static final double DEFAULT_LOCATION_SIZE = 100;
 
-	public static final LocationStatus DEFAULT_LOCATION_STATUS = LocationStatus.ACTIVE;
+	public static final Status DEFAULT_LOCATION_STATUS = Status.ACTIVE;
 
 	// The average radius of the Earth in meters
 	// https://en.wikipedia.org/wiki/Earth_radius
@@ -42,7 +42,7 @@ public class Location {
 	 */
 	private double size = DEFAULT_LOCATION_SIZE;
 
-	private LocationStatus status = DEFAULT_LOCATION_STATUS;
+	private Status status = DEFAULT_LOCATION_STATUS;
 
 	// TODO Can locations have types? Which ones?
 
@@ -102,6 +102,27 @@ public class Location {
 	 */
 	public static double degreesToMetersOnEarth( double distance ) {
 		return Math.sin( distance * RADIANS_PER_DEGREE ) * rE;
+	}
+
+	public enum Status {
+
+		ACTIVE,
+
+		REMOVED;
+
+		public static boolean isValid( String string ) {
+			try {
+				valueOf( string.toUpperCase() );
+				return true;
+			} catch( NullPointerException | IllegalArgumentException exception ) {
+				return false;
+			}
+		}
+
+		public static boolean isNotValid( String string ) {
+			return !isValid( string );
+		}
+
 	}
 
 }

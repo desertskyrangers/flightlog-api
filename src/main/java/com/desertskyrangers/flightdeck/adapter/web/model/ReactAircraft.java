@@ -2,7 +2,6 @@ package com.desertskyrangers.flightdeck.adapter.web.model;
 
 import com.desertskyrangers.flightdeck.util.AppColor;
 import com.desertskyrangers.flightdeck.core.model.Aircraft;
-import com.desertskyrangers.flightdeck.core.model.AircraftStatus;
 import com.desertskyrangers.flightdeck.core.model.AircraftType;
 import com.desertskyrangers.flightdeck.core.model.OwnerType;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -86,7 +85,7 @@ public class ReactAircraft {
 		aircraft.type( AircraftType.valueOf( reactAircraft.getType().toUpperCase() ) );
 		aircraft.make( reactAircraft.getMake() );
 		aircraft.model( reactAircraft.getModel() );
-		aircraft.status( AircraftStatus.valueOf( reactAircraft.getStatus().toUpperCase() ) );
+		aircraft.status( Aircraft.Status.valueOf( reactAircraft.getStatus().toUpperCase() ) );
 		aircraft.nightLights( reactAircraft.getNightLights() != null && reactAircraft.getNightLights() );
 
 		aircraft.wingspan( reactAircraft.getWingspan() );

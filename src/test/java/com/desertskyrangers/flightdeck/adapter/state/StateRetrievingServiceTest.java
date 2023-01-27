@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -38,7 +37,7 @@ public class StateRetrievingServiceTest extends BaseTest {
 
 		GroupEntity group = new GroupEntity();
 		group.setId( UUID.randomUUID() );
-		group.setType( GroupType.GROUP.name().toLowerCase() );
+		group.setType( Group.Type.GROUP.name().toLowerCase() );
 		group.setName( "Test Group" );
 		//group.setOwner( owner );
 		//group.setMembers( Set.of( owner ) );
@@ -50,7 +49,7 @@ public class StateRetrievingServiceTest extends BaseTest {
 		// then
 		assertThat( actual ).isNotNull();
 		assertThat( actual.id() ).isEqualTo( group.getId() );
-		assertThat( actual.type() ).isEqualTo( GroupType.valueOf( group.getType().toUpperCase() ) );
+		assertThat( actual.type() ).isEqualTo( Group.Type.valueOf( group.getType().toUpperCase() ) );
 		//assertThat( actual.owner() ).isEqualTo( UserEntity.toUser( owner ) );
 		//assertThat( actual.members() ).containsAll( Set.of( UserEntity.toUser( owner ) ) );
 	}
@@ -71,8 +70,8 @@ public class StateRetrievingServiceTest extends BaseTest {
 	void testFindGroupsByOwner() {
 		// given
 		User owner = statePersisting.upsert( createTestUser( "betty", "betty@example.com" ) );
-		Group group = statePersisting.upsert( createTestGroup( "Test Group", GroupType.GROUP ) );
-		statePersisting.upsert( new Member().user( owner ).group( group ).status( MemberStatus.OWNER ) );
+		Group group = statePersisting.upsert( createTestGroup( "Test Group", Group.Type.GROUP ) );
+		statePersisting.upsert( new Member().user( owner ).group( group ).status( Member.Status.OWNER ) );
 
 		// when
 		Set<Group> groups = stateRetrieving.findGroupsByOwner( owner );
@@ -85,11 +84,11 @@ public class StateRetrievingServiceTest extends BaseTest {
 	void testFindAllAvailableGroups() {
 		// given
 		User jason = statePersisting.upsert( createTestUser( "jason", "jason@example.com" ) );
-		Group jasons = statePersisting.upsert( createTestGroup( "Jason's Group", GroupType.GROUP ) );
-		statePersisting.upsert( new Member().user( jason ).group( jasons ).status( MemberStatus.OWNER ) );
+		Group jasons = statePersisting.upsert( createTestGroup( "Jason's Group", Group.Type.GROUP ) );
+		statePersisting.upsert( new Member().user( jason ).group( jasons ).status( Member.Status.OWNER ) );
 		User becky = statePersisting.upsert( createTestUser( "becky", "becky@example.com" ) );
-		Group beckys = statePersisting.upsert( createTestGroup( "Becky's Group", GroupType.GROUP ) );
-		statePersisting.upsert( new Member().user( becky ).group( beckys ).status( MemberStatus.OWNER ) );
+		Group beckys = statePersisting.upsert( createTestGroup( "Becky's Group", Group.Type.GROUP ) );
+		statePersisting.upsert( new Member().user( becky ).group( beckys ).status( Member.Status.OWNER ) );
 
 		Set<Group> groups = stateRetrieving.findAllAvailableGroups( jason );
 

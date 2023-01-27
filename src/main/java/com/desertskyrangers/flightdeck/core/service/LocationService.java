@@ -1,23 +1,17 @@
 package com.desertskyrangers.flightdeck.core.service;
 
-import com.desertskyrangers.flightdeck.adapter.state.entity.LocationEntity;
-import com.desertskyrangers.flightdeck.adapter.state.entity.UserEntity;
-import com.desertskyrangers.flightdeck.adapter.state.repo.LocationRepo;
 import com.desertskyrangers.flightdeck.core.model.Location;
-import com.desertskyrangers.flightdeck.core.model.LocationStatus;
 import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.port.LocationServices;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
 import com.desertskyrangers.flightdeck.port.StateRetrieving;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -48,11 +42,11 @@ public class LocationService implements LocationServices {
 		return stateRetrieving.findLocationsByUser( user );
 	}
 
-	public Set<Location> findByUserAndStatus( User user, Set<LocationStatus> status ) {
+	public Set<Location> findByUserAndStatus( User user, Set<Location.Status> status ) {
 		return stateRetrieving.findLocationsByUserAndStatus( user, status );
 	}
 
-	public Page<Location> findPageByUserAndStatus( User user, Set<LocationStatus> status, int page, int size ) {
+	public Page<Location> findPageByUserAndStatus( User user, Set<Location.Status> status, int page, int size ) {
 		return stateRetrieving.findLocationsPageByUser( user, page, size );
 	}
 

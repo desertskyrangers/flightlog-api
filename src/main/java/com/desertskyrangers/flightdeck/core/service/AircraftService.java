@@ -50,11 +50,11 @@ public class AircraftService implements AircraftServices {
 		return stateRetrieving.findAircraftPageByOwner( owner, page, size );
 	}
 
-	public Page<Aircraft> findPageByOwnerAndStatus( UUID owner, Set<AircraftStatus> status, int page, int size ) {
+	public Page<Aircraft> findPageByOwnerAndStatus( UUID owner, Set<Aircraft.Status> status, int page, int size ) {
 		return stateRetrieving.findAircraftPageByOwnerAndStatus( owner, status, page, size );
 	}
 
-	public List<Aircraft> findAllByOwnerAndStatus( UUID owner, AircraftStatus status ) {
+	public List<Aircraft> findAllByOwnerAndStatus( UUID owner, Aircraft.Status status ) {
 		return stateRetrieving.findAircraftByOwnerAndStatus( owner, status );
 	}
 

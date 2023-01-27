@@ -96,7 +96,7 @@ public class DashboardService implements DashboardServices {
 		if( showAllAircraft ) {
 			aircraft = aircraftServices.findAllByOwner( user.id() );
 		} else {
-			aircraft = aircraftServices.findAllByOwnerAndStatus( user.id(), AircraftStatus.AIRWORTHY );
+			aircraft = aircraftServices.findAllByOwnerAndStatus( user.id(), Aircraft.Status.AIRWORTHY );
 		}
 
 		// Collect the aircraft statistics

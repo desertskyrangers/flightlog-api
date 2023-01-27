@@ -33,7 +33,8 @@ public class BatteryEntity {
 
 	private String status;
 
-	private String type;
+	@Column( name = "type" )
+	private String chemistry;
 
 	private int cells;
 
@@ -69,7 +70,7 @@ public class BatteryEntity {
 		entity.setModel( battery.model() );
 		if( battery.connector() != null ) entity.setConnector( battery.connector().name().toLowerCase() );
 		entity.setUnlistedConnector( battery.unlistedConnector() );
-		if( battery.type() != null ) entity.setType( battery.type().name().toLowerCase() );
+		if( battery.chemistry() != null ) entity.setChemistry( battery.chemistry().name().toLowerCase() );
 		entity.setCells( battery.cells() );
 		entity.setInitialCycles( battery.initialCycles() );
 		entity.setCycles( battery.cycles() );
@@ -90,12 +91,12 @@ public class BatteryEntity {
 
 		battery.id( entity.getId() );
 		battery.name( entity.getName() );
-		if( entity.getStatus() != null ) battery.status( BatteryStatus.valueOf( entity.getStatus().toUpperCase() ) );
+		if( entity.getStatus() != null ) battery.status( Battery.Status.valueOf( entity.getStatus().toUpperCase() ) );
 		battery.make( entity.getMake() );
 		battery.model( entity.getModel() );
-		if( entity.getConnector() != null ) battery.connector( BatteryConnector.valueOf( entity.getConnector().toUpperCase() ) );
+		if( entity.getConnector() != null ) battery.connector( Battery.Connector.valueOf( entity.getConnector().toUpperCase() ) );
 		battery.unlistedConnector( entity.getUnlistedConnector() );
-		if( entity.getType() != null ) battery.type( BatteryType.valueOf( entity.getType().toUpperCase() ) );
+		if( entity.getChemistry() != null ) battery.chemistry( Battery.Chemistry.valueOf( entity.getChemistry().toUpperCase() ) );
 		battery.cells( entity.getCells() );
 		battery.initialCycles( entity.getInitialCycles() );
 		battery.cycles( entity.getCycles() );

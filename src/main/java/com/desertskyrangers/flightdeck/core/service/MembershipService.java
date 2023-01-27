@@ -45,12 +45,12 @@ public class MembershipService implements MembershipServices {
 
 		// Is the member currently invited and accepting membership?
 		Member current = stateRetrieving.findMembership( member.group(), requester ).orElse( null );
-		boolean currentlyInvited = current != null && current.status() == MemberStatus.INVITED;
-		boolean memberAccepted = member.status() == MemberStatus.ACCEPTED;
+		boolean currentlyInvited = current != null && current.status() == Member.Status.INVITED;
+		boolean memberAccepted = member.status() == Member.Status.ACCEPTED;
 		boolean isAccepting = currentlyInvited && memberAccepted;
 
 		// Is the user requesting membership and not have an existing membership?
-		boolean memberRequested = member.status() == MemberStatus.REQUESTED;
+		boolean memberRequested = member.status() == Member.Status.REQUESTED;
 		boolean isRequesting = current == null && memberRequested;
 
 		if( isGroupOwner || isAccepting || isRequesting ) return statePersisting.upsert( member );
@@ -72,12 +72,12 @@ public class MembershipService implements MembershipServices {
 		return stateRetrieving.findMemberships( group );
 	}
 
-	public Member requestMembership( User requester, User user, Group group, MemberStatus status ) {
-		if( status == MemberStatus.INVITED ) {
+	public Member requestMembership( User requester, User user, Group group, Member.Status status ) {
+		if( status == Member.Status.INVITED ) {
 			Member member = upsert( requester, new Member().user( user ).group( group ).status( status ) );
 			createEmailInvitations( user, group ).forEach( humanInterface::email );
 			return member;
-		} else if( status == MemberStatus.REQUESTED ) {
+		} else if( status == Member.Status.REQUESTED ) {
 			Member member = upsert( requester, new Member().user( user ).group( group ).status( status ) );
 			createEmailMembershipRequests( user, group ).forEach( humanInterface::email );
 			return member;

@@ -56,7 +56,7 @@ dependencyManagement {
 }
 
 configurations {
-	all {
+	configureEach {
 		exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-xml'
 	}
 }

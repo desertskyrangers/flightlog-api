@@ -28,11 +28,11 @@ public class UserServiceTest extends BaseTest {
 		User kara = statePersisting.upsert( createTestUser( "kara", "kara@example.com" ) );
 		User paul = statePersisting.upsert( createTestUser( "paul", "paul@example.com" ) );
 		User sara = statePersisting.upsert( createTestUser( "sara", "sara@example.com" ) );
-		Group group = statePersisting.upsert( createTestGroup( "Test Group", GroupType.GROUP ) );
-		statePersisting.upsert( new Member().user( john ).group( group ).status( MemberStatus.OWNER ) );
-		statePersisting.upsert( new Member().user( kara ).group( group ).status( MemberStatus.REQUESTED ) );
-		statePersisting.upsert( new Member().user( paul ).group( group ).status( MemberStatus.REVOKED ) );
-		statePersisting.upsert( new Member().user( sara ).group( group ).status( MemberStatus.ACCEPTED ) );
+		Group group = statePersisting.upsert( createTestGroup( "Test Group", Group.Type.GROUP ) );
+		statePersisting.upsert( new Member().user( john ).group( group ).status( Member.Status.OWNER ) );
+		statePersisting.upsert( new Member().user( kara ).group( group ).status( Member.Status.REQUESTED ) );
+		statePersisting.upsert( new Member().user( paul ).group( group ).status( Member.Status.REVOKED ) );
+		statePersisting.upsert( new Member().user( sara ).group( group ).status( Member.Status.ACCEPTED ) );
 
 		// when
 		Set<User> users = userServices.findAllGroupPeers( john );
@@ -48,11 +48,11 @@ public class UserServiceTest extends BaseTest {
 		User kara = statePersisting.upsert( createTestUser( "kara", "kara@example.com" ) );
 		User paul = statePersisting.upsert( createTestUser( "paul", "paul@example.com" ) );
 		User sara = statePersisting.upsert( createTestUser( "sara", "sara@example.com" ) );
-		Group group = statePersisting.upsert( createTestGroup( "Test Group", GroupType.GROUP ) );
-		statePersisting.upsert( new Member().user( john ).group( group ).status( MemberStatus.OWNER ) );
-		statePersisting.upsert( new Member().user( kara ).group( group ).status( MemberStatus.REQUESTED ) );
-		statePersisting.upsert( new Member().user( paul ).group( group ).status( MemberStatus.REVOKED ) );
-		statePersisting.upsert( new Member().user( sara ).group( group ).status( MemberStatus.ACCEPTED ) );
+		Group group = statePersisting.upsert( createTestGroup( "Test Group", Group.Type.GROUP ) );
+		statePersisting.upsert( new Member().user( john ).group( group ).status( Member.Status.OWNER ) );
+		statePersisting.upsert( new Member().user( kara ).group( group ).status( Member.Status.REQUESTED ) );
+		statePersisting.upsert( new Member().user( paul ).group( group ).status( Member.Status.REVOKED ) );
+		statePersisting.upsert( new Member().user( sara ).group( group ).status( Member.Status.ACCEPTED ) );
 
 		// when
 		Set<User> users = userServices.findAllAcceptedGroupPeers( john );

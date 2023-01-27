@@ -13,9 +13,9 @@ public interface StateRetrieving {
 
 	Page<Aircraft> findAircraftPageByOwner( UUID owner, int page, int size );
 
-	Page<Aircraft> findAircraftPageByOwnerAndStatus( UUID owner, Set<AircraftStatus> status, int page, int size );
+	Page<Aircraft> findAircraftPageByOwnerAndStatus( UUID owner, Set<Aircraft.Status> status, int page, int size );
 
-	List<Aircraft> findAircraftByOwnerAndStatus( UUID id, AircraftStatus status );
+	List<Aircraft> findAircraftByOwnerAndStatus( UUID id, Aircraft.Status status );
 
 	List<Aircraft> findAllAircraft();
 
@@ -25,7 +25,7 @@ public interface StateRetrieving {
 
 	Page<Battery> findBatteriesPageByOwner( UUID id, int page, int size );
 
-	Page<Battery> findBatteriesPageByOwnerAndStatus( UUID owner, Set<BatteryStatus> status, int page, int size );
+	Page<Battery> findBatteriesPageByOwnerAndStatus( UUID owner, Set<Battery.Status> status, int page, int size );
 
 	List<Battery> findAllBatteries();
 
@@ -78,7 +78,7 @@ public interface StateRetrieving {
 	Optional<Location> findLocation( UUID id );
 
 	Set<Location> findLocationsByUser( User user );
-	Set<Location> findLocationsByUserAndStatus( User user, Set<LocationStatus> status );
+	Set<Location> findLocationsByUserAndStatus( User user, Set<Location.Status> status );
 
 	Page<Location> findLocationsPageByUser( User user, int page, int size );
 

@@ -2,9 +2,7 @@ package com.desertskyrangers.flightdeck.port;
 
 import com.desertskyrangers.flightdeck.core.model.Group;
 import com.desertskyrangers.flightdeck.core.model.Member;
-import com.desertskyrangers.flightdeck.core.model.MemberStatus;
 import com.desertskyrangers.flightdeck.core.model.User;
-import org.springframework.data.domain.Page;
 
 import java.util.Optional;
 import java.util.Set;
@@ -22,7 +20,7 @@ public interface MembershipServices {
 
 	Set<Member> findMembershipsByGroup( Group group );
 
-	Member requestMembership( User requester, User user, Group group, MemberStatus status );
+	Member requestMembership( User requester, User user, Group group, Member.Status status );
 
 	Member cancelMembership( User requester, Member member );
 

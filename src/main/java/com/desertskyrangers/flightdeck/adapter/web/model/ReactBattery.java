@@ -57,7 +57,7 @@ public class ReactBattery {
 		if( battery.connector() != null ) result.setConnector( battery.connector().name().toLowerCase() );
 		if( battery.unlistedConnector() != null ) result.setUnlistedConnector( battery.unlistedConnector() );
 
-		if( battery.type() != null ) result.setType( battery.type().name().toLowerCase() );
+		if( battery.chemistry() != null ) result.setType( battery.chemistry().name().toLowerCase() );
 		result.setCells( battery.cells() );
 		result.setCycles( battery.cycles() );
 		result.setCapacity( battery.capacity() );
@@ -78,13 +78,13 @@ public class ReactBattery {
 
 		battery.id( UUID.fromString( reactBattery.getId() ) );
 		battery.name( reactBattery.getName() );
-		if( reactBattery.getStatus() != null ) battery.status( BatteryStatus.valueOf( reactBattery.getStatus().toUpperCase() ) );
+		if( reactBattery.getStatus() != null ) battery.status( Battery.Status.valueOf( reactBattery.getStatus().toUpperCase() ) );
 		battery.make( reactBattery.getMake() );
 		battery.model( reactBattery.getModel() );
-		if( reactBattery.getConnector() != null ) battery.connector( BatteryConnector.valueOf( reactBattery.getConnector().toUpperCase() ) );
+		if( reactBattery.getConnector() != null ) battery.connector( Battery.Connector.valueOf( reactBattery.getConnector().toUpperCase() ) );
 		battery.unlistedConnector( reactBattery.getUnlistedConnector() );
 
-		if( reactBattery.getType() != null ) battery.type( BatteryType.valueOf( reactBattery.getType().toUpperCase() ) );
+		if( reactBattery.getType() != null ) battery.chemistry( Battery.Chemistry.valueOf( reactBattery.getType().toUpperCase() ) );
 		battery.cells( reactBattery.getCells() );
 		battery.cycles( reactBattery.getCycles() );
 		battery.capacity( reactBattery.getCapacity() );

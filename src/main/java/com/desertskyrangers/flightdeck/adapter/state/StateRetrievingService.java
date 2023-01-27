@@ -81,13 +81,13 @@ public class StateRetrievingService implements StateRetrieving {
 	}
 
 	@Override
-	public Page<Aircraft> findAircraftPageByOwnerAndStatus( UUID owner, Set<AircraftStatus> status, int page, int size ) {
+	public Page<Aircraft> findAircraftPageByOwnerAndStatus( UUID owner, Set<Aircraft.Status> status, int page, int size ) {
 		Set<String> statusValues = status.stream().map( s -> s.name().toLowerCase() ).collect( Collectors.toSet() );
 		return aircraftRepo.findAircraftByOwnerAndStatusInOrderByName( owner, statusValues, PageRequest.of( page, size, Sort.Direction.ASC, "name" ) ).map( AircraftEntity::toAircraft );
 	}
 
 	@Override
-	public List<Aircraft> findAircraftByOwnerAndStatus( UUID id, AircraftStatus status ) {
+	public List<Aircraft> findAircraftByOwnerAndStatus( UUID id, Aircraft.Status status ) {
 		return convertAircraft( aircraftRepo.findAircraftByOwnerAndStatusOrderByName( id, status.name().toLowerCase() ) );
 	}
 
@@ -112,7 +112,7 @@ public class StateRetrievingService implements StateRetrieving {
 	}
 
 	@Override
-	public Page<Battery> findBatteriesPageByOwnerAndStatus( UUID owner, Set<BatteryStatus> status, int page, int size ) {
+	public Page<Battery> findBatteriesPageByOwnerAndStatus( UUID owner, Set<Battery.Status> status, int page, int size ) {
 		Set<String> statusValues = status.stream().map( s -> s.name().toLowerCase() ).collect( Collectors.toSet() );
 		return batteryRepo.findBatteryEntitiesByOwnerAndStatusInOrderByName( owner, statusValues, PageRequest.of( page, size ) ).map( BatteryEntity::toBattery );
 	}
@@ -227,17 +227,17 @@ public class StateRetrievingService implements StateRetrieving {
 
 	@Override
 	public Set<Group> findGroupsByOwner( User user ) {
-		return memberRepo.findAllByUser_IdAndStatus( user.id(), MemberStatus.OWNER.name().toLowerCase() ).stream().map( MemberEntity::getGroup ).map( GroupEntity::toGroup ).collect( Collectors.toSet() );
+		return memberRepo.findAllByUser_IdAndStatus( user.id(), Member.Status.OWNER.name().toLowerCase() ).stream().map( MemberEntity::getGroup ).map( GroupEntity::toGroup ).collect( Collectors.toSet() );
 	}
 
 	@Override
 	public Page<Group> findGroupsPageByOwner( User user, int page, int size ) {
-		return memberRepo.findAllByUser_IdAndStatus( user.id(), MemberStatus.OWNER.name().toLowerCase(), PageRequest.of( page, size ) ).map( MemberEntity::getGroup ).map( GroupEntity::toGroup );
+		return memberRepo.findAllByUser_IdAndStatus( user.id(), Member.Status.OWNER.name().toLowerCase(), PageRequest.of( page, size ) ).map( MemberEntity::getGroup ).map( GroupEntity::toGroup );
 	}
 
 	@Override
 	public Set<User> findGroupOwners( Group group ) {
-		return memberRepo.findAllByGroup_IdAndStatus( group.id(), MemberStatus.OWNER.name().toLowerCase() ).stream().map( MemberEntity::getUser ).map( UserEntity::toUser ).collect( Collectors.toSet() );
+		return memberRepo.findAllByGroup_IdAndStatus( group.id(), Member.Status.OWNER.name().toLowerCase() ).stream().map( MemberEntity::getUser ).map( UserEntity::toUser ).collect( Collectors.toSet() );
 	}
 
 	@Override
@@ -258,11 +258,11 @@ public class StateRetrievingService implements StateRetrieving {
 
 	@Override
 	public Set<Location> findLocationsByUser( User user ) {
-		return findLocationsByUserAndStatus( user, Set.of( LocationStatus.ACTIVE) );
+		return findLocationsByUserAndStatus( user, Set.of( Location.Status.ACTIVE) );
 	}
 
 	@Override
-	public Set<Location> findLocationsByUserAndStatus( User user, Set<LocationStatus> status ) {
+	public Set<Location> findLocationsByUserAndStatus( User user, Set<Location.Status> status ) {
 		return locationRepo
 			.findAllByUserAndStatusIn( UserEntity.from( user ), status.stream().map( s -> s.name().toLowerCase() ).collect( Collectors.toSet() ) )
 			.stream()
@@ -272,7 +272,7 @@ public class StateRetrievingService implements StateRetrieving {
 
 	@Override
 	public Page<Location> findLocationsPageByUser( User user, int page, int size ) {
-		return locationRepo.findAllPageByUserAndStatusIn( UserEntity.from( user ), Set.of( LocationStatus.ACTIVE.name().toLowerCase() ), PageRequest.of( page, size ) ).map( LocationEntity::toLocation );
+		return locationRepo.findAllPageByUserAndStatusIn( UserEntity.from( user ), Set.of( Location.Status.ACTIVE.name().toLowerCase() ), PageRequest.of( page, size ) ).map( LocationEntity::toLocation );
 	}
 
 	@Override

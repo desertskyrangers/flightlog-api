@@ -21,11 +21,11 @@ public class MembershipServiceTest extends BaseTest {
 		User owner = statePersisting.upsert( createTestUser( "olivia", "olivia@example.com" ) );
 		User invitee = statePersisting.upsert( createTestUser( "nate", "nate@example.com" ) );
 		statePersisting.upsert( createTestToken( invitee, invitee.username(), "" ) );
-		Group group = statePersisting.upsert( createTestGroup( "Group A", GroupType.CLUB ) );
-		statePersisting.upsert( createTestMember( owner, group, MemberStatus.OWNER ) );
+		Group group = statePersisting.upsert( createTestGroup( "Group A", Group.Type.CLUB ) );
+		statePersisting.upsert( createTestMember( owner, group, Member.Status.OWNER ) );
 
 		// when
-		Member invitation = membershipServices.requestMembership( owner, invitee, group, MemberStatus.INVITED );
+		Member invitation = membershipServices.requestMembership( owner, invitee, group, Member.Status.INVITED );
 
 		// then
 		Set<Member> memberships = membershipServices.findMembershipsByUser( invitee );
