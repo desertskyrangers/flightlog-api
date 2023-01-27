@@ -8,11 +8,11 @@ public class Award {
 
 	// Presenter?
 	//  Could be a group, person or none?
-	private Entity presenter;
+	private Actor presenter;
 
 	// Recipient
 	//  Could be a group, person or none?
-	private Entity recipient;
+	private Actor recipient;
 
 	// The flight that accomplished the recognition of the award
 	// What if we want to recognize birthday as an award???
@@ -29,7 +29,19 @@ public class Award {
 	// Categories
 	// - Flight records (personal, group, app?)
 	// - Milestones (first flight, first solo, flight ratings)
+	//   - First flight
+	//   - Fly the Pattern
+	//   - First solo
+	//   - First loop
+	//   - First roll
+	//   - First maiden
 	// - Achievements[flight and lifetime] (total hours, total flights)
+	//   - Lifetime flight time
+	//   - Lifetime flight count
+	//   - Daily flight time
+	//   - Daily flight count
+	//   - Single flight time
+	//   - Maiden flight count
 	// - Special(video, night flight, automated, fpv, cargo drop)
 
 	public enum Type {

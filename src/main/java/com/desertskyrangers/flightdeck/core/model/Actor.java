@@ -2,7 +2,7 @@ package com.desertskyrangers.flightdeck.core.model;
 
 import java.util.UUID;
 
-public class Entity {
+public class Actor {
 
 	private Type type;
 
