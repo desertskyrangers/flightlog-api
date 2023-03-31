@@ -1,12 +1,16 @@
 package com.desertskyrangers.flightdeck.adapter.state;
 
 import com.desertskyrangers.flightdeck.adapter.state.entity.*;
+import com.desertskyrangers.flightdeck.adapter.state.entity.mapper.*;
 import com.desertskyrangers.flightdeck.adapter.state.repo.*;
 import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.StateRetrieving;
 import com.desertskyrangers.flightdeck.util.Json;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -14,10 +18,13 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class StateRetrievingService implements StateRetrieving {
 
 	private final AircraftRepo aircraftRepo;
+
+	private final AwardRepo awardRepo;
 
 	private final BatteryRepo batteryRepo;
 
@@ -39,31 +46,31 @@ public class StateRetrievingService implements StateRetrieving {
 
 	private final VerificationRepo verificationRepo;
 
-	public StateRetrievingService(
-		AircraftRepo aircraftRepo,
-		BatteryRepo batteryRepo,
-		FlightRepo flightRepo,
-		GroupRepo groupRepo,
-		LocationRepo locationRepo,
-		MemberRepo memberRepo,
-		PreferencesRepo preferencesRepo,
-		ProjectionRepo projectionRepo,
-		UserRepo userRepo,
-		TokenRepo tokenRepo,
-		VerificationRepo verificationRepo
-	) {
-		this.aircraftRepo = aircraftRepo;
-		this.batteryRepo = batteryRepo;
-		this.flightRepo = flightRepo;
-		this.groupRepo = groupRepo;
-		this.locationRepo = locationRepo;
-		this.memberRepo = memberRepo;
-		this.preferencesRepo = preferencesRepo;
-		this.projectionRepo = projectionRepo;
-		this.userRepo = userRepo;
-		this.tokenRepo = tokenRepo;
-		this.verificationRepo = verificationRepo;
-	}
+	//	public StateRetrievingService(
+	//		AircraftRepo aircraftRepo,
+	//		BatteryRepo batteryRepo,
+	//		FlightRepo flightRepo,
+	//		GroupRepo groupRepo,
+	//		LocationRepo locationRepo,
+	//		MemberRepo memberRepo,
+	//		PreferencesRepo preferencesRepo,
+	//		ProjectionRepo projectionRepo,
+	//		UserRepo userRepo,
+	//		TokenRepo tokenRepo,
+	//		VerificationRepo verificationRepo
+	//	) {
+	//		this.aircraftRepo = aircraftRepo;
+	//		this.batteryRepo = batteryRepo;
+	//		this.flightRepo = flightRepo;
+	//		this.groupRepo = groupRepo;
+	//		this.locationRepo = locationRepo;
+	//		this.memberRepo = memberRepo;
+	//		this.preferencesRepo = preferencesRepo;
+	//		this.projectionRepo = projectionRepo;
+	//		this.userRepo = userRepo;
+	//		this.tokenRepo = tokenRepo;
+	//		this.verificationRepo = verificationRepo;
+	//	}
 
 	@Override
 	public Optional<Aircraft> findAircraft( UUID id ) {
@@ -99,6 +106,10 @@ public class StateRetrievingService implements StateRetrieving {
 	@Override
 	public Optional<Battery> findBattery( UUID id ) {
 		return batteryRepo.findById( id ).map( BatteryEntity::toBattery );
+	}
+
+	public Page<Award> findAwards( UUID id, int page, int size ) {
+		return awardRepo.findAwardEntitiesByRecipient( id, PageRequest.of( page, size ) ).map(AwardEntityMapper.INSTANCE::toAward);
 	}
 
 	@Override
@@ -258,7 +269,7 @@ public class StateRetrievingService implements StateRetrieving {
 
 	@Override
 	public Set<Location> findLocationsByUser( User user ) {
-		return findLocationsByUserAndStatus( user, Set.of( Location.Status.ACTIVE) );
+		return findLocationsByUserAndStatus( user, Set.of( Location.Status.ACTIVE ) );
 	}
 
 	@Override

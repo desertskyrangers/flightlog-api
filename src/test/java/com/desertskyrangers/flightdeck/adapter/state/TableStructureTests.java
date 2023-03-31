@@ -23,6 +23,7 @@ public class TableStructureTests {
 	void testTables() throws Exception {
 		Set<String> expected = new HashSet<>();
 		expected.add( "aircraft" );
+		expected.add( "award" );
 		expected.add( "battery" );
 		expected.add( "flight" );
 		expected.add( "flightbattery" );
@@ -67,6 +68,17 @@ public class TableStructureTests {
 		expected.add( "trimcolor" );
 
 		assertThat( getColumns( "aircraft" ) ).containsExactlyInAnyOrderElementsOf( expected );
+	}
+
+	@Test
+	void testAwardTable() throws Exception {
+		Set<String> expected = new HashSet<>();
+		expected.add( "id" );
+		expected.add( "recipienttype" );
+		expected.add( "recipient" );
+		expected.add( "data" );
+
+		assertThat( getColumns( "award" ) ).containsExactlyInAnyOrderElementsOf( expected );
 	}
 
 	@Test
@@ -204,8 +216,8 @@ public class TableStructureTests {
 		expected.add( "smsnumber" );
 		expected.add( "smscarrier" );
 		expected.add( "smsverified" );
-		expected.add( "dashboardid");
-		expected.add( "publicdashboardid");
+		expected.add( "dashboardid" );
+		expected.add( "publicdashboardid" );
 
 		assertThat( getColumns( "user" ) ).containsExactlyInAnyOrderElementsOf( expected );
 	}
