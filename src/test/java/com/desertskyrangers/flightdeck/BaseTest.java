@@ -1,9 +1,9 @@
 package com.desertskyrangers.flightdeck;
 
-import com.desertskyrangers.flightdeck.adapter.state.entity.GroupEntity;
-import com.desertskyrangers.flightdeck.adapter.state.entity.LocationEntity;
-import com.desertskyrangers.flightdeck.adapter.state.entity.MemberEntity;
-import com.desertskyrangers.flightdeck.adapter.state.entity.UserEntity;
+import com.desertskyrangers.flightdeck.adapter.store.entity.GroupEntity;
+import com.desertskyrangers.flightdeck.adapter.store.entity.LocationEntity;
+import com.desertskyrangers.flightdeck.adapter.store.entity.MemberEntity;
+import com.desertskyrangers.flightdeck.adapter.store.entity.UserEntity;
 import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.LocationServices;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
