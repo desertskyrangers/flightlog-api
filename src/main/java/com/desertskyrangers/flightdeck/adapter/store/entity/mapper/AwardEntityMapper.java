@@ -12,4 +12,6 @@ public interface AwardEntityMapper {
 
 	Award toAward( AwardEntity entity );
 
+	AwardEntity toEntity( Award award );
+
 }

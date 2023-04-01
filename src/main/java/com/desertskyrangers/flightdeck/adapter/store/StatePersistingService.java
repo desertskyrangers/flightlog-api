@@ -1,10 +1,12 @@
 package com.desertskyrangers.flightdeck.adapter.store;
 
 import com.desertskyrangers.flightdeck.adapter.store.entity.*;
+import com.desertskyrangers.flightdeck.adapter.store.entity.mapper.AwardEntityMapper;
 import com.desertskyrangers.flightdeck.adapter.store.repo.*;
 import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
 import com.desertskyrangers.flightdeck.util.Json;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -13,12 +15,15 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class StatePersistingService implements StatePersisting {
 
 	public static final String EMPTY_PROJECTION = "{}";
 
 	private final AircraftRepo aircraftRepo;
+
+	private final AwardRepo awardRepo;
 
 	private final BatteryRepo batteryRepo;
 
@@ -40,37 +45,40 @@ public class StatePersistingService implements StatePersisting {
 
 	private final VerificationRepo verificationRepo;
 
-	public StatePersistingService(
-		AircraftRepo aircraftRepo,
-		BatteryRepo batteryRepo,
-		FlightRepo flightRepo,
-		GroupRepo groupRepo,
-		LocationRepo locationRepo,
-		MemberRepo memberRepo,
-		PreferencesRepo preferencesRepo,
-		ProjectionRepo projectionRepo,
-		TokenRepo tokenRepo,
-		UserRepo userRepo,
-		VerificationRepo verificationRepo
-	) {
-		this.aircraftRepo = aircraftRepo;
-		this.batteryRepo = batteryRepo;
-		this.flightRepo = flightRepo;
-		this.groupRepo = groupRepo;
-		this.locationRepo = locationRepo;
-		this.memberRepo = memberRepo;
-		this.preferencesRepo = preferencesRepo;
-		this.projectionRepo = projectionRepo;
-		this.tokenRepo = tokenRepo;
-		this.userRepo = userRepo;
-		this.verificationRepo = verificationRepo;
-	}
+//	public StatePersistingService(
+//		AircraftRepo aircraftRepo,
+//		BatteryRepo batteryRepo,
+//		FlightRepo flightRepo,
+//		GroupRepo groupRepo,
+//		LocationRepo locationRepo,
+//		MemberRepo memberRepo,
+//		PreferencesRepo preferencesRepo,
+//		ProjectionRepo projectionRepo,
+//		TokenRepo tokenRepo,
+//		UserRepo userRepo,
+//		VerificationRepo verificationRepo
+//	) {
+//		this.aircraftRepo = aircraftRepo;
+//		this.batteryRepo = batteryRepo;
+//		this.flightRepo = flightRepo;
+//		this.groupRepo = groupRepo;
+//		this.locationRepo = locationRepo;
+//		this.memberRepo = memberRepo;
+//		this.preferencesRepo = preferencesRepo;
+//		this.projectionRepo = projectionRepo;
+//		this.tokenRepo = tokenRepo;
+//		this.userRepo = userRepo;
+//		this.verificationRepo = verificationRepo;
+//	}
 
 	@Override
 	public Aircraft upsert( Aircraft aircraft ) {
 		return AircraftEntity.toAircraft( aircraftRepo.save( AircraftEntity.from( aircraft ) ) );
 	}
 
+	public Award upsert(Award award ) {
+		return AwardEntityMapper.INSTANCE.toAward( awardRepo.save( AwardEntityMapper.INSTANCE.toEntity( award ) ) );
+	}
 	@Override
 	public void remove( Aircraft aircraft ) {
 		aircraftRepo.deleteById( aircraft.id() );
