@@ -109,7 +109,7 @@ public class StateRetrievingService implements StateRetrieving {
 	}
 
 	public Page<Award> findAwards( UUID id, int page, int size ) {
-		return awardRepo.findAwardEntitiesByRecipient( id, PageRequest.of( page, size ) ).map( AwardEntityMapper.INSTANCE::toAward);
+		return awardRepo.findAwardEntitiesByRecipientId( id, PageRequest.of( page, size ) ).map( AwardEntityMapper.INSTANCE::toAward);
 	}
 
 	@Override

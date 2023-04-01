@@ -13,6 +13,7 @@ import java.util.UUID;
 @Entity
 @Table( name = "award" )
 @Accessors( chain = true )
+@SuppressWarnings( { "JpaDataSourceORMInspection", "SpellCheckingInspection" } )
 public class AwardEntity {
 
 	@Id
@@ -22,9 +23,19 @@ public class AwardEntity {
 	@Column( name = "recipienttype" )
 	private String recipientType;
 
-	private UUID recipient;
+	@Column( name = "recipientid" )
+	private UUID recipientId;
 
-	// DATE
+	@Column( name = "presentertype" )
+	private String presenterType;
+
+	@Column( name = "presenterid" )
+	private UUID presenterId;
+
+	@Column( name = "earneddate")
+	private Long earnedDate;
+
+	private String description;
 
 	private String data;
 

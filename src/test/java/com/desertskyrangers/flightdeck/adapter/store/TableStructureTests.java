@@ -75,7 +75,11 @@ public class TableStructureTests {
 		Set<String> expected = new HashSet<>();
 		expected.add( "id" );
 		expected.add( "recipienttype" );
-		expected.add( "recipient" );
+		expected.add( "recipientid" );
+		expected.add( "presentertype" );
+		expected.add( "presenterid" );
+		expected.add( "earneddate" );
+		expected.add( "description" );
 		expected.add( "data" );
 
 		assertThat( getColumns( "award" ) ).containsExactlyInAnyOrderElementsOf( expected );
