@@ -9,7 +9,7 @@ import com.desertskyrangers.flightdeck.port.StateRetrieving;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.UUID;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class AwardServiceTest extends BaseTest {
 
@@ -27,8 +27,8 @@ public class AwardServiceTest extends BaseTest {
 		User user = statePersisting.upsert( createTestUser() );
 		Flight flight = statePersisting.upsert( createTestFlight( user ) );
 
-		System.err.println( "Flight count=" + stateRetrieving.findAllFlights().size() );
-		awardServices.getAwards( UUID.randomUUID() );
+		assertThat( stateRetrieving.findAllFlights().size() ).isEqualTo( 1 );
+		assertThat( awardServices.getAwards( user.id() ).getTotalElements() ).isEqualTo( 1 );
 	}
 
 }
