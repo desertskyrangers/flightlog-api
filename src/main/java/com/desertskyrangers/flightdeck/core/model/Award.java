@@ -68,6 +68,9 @@ public class Award {
 	// - Easter Eggs
 	//   - PI - Flight time is 3:14
 	//   - PI Date - Flight took place on PI day 3/14
+	// - Service milestones
+	//   - Group positions
+	//   - Special service award
 	// - Special(video, night flight, automated, fpv, cargo drop)
 
 	public enum Type {

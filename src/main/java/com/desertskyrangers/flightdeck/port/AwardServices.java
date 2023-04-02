@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface AwardServices {
 
-	Page<Award> getAwards( UUID id );
+	Page<Award> getAwards( UUID id, int page, int size );
 
 	void checkForAwards( Flight flight );
 

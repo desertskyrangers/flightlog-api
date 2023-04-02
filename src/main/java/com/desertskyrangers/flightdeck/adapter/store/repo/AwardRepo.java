@@ -9,6 +9,6 @@ import java.util.UUID;
 
 public interface AwardRepo extends JpaRepository<AwardEntity, UUID> {
 
-	Page<AwardEntity> findAwardEntitiesByRecipientId( UUID id, Pageable pageable );
+	Page<AwardEntity> findByRecipientId( UUID id, Pageable pageable );
 
 }

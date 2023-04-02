@@ -16,6 +16,18 @@ public class Actor {
 
 	private Type type;
 
+	public Actor() {}
+
+	public Actor( User user ) {
+		setType( Type.USER );
+		setId( user.id() );
+	}
+
+	public Actor( Group group ) {
+		setType( Type.ORG );
+		setId( group.id() );
+	}
+
 	public boolean isNone() {
 		return Objects.equals( id, NONE.id );
 	}

@@ -4,8 +4,14 @@ import java.util.Set;
 
 public class Awards {
 
-	Set<AwardType> getAwardTypes() {
-		return Set.of();
+	private static final Set<AwardType> types;
+
+	static {
+		types = Set.of( new EasterEggPiSecondsFlightTimeAward(), new EasterEggPiMinuteSecondFlightTimeAward() );
+	}
+
+	public static Set<AwardType> getAwardTypes() {
+		return types;
 	}
 
 }
