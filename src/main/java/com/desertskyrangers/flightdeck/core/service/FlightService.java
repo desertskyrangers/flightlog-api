@@ -4,12 +4,9 @@ import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,6 +40,11 @@ public class FlightService implements FlightServices {
 
 	public void setDashboardServices( DashboardServices dashboardServices ) {
 		this.dashboardServices = dashboardServices;
+	}
+
+	@Override
+	public List<Flight> findAll() {
+		return stateRetrieving.findAllFlights();
 	}
 
 	@Override

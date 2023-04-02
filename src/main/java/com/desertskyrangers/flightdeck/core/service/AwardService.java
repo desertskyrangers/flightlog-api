@@ -1,20 +1,24 @@
 package com.desertskyrangers.flightdeck.core.service;
 
 import com.desertskyrangers.flightdeck.core.model.Award;
-import com.desertskyrangers.flightdeck.core.model.Battery;
+import com.desertskyrangers.flightdeck.core.model.Flight;
 import com.desertskyrangers.flightdeck.core.model.Group;
 import com.desertskyrangers.flightdeck.core.model.User;
+import com.desertskyrangers.flightdeck.port.AwardServices;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
-public class AwardService {
+public class AwardService implements AwardServices {
 
 	public Page<Award> getAwards( UUID id ) {
 		return Page.empty();
+	}
+
+	public void checkForAwards( Flight flight ) {
+
 	}
 
 	public void checkForAwards( User user ) {

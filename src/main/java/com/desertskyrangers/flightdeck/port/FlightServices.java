@@ -15,6 +15,8 @@ public interface FlightServices {
 
 	void setDashboardServices( DashboardServices dashboardServices );
 
+	List<Flight> findAll();
+
 	Optional<Flight> find( UUID id );
 
 	List<Flight> findByPilot( User pilot );
