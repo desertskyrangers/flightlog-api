@@ -83,7 +83,7 @@ public class HumanInterfaceService implements HumanInterface {
 		message.numbers().stream().map( HumanInterfaceService::e164Format ).forEach( n -> {
 			try {
 				Message twilioMessage = Message.creator( new PhoneNumber( n ), new PhoneNumber( from ), message.content() ).create();
-				log.debug( "SMS message sent to={} sid={}}", n, twilioMessage.getSid() );
+				log.debug( "SMS message sent to={} sid={}", n, twilioMessage.getSid() );
 			} catch( Exception exception ) {
 				log.warn( "Unable to send message to={}", n );
 			}
