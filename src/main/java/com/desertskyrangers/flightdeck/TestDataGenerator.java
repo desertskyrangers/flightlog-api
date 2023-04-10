@@ -1,7 +1,7 @@
 package com.desertskyrangers.flightdeck;
 
-import com.desertskyrangers.flightdeck.adapter.state.entity.LocationEntity;
-import com.desertskyrangers.flightdeck.adapter.state.repo.LocationRepo;
+import com.desertskyrangers.flightdeck.adapter.store.entity.LocationEntity;
+import com.desertskyrangers.flightdeck.adapter.store.repo.LocationRepo;
 import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.*;
 import com.desertskyrangers.flightdeck.util.AppColor;
