@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -184,7 +185,8 @@ public class FlightService implements FlightServices {
 		updateMetrics( flight, Optional.empty() );
 	}
 
-	private void updateMetrics( Flight flight, Optional<Flight> prior ) {
+	@Async
+	protected void updateMetrics( Flight flight, Optional<Flight> prior ) {
 		// If the aircraft was changed, the old aircraft data also needs to be updated
 		prior.ifPresent( value -> aircraftServices.updateFlightData( value.aircraft() ) );
 
