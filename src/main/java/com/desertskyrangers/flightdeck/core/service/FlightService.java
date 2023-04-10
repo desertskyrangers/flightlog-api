@@ -3,6 +3,7 @@ package com.desertskyrangers.flightdeck.core.service;
 import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.*;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.stat.Statistics;
 import org.springframework.data.domain.Page;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -95,10 +96,19 @@ public class FlightService implements FlightServices {
 		return upsert( flight );
 	}
 
+	private ThreadLocal<Long> start = new ThreadLocal<>();
+
+	private final long now() {
+		return System.currentTimeMillis();
+	}
+
 	@Override
 	public Flight upsert( Flight flight ) {
+		start.set( now() );
 		Optional<Flight> prior = stateRetrieving.findFlight( flight.id() );
+		log.info( "Time to retrieve prior flight {}", start.get() - now() );
 		statePersisting.upsert( flight );
+		log.info( "Time to update current flight {}", start.get() - now() );
 		updateMetrics( flight, prior );
 		return flight;
 	}
@@ -190,16 +200,22 @@ public class FlightService implements FlightServices {
 	@Async
 	protected void updateMetrics( Flight flight, Optional<Flight> prior ) {
 		// If the aircraft was changed, the old aircraft data also needs to be updated
-		prior.ifPresent( value -> aircraftServices.updateFlightData( value.aircraft() ) );
+		prior.ifPresent( value -> {
+			aircraftServices.updateFlightData( value.aircraft() );
+			log.info( "Time to update prior flight data {}", start.get() - now() );
+		} );
 
 		// Update aircraft flight data
 		aircraftServices.updateFlightData( flight.aircraft() );
+		log.info( "Time to update current flight data {}", start.get() - now() );
 
 		// Update battery flight data
 		flight.batteries().forEach( b -> batteryServices.updateFlightData( b ) );
+		log.info( "Time to update current battery data {}", start.get() - now() );
 
 		// Update dashboards
 		updateDashboards( flight );
+		log.info( "Time to update dashboards {}", start.get() - now() );
 	}
 
 	private void updateDashboards( Flight flight ) {
