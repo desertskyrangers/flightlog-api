@@ -3,12 +3,12 @@ package com.desertskyrangers.flightdeck.core.service;
 import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.*;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.stat.Statistics;
 import org.springframework.data.domain.Page;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
@@ -193,12 +193,13 @@ public class FlightService implements FlightServices {
 		return flights;
 	}
 
-	private void updateMetrics( Flight flight ) {
-		updateMetrics( flight, Optional.empty() );
+	@Async
+	public CompletableFuture<Void> updateMetrics( Flight flight ) {
+		return updateMetrics( flight, Optional.empty() );
 	}
 
 	@Async
-	protected void updateMetrics( Flight flight, Optional<Flight> prior ) {
+	public CompletableFuture<Void> updateMetrics( Flight flight, Optional<Flight> prior ) {
 		// If the aircraft was changed, the old aircraft data also needs to be updated
 		prior.ifPresent( value -> {
 			aircraftServices.updateFlightData( value.aircraft() );
@@ -216,6 +217,8 @@ public class FlightService implements FlightServices {
 		// Update dashboards
 		updateDashboards( flight );
 		log.info( "Time to update dashboards {}", start.get() - now() );
+
+		return CompletableFuture.completedFuture( null );
 	}
 
 	private void updateDashboards( Flight flight ) {
