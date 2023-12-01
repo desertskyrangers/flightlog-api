@@ -4,7 +4,7 @@ import com.desertskyrangers.flightdeck.core.model.*;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;

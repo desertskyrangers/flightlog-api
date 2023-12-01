@@ -13,13 +13,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Data
 @Entity
-@Table( name = "user" )
+@Table( name = "\"user\"" )
 @Slf4j
 public class UserEntity {
 
@@ -83,7 +83,7 @@ public class UserEntity {
 	@ToString.Exclude()
 	private Set<GroupEntity> groups = new HashSet<>();
 
-	@OneToMany( mappedBy = "user", fetch = FetchType.EAGER )
+	@OneToMany( mappedBy = "user", fetch = FetchType.EAGER, orphanRemoval = true )
 	@EqualsAndHashCode.Exclude
 	@ToString.Exclude()
 	private Set<MemberEntity> memberships = new HashSet<>();

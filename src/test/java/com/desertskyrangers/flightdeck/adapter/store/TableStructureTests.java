@@ -223,7 +223,7 @@ public class TableStructureTests {
 		expected.add( "dashboardid" );
 		expected.add( "publicdashboardid" );
 
-		assertThat( getColumns( "user" ) ).containsExactlyInAnyOrderElementsOf( expected );
+		assertThat( getColumns( "\"user\"" ) ).containsExactlyInAnyOrderElementsOf( expected );
 	}
 
 	@Test

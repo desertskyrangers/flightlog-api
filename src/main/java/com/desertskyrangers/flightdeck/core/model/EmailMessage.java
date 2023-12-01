@@ -1,10 +1,10 @@
 package com.desertskyrangers.flightdeck.core.model;
 
+import jakarta.mail.internet.InternetAddress;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.mail.internet.InternetAddress;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
