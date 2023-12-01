@@ -12,7 +12,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-public class JwtTokenProviderTest {
+class JwtTokenProviderTest {
 
 	@Autowired
 	private JwtTokenProvider tokenProvider;
@@ -24,17 +24,17 @@ public class JwtTokenProviderTest {
 		Authentication authentication = new TestingAuthenticationToken( "username", "password", "TESTER" );
 		boolean remember = false;
 		long timestamp = System.currentTimeMillis();
-		int expiration = (int)(timestamp / 1000 + tokenProvider.getJwtValidityInSeconds());
+		long expiration = timestamp / 1000 + tokenProvider.getJwtValidityInSeconds();
 
 		// when
 		String token = tokenProvider.createToken( account, authentication, remember, timestamp );
 
 		// then
 		Map<String, Object> claims = tokenProvider.parse( token );
-		assertThat( claims.get( JwtToken.USER_ID_CLAIM_KEY ) ).isEqualTo( account.id().toString() );
-		assertThat( claims.get( JwtToken.SUBJECT_CLAIM_KEY ) ).isEqualTo( "username" );
-		assertThat( claims.get( JwtToken.AUTHORITIES_CLAIM_KEY ) ).isEqualTo( "TESTER" );
-		assertThat( claims.get( JwtToken.EXPIRES_CLAIM_KEY ) ).isEqualTo( expiration );
+		assertThat( claims ).containsEntry( JwtToken.USER_ID_CLAIM_KEY, account.id().toString() );
+		assertThat( claims ).containsEntry( JwtToken.SUBJECT_CLAIM_KEY, "username" );
+		assertThat( claims ).containsEntry( JwtToken.AUTHORITIES_CLAIM_KEY, "TESTER" );
+		assertThat( claims ).containsEntry( JwtToken.EXPIRES_CLAIM_KEY, expiration );
 	}
 
 	@Test
@@ -44,16 +44,17 @@ public class JwtTokenProviderTest {
 		Authentication authentication = new TestingAuthenticationToken( "username", "password", "TESTER" );
 		boolean remember = true;
 		long timestamp = System.currentTimeMillis();
-		int expiration = (int)(timestamp / 1000 + tokenProvider.getRememberedJwtValidityInSeconds());
+		long expiration = timestamp / 1000 + tokenProvider.getRememberedJwtValidityInSeconds();
 
 		// when
 		String token = tokenProvider.createToken( account, authentication, remember, timestamp );
 
 		// then
 		Map<String, Object> claims = tokenProvider.parse( token );
-		assertThat( claims.get( JwtToken.USER_ID_CLAIM_KEY ) ).isEqualTo( account.id().toString() );
-		assertThat( claims.get( JwtToken.SUBJECT_CLAIM_KEY ) ).isEqualTo( "username" );
-		assertThat( claims.get( JwtToken.AUTHORITIES_CLAIM_KEY ) ).isEqualTo( "TESTER" );
-		assertThat( claims.get( JwtToken.EXPIRES_CLAIM_KEY ) ).isEqualTo( expiration );
+		assertThat( claims ).containsEntry( JwtToken.USER_ID_CLAIM_KEY, account.id().toString() );
+		assertThat( claims ).containsEntry( JwtToken.SUBJECT_CLAIM_KEY, "username" );
+		assertThat( claims ).containsEntry( JwtToken.AUTHORITIES_CLAIM_KEY, "TESTER" );
+		assertThat( claims ).containsEntry( JwtToken.EXPIRES_CLAIM_KEY, expiration );
 	}
+
 }
