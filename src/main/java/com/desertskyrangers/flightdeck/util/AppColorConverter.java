@@ -1,7 +1,7 @@
 package com.desertskyrangers.flightdeck.util;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 
 @Converter( autoApply = true )
 public class AppColorConverter implements AttributeConverter<AppColor, String> {

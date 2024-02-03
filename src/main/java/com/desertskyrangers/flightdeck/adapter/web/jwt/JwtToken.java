@@ -3,7 +3,7 @@ package com.desertskyrangers.flightdeck.adapter.web.jwt;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.util.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 public class JwtToken {
 

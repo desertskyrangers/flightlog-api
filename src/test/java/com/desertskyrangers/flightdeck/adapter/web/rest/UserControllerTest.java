@@ -572,7 +572,7 @@ public class UserControllerTest extends BaseControllerTest {
 		List<?> memberships = (List<?>)map.get( "memberships" );
 		List<?> messages = (List<?>)map.get( "messages" );
 
-		assertThat( memberships.size() ).isEqualTo( 0 );
+		assertThat( memberships ).isEmpty();
 		assertThat( messages ).isNull();
 	}
 

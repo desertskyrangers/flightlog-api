@@ -8,7 +8,7 @@ import com.desertskyrangers.flightdeck.util.AppColorConverter;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.UUID;
 
 @Data

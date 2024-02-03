@@ -1,7 +1,9 @@
 package com.desertskyrangers.flightdeck.adapter.web.rest;
 
 import com.desertskyrangers.flightdeck.adapter.web.ApiPath;
-import com.desertskyrangers.flightdeck.core.model.*;
+import com.desertskyrangers.flightdeck.core.model.Group;
+import com.desertskyrangers.flightdeck.core.model.Member;
+import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
 import com.desertskyrangers.flightdeck.port.StateRetrieving;
 import com.desertskyrangers.flightdeck.util.Json;
@@ -117,7 +119,7 @@ public class MembershipControllerTest extends BaseControllerTest {
 
 		// then
 		Optional<Member> optional = stateRetrieving.findMembership( membership.id() );
-		assertThat( optional.isPresent() ).isFalse();
+		assertThat( optional ).isEmpty();
 	}
 
 	@Test

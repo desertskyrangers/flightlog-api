@@ -35,15 +35,15 @@ public class AuthController {
 
 	private final JwtTokenProvider tokenProvider;
 
-	private final AuthenticationManager authenticationManager;
+	private final AuthenticationProvider authenticationProvider;
 
 	private final PasswordEncoder passwordEncoder;
 
-	public AuthController( AuthServices authServices, UserServices userServices, JwtTokenProvider tokenProvider, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder ) {
+	public AuthController( AuthServices authServices, UserServices userServices, JwtTokenProvider tokenProvider, AuthenticationProvider authenticationProvider, PasswordEncoder passwordEncoder ) {
 		this.authServices = authServices;
 		this.userServices = userServices;
 		this.tokenProvider = tokenProvider;
-		this.authenticationManager = authenticationManager;
+		this.authenticationProvider = authenticationProvider;
 		this.passwordEncoder = passwordEncoder;
 	}
 
@@ -194,7 +194,7 @@ public class AuthController {
 
 	private String authenticate( String username, String password, boolean remember ) {
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken( username, password );
-		Authentication authentication = authenticationManager.authenticate( authenticationToken );
+		Authentication authentication = authenticationProvider.authenticate( authenticationToken );
 		SecurityContextHolder.getContext().setAuthentication( authentication );
 
 		Optional<User> optionalAccount = userServices.findByPrincipal( username );
