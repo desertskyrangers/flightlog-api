@@ -21,7 +21,7 @@ logging:
     # Increase verbosity as needed
     com:
       desertskyrangers:
-        perform: INFO
+        flightdeck: INFO
     org:
       springframework:
         security:
