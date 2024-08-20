@@ -1,10 +1,10 @@
 package com.desertskyrangers.flightdeck.core.service;
 
-import com.desertskyrangers.flightdeck.core.model.*;
-import com.desertskyrangers.flightdeck.port.GroupServices;
-import com.desertskyrangers.flightdeck.port.HumanInterface;
-import com.desertskyrangers.flightdeck.port.StatePersisting;
-import com.desertskyrangers.flightdeck.port.StateRetrieving;
+import com.desertskyrangers.flightdeck.core.model.Group;
+import com.desertskyrangers.flightdeck.core.model.Member;
+import com.desertskyrangers.flightdeck.core.model.SmsMessage;
+import com.desertskyrangers.flightdeck.core.model.User;
+import com.desertskyrangers.flightdeck.port.*;
 import com.desertskyrangers.flightdeck.util.Text;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -18,13 +18,16 @@ import java.util.UUID;
 @Slf4j
 public class GroupService implements GroupServices {
 
+	private final MembershipServices membershipService;
+
 	private final HumanInterface humanInterface;
 
 	private final StatePersisting statePersisting;
 
 	private final StateRetrieving stateRetrieving;
 
-	public GroupService( HumanInterface humanInterface, StatePersisting statePersisting, StateRetrieving stateRetrieving ) {
+	public GroupService( MembershipServices membershipService, HumanInterface humanInterface, StatePersisting statePersisting, StateRetrieving stateRetrieving ) {
+		this.membershipService = membershipService;
 		this.humanInterface = humanInterface;
 		this.statePersisting = statePersisting;
 		this.stateRetrieving = stateRetrieving;
@@ -73,7 +76,8 @@ public class GroupService implements GroupServices {
 		// Go through each member of the group and notify them of a callout
 		SmsMessage sms = new SmsMessage();
 		sms.content( "Flight Callout - " + caller.name() + " is going flying" );
-		group.users().stream().filter( u -> Text.isNotBlank( u.smsNumber() ) ).forEach( user -> sms.recipient( user.smsNumber() ) );
+
+		group.users().stream().filter( u -> Text.isNotBlank( u.smsNumber() ) ).filter( u -> membershipService.hasActiveMembership( group, u ) ).forEach( user -> sms.recipient( user.smsNumber() ) );
 		humanInterface.sms( sms );
 
 		return group;

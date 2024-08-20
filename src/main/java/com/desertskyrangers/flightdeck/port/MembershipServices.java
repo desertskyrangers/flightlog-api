@@ -24,4 +24,6 @@ public interface MembershipServices {
 
 	Member cancelMembership( User requester, Member member );
 
+	boolean hasActiveMembership( Group group, User user );
+
 }

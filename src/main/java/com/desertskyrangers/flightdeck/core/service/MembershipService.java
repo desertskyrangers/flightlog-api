@@ -21,16 +21,16 @@ public class MembershipService implements MembershipServices {
 
 	private static final String MEMBER_REQUEST_EMAIL_TEMPLATE = "templates/member-request.html";
 
+	private final HumanInterface humanInterface;
+
 	private final StatePersisting statePersisting;
 
 	private final StateRetrieving stateRetrieving;
 
-	private final HumanInterface humanInterface;
-
-	public MembershipService( StatePersisting statePersisting, StateRetrieving stateRetrieving, HumanInterface humanInterface ) {
+	public MembershipService( HumanInterface humanInterface, StatePersisting statePersisting, StateRetrieving stateRetrieving ) {
+		this.humanInterface = humanInterface;
 		this.statePersisting = statePersisting;
 		this.stateRetrieving = stateRetrieving;
-		this.humanInterface = humanInterface;
 	}
 
 	@Override
@@ -68,10 +68,12 @@ public class MembershipService implements MembershipServices {
 		return stateRetrieving.findMemberships( user );
 	}
 
+	@Override
 	public Set<Member> findMembershipsByGroup( Group group ) {
 		return stateRetrieving.findMemberships( group );
 	}
 
+	@Override
 	public Member requestMembership( User requester, User user, Group group, Member.Status status ) {
 		if( status == Member.Status.INVITED ) {
 			Member member = upsert( requester, new Member().user( user ).group( group ).status( status ) );
@@ -127,9 +129,21 @@ public class MembershipService implements MembershipServices {
 		} ).filter( Objects::nonNull ).collect( Collectors.toSet() );
 	}
 
+	@Override
 	public Member cancelMembership( User requester, Member member ) {
 		remove( requester, member );
 		return member;
+	}
+
+	@Override
+	public boolean hasActiveMembership( Group group, User user ) {
+		Set<Member> memberships = findMembershipsByUser( user );
+
+		for( Member member : memberships ) {
+			if( member.group().equals( group ) && member.status() == Member.Status.ACCEPTED ) return true;
+		}
+
+		return false;
 	}
 
 }
