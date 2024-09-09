@@ -125,8 +125,8 @@ public class BaseTest {
 	protected Location createTestLocation( User user ) {
 		Location location = new Location();
 
-		location.latitude( 40.50353298117737 );
-		location.longitude( -112.01466589278837 );
+		location.latitude( 40.50339561398912 );
+		location.longitude( -112.01445893299925 );
 		location.altitude( 1478 );
 		location.user( user );
 		location.name( "Morning Cloak Park" );
