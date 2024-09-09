@@ -61,6 +61,7 @@ public class LocationControllerTest extends BaseControllerTest {
 	void testUpdateLocationWithSuccess() throws Exception {
 		ReactLocation location = createTestReactLocation();
 		location.setName( "Monarch Meadows Park" );
+		location.setAltitude( 1973 );
 
 		MvcResult result = this.mockMvc.perform( put( ApiPath.LOCATION ).with( jwt() ).content( Json.stringify( location ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
 
@@ -68,6 +69,7 @@ public class LocationControllerTest extends BaseControllerTest {
 		Map<?, ?> map = Json.asMap( result.getResponse().getContentAsString() );
 		Map<?, ?> resultLocation = (Map<?, ?>)map.get( "data" );
 		assertThat( resultLocation.get( "name" ) ).isEqualTo( "Monarch Meadows Park" );
+		assertThat( resultLocation.get( "altitude" ) ).isEqualTo( 1973.0 );
 	}
 
 	@Test
