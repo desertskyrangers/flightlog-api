@@ -72,6 +72,7 @@ public class ReactFlight {
 		if( flight.location() != null ) reactFlight.setLocation( flight.location().id().toString() );
 		reactFlight.setLatitude( flight.latitude() );
 		reactFlight.setLongitude( flight.longitude() );
+		reactFlight.setAltitude( flight.altitude() );
 		reactFlight.setNotes( flight.notes() );
 
 		// Use aircraft info for the name and type...for now
