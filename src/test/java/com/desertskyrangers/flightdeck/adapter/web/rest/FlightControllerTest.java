@@ -94,13 +94,17 @@ public class FlightControllerTest extends BaseControllerTest {
 		Map<?, ?> map = Json.asMap( result.getResponse().getContentAsString() );
 		Map<?, ?> resultFlight = (Map<?, ?>)map.get( "flight" );
 		assertThat( resultFlight.get( "id" ) ).isEqualTo( flight.id().toString() );
+		assertThat( resultFlight.get( "location" ) ).isNotNull();
+		assertThat( resultFlight.get( "latitude" ) ).isEqualTo( flight.latitude() );
+		assertThat( resultFlight.get( "longitude" ) ).isEqualTo( flight.longitude() );
+		assertThat( resultFlight.get( "altitude" ) ).isEqualTo( flight.altitude() );
 	}
 
 	@Test
 	void deleteFlightWithSuccessAndCustomLocation() throws Exception {
 		// given
 		Flight flight = createTestFlight( getMockUser() );
-		flight.location(null);
+		flight.location( null );
 		flight.latitude( 40.50353298117737 );
 		flight.longitude( -112.01466589278837 );
 		flight.altitude( 1478 );
@@ -117,6 +121,10 @@ public class FlightControllerTest extends BaseControllerTest {
 		Map<?, ?> map = Json.asMap( result.getResponse().getContentAsString() );
 		Map<?, ?> resultFlight = (Map<?, ?>)map.get( "flight" );
 		assertThat( resultFlight.get( "id" ) ).isEqualTo( flight.id().toString() );
+		assertThat( resultFlight.get( "location" ) ).isNull();
+		assertThat( resultFlight.get( "latitude" ) ).isEqualTo( flight.latitude() );
+		assertThat( resultFlight.get( "longitude" ) ).isEqualTo( flight.longitude() );
+		assertThat( resultFlight.get( "altitude" ) ).isEqualTo( flight.altitude() );
 	}
 
 	private ReactFlight createTestReactFlight() {
