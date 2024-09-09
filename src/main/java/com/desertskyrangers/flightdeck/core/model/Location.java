@@ -29,6 +29,9 @@ public class Location {
 	// Longitude in decimal degrees
 	private double longitude;
 
+	// Altitude in meters
+	private double altitude;
+
 	private User user;
 
 	/**

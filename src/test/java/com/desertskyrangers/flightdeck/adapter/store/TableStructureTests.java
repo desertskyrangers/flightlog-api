@@ -126,6 +126,7 @@ public class TableStructureTests {
 		expected.add( "locationid" );
 		expected.add( "latitude" );
 		expected.add( "longitude" );
+		expected.add( "altitude" );
 		expected.add( "notes" );
 
 		assertThat( getColumns( "flight" ) ).containsExactlyInAnyOrderElementsOf( expected );
@@ -141,11 +142,12 @@ public class TableStructureTests {
 	}
 
 	@Test
-	void testLocation() throws Exception {
+	void testLocationTable() throws Exception {
 		Set<String> expected = new HashSet<>();
 		expected.add( "id" );
 		expected.add( "latitude" );
 		expected.add( "longitude" );
+		expected.add( "altitude" );
 		expected.add( "userid" );
 		expected.add( "name" );
 		expected.add( "size" );
@@ -155,7 +157,7 @@ public class TableStructureTests {
 	}
 
 	@Test
-	void testMember() throws Exception {
+	void testMemberTable() throws Exception {
 		Set<String> expected = new HashSet<>();
 		expected.add( "id" );
 		expected.add( "orgid" );

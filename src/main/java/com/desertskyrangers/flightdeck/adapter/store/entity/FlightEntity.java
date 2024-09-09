@@ -55,6 +55,8 @@ public class FlightEntity {
 
 	private double longitude;
 
+	private double altitude;
+
 	@Column( length = 1000 )
 	private String notes;
 
@@ -79,6 +81,7 @@ public class FlightEntity {
 		if( flight.location() != null ) entity.setLocation( LocationEntity.from( flight.location() ) );
 		entity.setLatitude( flight.latitude() );
 		entity.setLongitude( flight.longitude() );
+		entity.setAltitude( flight.altitude() );
 		entity.setNotes( flight.notes() );
 
 		return entity;
@@ -99,6 +102,7 @@ public class FlightEntity {
 		if( entity.getLocation() != null ) flight.location( LocationEntity.toLocation( entity.getLocation() ) );
 		flight.latitude( entity.getLatitude() );
 		flight.longitude( entity.getLongitude() );
+		flight.altitude( entity.getAltitude() );
 		flight.notes( entity.getNotes() );
 
 		return flight;

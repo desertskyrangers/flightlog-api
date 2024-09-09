@@ -43,6 +43,8 @@ public class ReactFlight {
 
 	private double longitude;
 
+	private double altitude;
+
 	private String notes;
 
 	private String userFlightRole;
@@ -121,6 +123,7 @@ public class ReactFlight {
 		if( Uuid.isValid( flight.location ) ) request.location( UUID.fromString( flight.getLocation() ) );
 		request.latitude( flight.getLatitude() );
 		request.longitude( flight.getLongitude() );
+		request.altitude( flight.getAltitude() );
 		request.notes( flight.getNotes() );
 
 		return request;

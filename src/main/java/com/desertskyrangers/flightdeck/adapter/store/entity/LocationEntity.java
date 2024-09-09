@@ -23,6 +23,8 @@ public class LocationEntity {
 
 	private double longitude;
 
+	private double altitude;
+
 	@ManyToOne( optional = false, fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
 	@JoinColumn( name = "userid", nullable = false, updatable = false, columnDefinition = "BINARY(16)" )
 	private UserEntity user;
@@ -40,6 +42,7 @@ public class LocationEntity {
 		entity.setId( location.id() );
 		entity.setLatitude( location.latitude() );
 		entity.setLongitude( location.longitude() );
+		entity.setAltitude( location.altitude() );
 		entity.setUser( UserEntity.from( location.user() ) );
 		entity.setName( location.name() );
 		entity.setSize( location.size() );
@@ -83,6 +86,7 @@ public class LocationEntity {
 		location.id( entity.getId() );
 		location.latitude( entity.getLatitude() );
 		location.longitude( entity.getLongitude() );
+		location.altitude( entity.getAltitude() );
 		location.name( entity.getName() );
 		location.size( entity.getSize() );
 		location.status( Location.Status.valueOf( entity.getStatus().toUpperCase() ) );

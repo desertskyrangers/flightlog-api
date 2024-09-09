@@ -117,6 +117,7 @@ public class BaseTest {
 		flight.batteries( Set.of( battery ) );
 		flight.timestamp( System.currentTimeMillis() );
 		flight.duration( 1000 );
+		flight.location( createTestLocation( pilot ) );
 		flight.notes( "Just a test flight" );
 		return flight;
 	}
@@ -126,6 +127,7 @@ public class BaseTest {
 
 		location.latitude( 40.50353298117737 );
 		location.longitude( -112.01466589278837 );
+		location.altitude( 1478 );
 		location.user( user );
 		location.name( "Morning Cloak Park" );
 		location.size( 150 );

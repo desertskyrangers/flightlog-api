@@ -96,6 +96,29 @@ public class FlightControllerTest extends BaseControllerTest {
 		assertThat( resultFlight.get( "id" ) ).isEqualTo( flight.id().toString() );
 	}
 
+	@Test
+	void deleteFlightWithSuccessAndCustomLocation() throws Exception {
+		// given
+		Flight flight = createTestFlight( getMockUser() );
+		flight.location(null);
+		flight.latitude( 40.50353298117737 );
+		flight.longitude( -112.01466589278837 );
+		flight.altitude( 1478 );
+
+		statePersisting.upsert( flight );
+
+		// when
+		MvcResult result = this.mockMvc
+			.perform( delete( ApiPath.FLIGHT ).with( jwt() ).content( "{\"id\":\"" + flight.id() + "\"}" ).contentType( MediaType.APPLICATION_JSON ) )
+			.andExpect( status().isOk() )
+			.andReturn();
+
+		// then
+		Map<?, ?> map = Json.asMap( result.getResponse().getContentAsString() );
+		Map<?, ?> resultFlight = (Map<?, ?>)map.get( "flight" );
+		assertThat( resultFlight.get( "id" ) ).isEqualTo( flight.id().toString() );
+	}
+
 	private ReactFlight createTestReactFlight() {
 		return createTestReactFlight( getMockUser(), getMockUser() );
 	}

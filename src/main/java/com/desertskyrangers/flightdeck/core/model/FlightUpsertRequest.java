@@ -1,6 +1,5 @@
 package com.desertskyrangers.flightdeck.core.model;
 
-import com.desertskyrangers.flightdeck.core.model.User;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -36,6 +35,8 @@ public class FlightUpsertRequest {
 	private double latitude;
 
 	private double longitude;
+
+	private double altitude;
 
 	private String notes;
 

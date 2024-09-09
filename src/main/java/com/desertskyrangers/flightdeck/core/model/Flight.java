@@ -34,6 +34,8 @@ public class Flight {
 
 	private double longitude;
 
+	private double altitude;
+
 	private String notes;
 
 	// departure location
