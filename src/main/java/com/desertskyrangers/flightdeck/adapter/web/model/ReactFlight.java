@@ -1,9 +1,6 @@
 package com.desertskyrangers.flightdeck.adapter.web.model;
 
-import com.desertskyrangers.flightdeck.core.model.Aircraft;
-import com.desertskyrangers.flightdeck.core.model.Flight;
-import com.desertskyrangers.flightdeck.core.model.FlightUpsertRequest;
-import com.desertskyrangers.flightdeck.core.model.User;
+import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.util.Text;
 import com.desertskyrangers.flightdeck.util.Uuid;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -112,7 +109,16 @@ public class ReactFlight {
 	public static FlightUpsertRequest toUpsertRequest( ReactFlight flight ) {
 		FlightUpsertRequest request = new FlightUpsertRequest();
 
-		request.id( UUID.fromString( flight.getId() ) );
+		if( "custom".equals( flight.getLocation())) {
+			request.id( Location.CUSTOM_LOCATION_ID );
+		} else if( "device".equals( flight.getLocation())) {
+			request.id( Location.DEVICE_LOCATION_ID );
+		} else if( "".equals( flight.getLocation())) {
+			request.id( Location.NO_LOCATION_ID );
+		} else {
+			request.id( UUID.fromString( flight.getLocation() ) );
+		}
+
 		request.pilot( UUID.fromString( flight.getPilot() ) );
 		request.unlistedPilot( flight.getUnlistedPilot() );
 		request.observer( UUID.fromString( flight.getObserver() ) );

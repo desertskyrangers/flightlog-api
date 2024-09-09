@@ -346,9 +346,11 @@ public class UserController extends BaseController {
 		User user = getRequester( authentication );
 		Set<Location> objects = locationServices.findByUser( user );
 		List<ReactOption> options = new ArrayList<>( objects.stream().map( c -> new ReactOption( c.id().toString(), c.name() ) ).toList() );
-		options.add( new ReactOption( "device", "Use device location" ) );
-		options.add( new ReactOption( "custom", "Use custom location" ) );
-		options.add( new ReactOption( "", "No location specified" ) );
+
+		options.add( new ReactOption( Location.DEVICE_LOCATION_ID.toString(), "Use device location" ) );
+		options.add( new ReactOption( Location.CUSTOM_LOCATION_ID.toString(), "Use custom location" ) );
+		options.add( new ReactOption( Location.NO_LOCATION_ID.toString(), "No location specified" ) );
+
 		return new ResponseEntity<>( options, HttpStatus.OK );
 	}
 

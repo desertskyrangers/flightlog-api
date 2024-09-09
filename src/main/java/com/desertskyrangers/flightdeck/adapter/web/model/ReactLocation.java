@@ -46,7 +46,16 @@ public class ReactLocation {
 	public static Location toLocation( ReactLocation location ) {
 		Location result = new Location();
 
-		result.id( UUID.fromString( location.getId() ) );
+		if( "custom".equals( location.getId() ) ) {
+			result.id( Location.CUSTOM_LOCATION_ID );
+		} else if( "device".equals( location.getId() ) ) {
+			result.id( Location.DEVICE_LOCATION_ID );
+		} else if( "".equals( location.getId() ) ) {
+			result.id( Location.NO_LOCATION_ID );
+		} else {
+			result.id( UUID.fromString( location.getId() ) );
+		}
+
 		result.latitude( location.getLatitude() );
 		result.longitude( location.getLongitude() );
 		result.altitude( location.getAltitude() );

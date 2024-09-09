@@ -9,6 +9,12 @@ import java.util.UUID;
 @Accessors( fluent = true )
 public class Location {
 
+	public static final UUID CUSTOM_LOCATION_ID = UUID.fromString( "f2f59a1b-d8eb-442d-a124-a1490b527e75" );
+
+	public static final UUID DEVICE_LOCATION_ID = UUID.fromString( "313d9657-abbd-4f5c-a9c3-9618a2574e18" );
+
+	public static final UUID NO_LOCATION_ID = UUID.fromString( "a65a59cb-45f5-43c0-94c8-d6489d1ca19f" );
+
 	public static final double DEFAULT_LOCATION_SIZE = 100;
 
 	public static final Status DEFAULT_LOCATION_STATUS = Status.ACTIVE;
