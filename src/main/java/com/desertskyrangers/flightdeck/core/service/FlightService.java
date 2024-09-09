@@ -91,6 +91,7 @@ public class FlightService implements FlightServices {
 		flight.location( location );
 		flight.latitude( request.latitude() );
 		flight.longitude( request.longitude() );
+		flight.altitude( request.altitude() );
 		flight.notes( request.notes() );
 
 		return upsert( flight );
