@@ -110,13 +110,13 @@ public class ReactFlight {
 		FlightUpsertRequest request = new FlightUpsertRequest();
 
 		if( "custom".equals( flight.getLocation())) {
-			request.id( Location.CUSTOM_LOCATION_ID );
+			request.location( Location.CUSTOM_LOCATION_ID );
 		} else if( "device".equals( flight.getLocation())) {
-			request.id( Location.DEVICE_LOCATION_ID );
+			request.location( Location.DEVICE_LOCATION_ID );
 		} else if( "".equals( flight.getLocation())) {
-			request.id( Location.NO_LOCATION_ID );
+			request.location( Location.NO_LOCATION_ID );
 		} else {
-			request.id( UUID.fromString( flight.getLocation() ) );
+			request.location( UUID.fromString( flight.getLocation() ) );
 		}
 
 		request.pilot( UUID.fromString( flight.getPilot() ) );
