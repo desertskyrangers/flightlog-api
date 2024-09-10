@@ -91,51 +91,36 @@ public class ReactFlight {
 		return reactFlight;
 	}
 
-	//	public static Flight toFlight( ReactFlight reactFlight ) {
-	//		Flight flight = new Flight();
-	//
-	//		flight.id( UUID.fromString( reactFlight.getId() ) );
-	//		// pilot is unable to be set here
-	//		// observer is unable to be set here
-	//		// aircraft is unable to be set here
-	//		// batteries are unable to be set here
-	//		flight.timestamp( reactFlight.getTimestamp() );
-	//		flight.duration( reactFlight.getDuration() );
-	//		flight.notes( reactFlight.getNotes() );
-	//
-	//		return flight;
-	//	}
+	public static FlightUpsertRequest toUpsertRequest( ReactFlight reactFlight ) {
+		FlightUpsertRequest flight = new FlightUpsertRequest();
 
-	public static FlightUpsertRequest toUpsertRequest( ReactFlight flight ) {
-		FlightUpsertRequest request = new FlightUpsertRequest();
-
-		if( "custom".equals( flight.getLocation())) {
-			request.location( Location.CUSTOM_LOCATION_ID );
-		} else if( "device".equals( flight.getLocation())) {
-			request.location( Location.DEVICE_LOCATION_ID );
-		} else if( "".equals( flight.getLocation())) {
-			request.location( Location.NO_LOCATION_ID );
-		} else if( Uuid.isValid( flight.getLocation() ) ){
-			request.location( UUID.fromString( flight.getLocation() ) );
+		if( "custom".equals( reactFlight.getLocation() ) ) {
+			flight.location( Location.CUSTOM_LOCATION_ID );
+		} else if( "device".equals( reactFlight.getLocation() ) ) {
+			flight.location( Location.DEVICE_LOCATION_ID );
+		} else if( "".equals( reactFlight.getLocation() ) ) {
+			flight.location( Location.NO_LOCATION_ID );
+		} else if( Uuid.isValid( reactFlight.getLocation() ) ) {
+			flight.location( UUID.fromString( reactFlight.getLocation() ) );
 		} else {
-			request.location( null );
+			flight.location( null );
 		}
 
-		request.id( UUID.fromString( flight.getId() ) );
-		request.pilot( UUID.fromString( flight.getPilot() ) );
-		request.unlistedPilot( flight.getUnlistedPilot() );
-		request.observer( UUID.fromString( flight.getObserver() ) );
-		request.unlistedObserver( flight.getUnlistedObserver() );
-		request.aircraft( UUID.fromString( flight.getAircraft() ) );
-		request.batteries( flight.getBatteries() == null ? List.of() : flight.getBatteries().stream().filter( Text::isNotBlank ).map( UUID::fromString ).toList() );
-		request.timestamp( flight.getTimestamp() );
-		request.duration( flight.getDuration() );
-		request.latitude( flight.getLatitude() );
-		request.longitude( flight.getLongitude() );
-		request.altitude( flight.getAltitude() );
-		request.notes( flight.getNotes() );
+		if( Uuid.isValid( reactFlight.getId() ) ) flight.id( UUID.fromString( reactFlight.getId() ) );
+		flight.pilot( UUID.fromString( reactFlight.getPilot() ) );
+		flight.unlistedPilot( reactFlight.getUnlistedPilot() );
+		flight.observer( UUID.fromString( reactFlight.getObserver() ) );
+		flight.unlistedObserver( reactFlight.getUnlistedObserver() );
+		flight.aircraft( UUID.fromString( reactFlight.getAircraft() ) );
+		flight.batteries( reactFlight.getBatteries() == null ? List.of() : reactFlight.getBatteries().stream().filter( Text::isNotBlank ).map( UUID::fromString ).toList() );
+		flight.timestamp( reactFlight.getTimestamp() );
+		flight.duration( reactFlight.getDuration() );
+		flight.latitude( reactFlight.getLatitude() );
+		flight.longitude( reactFlight.getLongitude() );
+		flight.altitude( reactFlight.getAltitude() );
+		flight.notes( reactFlight.getNotes() );
 
-		return request;
+		return flight;
 	}
 
 }
