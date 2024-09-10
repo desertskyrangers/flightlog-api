@@ -9,7 +9,7 @@ import java.util.UUID;
 @Accessors( fluent = true )
 public class Location {
 
-	public static final UUID CUSTOM_LOCATION_ID = UUID.fromString( "f2f59a1b-d8eb-442d-a124-a1490b527e75" );
+	public static final UUID CUSTOM_LOCATION_ID = UUID.fromString( "b9902649-9a9f-4d96-a219-3f2a52c1357e" );
 
 	public static final UUID DEVICE_LOCATION_ID = UUID.fromString( "313d9657-abbd-4f5c-a9c3-9618a2574e18" );
 
