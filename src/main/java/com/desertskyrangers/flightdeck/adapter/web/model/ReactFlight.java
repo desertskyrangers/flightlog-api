@@ -115,8 +115,10 @@ public class ReactFlight {
 			request.location( Location.DEVICE_LOCATION_ID );
 		} else if( "".equals( flight.getLocation())) {
 			request.location( Location.NO_LOCATION_ID );
-		} else {
+		} else if( Uuid.isValid( flight.getLocation() ) ){
 			request.location( UUID.fromString( flight.getLocation() ) );
+		} else {
+			request.location( null );
 		}
 
 		request.pilot( UUID.fromString( flight.getPilot() ) );
@@ -127,7 +129,6 @@ public class ReactFlight {
 		request.batteries( flight.getBatteries() == null ? List.of() : flight.getBatteries().stream().filter( Text::isNotBlank ).map( UUID::fromString ).toList() );
 		request.timestamp( flight.getTimestamp() );
 		request.duration( flight.getDuration() );
-		if( Uuid.isValid( flight.location ) ) request.location( UUID.fromString( flight.getLocation() ) );
 		request.latitude( flight.getLatitude() );
 		request.longitude( flight.getLongitude() );
 		request.altitude( flight.getAltitude() );
