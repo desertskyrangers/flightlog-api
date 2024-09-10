@@ -99,10 +99,6 @@ public class FlightService implements FlightServices {
 		return upsert( flight );
 	}
 
-	private long now() {
-		return System.currentTimeMillis();
-	}
-
 	@Override
 	public Flight upsert( Flight flight ) {
 		start.set( now() );
@@ -220,6 +216,10 @@ public class FlightService implements FlightServices {
 		log.info( "Time to update dashboards {}", now() - start.get() );
 
 		return CompletableFuture.completedFuture( null );
+	}
+
+	private long now() {
+		return System.currentTimeMillis();
 	}
 
 	private void updateDashboards( Flight flight ) {
