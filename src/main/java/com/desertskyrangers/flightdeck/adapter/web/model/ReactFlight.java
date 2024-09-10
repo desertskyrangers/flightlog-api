@@ -121,6 +121,7 @@ public class ReactFlight {
 			request.location( null );
 		}
 
+		request.id( UUID.fromString( flight.getId() ) );
 		request.pilot( UUID.fromString( flight.getPilot() ) );
 		request.unlistedPilot( flight.getUnlistedPilot() );
 		request.observer( UUID.fromString( flight.getObserver() ) );

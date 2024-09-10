@@ -9,8 +9,6 @@ import com.desertskyrangers.flightdeck.port.FlightServices;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class FlightServiceTest extends BaseTest {
@@ -21,13 +19,11 @@ public class FlightServiceTest extends BaseTest {
 	@Test
 	void testUpdateWithAltitude() {
 		// given
-		User pilot = createTestUser();
-		statePersisting.upsert( pilot );
-		Flight flight = createTestFlight( pilot );
-		statePersisting.upsert( flight );
+		User pilot = statePersisting.upsert( createTestUser() );
+		Flight flight = statePersisting.upsert( createTestFlight( pilot ) );
 		ReactFlight update = ReactFlight.from( pilot, flight );
+		update.setAltitude( 1973 );
 		FlightUpsertRequest request = ReactFlight.toUpsertRequest( update );
-		request.altitude( 1973 );
 
 		// when
 		Flight result = flightServices.upsert( request );
