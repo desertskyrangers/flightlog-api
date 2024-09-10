@@ -27,6 +27,8 @@ public class FlightService implements FlightServices {
 
 	private static final Map<String, Integer> times = Map.of( "month", 30, "week", 7, "day", 1 );
 
+	private final ThreadLocal<Long> start = new ThreadLocal<>();
+
 	public FlightService( StatePersisting statePersisting, StateRetrieving stateRetrieving ) {
 		this.statePersisting = statePersisting;
 		this.stateRetrieving = stateRetrieving;
@@ -97,9 +99,7 @@ public class FlightService implements FlightServices {
 		return upsert( flight );
 	}
 
-	private ThreadLocal<Long> start = new ThreadLocal<>();
-
-	private final long now() {
+	private long now() {
 		return System.currentTimeMillis();
 	}
 
@@ -107,9 +107,9 @@ public class FlightService implements FlightServices {
 	public Flight upsert( Flight flight ) {
 		start.set( now() );
 		Optional<Flight> prior = stateRetrieving.findFlight( flight.id() );
-		log.info( "Time to retrieve prior flight {}", start.get() - now() );
+		log.info( "Time to retrieve prior flight {}", now() - start.get() );
 		statePersisting.upsert( flight );
-		log.info( "Time to update current flight {}", start.get() - now() );
+		log.info( "Time to update current flight {}", now() - start.get() );
 		updateMetrics( flight, prior );
 		return flight;
 	}
@@ -204,20 +204,20 @@ public class FlightService implements FlightServices {
 		// If the aircraft was changed, the old aircraft data also needs to be updated
 		prior.ifPresent( value -> {
 			aircraftServices.updateFlightData( value.aircraft() );
-			log.info( "Time to update prior flight data {}", start.get() - now() );
+			log.info( "Time to update prior flight data {}", now() - start.get() );
 		} );
 
 		// Update aircraft flight data
 		aircraftServices.updateFlightData( flight.aircraft() );
-		log.info( "Time to update current flight data {}", start.get() - now() );
+		log.info( "Time to update current flight data {}", now() - start.get() );
 
 		// Update battery flight data
 		flight.batteries().forEach( b -> batteryServices.updateFlightData( b ) );
-		log.info( "Time to update current battery data {}", start.get() - now() );
+		log.info( "Time to update current battery data {}", now() - start.get() );
 
 		// Update dashboards
 		updateDashboards( flight );
-		log.info( "Time to update dashboards {}", start.get() - now() );
+		log.info( "Time to update dashboards {}", now() - start.get() );
 
 		return CompletableFuture.completedFuture( null );
 	}
