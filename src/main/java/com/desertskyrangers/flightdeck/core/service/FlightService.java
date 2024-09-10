@@ -104,9 +104,12 @@ public class FlightService implements FlightServices {
 		start.set( now() );
 		Optional<Flight> prior = stateRetrieving.findFlight( flight.id() );
 		log.info( "Time to retrieve prior flight {}", now() - start.get() );
+
+		start.set( now() );
 		statePersisting.upsert( flight );
 		log.info( "Time to update current flight {}", now() - start.get() );
 		updateMetrics( flight, prior );
+
 		return flight;
 	}
 
@@ -198,20 +201,24 @@ public class FlightService implements FlightServices {
 	@Async
 	public CompletableFuture<Void> updateMetrics( Flight flight, Optional<Flight> prior ) {
 		// If the aircraft was changed, the old aircraft data also needs to be updated
+		start.set( now() );
 		prior.ifPresent( value -> {
 			aircraftServices.updateFlightData( value.aircraft() );
 			log.info( "Time to update prior flight data {}", now() - start.get() );
 		} );
 
 		// Update aircraft flight data
+		start.set( now() );
 		aircraftServices.updateFlightData( flight.aircraft() );
 		log.info( "Time to update current flight data {}", now() - start.get() );
 
 		// Update battery flight data
+		start.set( now() );
 		flight.batteries().forEach( b -> batteryServices.updateFlightData( b ) );
 		log.info( "Time to update current battery data {}", now() - start.get() );
 
 		// Update dashboards
+		start.set( now() );
 		updateDashboards( flight );
 		log.info( "Time to update dashboards {}", now() - start.get() );
 
