@@ -2,6 +2,7 @@ package com.desertskyrangers.flightdeck.core.service;
 
 import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.*;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.scheduling.annotation.Async;
@@ -19,31 +20,25 @@ public class FlightService implements FlightServices {
 
 	private final StateRetrieving stateRetrieving;
 
-	private AircraftServices aircraftServices;
-
-	private BatteryServices batteryServices;
-
-	private DashboardServices dashboardServices;
+	private LocationServices locationServices;
 
 	private static final Map<String, Integer> times = Map.of( "month", 30, "week", 7, "day", 1 );
 
 	private final ThreadLocal<Long> start = new ThreadLocal<>();
 
-	public FlightService( StatePersisting statePersisting, StateRetrieving stateRetrieving ) {
+	@Setter
+	private AircraftServices aircraftServices;
+
+	@Setter
+	private BatteryServices batteryServices;
+
+	@Setter
+	private DashboardServices dashboardServices;
+
+	public FlightService( LocationServices locationServices, StatePersisting statePersisting, StateRetrieving stateRetrieving ) {
+		this.locationServices = locationServices;
 		this.statePersisting = statePersisting;
 		this.stateRetrieving = stateRetrieving;
-	}
-
-	public void setAircraftServices( AircraftServices aircraftServices ) {
-		this.aircraftServices = aircraftServices;
-	}
-
-	public void setBatteryServices( BatteryServices batteryServices ) {
-		this.batteryServices = batteryServices;
-	}
-
-	public void setDashboardServices( DashboardServices dashboardServices ) {
-		this.dashboardServices = dashboardServices;
 	}
 
 	@Override
@@ -53,7 +48,15 @@ public class FlightService implements FlightServices {
 
 	@Override
 	public Optional<Flight> find( UUID id ) {
-		return stateRetrieving.findFlight( id );
+		// FIXME The special locations are not being retrieved properly
+		Optional<Flight> result = stateRetrieving.findFlight( id );
+		if( result.isEmpty() ) return result;
+
+//		Flight flight = result.get();
+//		System.out.println("Flight.location.id=" + flight.location().id());
+//		flight.location( locationServices.find( flight.location().id() ).orElse( null ) );
+
+		return result;
 	}
 
 	@Override
@@ -77,7 +80,6 @@ public class FlightService implements FlightServices {
 		User observer = stateRetrieving.findUser( request.observer() ).orElse( null );
 		Aircraft aircraft = stateRetrieving.findAircraft( request.aircraft() ).orElse( null );
 		Set<Battery> batteries = request.batteries().stream().map( id -> stateRetrieving.findBattery( id ).orElse( null ) ).filter( Objects::nonNull ).collect( Collectors.toSet() );
-		Location location = request.location() == null ? null : stateRetrieving.findLocation( request.location() ).orElse( null );
 
 		// Convert request to a core flight object
 		Flight flight = new Flight();
@@ -90,7 +92,7 @@ public class FlightService implements FlightServices {
 		flight.batteries( batteries );
 		flight.timestamp( request.timestamp() );
 		flight.duration( request.duration() );
-		flight.location( location );
+		flight.location( locationServices.find( request.location() ).orElse( null ) );
 		flight.latitude( request.latitude() );
 		flight.longitude( request.longitude() );
 		flight.altitude( request.altitude() );

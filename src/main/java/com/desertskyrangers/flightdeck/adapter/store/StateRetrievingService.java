@@ -1,8 +1,8 @@
 package com.desertskyrangers.flightdeck.adapter.store;
 
 import com.desertskyrangers.flightdeck.adapter.store.entity.*;
-import com.desertskyrangers.flightdeck.adapter.store.repo.*;
 import com.desertskyrangers.flightdeck.adapter.store.entity.mapper.AwardEntityMapper;
+import com.desertskyrangers.flightdeck.adapter.store.repo.*;
 import com.desertskyrangers.flightdeck.core.model.*;
 import com.desertskyrangers.flightdeck.port.StateRetrieving;
 import com.desertskyrangers.flightdeck.util.Json;
@@ -109,7 +109,7 @@ public class StateRetrievingService implements StateRetrieving {
 	}
 
 	public Page<Award> findAwards( UUID id, int page, int size ) {
-		return awardRepo.findByRecipientId( id, PageRequest.of( page, size ) ).map( AwardEntityMapper.INSTANCE::toAward);
+		return awardRepo.findByRecipientId( id, PageRequest.of( page, size ) ).map( AwardEntityMapper.INSTANCE::toAward );
 	}
 
 	@Override
@@ -135,7 +135,17 @@ public class StateRetrievingService implements StateRetrieving {
 
 	@Override
 	public Optional<Flight> findFlight( UUID id ) {
-		return flightRepo.findById( id ).map( FlightEntity::toFlight );
+		return flightRepo.findById( id ).map( fe -> {
+			Flight flight = FlightEntity.toFlight( fe );
+
+			UUID locationId = fe.getLocationId();
+			if( locationId != null ) {
+				Optional<LocationEntity> location = locationRepo.findById( locationId );
+				location.ifPresent( locationEntity -> flight.location( LocationEntity.toLocation( locationEntity ) ) );
+			}
+
+			return flight;
+		} );
 	}
 
 	@Override

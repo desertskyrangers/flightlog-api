@@ -3,6 +3,7 @@ package com.desertskyrangers.flightdeck.core.model;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.util.Map;
 import java.util.UUID;
 
 @Data
@@ -15,6 +16,12 @@ public class Location {
 
 	public static final UUID NO_LOCATION_ID = UUID.fromString( "a65a59cb-45f5-43c0-94c8-d6489d1ca19f" );
 
+	public static final Location CUSTOM_LOCATION = new Location().id( CUSTOM_LOCATION_ID ).name( "Custom Location" ).user( User.INTERNAL_OWNER ).status( Status.ACTIVE );
+
+	public static final Location DEVICE_LOCATION = new Location().id( DEVICE_LOCATION_ID ).name( "Device Location" ).user( User.INTERNAL_OWNER ).status( Status.ACTIVE );
+
+	public static final Location NO_LOCATION = new Location().id( NO_LOCATION_ID ).name( "No Location" ).user( User.INTERNAL_OWNER ).status( Status.ACTIVE );
+
 	public static final double DEFAULT_LOCATION_SIZE = 100;
 
 	public static final Status DEFAULT_LOCATION_STATUS = Status.ACTIVE;
@@ -26,6 +33,8 @@ public class Location {
 	private static final double DEGREES_PER_RADIAN = 180.0 / Math.PI;
 
 	private static final double RADIANS_PER_DEGREE = Math.PI / 180.0;
+
+	private static final Map<UUID, Location> specialLocations;
 
 	private UUID id = UUID.randomUUID();
 
@@ -52,6 +61,10 @@ public class Location {
 	private double size = DEFAULT_LOCATION_SIZE;
 
 	private Status status = DEFAULT_LOCATION_STATUS;
+
+	static {
+		specialLocations = Map.of( CUSTOM_LOCATION_ID, CUSTOM_LOCATION, DEVICE_LOCATION_ID, DEVICE_LOCATION, NO_LOCATION_ID, NO_LOCATION );
+	}
 
 	// TODO Can locations have types? Which ones?
 
@@ -111,6 +124,11 @@ public class Location {
 	 */
 	public static double degreesToMetersOnEarth( double distance ) {
 		return Math.sin( distance * RADIANS_PER_DEGREE ) * rE;
+	}
+
+	public static Location forId( UUID id ) {
+		if( id == null ) return null;
+		return specialLocations.get( id );
 	}
 
 	public enum Status {

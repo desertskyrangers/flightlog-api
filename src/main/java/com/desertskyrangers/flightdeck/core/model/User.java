@@ -15,6 +15,10 @@ import java.util.concurrent.CopyOnWriteArraySet;
 @Accessors( fluent = true )
 public class User implements Comparable<User> {
 
+	private static final UUID INTERNAL_OWNER_ID = UUID.fromString( "00000000-0000-0000-0000-000000000000" );
+
+	public static final User INTERNAL_OWNER = new User().id( INTERNAL_OWNER_ID ).username( "internal" );
+
 	private UUID id = UUID.randomUUID();
 
 	private String username;

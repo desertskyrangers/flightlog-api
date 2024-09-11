@@ -27,7 +27,10 @@ public class LocationService implements LocationServices {
 	}
 
 	public Optional<Location> find( UUID id ) {
-		return stateRetrieving.findLocation( id );
+		if( id == null ) return Optional.empty();
+		Optional<Location> location = Optional.ofNullable( Location.forId( id ) );
+		if( location.isEmpty() ) location = stateRetrieving.findLocation( id );
+		return location;
 	}
 
 	public Location upsert( Location location ) {
