@@ -48,15 +48,7 @@ public class FlightService implements FlightServices {
 
 	@Override
 	public Optional<Flight> find( UUID id ) {
-		// FIXME The special locations are not being retrieved properly
-		Optional<Flight> result = stateRetrieving.findFlight( id );
-		if( result.isEmpty() ) return result;
-
-//		Flight flight = result.get();
-//		System.out.println("Flight.location.id=" + flight.location().id());
-//		flight.location( locationServices.find( flight.location().id() ).orElse( null ) );
-
-		return result;
+		return stateRetrieving.findFlight( id );
 	}
 
 	@Override
