@@ -140,8 +140,8 @@ public class StateRetrievingService implements StateRetrieving {
 
 			UUID locationId = fe.getLocationId();
 			if( locationId != null ) {
-				Optional<LocationEntity> location = locationRepo.findById( locationId );
-				location.ifPresent( locationEntity -> flight.location( LocationEntity.toLocation( locationEntity ) ) );
+				Optional<LocationEntity> optional = locationRepo.findById( locationId );
+				optional.ifPresentOrElse( entity -> flight.location( LocationEntity.toLocation( entity ) ), () -> flight.location( Location.forId( locationId ) ) );
 			}
 
 			return flight;

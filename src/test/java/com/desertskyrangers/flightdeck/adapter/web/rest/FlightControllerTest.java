@@ -3,6 +3,7 @@ package com.desertskyrangers.flightdeck.adapter.web.rest;
 import com.desertskyrangers.flightdeck.adapter.web.ApiPath;
 import com.desertskyrangers.flightdeck.adapter.web.model.ReactFlight;
 import com.desertskyrangers.flightdeck.core.model.Flight;
+import com.desertskyrangers.flightdeck.core.model.Location;
 import com.desertskyrangers.flightdeck.core.model.User;
 import com.desertskyrangers.flightdeck.port.StatePersisting;
 import com.desertskyrangers.flightdeck.util.Json;
@@ -39,6 +40,32 @@ public class FlightControllerTest extends BaseControllerTest {
 		Map<?, ?> map = Json.asMap( result.getResponse().getContentAsString() );
 		Map<?, ?> resultFlight = (Map<?, ?>)map.get( "flight" );
 		assertThat( resultFlight.get( "timestamp" ) ).isEqualTo( flight.timestamp() );
+
+		assertThat( resultFlight.get( "location" ) ).isEqualTo( flight.location().id().toString() );
+		assertThat( resultFlight.get( "latitude" ) ).isEqualTo( flight.latitude() );
+		assertThat( resultFlight.get( "longitude" ) ).isEqualTo( flight.longitude() );
+		assertThat( resultFlight.get( "altitude" ) ).isEqualTo( flight.altitude() );
+	}
+
+	@Test
+	void getFlightWithCustomLocation() throws Exception {
+		// given
+		Flight flight = createTestFlight( getMockUser() );
+		flight.location( Location.CUSTOM_LOCATION );
+		statePersisting.upsert( flight );
+
+		// when
+		MvcResult result = this.mockMvc.perform( get( ApiPath.FLIGHT + "/" + flight.id() ).with( jwt() ) ).andExpect( status().isOk() ).andReturn();
+
+		// then
+		Map<?, ?> map = Json.asMap( result.getResponse().getContentAsString() );
+		Map<?, ?> resultFlight = (Map<?, ?>)map.get( "flight" );
+		assertThat( resultFlight.get( "timestamp" ) ).isEqualTo( flight.timestamp() );
+
+		assertThat( resultFlight.get( "location" ) ).isEqualTo( flight.location().id().toString() );
+		assertThat( resultFlight.get( "latitude" ) ).isEqualTo( flight.latitude() );
+		assertThat( resultFlight.get( "longitude" ) ).isEqualTo( flight.longitude() );
+		assertThat( resultFlight.get( "altitude" ) ).isEqualTo( flight.altitude() );
 	}
 
 	@Test

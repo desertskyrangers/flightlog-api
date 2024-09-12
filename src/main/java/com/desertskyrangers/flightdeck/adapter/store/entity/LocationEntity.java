@@ -52,6 +52,8 @@ public class LocationEntity {
 	}
 
 	public static Location toLocation( LocationEntity entity ) {
+		if( entity == null ) return null;
+
 		Location location = toLocationShallow( entity );
 
 		final Map<UUID, Group> groups = new HashMap<>();
