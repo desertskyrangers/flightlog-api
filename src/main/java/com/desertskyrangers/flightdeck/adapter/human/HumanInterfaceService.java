@@ -79,11 +79,11 @@ public class HumanInterfaceService implements HumanInterface {
 
 		Twilio.init( username, password );
 
-		log.info( "Send sms " + message.content() );
+		log.info( "Send SMS: {}", message.content() );
 		message.numbers().stream().map( HumanInterfaceService::e164Format ).forEach( n -> {
 			try {
 				Message twilioMessage = Message.creator( new PhoneNumber( n ), new PhoneNumber( from ), message.content() ).create();
-				log.debug( "SMS message sent to={} sid={}", n, twilioMessage.getSid() );
+				log.info( "SMS message sent to={} sid={}", n, twilioMessage.getSid() );
 			} catch( Exception exception ) {
 				log.warn( "Unable to send message to={}", n );
 			}
