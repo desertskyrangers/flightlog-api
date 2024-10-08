@@ -140,7 +140,7 @@ public class MembershipService implements MembershipServices {
 		Set<Member> memberships = findMembershipsByUser( user );
 
 		for( Member member : memberships ) {
-			if( member.group().equals( group ) && member.status() == Member.Status.ACCEPTED ) return true;
+			if( member.group().equals( group ) && member.status().active() ) return true;
 		}
 
 		return false;

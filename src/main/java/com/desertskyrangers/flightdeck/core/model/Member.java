@@ -2,6 +2,7 @@ package com.desertskyrangers.flightdeck.core.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.experimental.Accessors;
 
 import java.util.UUID;
@@ -24,22 +25,22 @@ public class Member implements Comparable<Member> {
 		return this.status.compareTo( that.status );
 	}
 
+	@Getter
 	public enum Status {
 
-		OWNER( "Owner" ),
-		ACCEPTED( "Accepted" ),
-		INVITED( "Invited" ),
-		REQUESTED( "Requested" ),
-		REVOKED( "Revoked" );
+		OWNER( "Owner", true ),
+		ACCEPTED( "Accepted", true ),
+		INVITED( "Invited", false ),
+		REQUESTED( "Requested", false ),
+		REVOKED( "Revoked", false );
 
 		private final String name;
 
-		Status( String name ) {
-			this.name = name;
-		}
+		private final boolean active;
 
-		public String getName() {
-			return name;
+		Status( String name, boolean active ) {
+			this.name = name;
+			this.active = active;
 		}
 
 		public static boolean isValid( String string ) {
