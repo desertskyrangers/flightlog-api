@@ -34,12 +34,12 @@ public class Member implements Comparable<Member> {
 		REQUESTED( "Requested", false ),
 		REVOKED( "Revoked", false );
 
-		private final String name;
+		private final String title;
 
 		private final boolean active;
 
-		Status( String name, boolean active ) {
-			this.name = name;
+		Status( String title, boolean active ) {
+			this.title = title;
 			this.active = active;
 		}
 

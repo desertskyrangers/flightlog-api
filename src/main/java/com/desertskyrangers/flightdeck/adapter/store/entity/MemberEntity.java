@@ -34,7 +34,7 @@ public class MemberEntity {
 		entity.setId( member.id() );
 		entity.setUser( UserEntity.from( member.user() ) );
 		entity.setGroup( GroupEntity.from( member.group() ) );
-		entity.setStatus( member.status().name().toLowerCase() );
+		entity.setStatus( member.status().title().toLowerCase() );
 		return entity;
 	}
 

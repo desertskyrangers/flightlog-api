@@ -41,7 +41,7 @@ public class MembershipControllerTest extends BaseControllerTest {
 		Member membership = statePersisting.upsert( new Member().user( user ).group( group ).status( Member.Status.REQUESTED ) );
 
 		// when
-		Map<String, String> request = Map.of( "id", membership.id().toString(), "status", Member.Status.ACCEPTED.name().toLowerCase() );
+		Map<String, String> request = Map.of( "id", membership.id().toString(), "status", Member.Status.ACCEPTED.title().toLowerCase() );
 		this.mockMvc.perform( put( ApiPath.MEMBERSHIP ).with( jwt() ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
 
 		// then
@@ -73,7 +73,7 @@ public class MembershipControllerTest extends BaseControllerTest {
 		Member membership = statePersisting.upsert( new Member().user( getMockUser() ).group( group ).status( Member.Status.REQUESTED ) );
 
 		// when
-		Map<String, String> request = Map.of( "id", membership.id().toString(), "status", Member.Status.ACCEPTED.name().toLowerCase() );
+		Map<String, String> request = Map.of( "id", membership.id().toString(), "status", Member.Status.ACCEPTED.title().toLowerCase() );
 		this.mockMvc.perform( put( ApiPath.MEMBERSHIP ).with( jwt() ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isUnauthorized() ).andReturn();
 	}
 
@@ -86,7 +86,7 @@ public class MembershipControllerTest extends BaseControllerTest {
 		Member membership = statePersisting.upsert( new Member().user( getMockUser() ).group( group ).status( Member.Status.INVITED ) );
 
 		// when
-		Map<String, String> request = Map.of( "id", membership.id().toString(), "status", Member.Status.ACCEPTED.name().toLowerCase() );
+		Map<String, String> request = Map.of( "id", membership.id().toString(), "status", Member.Status.ACCEPTED.title().toLowerCase() );
 		this.mockMvc.perform( put( ApiPath.MEMBERSHIP ).with( jwt() ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) ).andExpect( status().isOk() ).andReturn();
 	}
 

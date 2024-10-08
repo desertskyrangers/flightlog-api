@@ -248,17 +248,17 @@ public class StateRetrievingService implements StateRetrieving {
 
 	@Override
 	public Set<Group> findGroupsByOwner( User user ) {
-		return memberRepo.findAllByUser_IdAndStatus( user.id(), Member.Status.OWNER.name().toLowerCase() ).stream().map( MemberEntity::getGroup ).map( GroupEntity::toGroup ).collect( Collectors.toSet() );
+		return memberRepo.findAllByUser_IdAndStatus( user.id(), Member.Status.OWNER.title().toLowerCase() ).stream().map( MemberEntity::getGroup ).map( GroupEntity::toGroup ).collect( Collectors.toSet() );
 	}
 
 	@Override
 	public Page<Group> findGroupsPageByOwner( User user, int page, int size ) {
-		return memberRepo.findAllByUser_IdAndStatus( user.id(), Member.Status.OWNER.name().toLowerCase(), PageRequest.of( page, size ) ).map( MemberEntity::getGroup ).map( GroupEntity::toGroup );
+		return memberRepo.findAllByUser_IdAndStatus( user.id(), Member.Status.OWNER.title().toLowerCase(), PageRequest.of( page, size ) ).map( MemberEntity::getGroup ).map( GroupEntity::toGroup );
 	}
 
 	@Override
 	public Set<User> findGroupOwners( Group group ) {
-		return memberRepo.findAllByGroup_IdAndStatus( group.id(), Member.Status.OWNER.name().toLowerCase() ).stream().map( MemberEntity::getUser ).map( UserEntity::toUser ).collect( Collectors.toSet() );
+		return memberRepo.findAllByGroup_IdAndStatus( group.id(), Member.Status.OWNER.title().toLowerCase() ).stream().map( MemberEntity::getUser ).map( UserEntity::toUser ).collect( Collectors.toSet() );
 	}
 
 	@Override

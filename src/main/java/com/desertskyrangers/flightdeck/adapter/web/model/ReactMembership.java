@@ -24,7 +24,7 @@ public class ReactMembership {
 		reactMembership.setId( member.id().toString() );
 		reactMembership.setUser( ReactUser.from( member.user() ) );
 		reactMembership.setGroup( ReactGroup.from( member.group() ) );
-		reactMembership.setStatus( member.status().name().toLowerCase() );
+		reactMembership.setStatus( member.status().title().toLowerCase() );
 
 		return reactMembership;
 	}

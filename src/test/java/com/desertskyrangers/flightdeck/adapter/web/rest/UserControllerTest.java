@@ -490,7 +490,7 @@ public class UserControllerTest extends BaseControllerTest {
 
 		// when
 		// Because the requesting user is the mock user, this should fail
-		Map<String, String> request = Map.of( "userid", user.id().toString(), "groupid", group.id().toString(), "status", Member.Status.INVITED.name().toLowerCase() );
+		Map<String, String> request = Map.of( "userid", user.id().toString(), "groupid", group.id().toString(), "status", Member.Status.INVITED.title().toLowerCase() );
 		MvcResult result = this.mockMvc
 			.perform( put( ApiPath.USER_MEMBERSHIP ).with( jwt() ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) )
 			.andExpect( status().isUnauthorized() )
@@ -515,7 +515,7 @@ public class UserControllerTest extends BaseControllerTest {
 
 		// when
 		// Because the requesting user is the mock user, this should fail
-		Map<String, String> request = Map.of( "userid", user.id().toString(), "groupid", group.id().toString(), "status", Member.Status.ACCEPTED.name().toLowerCase() );
+		Map<String, String> request = Map.of( "userid", user.id().toString(), "groupid", group.id().toString(), "status", Member.Status.ACCEPTED.title().toLowerCase() );
 		MvcResult result = this.mockMvc
 			.perform( put( ApiPath.USER_MEMBERSHIP ).with( jwt() ).content( Json.stringify( request ) ).contentType( MediaType.APPLICATION_JSON ) )
 			.andExpect( status().isUnauthorized() )
