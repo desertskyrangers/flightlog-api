@@ -57,6 +57,8 @@ public class UserControllerTest extends BaseControllerTest {
 
 	@BeforeEach
 	protected void setup() {
+		statePersisting.removeAllFlights();
+
 		super.setup();
 
 		userServices.setDashboardServices( dashboardServices );
@@ -66,12 +68,6 @@ public class UserControllerTest extends BaseControllerTest {
 		String jwtToken = tokenProvider.createToken( getMockUser(), authentication, false );
 		headers = new HttpHeaders();
 		headers.add( JwtToken.AUTHORIZATION_HEADER, JwtToken.AUTHORIZATION_TYPE + " " + jwtToken );
-	}
-
-	@AfterEach
-	void teardown() {
-		statePersisting.removeAllFlights();
-		userServices.remove( getMockUser() );
 	}
 
 	@Test
