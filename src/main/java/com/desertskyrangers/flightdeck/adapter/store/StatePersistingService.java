@@ -181,6 +181,7 @@ public class StatePersistingService implements StatePersisting {
 	@Override
 	public void remove( User user ) {
 		userRepo.deleteById( user.id() );
+		userRepo.flush();
 	}
 
 	@Override

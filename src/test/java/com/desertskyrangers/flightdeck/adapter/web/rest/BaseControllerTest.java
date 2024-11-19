@@ -42,7 +42,6 @@ public abstract class BaseControllerTest extends BaseTest {
 
 			// Delete the exising mock user account
 			userServices.findByPrincipal( authentication.getName() ).ifPresent( u -> userServices.remove( u ) );
-			//if( userServices.findByPrincipal( authentication.getName() ).isPresent())
 
 			mockUser = userServices.findByPrincipal( authentication.getName() ).orElseGet( () -> {
 				User user = new User();
@@ -58,6 +57,10 @@ public abstract class BaseControllerTest extends BaseTest {
 				userServices.upsert( user );
 				return user;
 			} );
+
+			mockUser.firstName( "Mock" );
+			mockUser.lastName( "User" );
+			userServices.upsert( mockUser );
 
 			stateRetrieving.findAircraftByOwner( getMockUser().id() ).forEach( statePersisting::remove );
 			stateRetrieving.findBatteriesByOwner( getMockUser().id() ).forEach( statePersisting::remove );
