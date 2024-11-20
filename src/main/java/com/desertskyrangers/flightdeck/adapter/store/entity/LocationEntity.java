@@ -16,7 +16,6 @@ import java.util.UUID;
 public class LocationEntity {
 
 	@Id
-	@Column( columnDefinition = "BINARY(16)" )
 	private UUID id;
 
 	private double latitude;
@@ -26,7 +25,7 @@ public class LocationEntity {
 	private double altitude;
 
 	@ManyToOne( optional = false, fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
-	@JoinColumn( name = "userid", nullable = false, updatable = false, columnDefinition = "BINARY(16)" )
+	@JoinColumn( name = "userid", nullable = false, updatable = false )
 	private UserEntity user;
 
 	@Column( length = 160 )

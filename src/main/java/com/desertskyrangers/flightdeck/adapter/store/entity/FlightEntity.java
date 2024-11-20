@@ -17,25 +17,24 @@ import java.util.stream.Collectors;
 public class FlightEntity {
 
 	@Id
-	@Column( columnDefinition = "BINARY(16)" )
 	private UUID id;
 
 	@ManyToOne( fetch = FetchType.EAGER )
-	@JoinColumn( name = "pilotid", nullable = false, columnDefinition = "BINARY(16)" )
+	@JoinColumn( name = "pilotid", nullable = false )
 	private UserEntity pilot;
 
 	@Column( name = "unlistedpilot" )
 	private String unlistedPilot;
 
 	@ManyToOne( fetch = FetchType.EAGER )
-	@JoinColumn( name = "observerid", columnDefinition = "BINARY(16)" )
+	@JoinColumn( name = "observerid" )
 	private UserEntity observer;
 
 	@Column( name = "unlistedobserver" )
 	private String unlistedObserver;
 
 	@ManyToOne( fetch = FetchType.EAGER )
-	@JoinColumn( name = "aircraftid", nullable = false, columnDefinition = "BINARY(16)" )
+	@JoinColumn( name = "aircraftid", nullable = false )
 	private AircraftEntity aircraft;
 
 	@ManyToMany( fetch = FetchType.EAGER )
@@ -47,12 +46,8 @@ public class FlightEntity {
 
 	private int duration;
 
-	@Column( name = "locationid", columnDefinition = "BINARY(16)" )
+	@Column( name = "locationid" )
 	private UUID locationId;
-
-//	@ManyToOne( fetch = FetchType.EAGER )
-//	@JoinColumn( name = "locationid", columnDefinition = "BINARY(16)" )
-//	private LocationEntity location;
 
 	private double latitude;
 

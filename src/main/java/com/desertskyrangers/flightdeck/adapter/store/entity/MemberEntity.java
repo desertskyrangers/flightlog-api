@@ -16,15 +16,14 @@ import java.util.UUID;
 public class MemberEntity {
 
 	@Id
-	@Column( columnDefinition = "BINARY(16)" )
 	private UUID id;
 
 	@ManyToOne( optional = false, fetch = FetchType.EAGER )
-	@JoinColumn( name = "userid", nullable = false, updatable = false, columnDefinition = "BINARY(16)" )
+	@JoinColumn( name = "userid", nullable = false, updatable = false )
 	private UserEntity user;
 
 	@ManyToOne( optional = false, fetch = FetchType.EAGER )
-	@JoinColumn( name = "orgid", nullable = false, updatable = false, columnDefinition = "BINARY(16)" )
+	@JoinColumn( name = "orgid", nullable = false, updatable = false )
 	private GroupEntity group;
 
 	private String status;

@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 public class UserEntity {
 
 	@Id
-	@Column( columnDefinition = "BINARY(16)" )
 	private UUID id;
 
 	private String username;

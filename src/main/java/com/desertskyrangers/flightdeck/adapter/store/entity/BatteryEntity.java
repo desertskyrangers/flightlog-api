@@ -17,7 +17,6 @@ import java.util.UUID;
 public class BatteryEntity {
 
 	@Id
-	@Column( columnDefinition = "BINARY(16)" )
 	private UUID id;
 
 	private String name;
@@ -54,7 +53,7 @@ public class BatteryEntity {
 	@Column( name = "flighttime" )
 	private Long flightTime;
 
-	@Column( nullable = false, columnDefinition = "BINARY(16)" )
+	@Column( nullable = false )
 	private UUID owner;
 
 	@Column( name = "ownertype", nullable = false )

@@ -16,11 +16,10 @@ import java.util.UUID;
 public class TokenEntity {
 
 	@Id
-	@Column( columnDefinition = "BINARY(16)" )
 	private UUID id;
 
 	@ManyToOne( optional = false, fetch = FetchType.EAGER )
-	@JoinColumn( name = "userid", nullable = false, updatable = false, columnDefinition = "BINARY(16)" )
+	@JoinColumn( name = "userid", nullable = false, updatable = false )
 	private UserEntity user;
 
 	@Column( unique = true )

@@ -17,7 +17,6 @@ import java.util.UUID;
 public class AwardEntity {
 
 	@Id
-	@Column( columnDefinition = "BINARY(16)" )
 	private UUID id;
 
 	@Column( name = "recipienttype" )
